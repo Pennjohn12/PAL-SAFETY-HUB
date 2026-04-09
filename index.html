@@ -735,6 +735,7 @@
       <div class="grid grid-2">
         <div class="kit-card" onclick="showPage('scissor-lift-inspection')"><div class="kit-icon">🔧</div><h4>Scissor Lift Pre-Use Inspection</h4><p>Pre-start walk-around, powered checks &amp; workplace</p></div>
         <div class="kit-card" onclick="showPage('scaffold-checklist')"><div class="kit-icon">🏗️</div><h4>Scaffolding Safety Checklist</h4><p>Pre-use scaffold inspection — general &amp; special</p></div>
+        <div class="kit-card" onclick="showPage('harness-checklist')"><div class="kit-icon">🦺</div><h4>Full-Body Harness Inspection</h4><p>Pre-use harness inspection checklist</p></div>
       </div>
 
       <div class="kit-section-title">New Hire Documents</div>
@@ -1717,7 +1718,100 @@
       </div>
     </section>
 
-    <!-- PPE -->
+    <!-- FULL-BODY HARNESS INSPECTION CHECKLIST -->
+    <section class="page" id="harness-checklist">
+      <div class="form-shell">
+        <div class="form-head">
+          <div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="14" fill="#1b3a5c"/>
+            <text x="50" y="42" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="36" fill="#e8b84b" letter-spacing="1">PAL</text>
+            <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">ENVIRONMENTAL</text>
+            <text x="50" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">SERVICES</text>
+            <rect x="18" y="79" width="64" height="2" rx="1" fill="#e8b84b" opacity=".5"/>
+          </svg></div>
+          <div class="title-wrap"><h2>Full-Body Harnesses Inspection Checklist</h2><p>Complete before every use — PAL Environmental Services</p></div>
+          <div class="form-meta">Form: PAL-HIC-001<br>Rev: 1.0<br>Date: 2026</div>
+        </div>
+
+        <div class="form-body">
+          <div class="toolbar">
+            <button class="btn secondary" onclick="showPage('foreman-kit')">← Back to Foreman's Kit</button>
+            <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('harness-checklist')">🗑 Clear Sheet</button>
+          </div>
+
+          <form data-save-key="harness-checklist">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+              <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
+              <div class="field"><label>Date of First Use</label><input type="date" name="date_first_use"></div>
+              <div class="field"><label>Date</label><input type="date" name="date"></div>
+              <div class="field"><label>Date of Manufacture</label><input name="date_manufacture"></div>
+              <div class="field"><label>System Number</label><input name="system_number"></div>
+              <div class="field"><label>Model Serial Number</label><input name="model_serial"></div>
+            </div>
+          </form>
+
+          <!-- Inspection Table -->
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr>
+                <th style="background:#1b3a5c;color:white;padding:8px 10px;text-align:left;border:1px solid #4a6580;">INSPECTION POINTS</th>
+                <th colspan="2" style="background:#1b3a5c;color:white;padding:8px 10px;text-align:center;border:1px solid #4a6580;white-space:nowrap;">Inspection Result (✓)</th>
+              </tr>
+              <tr>
+                <th style="background:#eff4f8;color:var(--navy);padding:6px 10px;border:1px solid #d6dde7;"></th>
+                <th style="background:#eff4f8;color:var(--navy);padding:6px 10px;text-align:center;border:1px solid #d6dde7;min-width:60px;">PASS</th>
+                <th style="background:#eff4f8;color:var(--navy);padding:6px 10px;text-align:center;border:1px solid #d6dde7;min-width:60px;">FAIL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Main inspection items -->
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">1) Inspect the load indicator warning (located on webbing below dorsal D-Ring pad) to see if any part of it is showing.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h1" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h1" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">2) Inspect hardware for cracks, sharp edges, deformation, corrosion, rust, or other signs of wear or damage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h2" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h2" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">3) Ensure all labels and markings are legible and attached to the product.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h3" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h3" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">4) Ensure product inspections are current and up to date.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h4" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h4" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">5) Ensure all springs are in working condition.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h5" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h5" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">6) Ensure sewn terminations are secure, complete, and not visibly damaged.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h6" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h6" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">7) Inspect stitching for pulled, missing, or cut stitches or other signs of wear or damage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h7" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h7" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">8) Inspect buckles and D-Rings for damage, distortion, cracks, breaks, rough or sharp edges, or other signs of wear or damage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h8" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h8" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">9) Inspect buckle attachments for unusual wear, frayed or cut fibers, broken stitching, or other signs of wear or damage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h9" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h9" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">10) Ensure buckles properly engage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h10" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h10" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">11) Ensure the outer and center bars on friction and slotted mating buckles are straight.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h11" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h11" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">12) Inspect webbing by bending a portion of the webbing six to eight inches (15 to 20 centimeters) into an inverted "U" shape. Continue along all webbing inspecting for tears, cuts, fraying, abrasions, discoloration, burns, holes, mold, additional punched holes, missing straps, excessive hardness or brittleness, or other signs of wear or damage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h12" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h12" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">13) Inspect all webbing hidden by components by adjusting all keepers, buckles, padding, and D-Ring.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h13" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h13" value="FAIL"></td></tr>
+
+              <!-- Section header: Tongue Buckles -->
+              <tr><td colspan="3" style="background:#1b3a5c;color:white;padding:6px 10px;font-weight:700;font-size:12px;border:1px solid #4a6580;">Tongue Buckles/Grommet Tongues Inspection</td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">1) Tongue buckles/grommet tongues, if supplied, should be free of distortion in shape and motion.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h14" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h14" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">2) Tongue buckles should overlap the buckle frame and move freely in their socket.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h15" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h15" value="FAIL"></td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">3) The roller should turn freely on frame.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h16" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h16" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">4) Inspect tongue buckles for loose, distorted, or broken grommets (holes).</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h17" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h17" value="FAIL"></td></tr>
+
+              <!-- Section header: Quick-Connect -->
+              <tr><td colspan="3" style="background:#1b3a5c;color:white;padding:6px 10px;font-weight:700;font-size:12px;border:1px solid #4a6580;">Quick-Connect Buckle Inspection</td></tr>
+              <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">1) Ensure that quick-connect buckles, if supplied, engage properly by tugging on both halves of the buckle to make sure it will not disengage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h18" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h18" value="FAIL"></td></tr>
+              <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">2) Ensure the quick-connect buckles' release mechanisms are free of debris.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h19" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h19" value="FAIL"></td></tr>
+            </tbody>
+          </table>
+
+          <p style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;">
+            <strong>NOTE:</strong> This checklist must be used in conjunction with the User Manual. Please refer to the manual before using this checklist.<br>
+            ©2018. All Rights Reserved. All specifications and product designs subject to change without prior notice.
+          </p>
+          <p style="font-size:10px;color:var(--muted);">718.349.0900 &nbsp;|&nbsp; 11-02 Queens Plaza South &nbsp;|&nbsp; Long Island City, NY 11101 &nbsp;|&nbsp; www.palcorp.com</p>
+
+          <!-- Inspector signature removed -->
+
+        </div>
+        <div class="sticky-actions">
+          <button class="btn secondary" onclick="printPage()">Print Blank</button>
+          <button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">Export PDF</button>
+          <button class="btn share" onclick="saveForm('harness-checklist');shareCurrentPage()">Share</button>
+          <button class="btn gold" onclick="saveForm('harness-checklist');printPage()">Save and Print</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FULL-BODY HARNESS INSPECTION CHECKLIST -->
     <section class="page" id="ppe">
       <div class="hero"><h2>Personal Protective Equipment (PPE)</h2><p>All PAL employees must wear required PPE at all times on every jobsite. PPE is your last line of defense against injury.</p></div>
       <h3 class="section-title">Minimum Required PPE — All PAL Sites</h3>
