@@ -301,6 +301,17 @@
       .card, .policy-card { box-shadow: none !important; }
       body { background: white !important; }
 
+      /* Fix blacked-out text on print/share — force all inputs to show text */
+      .field input, .field select, .field textarea,
+      input, select, textarea, [contenteditable] {
+        color: #000 !important;
+        background: white !important;
+        -webkit-text-fill-color: #000 !important;
+        opacity: 1 !important;
+      }
+      /* Fix table input fields */
+      table input { color: #000 !important; background: white !important; -webkit-text-fill-color: #000 !important; }
+
       /* Tighter print sizing for all forms */
       .form-body { font-size: 11px; }
       .form-head h2 { font-size: 15px !important; }
@@ -2496,6 +2507,7 @@
     const navTabs = [
       ['cover', { en: 'Cover', es: 'Portada', pl: 'Okładka' }],
       ['foreman-kit', { en: "Foreman's Kit", es: 'Kit del Capataz', pl: 'Zestaw Brygadzisty' }, true],
+      ['projects-link', { en: '🏗️ Projects', es: '🏗️ Proyectos', pl: '🏗️ Projekty' }],
       ['contents', { en: 'Contents', es: 'Contenido', pl: 'Spis treści' }],
       ['training-records', { en: 'Training Records', es: 'Registros de Capacitación', pl: 'Rejestry Szkoleniowe' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
@@ -2645,9 +2657,12 @@
 
     function buildTabs() {
       const tabs = document.getElementById('tabs');
-      tabs.innerHTML = navTabs.map(([id, label, foreman]) =>
-        `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`
-      ).join('');
+      tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
+        if (id === 'projects-link') {
+          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">🏗️ Projects</button>`;
+        }
+        return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
+      }).join('');
     }
 
     function applyTranslations() {
