@@ -220,8 +220,26 @@
     .topic-card strong { color: var(--navy); }
     .talk-section { border-left: 5px solid var(--green-accent); }
 
+
+    .cloud-panel {
+      background: linear-gradient(180deg, #f7fbff, #eef5fb);
+      border: 1px solid #cddceb;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .cloud-panel h4 { margin: 0 0 6px; color: var(--navy); font-size: 15px; }
+    .cloud-panel p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .cloud-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .project-context-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 6px; }
+    .project-badge {
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      background:#eef4fa; color:var(--navy); font-size:12px; font-weight:700;
+    }
+    .sync-note { font-size:12px; color:var(--muted); margin-top:8px; }
+
     @media (max-width: 600px) {
-      .grid-2, .grid-3, .form-grid, .toolbox-grid { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .form-grid, .toolbox-grid, .project-context-grid { grid-template-columns: 1fr; }
       .span-2 { grid-column: span 1; }
       .header { padding: 0 10px; }
       .brand-text h1 { font-size: 16px; }
@@ -265,6 +283,24 @@
     .scaffold-table .yn-cell input[type=radio] { width: 18px; height: 18px; accent-color: var(--navy); cursor: pointer; }
     .scaffold-table .remarks-cell input { width: 100%; border: none; border-bottom: 1px solid #aebccc; padding: 4px 2px; font: inherit; background: transparent; font-size: 12px; }
     .scaffold-table .checked-cell input { width: 100%; border: none; border-bottom: 1px solid #aebccc; padding: 4px 2px; font: inherit; background: transparent; font-size: 12px; }
+
+    .cloud-panel {
+      background: linear-gradient(180deg, #f7fbff, #eef5fb);
+      border: 1px solid #cddceb;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .cloud-panel h4 { margin: 0 0 6px; color: var(--navy); font-size: 15px; }
+    .cloud-panel p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .cloud-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .project-context-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 6px; }
+    .project-badge {
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      background:#eef4fa; color:var(--navy); font-size:12px; font-weight:700;
+    }
+    .sync-note { font-size:12px; color:var(--muted); margin-top:8px; }
+
     @media (max-width: 600px) {
       .scaffold-table { font-size: 12px; }
       .scaffold-table td, .scaffold-table th { padding: 6px 8px; }
@@ -1054,8 +1090,32 @@
         <div class="form-body">
           <div class="toolbar">
             <button class="btn secondary" onclick="showPage('foreman-kit')">← Back to Foreman's Kit</button>
+            <button class="btn secondary hidden" id="daily-report-project-back" onclick="returnToProjectDashboard()">← Back to Project Dashboard</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('daily-report')">🗑 Clear Sheet</button>
           </div>
+
+          <div class="cloud-panel" id="daily-report-cloud-panel">
+            <h4>Project Cloud Link</h4>
+            <p>Pick the correct project before saving so this report lands under the right job in PAL Projects.</p>
+            <div class="project-context-grid" style="margin-top:12px;">
+              <div class="field">
+                <label>Selected Project</label>
+                <select id="daily-report-project-select">
+                  <option value="">Select a project…</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Cloud Save Status</label>
+                <div id="daily-report-cloud-status" class="project-badge">Local only</div>
+              </div>
+            </div>
+            <div class="cloud-actions">
+              <button type="button" class="btn secondary" onclick="openProjectDashboardFromReport()">Open Project Dashboard</button>
+              <button type="button" class="btn secondary" onclick="refreshDailyReportProjects()">Refresh Projects</button>
+            </div>
+            <div class="sync-note" id="daily-report-project-hint">Sign in through the Projects page to load your assigned projects here.</div>
+          </div>
+
           <form data-save-key="daily-report">
             <h3 class="subhead">Project Information</h3>
             <div class="form-grid">
@@ -3064,6 +3124,34 @@
       }
     }
 
+    function toastPalMessage(message) {
+      let el = document.getElementById('pal-toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'pal-toast';
+        el.style.position = 'fixed';
+        el.style.bottom = '88px';
+        el.style.left = '50%';
+        el.style.transform = 'translateX(-50%)';
+        el.style.background = '#1f2937';
+        el.style.color = 'white';
+        el.style.padding = '12px 16px';
+        el.style.borderRadius = '12px';
+        el.style.fontSize = '14px';
+        el.style.fontWeight = '700';
+        el.style.zIndex = '99999';
+        el.style.boxShadow = '0 8px 24px rgba(0,0,0,.25)';
+        el.style.opacity = '0';
+        el.style.transition = 'opacity .2s ease';
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      el.style.opacity = '1';
+      clearTimeout(window.__palToastTimer);
+      window.__palToastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2600);
+    }
+    window.toastPalMessage = toastPalMessage;
+
     function printPage() {
       window.print();
     }
@@ -3221,5 +3309,257 @@
       if (banner) banner.classList.add('hidden');
     });
   </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, serverTimestamp, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80",
+      authDomain: "pal-safety-hub.firebaseapp.com",
+      projectId: "pal-safety-hub",
+      storageBucket: "pal-safety-hub.firebasestorage.app",
+      messagingSenderId: "461653262208",
+      appId: "1:461653262208:web:fb88dc50ea0a2f68630b65"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let palProjects = [];
+    let palCurrentUser = null;
+    let palCurrentUserProfile = null;
+    let palDailyReportInitialized = false;
+
+    const originalSaveForm = window.saveForm;
+
+    window.refreshDailyReportProjects = refreshDailyReportProjects;
+    window.openProjectDashboardFromReport = openProjectDashboardFromReport;
+    window.returnToProjectDashboard = returnToProjectDashboard;
+
+    onAuthStateChanged(auth, async (user) => {
+      palCurrentUser = user || null;
+      palCurrentUserProfile = user ? await loadUserProfile(user) : null;
+      await refreshDailyReportProjects();
+    });
+
+    async function loadUserProfile(user) {
+      try {
+        const q = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
+        const snap = await getDocs(q);
+        if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+      } catch (err) {
+        console.error('Could not load user profile', err);
+      }
+      return { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
+    }
+
+    function isOfficeRole() {
+      const role = (palCurrentUserProfile?.role || '').toLowerCase();
+      return ['office', 'admin', 'administrator', 'project manager', 'project_manager'].includes(role);
+    }
+
+    async function refreshDailyReportProjects() {
+      const select = document.getElementById('daily-report-project-select');
+      const status = document.getElementById('daily-report-cloud-status');
+      const hint = document.getElementById('daily-report-project-hint');
+      const backBtn = document.getElementById('daily-report-project-back');
+      if (!select || !status || !hint) return;
+
+      if (!palCurrentUser) {
+        palProjects = [];
+        select.innerHTML = '<option value="">Select a project…</option>';
+        status.textContent = 'Local only';
+        hint.textContent = 'Sign in through the Projects page to load your assigned projects here.';
+        backBtn?.classList.add('hidden');
+        applyProjectSelectionFromStorage();
+        return;
+      }
+
+      try {
+        const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const all = [];
+        snap.forEach(docSnap => all.push({ id: docSnap.id, ...docSnap.data() }));
+        palProjects = all.filter(p => {
+          if (isOfficeRole()) return true;
+          const foremen = Array.isArray(p.foremen) ? p.foremen : [];
+          return foremen.some(f => (f.email || '').toLowerCase() === (palCurrentUser?.email || '').toLowerCase() || (f.uid && f.uid === palCurrentUser?.uid)) || p.createdBy === palCurrentUser?.uid;
+        });
+
+        select.innerHTML = '<option value="">Select a project…</option>' + palProjects.map(p => `<option value="${p.id}">${escapeHtml(p.name || 'Project')}${p.jobNumber ? ' — ' + escapeHtml(p.jobNumber) : ''}</option>`).join('');
+        hint.textContent = palProjects.length
+          ? `${palProjects.length} project${palProjects.length === 1 ? '' : 's'} available for cloud save.`
+          : 'No assigned projects were found for this account.';
+        status.textContent = palProjects.length ? 'Ready for cloud save' : 'No projects available';
+        applyProjectSelectionFromStorage();
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Cloud unavailable';
+        hint.textContent = 'Could not load projects right now. You can still save on this device.';
+      }
+    }
+
+    function getStoredCurrentProject() {
+      try {
+        const raw = localStorage.getItem('pal-current-project');
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function setStoredCurrentProject(project) {
+      if (!project) return;
+      localStorage.setItem('pal-current-project', JSON.stringify({
+        id: project.id,
+        name: project.name || '',
+        jobNumber: project.jobNumber || '',
+        location: project.location || '',
+        status: project.status || 'active'
+      }));
+    }
+
+    function applyProjectSelectionFromStorage() {
+      const select = document.getElementById('daily-report-project-select');
+      const backBtn = document.getElementById('daily-report-project-back');
+      if (!select) return;
+      const params = new URLSearchParams(window.location.search);
+      const fromQuery = params.get('projectId');
+      const stored = getStoredCurrentProject();
+      const preferredId = fromQuery || stored?.id || '';
+      if (preferredId) select.value = preferredId;
+      if (!palDailyReportInitialized) {
+        bindDailyReportProjectSelection();
+        palDailyReportInitialized = true;
+      }
+      syncDailyReportProjectFields();
+      if (stored?.id || fromQuery) backBtn?.classList.remove('hidden');
+      if (params.get('page') === 'daily-report') {
+        showPage('daily-report');
+      }
+    }
+
+    function bindDailyReportProjectSelection() {
+      const select = document.getElementById('daily-report-project-select');
+      if (!select) return;
+      select.addEventListener('change', syncDailyReportProjectFields);
+    }
+
+    function syncDailyReportProjectFields() {
+      const select = document.getElementById('daily-report-project-select');
+      const status = document.getElementById('daily-report-cloud-status');
+      const hint = document.getElementById('daily-report-project-hint');
+      if (!select || !status || !hint) return;
+      const project = palProjects.find(p => p.id === select.value) || getStoredCurrentProject();
+      if (project && project.id && select.value !== project.id && palProjects.some(p => p.id === project.id)) {
+        select.value = project.id;
+      }
+      if (project && project.id) {
+        const page = document.getElementById('daily-report');
+        const form = page?.querySelector('form[data-save-key="daily-report"]');
+        if (form) {
+          const jobName = form.elements['job_name'];
+          const jobNumber = form.elements['job_number'];
+          if (jobName) jobName.value = project.name || '';
+          if (jobNumber) {
+            jobNumber.value = project.jobNumber || '';
+            if (typeof window.syncJobNumber === 'function') window.syncJobNumber(jobNumber.value || '');
+          }
+        }
+        setStoredCurrentProject(project);
+        status.textContent = palCurrentUser ? 'Linked to project' : 'Project selected';
+        hint.textContent = project.location ? `Saving under ${project.name} · ${project.location}` : `Saving under ${project.name}`;
+      } else {
+        status.textContent = palCurrentUser ? 'Ready for cloud save' : 'Local only';
+      }
+    }
+
+    async function saveDailyReportToFirestore() {
+      if (!palCurrentUser) return { saved: false, reason: 'not-signed-in' };
+      const select = document.getElementById('daily-report-project-select');
+      const projectId = select?.value || getStoredCurrentProject()?.id;
+      if (!projectId) return { saved: false, reason: 'no-project' };
+
+      const page = document.getElementById('daily-report');
+      const form = page?.querySelector('form[data-save-key="daily-report"]');
+      if (!form) return { saved: false, reason: 'no-form' };
+      const data = window.formToJSON ? window.formToJSON(form) : Object.fromEntries(new FormData(form).entries());
+      const project = palProjects.find(p => p.id === projectId) || getStoredCurrentProject() || {};
+      data.projectId = projectId;
+      data.project_name = project.name || data.job_name || '';
+      data.project_location = project.location || '';
+      data.project_status = project.status || '';
+
+      await addDoc(collection(db, 'projects', projectId, 'reports'), {
+        ...data,
+        submittedAt: serverTimestamp(),
+        submittedByUid: palCurrentUser.uid,
+        submittedByEmail: palCurrentUser.email || '',
+        submittedByName: palCurrentUser.displayName || palCurrentUser.email || '',
+        source: 'daily-report'
+      });
+
+      setStoredCurrentProject(project);
+      const status = document.getElementById('daily-report-cloud-status');
+      if (status) status.textContent = 'Saved to cloud';
+      return { saved: true };
+    }
+
+    window.saveForm = function(pageId) {
+      if (pageId !== 'daily-report') {
+        return originalSaveForm.call(this, pageId);
+      }
+
+      const page = document.getElementById(pageId);
+      const form = page?.querySelector('form[data-save-key]');
+      if (form) {
+        const key = form.dataset.saveKey;
+        const data = window.formToJSON ? window.formToJSON(form) : Object.fromEntries(new FormData(form).entries());
+        localStorage.setItem(`pal-${key}`, JSON.stringify(data));
+      }
+
+      saveDailyReportToFirestore()
+        .then((result) => {
+          if (result.saved) {
+            if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Saved on this device and to the project.');
+          } else if (result.reason === 'no-project') {
+            if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Saved on this device. Pick a project to send it to PAL Projects.');
+          } else if (result.reason === 'not-signed-in') {
+            if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Saved on this device. Sign in through Projects for cloud save.');
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Saved on this device. Cloud save failed.');
+        });
+    };
+
+    function openProjectDashboardFromReport() {
+      const select = document.getElementById('daily-report-project-select');
+      const projectId = select?.value || getStoredCurrentProject()?.id;
+      if (!projectId) {
+        if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Select a project first.');
+        return;
+      }
+      window.location.href = `projects.html?projectId=${encodeURIComponent(projectId)}`;
+    }
+
+    function returnToProjectDashboard() {
+      const stored = getStoredCurrentProject();
+      if (!stored?.id) {
+        window.location.href = 'projects.html';
+        return;
+      }
+      window.location.href = `projects.html?projectId=${encodeURIComponent(stored.id)}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+
 </body>
 </html>
