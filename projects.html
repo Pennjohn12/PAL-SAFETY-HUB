@@ -349,6 +349,21 @@
     .report-field .v { font-size:14px; color:var(--text); white-space:pre-line; }
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
 
+    .top-switch { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+    .top-switch-btn {
+      border:none; background:white; color:var(--muted); padding:11px 16px; border-radius:12px; cursor:pointer;
+      font:inherit; font-weight:700; font-size:14px; box-shadow:0 1px 4px rgba(0,0,0,.06);
+    }
+    .top-switch-btn.active { color:var(--navy); border-bottom:3px solid var(--green); }
+    .home-pane { display:none; }
+    .home-pane.active { display:block; }
+    .employee-section-block { margin-top:14px; }
+    .employee-file-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
+    .employee-mini-card { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .employee-mini-card .k { display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.35px; margin-bottom:6px; }
+    .file-link-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-top:1px solid #eef2f7; }
+    .file-link-row:first-child { border-top:none; padding-top:0; }
+
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
       .project-header-card h2 { font-size: 20px; }
@@ -461,18 +476,38 @@
   </div>
 
   <div class="page-wrap">
-    <div class="page-header">
-      <h2>Projects</h2>
-      <div class="header-actions">
-        <button class="btn-outline admin-only" onclick="openEmployeeModal()">👷 Employee Records</button>
-        <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
+    <div class="top-switch">
+      <button class="top-switch-btn active" id="home-projects-btn" onclick="switchHomePane('projects-home-pane', this)">🏗️ Projects</button>
+      <button class="top-switch-btn" id="home-employees-btn" onclick="switchHomePane('employees-home-pane', this); loadEmployeesHome()">🪪 Employees & Certifications</button>
+    </div>
+
+    <div class="home-pane active" id="projects-home-pane">
+      <div class="page-header">
+        <h2>Projects</h2>
+        <div class="header-actions">
+          <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
+        </div>
+      </div>
+      <div id="projects-list">
+        <div class="empty-state">
+          <div class="icon">🏗️</div>
+          <h3>No projects yet</h3>
+          <p>Tap "New Project" to get started</p>
+        </div>
       </div>
     </div>
-    <div id="projects-list">
-      <div class="empty-state">
-        <div class="icon">🏗️</div>
-        <h3>No projects yet</h3>
-        <p>Tap "New Project" to get started</p>
+
+    <div class="home-pane" id="employees-home-pane">
+      <div class="page-header">
+        <h2>Employees & Certifications</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadEmployeesHome()">↻ Refresh</button>
+          <button class="btn-outline" onclick="openEmployeeModal()">👷 New Employee</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:12px;">Employee records stay with the worker and can include certifications, new hire documents, and job assignments.</div>
+      <div id="employees-home-list">
+        <p style="color:var(--muted);font-size:14px;">No employee records yet.</p>
       </div>
     </div>
   </div>
@@ -532,7 +567,7 @@
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
-      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
+      <button class="tab" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -613,7 +648,7 @@
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
-          <button class="btn-save" onclick="openEmployeeModal()">＋ New Employee</button>
+          <button class="btn-outline" onclick="openEmployeeModal()">👷 New Employee</button>
         </div>
       </div>
       <div id="employees-list"><p style="color:var(--muted);font-size:14px;">No employee records yet.</p></div>
@@ -723,6 +758,43 @@
   </div>
 </div>
 
+<!-- NEW HIRE DOC MODAL -->
+<div class="modal-overlay" id="modal-employee-doc">
+  <div class="modal">
+    <h3>📂 Upload New Hire / Employee Doc</h3>
+    <div class="mini-note" id="doc-employee-label" style="margin-bottom:14px;"></div>
+    <div class="field">
+      <label>Document Type</label>
+      <select id="emp-doc-type" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;outline:none;width:100%;background:white;">
+        <option value="Site Orientation">Site Orientation</option>
+        <option value="Drug & Alcohol Consent">Drug & Alcohol Consent</option>
+        <option value="W-4">W-4</option>
+        <option value="I-9">I-9</option>
+        <option value="Direct Deposit">Direct Deposit</option>
+        <option value="Emergency Contact">Emergency Contact</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Custom Title (optional)</label><input type="text" id="emp-doc-custom-title" placeholder="Specific document name" /></div>
+    <div class="field"><label>Document File</label><input type="file" id="emp-doc-file" accept=".pdf,image/*,.doc,.docx" /></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-employee-doc')">Cancel</button>
+      <button class="btn-save" id="save-employee-doc-btn" onclick="saveEmployeeDoc()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-employee-detail">
+  <div class="modal" style="max-width:760px;">
+    <h3>👷 Employee File</h3>
+    <div id="employee-detail-content"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-employee-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -781,9 +853,14 @@
   window.openEmployeeModal = openEmployeeModal;
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
+  window.loadEmployeesHome = loadEmployeesHome;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
+  window.openEmployeeDocModal = openEmployeeDocModal;
+  window.saveEmployeeDoc = saveEmployeeDoc;
+  window.openEmployeeDetail = openEmployeeDetail;
+  window.switchHomePane = switchHomePane;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -794,6 +871,7 @@
       applyRoleUI();
       showView('view-projects');
       loadProjects();
+      loadEmployeesHome();
     } else {
       currentUser = null;
       currentUserProfile = null;
@@ -1271,7 +1349,6 @@
 
   // ── EMPLOYEES / CERTIFICATIONS ──
   async function loadEmployees(force = false) {
-    if (!isOfficeRole() && !force) return;
     const list = document.getElementById('employees-list');
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
@@ -1279,36 +1356,7 @@
       const snap = await getDocs(query(collection(db, 'employees'), orderBy('name', 'asc')));
       allEmployees = [];
       snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
-      if (!allEmployees.length) {
-        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No employee records yet.</p>';
-        return;
-      }
-      list.innerHTML = '';
-      allEmployees.forEach(emp => {
-        const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
-        const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-        const card = document.createElement('div');
-        card.className = 'employee-card';
-        card.innerHTML = `
-          <div class="employee-card-header">
-            <div>
-              <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
-              <div class="employee-meta">
-                ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-                ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-                ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-              </div>
-            </div>
-            <span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>
-          </div>
-          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
-          <div class="cert-list">${certs.length ? certs.slice(0,6).map(cert => `<span class="cert-item">${esc(cert.title || cert.type)}${cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : ''}</span>`).join('') : '<span class="cert-item">No certifications uploaded yet</span>'}</div>
-          <div class="employee-actions" style="margin-top:12px;">
-            <button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>
-            <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
-          </div>`;
-        list.appendChild(card);
-      });
+      renderEmployeeCards(list, true);
     } catch (e) {
       console.error(e);
       list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load employee records.</p>';
@@ -1332,6 +1380,7 @@
         trade: document.getElementById('emp-trade').value.trim(),
         notes: document.getElementById('emp-notes').value.trim(),
         certifications: [],
+        employeeDocs: [],
         assignedProjectIds: currentProject ? [currentProject.id] : [],
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
@@ -1400,12 +1449,92 @@
       document.getElementById('cert-type').value = 'OSHA 30';
       closeModal('modal-certification');
       await loadEmployees(true);
+      await loadEmployeesHome();
       toast('Certification uploaded');
     } catch (e) {
       toast('Could not upload certification');
       console.error(e);
     }
     btn.disabled = false; btn.textContent = 'Upload';
+  }
+
+  function openEmployeeDocModal(employeeId) {
+    currentEmployeeId = employeeId;
+    const emp = allEmployees.find(e => e.id === employeeId);
+    document.getElementById('doc-employee-label').textContent = emp ? `Employee: ${emp.name}` : '';
+    document.getElementById('modal-employee-doc').classList.add('open');
+  }
+
+  async function saveEmployeeDoc() {
+    if (!currentEmployeeId) return;
+    const btn = document.getElementById('save-employee-doc-btn');
+    const file = document.getElementById('emp-doc-file').files[0];
+    if (!file) { toast('Select a document file first'); return; }
+    const baseType = document.getElementById('emp-doc-type').value;
+    const title = document.getElementById('emp-doc-custom-title').value.trim() || baseType;
+    btn.disabled = true; btn.textContent = 'Uploading…';
+    try {
+      const path = `employees/${currentEmployeeId}/docs/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      await updateDoc(doc(db, 'employees', currentEmployeeId), {
+        employeeDocs: arrayUnion({
+          type: baseType,
+          title,
+          fileName: file.name,
+          url,
+          uploadedAt: new Date().toISOString(),
+          uploadedBy: currentUser.displayName || currentUser.email
+        })
+      });
+      ['emp-doc-custom-title'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('emp-doc-file').value = '';
+      document.getElementById('emp-doc-type').value = 'Site Orientation';
+      closeModal('modal-employee-doc');
+      await loadEmployees(true);
+      await loadEmployeesHome();
+      toast('Employee document uploaded');
+    } catch (e) {
+      toast('Could not upload employee document');
+      console.error(e);
+    }
+    btn.disabled = false; btn.textContent = 'Upload';
+  }
+
+  function openEmployeeDetail(employeeId) {
+    const emp = allEmployees.find(e => e.id === employeeId);
+    if (!emp) return;
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const docs = Array.isArray(emp.employeeDocs) ? emp.employeeDocs : [];
+    const assignedProjectsCount = Array.isArray(emp.assignedProjectIds) ? emp.assignedProjectIds.length : 0;
+    const content = document.getElementById('employee-detail-content');
+    content.innerHTML = `
+      <div class="employee-file-grid">
+        <div class="employee-mini-card"><span class="k">Employee</span><div>${esc(emp.name || '—')}</div></div>
+        <div class="employee-mini-card"><span class="k">Trade / Role</span><div>${esc(emp.trade || '—')}</div></div>
+        <div class="employee-mini-card"><span class="k">Email</span><div>${esc(emp.email || '—')}</div></div>
+        <div class="employee-mini-card"><span class="k">Phone</span><div>${esc(emp.phone || '—')}</div></div>
+        <div class="employee-mini-card"><span class="k">Assigned Projects</span><div>${assignedProjectsCount}</div></div>
+        <div class="employee-mini-card"><span class="k">Notes</span><div>${esc(emp.notes || 'No notes')}</div></div>
+      </div>
+      <div class="employee-section-block">
+        <div class="section-label">Certifications</div>
+        ${certs.length ? certs.map(cert => `<div class="file-link-row"><div><strong>${esc(cert.title || cert.type)}</strong><div class="mini-note">${cert.issueDate ? `Issued ${esc(cert.issueDate)}` : ''}${cert.issueDate && cert.expirationDate ? ' · ' : ''}${cert.expirationDate ? `Exp ${esc(cert.expirationDate)}` : ''}</div></div><a class="btn-sm" href="${cert.url}" target="_blank">Open</a></div>`).join('') : '<div class="mini-note">No certifications uploaded yet.</div>'}
+      </div>
+      <div class="employee-section-block">
+        <div class="section-label">New Hire / Employee Docs</div>
+        ${docs.length ? docs.map(doc => `<div class="file-link-row"><div><strong>${esc(doc.title || doc.type)}</strong><div class="mini-note">Uploaded ${formatDate(doc.uploadedAt)}</div></div><a class="btn-sm" href="${doc.url}" target="_blank">Open</a></div>`).join('') : '<div class="mini-note">No employee docs uploaded yet.</div>'}
+      </div>`;
+    document.getElementById('modal-employee-detail').classList.add('open');
+  }
+
+  function switchHomePane(paneId, btn) {
+    document.querySelectorAll('.home-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.top-switch-btn').forEach(b => b.classList.remove('active'));
+    const pane = document.getElementById(paneId);
+    if (pane) pane.classList.add('active');
+    if (btn) btn.classList.add('active');
   }
 
   function openReportDetail(reportId) {
@@ -1517,7 +1646,7 @@
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification','modal-employee-doc','modal-employee-detail'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
