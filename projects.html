@@ -461,12 +461,12 @@
   </div>
 
   <div class="page-wrap">
-    <div class="tabs" id="main-private-tabs" style="margin-bottom:20px;">
-      <button class="tab active" onclick="switchMainTab('projects-main', this)">🏗️ Projects</button>
-      <button class="tab" onclick="switchMainTab('employees-main', this)">🪪 Employee Certs</button>
+    <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
+      <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
+      <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
     </div>
 
-    <div id="projects-main" class="tab-pane active">
+    <div class="tab-pane active" id="main-projects">
       <div class="page-header">
         <h2>Projects</h2>
         <div class="header-actions">
@@ -482,15 +482,15 @@
       </div>
     </div>
 
-    <div id="employees-main" class="tab-pane">
+    <div class="tab-pane" id="main-employees">
       <div class="page-header">
-        <h2>Employee Certifications</h2>
+        <h2>Employee Certs</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
           <button class="btn-add" onclick="openEmployeeModal()">＋ Add Employee</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Employee records and certifications stay here company-wide so they can be viewed across all projects.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
       <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">No employee records yet.</p></div>
     </div>
   </div>
@@ -781,9 +781,10 @@
   window.copyProjectLink = copyProjectLink;
   window.openReportDetail = openReportDetail;
   window.openEmployeeModal = openEmployeeModal;
-  window.switchMainTab = switchMainTab;
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
+  window.switchMainTab = switchMainTab;
+  window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
 
@@ -793,10 +794,9 @@
       currentUser = user;
       updateUserUI(user);
       showView('view-projects');
-      const mainProjectsTab = document.querySelector('#main-private-tabs .tab');
-      if (mainProjectsTab) switchMainTab('projects-main', mainProjectsTab);
       currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
       applyRoleUI();
+      switchMainTab('main-projects');
       loadProjects();
       try {
         const profile = await loadUserProfile(user);
@@ -805,6 +805,7 @@
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
+      switchMainTab('main-projects');
       loadProjects();
     } else {
       currentUser = null;
@@ -904,17 +905,6 @@
     if (unsubProjects) unsubProjects();
     await signOut(auth);
     showView('view-login');
-  }
-
-  function switchMainTab(id, btn) {
-    const wrap = document.getElementById('view-projects');
-    if (!wrap) return;
-    wrap.querySelectorAll('#main-private-tabs .tab').forEach(t => t.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    wrap.querySelectorAll('.page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
-    const pane = document.getElementById(id);
-    if (pane) pane.classList.add('active');
-    if (id === 'employees-main') loadEmployees(true);
   }
 
   // ── PROJECTS ──
@@ -1027,7 +1017,7 @@
     document.getElementById('detail-info-created-by').textContent = data.createdByName || '—';
     document.getElementById('detail-project-notes').textContent = data.notes || 'No notes added for this project yet.';
     showView('view-detail');
-    switchTab('tab-docs', document.querySelector('#view-detail .tabs .tab'));
+    switchTab('tab-docs', document.querySelector('.tab'));
     await refreshProjectDetail(id);
     if (unsubProjectDetail) unsubProjectDetail();
     unsubProjectDetail = onSnapshot(doc(db, 'projects', id), async snap => {
@@ -1044,8 +1034,6 @@
 
   function backToProjects() {
     currentProject = null;
-    const mainProjectsTab = document.querySelector('#main-private-tabs .tab');
-    if (mainProjectsTab) switchMainTab('projects-main', mainProjectsTab);
     currentProjectDoc = null;
     if (unsubProjectDetail) { unsubProjectDetail(); unsubProjectDetail = null; }
     const url = new URL(window.location.href);
@@ -1307,18 +1295,6 @@
   }
 
   // ── EMPLOYEES / CERTIFICATIONS ──
-  function certificationStatus(cert = {}) {
-    const exp = cert.expirationDate;
-    if (!exp) return { label: 'No Exp Date', cls: 'neutral' };
-    const expDate = new Date(`${exp}T23:59:59`);
-    if (Number.isNaN(expDate.getTime())) return { label: 'No Exp Date', cls: 'neutral' };
-    const now = new Date();
-    const diffDays = Math.ceil((expDate - now) / 86400000);
-    if (diffDays < 0) return { label: 'Expired', cls: 'warn' };
-    if (diffDays <= 30) return { label: 'Expiring Soon', cls: 'warn' };
-    return { label: 'Valid', cls: 'active' };
-  }
-
   async function loadEmployees(force = false) {
     const list = document.getElementById('employees-list-main');
     if (!list) return;
@@ -1333,27 +1309,31 @@
       }
       list.innerHTML = '';
       allEmployees.forEach(emp => {
-        const certs = Array.isArray(emp.certifications) ? [...emp.certifications] : [];
-        certs.sort((a, b) => (a.title || a.type || '').localeCompare(b.title || b.type || ''));
+        const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
         const assignedCount = Array.isArray(emp.assignedProjectIds) ? emp.assignedProjectIds.length : 0;
         const certMarkup = certs.length
-          ? certs.map(cert => {
-              const status = certificationStatus(cert);
+          ? certs.map((cert, index) => {
+              const exp = cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : '';
+              const urlBtn = cert.url ? `<a href="${cert.url}" target="_blank" class="btn-sm">Open File</a>` : '';
               return `
-                <div class="file-item" style="margin-bottom:8px;">
-                  <div class="file-icon">🪪</div>
-                  <div class="file-info">
-                    <h4>${esc(cert.title || cert.type || 'Certification')}</h4>
-                    <p>Issued: ${esc(cert.issueDate || '—')} · Expires: ${esc(cert.expirationDate || '—')} · Uploaded by ${esc(cert.uploadedBy || 'PAL')}</p>
+                <div class="report-card" style="margin-top:10px;">
+                  <div class="report-card-header">
+                    <div>
+                      <h4>${esc(cert.title || cert.type || 'Certification')}</h4>
+                      <div class="report-meta">
+                        ${cert.issueDate ? `<span>Issued ${esc(cert.issueDate)}</span>` : ''}
+                        ${cert.expirationDate ? `<span>Expires ${esc(cert.expirationDate)}</span>` : '<span>No expiration date</span>'}
+                        ${cert.uploadedBy ? `<span>Uploaded by ${esc(cert.uploadedBy)}</span>` : ''}
+                      </div>
+                    </div>
+                    <span class="pill ${getCertificationStatusClass(cert.expirationDate)}">${esc(getCertificationStatusLabel(cert.expirationDate))}</span>
                   </div>
-                  <div class="file-actions">
-                    <span class="pill ${status.cls}">${status.label}</span>
-                    ${cert.url ? `<a href="${cert.url}" target="_blank" class="btn-sm">Open</a>` : ''}
+                  <div class="report-actions">
+                    ${urlBtn}
                   </div>
                 </div>`;
             }).join('')
           : '<div class="mini-note">No certifications uploaded yet.</div>';
-
         const card = document.createElement('div');
         card.className = 'employee-card';
         card.innerHTML = `
@@ -1364,13 +1344,12 @@
                 ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
                 ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
                 ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-                <span>🏗️ ${assignedCount} project${assignedCount === 1 ? '' : 's'}</span>
               </div>
             </div>
-            <span class="pill blue">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>
+            <span class="pill blue">${assignedCount} project${assignedCount === 1 ? '' : 's'}</span>
           </div>
           <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
-          <div class="employee-actions" style="margin:12px 0;">
+          <div class="employee-actions" style="margin-top:12px;">
             <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
           </div>
           ${certMarkup}`;
@@ -1399,7 +1378,7 @@
         trade: document.getElementById('emp-trade').value.trim(),
         notes: document.getElementById('emp-notes').value.trim(),
         certifications: [],
-        assignedProjectIds: [],
+        assignedProjectIds: currentProject ? [currentProject.id] : [],
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
@@ -1415,6 +1394,20 @@
     btn.disabled = false; btn.textContent = 'Create Employee';
   }
 
+  async function toggleEmployeeAssignment(employeeId, assign) {
+    if (!currentProject) return;
+    try {
+      const employeeRef = doc(db, 'employees', employeeId);
+      await updateDoc(employeeRef, {
+        assignedProjectIds: assign ? arrayUnion(currentProject.id) : arrayRemove(currentProject.id)
+      });
+      await loadEmployees(true);
+      toast(assign ? 'Employee assigned to project' : 'Employee removed from project');
+    } catch (e) {
+      toast('Could not update employee assignment');
+      console.error(e);
+    }
+  }
 
   function openCertificationModal(employeeId) {
     currentEmployeeId = employeeId;
@@ -1491,6 +1484,40 @@
     ].filter(([,value]) => value);
     grid.innerHTML = fields.map(([k, v]) => `<div class="report-field"><span class="k">${esc(k)}</span><div class="v">${esc(v)}</div></div>`).join('');
     document.getElementById('modal-report-detail').classList.add('open');
+  }
+
+  function getCertificationStatusLabel(expirationDate) {
+    if (!expirationDate) return 'No Expiration';
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const exp = new Date(expirationDate + 'T00:00:00');
+    if (Number.isNaN(exp.getTime())) return 'No Expiration';
+    const diffDays = Math.ceil((exp - today) / 86400000);
+    if (diffDays < 0) return 'Expired';
+    if (diffDays <= 30) return 'Expiring Soon';
+    return 'Valid';
+  }
+
+  function getCertificationStatusClass(expirationDate) {
+    const label = getCertificationStatusLabel(expirationDate);
+    if (label === 'Expired') return 'warn';
+    if (label === 'Expiring Soon') return 'pending';
+    if (label === 'Valid') return 'active';
+    return 'neutral';
+  }
+
+  function switchMainTab(tabId, btn) {
+    const wrap = document.getElementById('view-projects');
+    if (!wrap) return;
+    wrap.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    ['main-projects', 'main-employees'].forEach(id => {
+      const pane = document.getElementById(id);
+      if (pane) pane.classList.toggle('active', id === tabId);
+    });
+    if (tabId === 'main-employees') {
+      loadEmployees(true);
+    }
   }
 
   // ── UI HELPERS ──
