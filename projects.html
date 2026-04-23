@@ -380,6 +380,14 @@
     .report-field .k { display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.35px; margin-bottom:6px; }
     .report-field .v { font-size:14px; color:var(--text); white-space:pre-line; }
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
+    .sr-file-input {
+      position: absolute !important;
+      left: -9999px !important;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
 
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
@@ -617,10 +625,10 @@
           <div class="section-label">Uploaded Documents</div>
           <div class="helper-text">Project-specific files stored with this job.</div>
         </div>
-        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button>
+        <button class="btn-save" onclick="openFilePicker('doc-file-input')">📎 Upload Documents</button>
       </div>
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
-      <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
+      <input type="file" id="doc-file-input" class="sr-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*,.heic,.heif,.jpg,.jpeg,.png" onchange="handleDocUpload(this)" />
     </div>
 
     <!-- PHOTOS TAB -->
@@ -640,13 +648,13 @@
             <option value="Incident">Incident</option>
             <option value="Inspection">Inspection</option>
           </select>
-          <button class="btn-save" onclick="document.getElementById('photo-file-input').click()">📸 Add Photos</button>
+          <button class="btn-save" onclick="openFilePicker('photo-file-input')">📸 Add Photos</button>
         </div>
       </div>
       <div id="photos-sections"></div>
       <div class="photo-grid" id="photos-grid"></div>
       <p id="no-photos-msg" style="color:var(--muted);font-size:14px;">No photos yet.</p>
-      <input type="file" id="photo-file-input" multiple accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)" />
+      <input type="file" id="photo-file-input" class="sr-file-input" multiple accept="image/*,.heic,.heif,.jpg,.jpeg,.png" onchange="handlePhotoUpload(this)" />
     </div>
 
     <!-- DAILY REPORTS TAB -->
@@ -681,8 +689,8 @@
 
     <!-- Sticky upload bar (shown on docs/photos tabs) -->
     <div class="sticky-upload" id="sticky-upload">
-      <button class="btn-upload" onclick="document.getElementById('doc-file-input').click()">📎 Upload Docs</button>
-      <button class="btn-upload green" onclick="document.getElementById('photo-file-input').click()">📸 Add Photos</button>
+      <button class="btn-upload" onclick="openFilePicker('doc-file-input')">📎 Upload Docs</button>
+      <button class="btn-upload green" onclick="openFilePicker('photo-file-input')">📸 Add Photos</button>
     </div>
   </div>
 </div>
@@ -784,7 +792,7 @@
     <div class="field"><label>Custom Title (optional)</label><input type="text" id="cert-custom-title" placeholder="Use this if you chose Other or want a specific name" /></div>
     <div class="field"><label>Issue Date</label><input type="date" id="cert-issue-date" /></div>
     <div class="field"><label>Expiration Date (optional)</label><input type="date" id="cert-exp-date" /></div>
-    <div class="field"><label>Certification File</label><input type="file" id="cert-file" accept=".pdf,image/*" /></div>
+    <div class="field"><label>Certification File</label><input type="file" id="cert-file" accept=".pdf,image/*,.heic,.heif,.jpg,.jpeg,.png" /></div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-certification')">Cancel</button>
       <button class="btn-save" id="save-cert-btn" onclick="saveCertification()">Upload</button>
@@ -872,11 +880,25 @@
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
+  window.openFilePicker = openFilePicker;
   window.switchMainSection = switchMainSection;
   window.setProjectWorkType = setProjectWorkType;
   window.renderProjectsList = renderProjectsList;
   window.renderEmployeesList = renderEmployeesList;
   window.openEmployeeDetail = openEmployeeDetail;
+
+  function openFilePicker(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.value = '';
+    try {
+      if (typeof input.showPicker === 'function') {
+        input.showPicker();
+        return;
+      }
+    } catch (e) {}
+    requestAnimationFrame(() => input.click());
+  }
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -1224,24 +1246,28 @@
 
   async function handleDocUpload(input) {
     if (!input.files.length || !currentProject) return;
-    toast('Uploading…');
+    toast('Uploading documents…');
     const files = Array.from(input.files);
     for (const file of files) {
       try {
-        const path = `projects/${currentProject.id}/docs/${Date.now()}_${file.name}`;
+        const safeName = String(file.name || 'upload').replace(/[^a-zA-Z0-9._-]+/g, '_');
+        const path = `projects/${currentProject.id}/docs/${Date.now()}_${safeName}`;
         const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
+        await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
         const url = await getDownloadURL(storageRef);
         await updateDoc(doc(db, 'projects', currentProject.id), {
           documents: arrayUnion({
             name: file.name,
             url,
+            contentType: file.type || '',
             uploadedBy: currentUser.displayName || currentUser.email,
             uploadedAt: new Date().toISOString()
           })
         });
       } catch(e) {
-        toast('Upload failed: ' + e.message);
+        console.error('Document upload failed', e);
+        toast(`Upload failed${e?.message ? ': ' + e.message : ''}`);
+        input.value = '';
         return;
       }
     }
@@ -1293,21 +1319,25 @@
     const category = document.getElementById('photo-category-select')?.value || 'General';
     for (const file of files) {
       try {
-        const path = `projects/${currentProject.id}/photos/${Date.now()}_${file.name}`;
+        const safeName = String(file.name || 'photo').replace(/[^a-zA-Z0-9._-]+/g, '_');
+        const path = `projects/${currentProject.id}/photos/${Date.now()}_${safeName}`;
         const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
+        await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
         const url = await getDownloadURL(storageRef);
         await updateDoc(doc(db, 'projects', currentProject.id), {
           photos: arrayUnion({
             name: file.name,
             url,
             category,
+            contentType: file.type || '',
             uploadedBy: currentUser.displayName || currentUser.email,
             uploadedAt: new Date().toISOString()
           })
         });
       } catch(e) {
-        toast('Photo upload failed: ' + e.message);
+        console.error('Photo upload failed', e);
+        toast(`Photo upload failed${e?.message ? ': ' + e.message : ''}`);
+        input.value = '';
         return;
       }
     }
@@ -1552,9 +1582,10 @@
     const title = document.getElementById('cert-custom-title').value.trim() || baseType;
     btn.disabled = true; btn.textContent = 'Uploading…';
     try {
-      const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${file.name}`;
+      const safeName = String(file.name || 'certification').replace(/[^a-zA-Z0-9._-]+/g, '_');
+      const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${safeName}`;
       const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
+      await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
       const url = await getDownloadURL(storageRef);
       await updateDoc(doc(db, 'employees', currentEmployeeId), {
         certifications: arrayUnion({
@@ -1563,6 +1594,7 @@
           issueDate: document.getElementById('cert-issue-date').value || '',
           expirationDate: document.getElementById('cert-exp-date').value || '',
           fileName: file.name,
+          contentType: file.type || '',
           url,
           uploadedAt: new Date().toISOString(),
           uploadedBy: currentUser.displayName || currentUser.email
@@ -1575,8 +1607,8 @@
       await loadEmployees(true);
       toast('Certification uploaded');
     } catch (e) {
-      toast('Could not upload certification');
-      console.error(e);
+      console.error('Certification upload failed', e);
+      toast(`Could not upload certification${e?.message ? ': ' + e.message : ''}`);
     }
     btn.disabled = false; btn.textContent = 'Upload';
   }
