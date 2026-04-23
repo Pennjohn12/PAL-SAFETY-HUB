@@ -287,38 +287,6 @@
 
 
     .header-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .main-nav-tabs { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
-    .main-nav-tab {
-      border:none; background:white; color:var(--muted);
-      padding:12px 18px; border-radius:12px; cursor:pointer;
-      font:inherit; font-weight:700; font-size:14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-      border-bottom:3px solid transparent;
-    }
-    .main-nav-tab.active { color:var(--navy); border-bottom-color: var(--green); }
-    .main-section { display:none; }
-    .main-section.active { display:block; }
-    .main-empty {
-      background:white; border:1px solid var(--line); border-radius:18px;
-      padding:36px 24px; text-align:center; color:var(--muted);
-      box-shadow:0 4px 14px rgba(16,24,40,.05);
-    }
-    .main-empty h3 { color:var(--navy); margin-bottom:8px; font-size:20px; }
-    .worktype-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin-bottom:16px; }
-    .worktype-card {
-      background:white; border:1px solid var(--line); border-radius:16px; padding:18px;
-      cursor:pointer; font-weight:800; color:var(--navy); text-align:center;
-      box-shadow:0 4px 14px rgba(16,24,40,.05); transition:transform .15s, box-shadow .15s, border-color .15s;
-    }
-    .worktype-card:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(16,24,40,.08); }
-    .worktype-card.active { border-color: var(--green); box-shadow:0 0 0 2px rgba(120,194,64,.15); }
-    .search-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-    .search-input {
-      flex:1; min-width:220px; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px;
-      font:inherit; font-size:14px; outline:none; background:white;
-    }
-    .search-input:focus { border-color:var(--navy); }
-
     .btn-outline {
       background: white; color: var(--navy); border: 1.5px solid var(--line);
       border-radius: 12px; padding: 11px 16px; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
@@ -380,14 +348,6 @@
     .report-field .k { display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.35px; margin-bottom:6px; }
     .report-field .v { font-size:14px; color:var(--text); white-space:pre-line; }
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
-    .sr-file-input {
-      position: absolute !important;
-      left: -9999px !important;
-      width: 1px !important;
-      height: 1px !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
 
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
@@ -501,62 +461,18 @@
   </div>
 
   <div class="page-wrap">
-    <div class="main-nav-tabs">
-      <button class="main-nav-tab" id="main-tab-projects" onclick="switchMainSection('projects-home', this)">🏗️ Projects</button>
-      <button class="main-nav-tab" id="main-tab-employees" onclick="switchMainSection('employees-home', this)">🪪 Employee Certs</button>
-    </div>
-
-    <div id="main-home-blank" class="main-empty">
-      <h3>Select an area</h3>
-      <p>Choose <strong>Projects</strong> or <strong>Employee Certs</strong> to continue.</p>
-    </div>
-
-    <div id="projects-home" class="main-section">
-      <div class="page-header">
-        <h2>Projects</h2>
-        <div class="header-actions">
-          <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
-        </div>
-      </div>
-
-      <div class="helper-text" style="margin-bottom:12px;">Choose the type of work first to make project navigation faster in the field.</div>
-
-      <div class="worktype-grid">
-        <button class="worktype-card active" onclick="setProjectWorkType('Fireproofing', this)">Fireproofing</button>
-        <button class="worktype-card" onclick="setProjectWorkType('Demolition', this)">Demolition</button>
-        <button class="worktype-card" onclick="setProjectWorkType('Asbestos', this)">Asbestos</button>
-        <button class="worktype-card" onclick="setProjectWorkType('Other', this)">Other</button>
-      </div>
-
-      <div class="search-row">
-        <input id="project-search-input" class="search-input" type="text" placeholder="Search project name, job number, or location..." oninput="renderProjectsList()" />
-      </div>
-
-      <div id="projects-list">
-        <div class="empty-state">
-          <div class="icon">🏗️</div>
-          <h3>No projects yet</h3>
-          <p>Tap "New Project" to get started</p>
-        </div>
+    <div class="page-header">
+      <h2>Projects</h2>
+      <div class="header-actions">
+        <button class="btn-outline admin-only" onclick="openEmployeeModal()">👷 Employee Records</button>
+        <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
       </div>
     </div>
-
-    <div id="employees-home" class="main-section">
-      <div class="page-header">
-        <h2>Employee Certifications</h2>
-        <div class="header-actions">
-          <button class="btn-add" onclick="openEmployeeModal()">＋ Add Employee</button>
-        </div>
-      </div>
-
-      <div class="helper-text" style="margin-bottom:12px;">Search employees, then click a name to open the full record and certifications.</div>
-
-      <div class="search-row">
-        <input id="employee-search-input" class="search-input" type="text" placeholder="Search employee name, trade, phone, or email..." oninput="renderEmployeesList()" />
-      </div>
-
-      <div id="employees-list">
-        <p style="color:var(--muted);font-size:14px;">No employee records yet.</p>
+    <div id="projects-list">
+      <div class="empty-state">
+        <div class="icon">🏗️</div>
+        <h3>No projects yet</h3>
+        <p>Tap "New Project" to get started</p>
       </div>
     </div>
   </div>
@@ -616,7 +532,8 @@
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
-          </div>
+      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
+    </div>
 
     <!-- DOCUMENTS TAB -->
     <div class="tab-pane active" id="tab-docs">
@@ -625,10 +542,10 @@
           <div class="section-label">Uploaded Documents</div>
           <div class="helper-text">Project-specific files stored with this job.</div>
         </div>
-        <button class="btn-save" onclick="openFilePicker('doc-file-input')">📎 Upload Documents</button>
+        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button>
       </div>
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
-      <input type="file" id="doc-file-input" class="sr-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*,.heic,.heif,.jpg,.jpeg,.png" onchange="handleDocUpload(this)" />
+      <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
     </div>
 
     <!-- PHOTOS TAB -->
@@ -648,13 +565,13 @@
             <option value="Incident">Incident</option>
             <option value="Inspection">Inspection</option>
           </select>
-          <button class="btn-save" onclick="openFilePicker('photo-file-input')">📸 Add Photos</button>
+          <button class="btn-save" onclick="document.getElementById('photo-file-input').click()">📸 Add Photos</button>
         </div>
       </div>
       <div id="photos-sections"></div>
       <div class="photo-grid" id="photos-grid"></div>
       <p id="no-photos-msg" style="color:var(--muted);font-size:14px;">No photos yet.</p>
-      <input type="file" id="photo-file-input" class="sr-file-input" multiple accept="image/*,.heic,.heif,.jpg,.jpeg,.png" onchange="handlePhotoUpload(this)" />
+      <input type="file" id="photo-file-input" multiple accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)" />
     </div>
 
     <!-- DAILY REPORTS TAB -->
@@ -687,10 +604,25 @@
       </div>
     </div>
 
+    <!-- EMPLOYEES TAB -->
+    <div class="tab-pane" id="tab-employees">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Employee Records & Certifications</div>
+          <div class="helper-text">Employee files live independently from any one jobsite, so records stay with the employee.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
+          <button class="btn-save" onclick="openEmployeeModal()">＋ New Employee</button>
+        </div>
+      </div>
+      <div id="employees-list"><p style="color:var(--muted);font-size:14px;">No employee records yet.</p></div>
+    </div>
+
     <!-- Sticky upload bar (shown on docs/photos tabs) -->
     <div class="sticky-upload" id="sticky-upload">
-      <button class="btn-upload" onclick="openFilePicker('doc-file-input')">📎 Upload Docs</button>
-      <button class="btn-upload green" onclick="openFilePicker('photo-file-input')">📸 Add Photos</button>
+      <button class="btn-upload" onclick="document.getElementById('doc-file-input').click()">📎 Upload Docs</button>
+      <button class="btn-upload green" onclick="document.getElementById('photo-file-input').click()">📸 Add Photos</button>
     </div>
   </div>
 </div>
@@ -712,15 +644,6 @@
     <div class="field">
       <label>Location / Address</label>
       <input type="text" id="np-location" placeholder="e.g. 1 Times Square, New York, NY" />
-    </div>
-    <div class="field">
-      <label>Type of Work</label>
-      <select id="np-worktype" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;outline:none;width:100%;background:white;">
-        <option value="Fireproofing">Fireproofing</option>
-        <option value="Demolition">Demolition</option>
-        <option value="Asbestos">Asbestos</option>
-        <option value="Other">Other</option>
-      </select>
     </div>
     <div class="field">
       <label>Status</label>
@@ -775,7 +698,6 @@
   <div class="modal">
     <h3>🪪 Upload Certification</h3>
     <div class="mini-note" id="cert-employee-label" style="margin-bottom:14px;"></div>
-    <div class="mini-note" style="margin-bottom:14px;">After you choose the file, tap Upload to save it to the employee record.</div>
     <div class="field">
       <label>Certification Type</label>
       <select id="cert-type" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;outline:none;width:100%;background:white;">
@@ -793,27 +715,15 @@
     <div class="field"><label>Custom Title (optional)</label><input type="text" id="cert-custom-title" placeholder="Use this if you chose Other or want a specific name" /></div>
     <div class="field"><label>Issue Date</label><input type="date" id="cert-issue-date" /></div>
     <div class="field"><label>Expiration Date (optional)</label><input type="date" id="cert-exp-date" /></div>
-    <div class="field"><label>Certification File</label><input type="file" id="cert-file" accept=".pdf,image/*,.heic,.heif,.jpg,.jpeg,.png" /></div>
+    <div class="field">
+      <label>Certification File</label>
+      <input type="file" id="cert-file" accept=".pdf,.png,.jpg,.jpeg,.heic,.heif,image/*,application/pdf" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" onchange="handleCertFileChange(this)" />
+      <label for="cert-file" class="btn-outline" style="display:flex;justify-content:center;cursor:pointer;">📎 Choose Certification File</label>
+      <div class="mini-note" id="cert-file-name">No file selected yet.</div>
+    </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-certification')">Cancel</button>
       <button class="btn-save" id="save-cert-btn" onclick="saveCertification()">Upload</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- EMPLOYEE DETAIL MODAL -->
-<div class="modal-overlay" id="modal-employee-detail">
-  <div class="modal" style="max-width:760px;">
-    <h3>👷 Employee Record</h3>
-    <div class="report-grid" id="employee-detail-grid"></div>
-    <div style="margin-top:16px;">
-      <div class="section-label" style="margin-top:0;">Certifications</div>
-      <div id="employee-detail-certs"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('modal-employee-detail')">Close</button>
-      <button class="btn-save" id="employee-detail-upload-btn" onclick="openCertificationModal(currentEmployeeId)">Upload Certification</button>
     </div>
   </div>
 </div>
@@ -827,7 +737,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
@@ -854,8 +764,6 @@
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
-  let selectedProjectWorkType = 'Fireproofing';
-  let allProjects = [];
 
   // ── Expose functions to global scope ──
   window.doLogin = doLogin;
@@ -881,25 +789,8 @@
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
-  window.openFilePicker = openFilePicker;
-  window.switchMainSection = switchMainSection;
-  window.setProjectWorkType = setProjectWorkType;
-  window.renderProjectsList = renderProjectsList;
-  window.renderEmployeesList = renderEmployeesList;
-  window.openEmployeeDetail = openEmployeeDetail;
-
-  function openFilePicker(inputId) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    input.value = '';
-    try {
-      if (typeof input.showPicker === 'function') {
-        input.showPicker();
-        return;
-      }
-    } catch (e) {}
-    requestAnimationFrame(() => input.click());
-  }
+  window.deleteEmployee = deleteEmployee;
+  window.handleCertFileChange = handleCertFileChange;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -1021,22 +912,49 @@
   // ── PROJECTS ──
   function loadProjects() {
     const list = document.getElementById('projects-list');
-    if (list) list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects…</p>';
+    list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects…</p>';
     const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
     if (unsubProjects) unsubProjects();
     unsubProjects = onSnapshot(q, snap => {
       const docs = [];
       snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
-      allProjects = docs.filter(p => {
+      const filtered = docs.filter(p => {
         if (isOfficeRole()) return true;
         const foremen = Array.isArray(p.foremen) ? p.foremen : [];
         const emailMatch = foremen.some(f => (f.email || '').toLowerCase() === (currentUser?.email || '').toLowerCase());
         const uidMatch = foremen.some(f => f.uid && f.uid === currentUser?.uid);
         return emailMatch || uidMatch || p.createdBy === currentUser?.uid;
       });
-      renderProjectsList();
+      if (!filtered.length) {
+        list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No projects available</h3><p>${isOfficeRole() ? 'Tap "New Project" to get started' : 'You do not have any assigned projects yet.'}</p></div>`;
+        return;
+      }
+      list.innerHTML = '';
+      filtered.forEach(p => {
+        const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
+        const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
+        const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = `
+          <div class="project-icon">🏗️</div>
+          <div class="project-info">
+            <h3>${esc(p.name)}</h3>
+            <div class="project-meta">
+              <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
+              ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
+              ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
+              <span>📄 ${docCount}</span>
+              <span>📸 ${photoCount}</span>
+              <span>👷 ${foremanCount}</span>
+            </div>
+          </div>
+          <span class="chevron">›</span>`;
+        card.onclick = () => openProject(p.id, p);
+        list.appendChild(card);
+      });
       if (requestedProjectId) {
-        const target = allProjects.find(p => p.id === requestedProjectId);
+        const target = filtered.find(p => p.id === requestedProjectId);
         if (target) {
           const id = requestedProjectId;
           requestedProjectId = null;
@@ -1044,54 +962,6 @@
         }
       }
     });
-  }
-
-  function renderProjectsList() {
-    const list = document.getElementById('projects-list');
-    if (!list) return;
-    const search = (document.getElementById('project-search-input')?.value || '').trim().toLowerCase();
-    const filtered = allProjects.filter(p => {
-      const workType = (p.workType || 'Other');
-      if (workType !== selectedProjectWorkType) return false;
-      if (!search) return true;
-      return [p.name, p.jobNumber, p.location, p.workType].some(v => String(v || '').toLowerCase().includes(search));
-    });
-    if (!filtered.length) {
-      list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No ${selectedProjectWorkType.toLowerCase()} projects found</h3><p>${search ? 'Try a different search.' : 'No projects are saved in this work type yet.'}</p></div>`;
-      return;
-    }
-    list.innerHTML = '';
-    filtered.forEach(p => {
-      const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
-      const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
-      const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
-      const card = document.createElement('div');
-      card.className = 'project-card';
-      card.innerHTML = `
-        <div class="project-icon">🏗️</div>
-        <div class="project-info">
-          <h3>${esc(p.name)}</h3>
-          <div class="project-meta">
-            <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
-            <span>🧱 ${esc(p.workType || 'Other')}</span>
-            ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
-            ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
-            <span>📄 ${docCount}</span>
-            <span>📸 ${photoCount}</span>
-            <span>👷 ${foremanCount}</span>
-          </div>
-        </div>
-        <span class="chevron">›</span>`;
-      card.onclick = () => openProject(p.id, p);
-      list.appendChild(card);
-    });
-  }
-
-  function setProjectWorkType(type, btn) {
-    selectedProjectWorkType = type;
-    document.querySelectorAll('.worktype-card').forEach(card => card.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderProjectsList();
   }
 
   async function saveNewProject() {
@@ -1104,7 +974,6 @@
         name,
         jobNumber: document.getElementById('np-job').value.trim(),
         location: document.getElementById('np-location').value.trim(),
-        workType: document.getElementById('np-worktype').value,
         status: document.getElementById('np-status').value,
         notes: document.getElementById('np-notes').value.trim(),
         createdBy: currentUser.uid,
@@ -1162,6 +1031,7 @@
       loadProjectPhotos(id);
       loadProjectReports(id);
       loadProjectForemen(currentProjectDoc);
+      if (isOfficeRole()) await loadEmployees();
     });
   }
 
@@ -1184,6 +1054,7 @@
     loadProjectPhotos(projectId);
     loadProjectReports(projectId);
     loadProjectForemen(currentProjectDoc);
+    if (isOfficeRole()) await loadEmployees();
   }
 
   function updateProjectSummary(data) {
@@ -1247,28 +1118,24 @@
 
   async function handleDocUpload(input) {
     if (!input.files.length || !currentProject) return;
-    toast('Uploading documents…');
+    toast('Uploading…');
     const files = Array.from(input.files);
     for (const file of files) {
       try {
-        const safeName = String(file.name || 'upload').replace(/[^a-zA-Z0-9._-]+/g, '_');
-        const path = `projects/${currentProject.id}/docs/${Date.now()}_${safeName}`;
+        const path = `projects/${currentProject.id}/docs/${Date.now()}_${file.name}`;
         const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
+        await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
         await updateDoc(doc(db, 'projects', currentProject.id), {
           documents: arrayUnion({
             name: file.name,
             url,
-            contentType: file.type || '',
             uploadedBy: currentUser.displayName || currentUser.email,
             uploadedAt: new Date().toISOString()
           })
         });
       } catch(e) {
-        console.error('Document upload failed', e);
-        toast(`Upload failed${e?.message ? ': ' + e.message : ''}`);
-        input.value = '';
+        toast('Upload failed: ' + e.message);
         return;
       }
     }
@@ -1320,25 +1187,21 @@
     const category = document.getElementById('photo-category-select')?.value || 'General';
     for (const file of files) {
       try {
-        const safeName = String(file.name || 'photo').replace(/[^a-zA-Z0-9._-]+/g, '_');
-        const path = `projects/${currentProject.id}/photos/${Date.now()}_${safeName}`;
+        const path = `projects/${currentProject.id}/photos/${Date.now()}_${file.name}`;
         const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
+        await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
         await updateDoc(doc(db, 'projects', currentProject.id), {
           photos: arrayUnion({
             name: file.name,
             url,
             category,
-            contentType: file.type || '',
             uploadedBy: currentUser.displayName || currentUser.email,
             uploadedAt: new Date().toISOString()
           })
         });
       } catch(e) {
-        console.error('Photo upload failed', e);
-        toast(`Photo upload failed${e?.message ? ': ' + e.message : ''}`);
-        input.value = '';
+        toast('Photo upload failed: ' + e.message);
         return;
       }
     }
@@ -1436,6 +1299,7 @@
 
   // ── EMPLOYEES / CERTIFICATIONS ──
   async function loadEmployees(force = false) {
+    if (!isOfficeRole() && !force) return;
     const list = document.getElementById('employees-list');
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
@@ -1443,80 +1307,41 @@
       const snap = await getDocs(query(collection(db, 'employees'), orderBy('name', 'asc')));
       allEmployees = [];
       snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
-      renderEmployeesList();
+      if (!allEmployees.length) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No employee records yet.</p>';
+        return;
+      }
+      list.innerHTML = '';
+      allEmployees.forEach(emp => {
+        const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
+        const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+        const card = document.createElement('div');
+        card.className = 'employee-card';
+        card.innerHTML = `
+          <div class="employee-card-header">
+            <div>
+              <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
+              <div class="employee-meta">
+                ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
+                ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
+                ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+              </div>
+            </div>
+            <span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>
+          </div>
+          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
+          <div class="cert-list">${certs.length ? certs.slice(0,6).map(cert => `<span class="cert-item">${esc(cert.title || cert.type)}${cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : ''}</span>`).join('') : '<span class="cert-item">No certifications uploaded yet</span>'}</div>
+          <div class="employee-actions" style="margin-top:12px;">
+            <button class="btn-sm" type="button" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>
+            <button class="btn-sm" type="button" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+            <button class="btn-sm danger" type="button" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
+          </div>`;
+        list.appendChild(card);
+      });
     } catch (e) {
       console.error(e);
       list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load employee records.</p>';
     }
-  }
-
-  function renderEmployeesList() {
-    const list = document.getElementById('employees-list');
-    if (!list) return;
-    const search = (document.getElementById('employee-search-input')?.value || '').trim().toLowerCase();
-    const filtered = allEmployees.filter(emp => {
-      if (!search) return true;
-      return [emp.name, emp.trade, emp.email, emp.phone].some(v => String(v || '').toLowerCase().includes(search));
-    });
-    if (!filtered.length) {
-      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No employee records found.</p>';
-      return;
-    }
-    list.innerHTML = '';
-    filtered.forEach(emp => {
-      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-      const card = document.createElement('div');
-      card.className = 'employee-card';
-      card.innerHTML = `
-        <div class="employee-card-header">
-          <div>
-            <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
-            <div class="employee-meta">
-              ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-              ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-              ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-              <span>🪪 ${certs.length} cert${certs.length === 1 ? '' : 's'}</span>
-            </div>
-          </div>
-          <span class="pill neutral">Tap to open</span>
-        </div>`;
-      card.onclick = () => openEmployeeDetail(emp.id);
-      list.appendChild(card);
-    });
-  }
-
-  function openEmployeeDetail(employeeId) {
-    const emp = allEmployees.find(e => e.id === employeeId);
-    if (!emp) return;
-    currentEmployeeId = employeeId;
-    const grid = document.getElementById('employee-detail-grid');
-    const certWrap = document.getElementById('employee-detail-certs');
-    const fields = [
-      ['Employee Name', emp.name],
-      ['Trade / Role', emp.trade],
-      ['Email', emp.email],
-      ['Phone', emp.phone],
-      ['Notes', emp.notes],
-      ['Created By', emp.createdByName]
-    ].filter(([,v]) => v);
-    grid.innerHTML = fields.map(([k, v]) => `<div class="report-field"><span class="k">${esc(k)}</span><div class="v">${esc(v)}</div></div>`).join('');
-    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-    if (!certs.length) {
-      certWrap.innerHTML = '<p style="color:var(--muted);font-size:14px;">No certifications uploaded yet.</p>';
-    } else {
-      certWrap.innerHTML = certs.map(cert => `
-        <div class="file-item">
-          <div class="file-icon">🪪</div>
-          <div class="file-info">
-            <h4>${esc(cert.title || cert.type || 'Certification')}</h4>
-            <p>${cert.issueDate ? `Issued: ${esc(cert.issueDate)}` : 'Issue date not set'}${cert.expirationDate ? ` · Expires: ${esc(cert.expirationDate)}` : ''}</p>
-          </div>
-          <div class="file-actions">
-            <a href="${cert.url}" target="_blank" class="btn-sm">Open</a>
-          </div>
-        </div>`).join('');
-    }
-    document.getElementById('modal-employee-detail').classList.add('open');
   }
 
   function openEmployeeModal() {
@@ -1536,7 +1361,7 @@
         trade: document.getElementById('emp-trade').value.trim(),
         notes: document.getElementById('emp-notes').value.trim(),
         certifications: [],
-        assignedProjectIds: [],
+        assignedProjectIds: currentProject ? [currentProject.id] : [],
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
@@ -1567,18 +1392,34 @@
     }
   }
 
+  function handleCertFileChange(input) {
+    const fileNameEl = document.getElementById('cert-file-name');
+    const file = input?.files?.[0];
+    fileNameEl.textContent = file ? `Selected: ${file.name}` : 'No file selected yet.';
+  }
+
+  function resetCertificationModal() {
+    currentEmployeeId = null;
+    document.getElementById('cert-type').value = 'OSHA 30';
+    ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('cert-file').value = '';
+    document.getElementById('cert-file-name').textContent = 'No file selected yet.';
+    document.getElementById('cert-employee-label').textContent = '';
+  }
+
   function openCertificationModal(employeeId) {
-    currentEmployeeId = employeeId;
     const emp = allEmployees.find(e => e.id === employeeId);
+    currentEmployeeId = employeeId;
+    resetCertificationModal();
+    currentEmployeeId = employeeId;
     document.getElementById('cert-employee-label').textContent = emp ? `Employee: ${emp.name}` : '';
-    const employeeDetailModal = document.getElementById('modal-employee-detail');
-    if (employeeDetailModal) employeeDetailModal.classList.remove('open');
-    const certModal = document.getElementById('modal-certification');
-    if (certModal) certModal.classList.add('open');
+    const modal = document.getElementById('modal-certification');
+    modal.classList.add('open');
+    modal.style.zIndex = '4000';
   }
 
   async function saveCertification() {
-    if (!currentEmployeeId) return;
+    if (!currentEmployeeId) { toast('Choose an employee first'); return; }
     const btn = document.getElementById('save-cert-btn');
     const file = document.getElementById('cert-file').files[0];
     if (!file) { toast('Select a certification file first'); return; }
@@ -1586,8 +1427,8 @@
     const title = document.getElementById('cert-custom-title').value.trim() || baseType;
     btn.disabled = true; btn.textContent = 'Uploading…';
     try {
-      const safeName = String(file.name || 'certification').replace(/[^a-zA-Z0-9._-]+/g, '_');
-      const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${safeName}`;
+      const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${safeFileName}`;
       const storageRef = ref(storage, path);
       await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
       const url = await getDownloadURL(storageRef);
@@ -1598,23 +1439,44 @@
           issueDate: document.getElementById('cert-issue-date').value || '',
           expirationDate: document.getElementById('cert-exp-date').value || '',
           fileName: file.name,
-          contentType: file.type || '',
+          storagePath: path,
           url,
           uploadedAt: new Date().toISOString(),
           uploadedBy: currentUser.displayName || currentUser.email
         })
       });
-      ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('cert-file').value = '';
-      document.getElementById('cert-type').value = 'OSHA 30';
       closeModal('modal-certification');
+      resetCertificationModal();
       await loadEmployees(true);
       toast('Certification uploaded');
     } catch (e) {
-      console.error('Certification upload failed', e);
-      toast(`Could not upload certification${e?.message ? ': ' + e.message : ''}`);
+      const msg = String(e?.message || e || '');
+      if (/storage|network|permission/i.test(msg)) {
+        toast('Upload failed. Check iPhone signal / Wi-Fi and try again.');
+      } else {
+        toast('Could not upload certification');
+      }
+      console.error(e);
     }
     btn.disabled = false; btn.textContent = 'Upload';
+  }
+
+  async function deleteEmployee(employeeId) {
+    const emp = allEmployees.find(e => e.id === employeeId);
+    const name = emp?.name || 'this employee';
+    if (!confirm(`Remove ${name} from Employee Certs?`)) return;
+    try {
+      await deleteDoc(doc(db, 'employees', employeeId));
+      if (currentEmployeeId === employeeId) {
+        closeModal('modal-certification');
+        resetCertificationModal();
+      }
+      await loadEmployees(true);
+      toast('Employee removed');
+    } catch (e) {
+      toast('Could not remove employee');
+      console.error(e);
+    }
   }
 
   function openReportDetail(reportId) {
@@ -1663,30 +1525,20 @@
   }
 
   function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.style.zIndex = '';
   }
 
   function clearModal() {
     ['np-name','np-job','np-location','np-notes'].forEach(id => { document.getElementById(id).value = ''; });
-    document.getElementById('np-worktype').value = 'Fireproofing';
     document.getElementById('np-status').value = 'active';
   }
 
-  function switchMainSection(sectionId, btn) {
-    const blank = document.getElementById('main-home-blank');
-    if (blank) blank.style.display = 'none';
-    document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.main-nav-tab').forEach(t => t.classList.remove('active'));
-    const section = document.getElementById(sectionId);
-    if (section) section.classList.add('active');
-    if (btn) btn.classList.add('active');
-    if (sectionId === 'employees-home') loadEmployees(true);
-    if (sectionId === 'projects-home') renderProjectsList();
-  }
-
   function switchTab(tabId, btn) {
-    document.querySelectorAll('#view-detail .tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('#view-detail .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (btn) btn.classList.add('active');
