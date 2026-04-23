@@ -775,6 +775,7 @@
   <div class="modal">
     <h3>🪪 Upload Certification</h3>
     <div class="mini-note" id="cert-employee-label" style="margin-bottom:14px;"></div>
+    <div class="mini-note" style="margin-bottom:14px;">After you choose the file, tap Upload to save it to the employee record.</div>
     <div class="field">
       <label>Certification Type</label>
       <select id="cert-type" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;outline:none;width:100%;background:white;">
@@ -1570,7 +1571,10 @@
     currentEmployeeId = employeeId;
     const emp = allEmployees.find(e => e.id === employeeId);
     document.getElementById('cert-employee-label').textContent = emp ? `Employee: ${emp.name}` : '';
-    document.getElementById('modal-certification').classList.add('open');
+    const employeeDetailModal = document.getElementById('modal-employee-detail');
+    if (employeeDetailModal) employeeDetailModal.classList.remove('open');
+    const certModal = document.getElementById('modal-certification');
+    if (certModal) certModal.classList.add('open');
   }
 
   async function saveCertification() {
