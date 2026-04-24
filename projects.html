@@ -351,6 +351,26 @@
 
 
 
+    /* Dashboard category + employee upgrades */
+    .choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:12px; }
+    .choice-card { background:white; border:1px solid var(--line); border-radius:18px; padding:20px; cursor:pointer; box-shadow:0 4px 14px rgba(16,24,40,.05); transition:transform .15s, box-shadow .15s; }
+    .choice-card:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(16,24,40,.10); }
+    .choice-card .icon { font-size:30px; margin-bottom:8px; }
+    .choice-card h3 { color:var(--navy); font-size:18px; margin-bottom:4px; }
+    .choice-card p { color:var(--muted); font-size:13px; line-height:1.4; }
+    .search-row { display:flex; gap:10px; flex-wrap:wrap; margin: 0 0 16px; align-items:center; }
+    .search-input { flex:1; min-width:220px; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font:inherit; font-size:15px; outline:none; background:white; }
+    .search-input:focus { border-color:var(--navy); }
+    .employee-simple-card { background:white; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; box-shadow:0 4px 12px rgba(16,24,40,.04); }
+    .employee-simple-card:hover { border-color:var(--navy); }
+    .employee-simple-card h4 { color:var(--navy); font-size:16px; margin-bottom:4px; }
+    .employee-detail-block { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:12px; }
+    .status-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .pill.expired { background:#fff1f2; color:#b91c1c; }
+    .pill.expiring { background:#fff7ed; color:#c2410c; }
+    .pill.valid { background:#e8f5e0; color:#2e7d32; }
+    .pill.no-exp { background:#eef2f7; color:#475569; }
+
     /* Extra Work Tickets */
     .ticket-paper {
       background:white; border:1px solid #cfd6df; border-radius:18px; padding:18px;
@@ -388,11 +408,12 @@
       .ticket-no { text-align:left; }
     }
 
+
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
       .project-header-card h2 { font-size: 20px; }
       .photo-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-      .project-summary-grid, .detail-grid, .report-grid { grid-template-columns: 1fr; }
+      .project-summary-grid, .detail-grid, .report-grid, .choice-grid { grid-template-columns: 1fr; }
       .page-header { align-items: stretch; }
       .header-actions { width:100%; }
       .header-actions .btn-add, .header-actions .btn-outline { flex:1; justify-content:center; }
@@ -500,19 +521,51 @@
   </div>
 
   <div class="page-wrap">
-    <div class="page-header">
-      <h2>Projects</h2>
-      <div class="header-actions">
-        <button class="btn-outline admin-only" onclick="openEmployeeModal()">👷 Employee Records</button>
-        <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
-      </div>
+    <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
+      <button class="tab" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
+      <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
     </div>
-    <div id="projects-list">
-      <div class="empty-state">
-        <div class="icon">🏗️</div>
-        <h3>No projects yet</h3>
-        <p>Tap "New Project" to get started</p>
+
+    <div class="tab-pane" id="main-projects">
+      <div class="page-header">
+        <h2 id="projects-main-title">Choose Work Type</h2>
+        <div class="header-actions">
+          <button class="btn-outline" id="back-to-work-types-btn" onclick="showWorkTypeChoices()" style="display:none;">← Work Types</button>
+          <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
+        </div>
       </div>
+      <div class="search-row" id="project-search-row" style="display:none;">
+        <input class="search-input" id="project-search" placeholder="Search projects by name, job number, location..." oninput="renderProjectList()" />
+      </div>
+      <div id="work-type-list" class="choice-grid">
+        <div class="choice-card" onclick="selectWorkType('Fireproofing')"><div class="icon">🔥</div><h3>Fireproofing</h3><p>Open fireproofing projects and field files.</p></div>
+        <div class="choice-card" onclick="selectWorkType('Demolition')"><div class="icon">🔨</div><h3>Demolition</h3><p>Open demolition jobs and project records.</p></div>
+        <div class="choice-card" onclick="selectWorkType('Asbestos')"><div class="icon">⚠️</div><h3>Asbestos</h3><p>Open asbestos jobs, docs, and photos.</p></div>
+        <div class="choice-card" onclick="selectWorkType('Other')"><div class="icon">📁</div><h3>Other</h3><p>Open miscellaneous or uncategorized projects.</p></div>
+      </div>
+      <div id="projects-list" style="display:none;"></div>
+    </div>
+
+    <div class="tab-pane" id="main-employees">
+      <div class="page-header">
+        <h2>Employee Certs</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
+          <button class="btn-add" onclick="openEmployeeModal()">＋ Add Employee</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Search employees, open a worker file, upload certs, and assign workers to jobsites.</div>
+      <div class="search-row">
+        <input class="search-input" id="employee-search" placeholder="Search employee by name, trade, phone, email, cert, or project..." oninput="renderEmployees()" />
+        <select id="employee-status-filter" class="inline-select" onchange="renderEmployees()">
+          <option value="all">All cert statuses</option>
+          <option value="expired">Expired</option>
+          <option value="expiring">Expiring Soon</option>
+          <option value="valid">Valid</option>
+          <option value="missing">No Certs</option>
+        </select>
+      </div>
+      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Employee Certs to load employee records.</p></div>
     </div>
   </div>
 </div>
@@ -557,6 +610,7 @@
           <div class="row"><span>Job Number</span><strong id="detail-info-job">—</strong></div>
           <div class="row"><span>Location</span><strong id="detail-info-location">—</strong></div>
           <div class="row"><span>Status</span><strong id="detail-info-status">—</strong></div>
+          <div class="row"><span>Type of Work</span><strong id="detail-info-worktype">—</strong></div>
           <div class="row"><span>Created By</span><strong id="detail-info-created-by">—</strong></div>
         </div>
       </div>
@@ -571,9 +625,9 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" onclick="switchTab('tab-tickets', this)">💵 Extra Tickets</button>
+      <button class="tab" onclick="switchTab('tab-tickets', this); loadExtraTickets(currentProject?.id);">💵 Extra Tickets</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
-      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
+      <button class="tab" onclick="switchTab('tab-workers', this); loadProjectWorkers();">🪪 Workers & Certs</button>
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -639,6 +693,7 @@
       <div id="tickets-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets yet.</p></div>
     </div>
 
+
     <!-- FOREMEN TAB -->
     <div class="tab-pane" id="tab-foremen">
       <div class="action-row">
@@ -657,19 +712,17 @@
       </div>
     </div>
 
-    <!-- EMPLOYEES TAB -->
-    <div class="tab-pane" id="tab-employees">
+
+    <!-- WORKERS & CERTS TAB -->
+    <div class="tab-pane" id="tab-workers">
       <div class="action-row">
         <div>
-          <div class="section-label">Employee Records & Certifications</div>
-          <div class="helper-text">Employee files live independently from any one jobsite, so records stay with the employee.</div>
+          <div class="section-label">Assigned Workers & Certification Status</div>
+          <div class="helper-text">Workers linked to this jobsite. Open the employee file from Employee Certs to add or update certifications.</div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
-          <button class="btn-save" onclick="openEmployeeModal()">＋ New Employee</button>
-        </div>
+        <button class="btn-outline" onclick="loadProjectWorkers()">↻ Refresh</button>
       </div>
-      <div id="employees-list"><p style="color:var(--muted);font-size:14px;">No employee records yet.</p></div>
+      <div id="project-workers-list"><p style="color:var(--muted);font-size:14px;">No workers assigned to this job yet.</p></div>
     </div>
 
     <!-- Sticky upload bar (shown on docs/photos tabs) -->
@@ -697,6 +750,15 @@
     <div class="field">
       <label>Location / Address</label>
       <input type="text" id="np-location" placeholder="e.g. 1 Times Square, New York, NY" />
+    </div>
+    <div class="field">
+      <label>Type of Work</label>
+      <select id="np-work-type" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;outline:none;width:100%;background:white;">
+        <option value="Fireproofing">Fireproofing</option>
+        <option value="Demolition">Demolition</option>
+        <option value="Asbestos">Asbestos</option>
+        <option value="Other">Other</option>
+      </select>
     </div>
     <div class="field">
       <label>Status</label>
@@ -746,6 +808,18 @@
   </div>
 </div>
 
+
+<!-- EMPLOYEE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-employee-detail">
+  <div class="modal" style="max-width:760px;">
+    <h3 id="employee-detail-title">Employee File</h3>
+    <div id="employee-detail-body"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-employee-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- CERTIFICATION MODAL -->
 <div class="modal-overlay" id="modal-certification">
   <div class="modal">
@@ -770,9 +844,11 @@
     <div class="field"><label>Expiration Date (optional)</label><input type="date" id="cert-exp-date" /></div>
     <div class="field">
       <label>Certification File</label>
-      <input type="file" id="cert-file" accept=".pdf,.png,.jpg,.jpeg,.heic,.heif,image/*,application/pdf" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" onchange="handleCertFileChange(this)" />
-      <label for="cert-file" class="btn-outline" style="display:flex;justify-content:center;cursor:pointer;">📎 Choose Certification File</label>
-      <div class="mini-note" id="cert-file-name">No file selected yet.</div>
+      <input type="file" id="cert-file" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,image/*,application/pdf" style="display:none" onchange="updateCertFileName()" />
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button type="button" class="btn-secondary" onclick="triggerCertFilePicker()">Choose Certification File</button>
+        <span id="cert-file-name" class="helper-text">No file selected</span>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-certification')">Cancel</button>
@@ -885,6 +961,7 @@
   </div>
 </div>
 
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -918,6 +995,8 @@
   let currentProjectDoc = null;
   let currentEmployeeId = null;
   let allEmployees = [];
+  let allProjects = [];
+  let selectedWorkType = null;
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
@@ -943,17 +1022,27 @@
   window.openEmployeeModal = openEmployeeModal;
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
+  window.switchMainTab = switchMainTab;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
+  window.renderEmployees = renderEmployees;
+  window.openEmployeeDetail = openEmployeeDetail;
+  window.assignEmployeeToProject = assignEmployeeToProject;
+  window.removeEmployeeFromProject = removeEmployeeFromProject;
+  window.selectWorkType = selectWorkType;
+  window.showWorkTypeChoices = showWorkTypeChoices;
   window.openExtraTicketModal = openExtraTicketModal;
   window.saveExtraTicket = saveExtraTicket;
   window.calculateTicketTotals = calculateTicketTotals;
   window.clearTicketSignature = clearTicketSignature;
   window.openTicketDetail = openTicketDetail;
   window.printCurrentTicket = printCurrentTicket;
+  window.renderProjectList = renderProjectList;
+  window.loadProjectWorkers = loadProjectWorkers;
+  window.triggerCertFilePicker = triggerCertFilePicker;
+  window.updateCertFileName = updateCertFileName;
   window.deleteEmployee = deleteEmployee;
-  window.handleCertFileChange = handleCertFileChange;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -963,6 +1052,7 @@
       showView('view-projects');
       currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
       applyRoleUI();
+      switchMainTab('main-projects');
       loadProjects();
       try {
         const profile = await loadUserProfile(user);
@@ -971,6 +1061,7 @@
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
+      switchMainTab('main-projects');
       loadProjects();
     } else {
       currentUser = null;
@@ -1074,56 +1165,96 @@
 
   // ── PROJECTS ──
   function loadProjects() {
-    const list = document.getElementById('projects-list');
-    list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects…</p>';
     const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
     if (unsubProjects) unsubProjects();
     unsubProjects = onSnapshot(q, snap => {
       const docs = [];
       snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
-      const filtered = docs.filter(p => {
+      allProjects = docs.filter(p => {
         if (isOfficeRole()) return true;
         const foremen = Array.isArray(p.foremen) ? p.foremen : [];
         const emailMatch = foremen.some(f => (f.email || '').toLowerCase() === (currentUser?.email || '').toLowerCase());
         const uidMatch = foremen.some(f => f.uid && f.uid === currentUser?.uid);
         return emailMatch || uidMatch || p.createdBy === currentUser?.uid;
       });
-      if (!filtered.length) {
-        list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No projects available</h3><p>${isOfficeRole() ? 'Tap "New Project" to get started' : 'You do not have any assigned projects yet.'}</p></div>`;
-        return;
-      }
-      list.innerHTML = '';
-      filtered.forEach(p => {
-        const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
-        const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
-        const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.innerHTML = `
-          <div class="project-icon">🏗️</div>
-          <div class="project-info">
-            <h3>${esc(p.name)}</h3>
-            <div class="project-meta">
-              <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
-              ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
-              ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
-              <span>📄 ${docCount}</span>
-              <span>📸 ${photoCount}</span>
-              <span>👷 ${foremanCount}</span>
-            </div>
-          </div>
-          <span class="chevron">›</span>`;
-        card.onclick = () => openProject(p.id, p);
-        list.appendChild(card);
-      });
+      if (selectedWorkType) renderProjectList();
       if (requestedProjectId) {
-        const target = filtered.find(p => p.id === requestedProjectId);
+        const target = allProjects.find(p => p.id === requestedProjectId);
         if (target) {
           const id = requestedProjectId;
           requestedProjectId = null;
           openProject(id, target);
         }
       }
+    });
+  }
+
+  function normalizeWorkType(type) {
+    const raw = (type || '').toString().trim().toLowerCase();
+    if (raw.includes('fire')) return 'Fireproofing';
+    if (raw.includes('demo')) return 'Demolition';
+    if (raw.includes('asbestos') || raw.includes('absestos')) return 'Asbestos';
+    return 'Other';
+  }
+
+  function selectWorkType(type) {
+    selectedWorkType = type;
+    document.getElementById('projects-main-title').textContent = `${type} Projects`;
+    document.getElementById('work-type-list').style.display = 'none';
+    document.getElementById('projects-list').style.display = 'block';
+    document.getElementById('project-search-row').style.display = 'flex';
+    document.getElementById('back-to-work-types-btn').style.display = 'inline-flex';
+    const search = document.getElementById('project-search');
+    if (search) search.value = '';
+    renderProjectList();
+  }
+
+  function showWorkTypeChoices() {
+    selectedWorkType = null;
+    document.getElementById('projects-main-title').textContent = 'Choose Work Type';
+    document.getElementById('work-type-list').style.display = 'grid';
+    document.getElementById('projects-list').style.display = 'none';
+    document.getElementById('project-search-row').style.display = 'none';
+    document.getElementById('back-to-work-types-btn').style.display = 'none';
+  }
+
+  function renderProjectList() {
+    const list = document.getElementById('projects-list');
+    if (!list) return;
+    const term = (document.getElementById('project-search')?.value || '').toLowerCase().trim();
+    const filtered = allProjects.filter(p => {
+      const typeMatch = normalizeWorkType(p.workType || p.type || p.category) === (selectedWorkType || 'Other');
+      const hay = [p.name, p.jobNumber, p.location, p.status, p.notes].filter(Boolean).join(' ').toLowerCase();
+      return typeMatch && (!term || hay.includes(term));
+    });
+    if (!filtered.length) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No ${selectedWorkType || ''} projects found</h3><p>${isOfficeRole() ? 'Tap New Project to add one, or choose another work type.' : 'You do not have any assigned projects in this work type yet.'}</p></div>`;
+      return;
+    }
+    list.innerHTML = '';
+    filtered.forEach(p => {
+      const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
+      const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
+      const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.innerHTML = `
+        <div class="project-icon">🏗️</div>
+        <div class="project-info">
+          <h3>${esc(p.name)}</h3>
+          <div class="project-meta">
+            <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
+            <span>🧰 ${esc(normalizeWorkType(p.workType || p.type || p.category))}</span>
+            ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
+            ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
+            <span>📄 ${docCount}</span>
+            <span>📸 ${photoCount}</span>
+            <span>👷 ${foremanCount}</span>
+          </div>
+        </div>
+        <span class="chevron">›</span>`;
+      card.onclick = () => openProject(p.id, p);
+      list.appendChild(card);
     });
   }
 
@@ -1137,6 +1268,7 @@
         name,
         jobNumber: document.getElementById('np-job').value.trim(),
         location: document.getElementById('np-location').value.trim(),
+        workType: document.getElementById('np-work-type').value || 'Other',
         status: document.getElementById('np-status').value,
         notes: document.getElementById('np-notes').value.trim(),
         createdBy: currentUser.uid,
@@ -1174,11 +1306,14 @@
       ${data.jobNumber ? `<span>📋 ${esc(data.jobNumber)}</span>` : ''}
       ${data.location ? `<span>📍 ${esc(data.location)}</span>` : ''}
       <span>Status: ${capitalize(data.status || 'active')}</span>
+      <span>Type: ${esc(normalizeWorkType(data.workType || data.type || data.category))}</span>
     `;
     document.getElementById('detail-info-name').textContent = data.name || '—';
     document.getElementById('detail-info-job').textContent = data.jobNumber || '—';
     document.getElementById('detail-info-location').textContent = data.location || '—';
     document.getElementById('detail-info-status').textContent = capitalize(data.status || 'active');
+    const detailWorkType = document.getElementById('detail-info-worktype');
+    if (detailWorkType) detailWorkType.textContent = normalizeWorkType(data.workType || data.type || data.category);
     document.getElementById('detail-info-created-by').textContent = data.createdByName || '—';
     document.getElementById('detail-project-notes').textContent = data.notes || 'No notes added for this project yet.';
     showView('view-detail');
@@ -1195,7 +1330,6 @@
       loadProjectReports(id);
       loadExtraTickets(id);
       loadProjectForemen(currentProjectDoc);
-      if (isOfficeRole()) await loadEmployees();
     });
   }
 
@@ -1231,9 +1365,8 @@
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
-    const ticketCount = Number(data?.ticketCount || 0);
     const ticketEl = document.getElementById('summary-tickets');
-    if (ticketEl) ticketEl.textContent = ticketCount;
+    if (ticketEl) ticketEl.textContent = Number(data?.ticketCount || 0);
   }
 
   function openDailyReportForm() {
@@ -1425,8 +1558,6 @@
     }
   }
 
-
-  // ── EXTRA WORK TICKETS ──
   let currentTicketForPrint = null;
 
   function money(n) {
@@ -1731,6 +1862,8 @@
     w.document.close();
   }
 
+
+
   // ── FOREMEN ──
   function loadProjectForemen(data) {
     const list = document.getElementById('foremen-list');
@@ -1773,49 +1906,78 @@
 
   // ── EMPLOYEES / CERTIFICATIONS ──
   async function loadEmployees(force = false) {
-    if (!isOfficeRole() && !force) return;
-    const list = document.getElementById('employees-list');
+    const list = document.getElementById('employees-list-main');
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
     try {
       const snap = await getDocs(query(collection(db, 'employees'), orderBy('name', 'asc')));
       allEmployees = [];
       snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
-      if (!allEmployees.length) {
-        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No employee records yet.</p>';
-        return;
-      }
-      list.innerHTML = '';
-      allEmployees.forEach(emp => {
-        const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
-        const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-        const card = document.createElement('div');
-        card.className = 'employee-card';
-        card.innerHTML = `
-          <div class="employee-card-header">
-            <div>
-              <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
-              <div class="employee-meta">
-                ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-                ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-                ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-              </div>
-            </div>
-            <span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>
-          </div>
-          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
-          <div class="cert-list">${certs.length ? certs.slice(0,6).map(cert => `<span class="cert-item">${esc(cert.title || cert.type)}${cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : ''}</span>`).join('') : '<span class="cert-item">No certifications uploaded yet</span>'}</div>
-          <div class="employee-actions" style="margin-top:12px;">
-            <button class="btn-sm" type="button" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>
-            <button class="btn-sm" type="button" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
-            <button class="btn-sm danger" type="button" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
-          </div>`;
-        list.appendChild(card);
-      });
+      renderEmployees();
+      if (currentProject) loadProjectWorkers();
     } catch (e) {
       console.error(e);
       list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load employee records.</p>';
     }
+  }
+
+  function employeeCertCounts(emp) {
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const counts = { total: certs.length, expired: 0, expiring: 0, valid: 0, noexp: 0 };
+    certs.forEach(cert => {
+      const key = getCertificationStatusKey(cert.expirationDate);
+      if (key === 'expired') counts.expired++;
+      else if (key === 'expiring') counts.expiring++;
+      else if (key === 'valid') counts.valid++;
+      else counts.noexp++;
+    });
+    return counts;
+  }
+
+  function renderEmployees() {
+    const list = document.getElementById('employees-list-main');
+    if (!list) return;
+    const term = (document.getElementById('employee-search')?.value || '').toLowerCase().trim();
+    const filter = document.getElementById('employee-status-filter')?.value || 'all';
+    let rows = allEmployees.filter(emp => {
+      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const assignedNames = (emp.assignedProjectIds || []).map(id => allProjects.find(p => p.id === id)?.name || '').join(' ');
+      const hay = [emp.name, emp.trade, emp.email, emp.phone, emp.notes, assignedNames, ...certs.map(c => `${c.title || ''} ${c.type || ''} ${c.fileName || ''}`)].join(' ').toLowerCase();
+      const counts = employeeCertCounts(emp);
+      const statusMatch = filter === 'all' ||
+        (filter === 'missing' && counts.total === 0) ||
+        (filter === 'expired' && counts.expired > 0) ||
+        (filter === 'expiring' && counts.expiring > 0) ||
+        (filter === 'valid' && counts.valid > 0 && counts.expired === 0);
+      return (!term || hay.includes(term)) && statusMatch;
+    });
+    if (!rows.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">🪪</div><h3>No matching employee records</h3><p>Try a different search or add a new employee.</p></div>';
+      return;
+    }
+    list.innerHTML = rows.map(emp => {
+      const counts = employeeCertCounts(emp);
+      const warnings = [];
+      if (counts.expired) warnings.push(`<span class="pill expired">${counts.expired} expired</span>`);
+      if (counts.expiring) warnings.push(`<span class="pill expiring">${counts.expiring} expiring</span>`);
+      if (!counts.expired && !counts.expiring && counts.total) warnings.push(`<span class="pill valid">Certs OK</span>`);
+      if (!counts.total) warnings.push(`<span class="pill no-exp">No certs</span>`);
+      const assignedCount = Array.isArray(emp.assignedProjectIds) ? emp.assignedProjectIds.length : 0;
+      return `
+        <div class="employee-simple-card" onclick="openEmployeeDetail('${emp.id}')">
+          <div>
+            <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
+            <div class="employee-meta">
+              ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
+              ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+              ${assignedCount ? `<span>🏗️ ${assignedCount} jobsite${assignedCount === 1 ? '' : 's'}</span>` : ''}
+            </div>
+            <div class="status-row">${warnings.join('')}</div>
+          </div>
+          <span class="chevron">›</span>
+        </div>`;
+    }).join('');
+    applyRoleUI();
   }
 
   function openEmployeeModal() {
@@ -1835,7 +1997,7 @@
         trade: document.getElementById('emp-trade').value.trim(),
         notes: document.getElementById('emp-notes').value.trim(),
         certifications: [],
-        assignedProjectIds: currentProject ? [currentProject.id] : [],
+        assignedProjectIds: [],
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
@@ -1849,6 +2011,91 @@
       console.error(e);
     }
     btn.disabled = false; btn.textContent = 'Create Employee';
+  }
+
+  function openEmployeeDetail(employeeId) {
+    currentEmployeeId = employeeId;
+    const emp = allEmployees.find(e => e.id === employeeId);
+    if (!emp) return;
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const assignedIds = Array.isArray(emp.assignedProjectIds) ? emp.assignedProjectIds : [];
+    document.getElementById('employee-detail-title').textContent = emp.name || 'Employee File';
+    const availableProjects = allProjects.filter(p => !assignedIds.includes(p.id));
+    const assignedProjects = assignedIds.map(id => allProjects.find(p => p.id === id)).filter(Boolean);
+    const body = document.getElementById('employee-detail-body');
+    body.innerHTML = `
+      <div class="employee-detail-block">
+        <div class="employee-meta" style="margin-bottom:8px;">
+          ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
+          ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
+          ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+        </div>
+        <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
+      </div>
+
+      <div class="employee-detail-block">
+        <div class="action-row" style="margin-bottom:8px;">
+          <div><strong style="color:var(--navy);">Certifications</strong><div class="helper-text">Status is based on expiration date.</div></div>
+          <button class="btn-save" type="button" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+        </div>
+        ${certs.length ? certs.map(cert => {
+          const key = getCertStatusKey(cert.expirationDate);
+          return `<div class="file-item" style="margin-bottom:8px;">
+            <div class="file-icon">🪪</div>
+            <div class="file-info">
+              <h4>${esc(cert.title || cert.type)}</h4>
+              <p>${cert.issueDate ? `Issued ${esc(cert.issueDate)}` : 'Issue date not set'}${cert.expirationDate ? ` · Expires ${esc(cert.expirationDate)}` : ' · No expiration date'}</p>
+              <div class="status-row"><span class="pill ${key}">${getCertificationStatusLabel(cert.expirationDate)}</span></div>
+            </div>
+            <div class="file-actions"><a href="${cert.url}" target="_blank" class="btn-sm">Open</a></div>
+          </div>`;
+        }).join('') : '<p class="helper-text">No certifications uploaded yet.</p>'}
+      </div>
+
+      <div class="employee-detail-block">
+        <strong style="color:var(--navy);">Linked Jobsites</strong>
+        <div class="helper-text" style="margin:4px 0 12px;">Assign this employee to one or more active projects.</div>
+        ${assignedProjects.length ? assignedProjects.map(p => `<div class="file-item" style="margin-bottom:8px;"><div class="file-icon">🏗️</div><div class="file-info"><h4>${esc(p.name)}</h4><p>${esc(normalizeWorkType(p.workType || p.type || p.category))}${p.jobNumber ? ` · ${esc(p.jobNumber)}` : ''}</p></div><button class="btn-sm danger" onclick="removeEmployeeFromProject('${emp.id}','${p.id}')">Remove</button></div>`).join('') : '<p class="helper-text">This employee is not assigned to any project yet.</p>'}
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <select id="assign-project-select" class="inline-select" style="flex:1;min-width:220px;">
+            <option value="">Choose project to link…</option>
+            ${availableProjects.map(p => `<option value="${p.id}">${esc(p.name)} — ${esc(normalizeWorkType(p.workType || p.type || p.category))}</option>`).join('')}
+          </select>
+          <button class="btn-save" onclick="assignEmployeeToProject('${emp.id}')">Link to Jobsite</button>
+        </div>
+      </div>
+
+      <div class="employee-actions" style="margin-top:12px;">
+        <button class="btn-sm danger admin-only" type="button" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
+      </div>`;
+    document.getElementById('modal-employee-detail').classList.add('open');
+    applyRoleUI();
+  }
+
+  async function assignEmployeeToProject(employeeId) {
+    const projectId = document.getElementById('assign-project-select')?.value;
+    if (!projectId) { toast('Choose a project first'); return; }
+    try {
+      await updateDoc(doc(db, 'employees', employeeId), { assignedProjectIds: arrayUnion(projectId) });
+      await loadEmployees(true);
+      openEmployeeDetail(employeeId);
+      toast('Employee linked to jobsite');
+    } catch(e) {
+      console.error(e);
+      toast('Could not link employee');
+    }
+  }
+
+  async function removeEmployeeFromProject(employeeId, projectId) {
+    try {
+      await updateDoc(doc(db, 'employees', employeeId), { assignedProjectIds: arrayRemove(projectId) });
+      await loadEmployees(true);
+      openEmployeeDetail(employeeId);
+      toast('Employee removed from jobsite');
+    } catch(e) {
+      console.error(e);
+      toast('Could not remove employee from jobsite');
+    }
   }
 
   async function toggleEmployeeAssignment(employeeId, assign) {
@@ -1866,34 +2113,61 @@
     }
   }
 
-  function handleCertFileChange(input) {
-    const fileNameEl = document.getElementById('cert-file-name');
-    const file = input?.files?.[0];
-    fileNameEl.textContent = file ? `Selected: ${file.name}` : 'No file selected yet.';
+  async function loadProjectWorkers() {
+    const list = document.getElementById('project-workers-list');
+    if (!list || !currentProject) return;
+    if (!allEmployees.length) {
+      try { await loadEmployees(true); } catch(e) {}
+    }
+    const rows = allEmployees.filter(emp => Array.isArray(emp.assignedProjectIds) && emp.assignedProjectIds.includes(currentProject.id));
+    if (!rows.length) {
+      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No workers assigned to this job yet. Assign workers from the Employee Certs tab.</p>';
+      return;
+    }
+    list.innerHTML = rows.map(emp => {
+      const counts = employeeCertCounts(emp);
+      const pills = [];
+      if (counts.expired) pills.push(`<span class="pill expired">${counts.expired} expired</span>`);
+      if (counts.expiring) pills.push(`<span class="pill expiring">${counts.expiring} expiring</span>`);
+      if (!counts.expired && !counts.expiring && counts.total) pills.push(`<span class="pill valid">Certs OK</span>`);
+      if (!counts.total) pills.push(`<span class="pill no-exp">No certs</span>`);
+      return `<div class="employee-simple-card" onclick="openEmployeeDetail('${emp.id}')"><div><h4>${esc(emp.name || 'Unnamed Employee')}</h4><div class="employee-meta">${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}</div><div class="status-row">${pills.join('')}</div></div><span class="chevron">›</span></div>`;
+    }).join('');
   }
 
-  function resetCertificationModal() {
-    currentEmployeeId = null;
-    document.getElementById('cert-type').value = 'OSHA 30';
-    ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('cert-file').value = '';
-    document.getElementById('cert-file-name').textContent = 'No file selected yet.';
-    document.getElementById('cert-employee-label').textContent = '';
+  function triggerCertFilePicker() {
+    const input = document.getElementById('cert-file');
+    if (input) input.click();
+  }
+
+  function updateCertFileName() {
+    const input = document.getElementById('cert-file');
+    const label = document.getElementById('cert-file-name');
+    if (!label) return;
+    label.textContent = input?.files?.[0]?.name || 'No file selected';
   }
 
   function openCertificationModal(employeeId) {
+    currentEmployeeId = employeeId;
     const emp = allEmployees.find(e => e.id === employeeId);
-    currentEmployeeId = employeeId;
-    resetCertificationModal();
-    currentEmployeeId = employeeId;
     document.getElementById('cert-employee-label').textContent = emp ? `Employee: ${emp.name}` : '';
+    document.getElementById('cert-custom-title').value = '';
+    document.getElementById('cert-issue-date').value = '';
+    document.getElementById('cert-exp-date').value = '';
+    document.getElementById('cert-type').value = 'OSHA 30';
+    const fileInput = document.getElementById('cert-file');
+    if (fileInput) fileInput.value = '';
+    updateCertFileName();
     const modal = document.getElementById('modal-certification');
-    modal.classList.add('open');
-    modal.style.zIndex = '4000';
+    if (modal) {
+      modal.style.zIndex = '3000';
+      modal.classList.add('open');
+    }
   }
 
   async function saveCertification() {
-    if (!currentEmployeeId) { toast('Choose an employee first'); return; }
+    if (!currentEmployeeId) return;
+    const savingEmployeeId = currentEmployeeId;
     const btn = document.getElementById('save-cert-btn');
     const file = document.getElementById('cert-file').files[0];
     if (!file) { toast('Select a certification file first'); return; }
@@ -1901,35 +2175,32 @@
     const title = document.getElementById('cert-custom-title').value.trim() || baseType;
     btn.disabled = true; btn.textContent = 'Uploading…';
     try {
-      const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${safeFileName}`;
+      const path = `employees/${savingEmployeeId}/certifications/${Date.now()}_${file.name}`;
       const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
+      await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      await updateDoc(doc(db, 'employees', currentEmployeeId), {
+      await updateDoc(doc(db, 'employees', savingEmployeeId), {
         certifications: arrayUnion({
           type: baseType,
           title,
           issueDate: document.getElementById('cert-issue-date').value || '',
           expirationDate: document.getElementById('cert-exp-date').value || '',
           fileName: file.name,
-          storagePath: path,
           url,
           uploadedAt: new Date().toISOString(),
           uploadedBy: currentUser.displayName || currentUser.email
         })
       });
+      ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('cert-file').value = '';
+      document.getElementById('cert-type').value = 'OSHA 30';
+      updateCertFileName();
       closeModal('modal-certification');
-      resetCertificationModal();
       await loadEmployees(true);
+      openEmployeeDetail(savingEmployeeId);
       toast('Certification uploaded');
     } catch (e) {
-      const msg = String(e?.message || e || '');
-      if (/storage|network|permission/i.test(msg)) {
-        toast('Upload failed. Check iPhone signal / Wi-Fi and try again.');
-      } else {
-        toast('Could not upload certification');
-      }
+      toast('Could not upload certification');
       console.error(e);
     }
     btn.disabled = false; btn.textContent = 'Upload';
@@ -1942,14 +2213,15 @@
     try {
       await deleteDoc(doc(db, 'employees', employeeId));
       if (currentEmployeeId === employeeId) {
+        currentEmployeeId = null;
         closeModal('modal-certification');
-        resetCertificationModal();
+        closeModal('modal-employee-detail');
       }
       await loadEmployees(true);
       toast('Employee removed');
     } catch (e) {
-      toast('Could not remove employee');
       console.error(e);
+      toast('Could not remove employee');
     }
   }
 
@@ -1985,6 +2257,30 @@
     document.getElementById('modal-report-detail').classList.add('open');
   }
 
+  function getCertificationStatusKey(expirationDate) {
+    if (!expirationDate) return 'no-exp';
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const exp = new Date(expirationDate + 'T00:00:00');
+    if (Number.isNaN(exp.getTime())) return 'no-exp';
+    const diffDays = Math.ceil((exp - today) / 86400000);
+    if (diffDays < 0) return 'expired';
+    if (diffDays <= 30) return 'expiring';
+    return 'valid';
+  }
+
+  function getCertificationStatusLabel(expirationDate) {
+    const key = getCertificationStatusKey(expirationDate);
+    if (key === 'expired') return 'Expired';
+    if (key === 'expiring') return 'Expiring Soon';
+    if (key === 'valid') return 'Valid';
+    return 'No Expiration';
+  }
+
+  function getCertificationStatusClass(expirationDate) {
+    return getCertificationStatusKey(expirationDate);
+  }
+
   // ── UI HELPERS ──
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1995,24 +2291,45 @@
   function showLogin() { showView('view-login'); }
 
   function openNewProjectModal() {
+    const workType = document.getElementById('np-work-type');
+    if (workType) workType.value = selectedWorkType || 'Fireproofing';
     document.getElementById('modal-new-project').classList.add('open');
   }
 
   function closeModal(id) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
-    modal.classList.remove('open');
-    modal.style.zIndex = '';
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('open');
+    if (id === 'modal-certification') {
+      currentEmployeeId = null;
+      const fileInput = document.getElementById('cert-file');
+      if (fileInput) fileInput.value = '';
+      updateCertFileName();
+    }
   }
 
   function clearModal() {
     ['np-name','np-job','np-location','np-notes'].forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('np-status').value = 'active';
+    const workType = document.getElementById('np-work-type');
+    if (workType) workType.value = selectedWorkType || 'Fireproofing';
+  }
+
+  function switchMainTab(tabId, btn = null) {
+    const panes = document.querySelectorAll('#view-projects > .page-wrap > .tab-pane');
+    panes.forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
+    const pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+    const activeBtn = btn || document.querySelector(`#main-dashboard-tabs .tab[onclick*="${tabId}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+    if (tabId === 'main-employees') loadEmployees(true);
+    if (tabId === 'main-projects') showWorkTypeChoices();
   }
 
   function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const detailView = document.getElementById('view-detail');
+    detailView.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    detailView.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (btn) btn.classList.add('active');
@@ -2067,7 +2384,7 @@
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification','modal-extra-ticket','modal-ticket-detail'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
