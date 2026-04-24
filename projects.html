@@ -1052,7 +1052,7 @@
       showView('view-projects');
       currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
       applyRoleUI();
-      switchMainTab('main-projects');
+      resetMainDashboard();
       loadProjects();
       try {
         const profile = await loadUserProfile(user);
@@ -1061,7 +1061,7 @@
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
-      switchMainTab('main-projects');
+      resetMainDashboard();
       loadProjects();
     } else {
       currentUser = null;
@@ -2312,6 +2312,22 @@
     document.getElementById('np-status').value = 'active';
     const workType = document.getElementById('np-work-type');
     if (workType) workType.value = selectedWorkType || 'Fireproofing';
+  }
+
+  function resetMainDashboard() {
+    selectedWorkType = null;
+    document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
+    const workTypeList = document.getElementById('work-type-list');
+    const projectsList = document.getElementById('projects-list');
+    const projectSearchRow = document.getElementById('project-search-row');
+    const backBtn = document.getElementById('back-to-work-types-btn');
+    const title = document.getElementById('projects-main-title');
+    if (title) title.textContent = 'Choose Work Type';
+    if (workTypeList) workTypeList.style.display = 'grid';
+    if (projectsList) { projectsList.style.display = 'none'; projectsList.innerHTML = ''; }
+    if (projectSearchRow) projectSearchRow.style.display = 'none';
+    if (backBtn) backBtn.style.display = 'none';
   }
 
   function switchMainTab(tabId, btn = null) {
