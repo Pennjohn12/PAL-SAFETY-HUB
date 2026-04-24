@@ -351,31 +351,48 @@
 
 
 
-    /* Dashboard category + employee upgrades */
-    .choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:12px; }
-    .choice-card { background:white; border:1px solid var(--line); border-radius:18px; padding:20px; cursor:pointer; box-shadow:0 4px 14px rgba(16,24,40,.05); transition:transform .15s, box-shadow .15s; }
-    .choice-card:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(16,24,40,.10); }
-    .choice-card .icon { font-size:30px; margin-bottom:8px; }
-    .choice-card h3 { color:var(--navy); font-size:18px; margin-bottom:4px; }
-    .choice-card p { color:var(--muted); font-size:13px; line-height:1.4; }
-    .search-row { display:flex; gap:10px; flex-wrap:wrap; margin: 0 0 16px; align-items:center; }
-    .search-input { flex:1; min-width:220px; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font:inherit; font-size:15px; outline:none; background:white; }
-    .search-input:focus { border-color:var(--navy); }
-    .employee-simple-card { background:white; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; box-shadow:0 4px 12px rgba(16,24,40,.04); }
-    .employee-simple-card:hover { border-color:var(--navy); }
-    .employee-simple-card h4 { color:var(--navy); font-size:16px; margin-bottom:4px; }
-    .employee-detail-block { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:12px; }
-    .status-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-    .pill.expired { background:#fff1f2; color:#b91c1c; }
-    .pill.expiring { background:#fff7ed; color:#c2410c; }
-    .pill.valid { background:#e8f5e0; color:#2e7d32; }
-    .pill.no-exp { background:#eef2f7; color:#475569; }
+    /* Extra Work Tickets */
+    .ticket-paper {
+      background:white; border:1px solid #cfd6df; border-radius:18px; padding:18px;
+      box-shadow:0 4px 14px rgba(16,24,40,.05); color:#1f2937;
+    }
+    .ticket-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; border-bottom:2px solid #d6dde7; padding-bottom:10px; margin-bottom:12px; }
+    .ticket-logo { display:flex; align-items:center; gap:10px; font-weight:900; color:var(--navy); font-size:24px; letter-spacing:-1px; }
+    .ticket-title { text-align:center; font-weight:900; color:var(--navy); font-size:16px; margin:0 0 6px; text-transform:uppercase; }
+    .ticket-no { color:#b91c1c; font-weight:900; font-size:18px; text-align:right; }
+    .ticket-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+    .ticket-line { display:flex; align-items:end; gap:8px; min-height:36px; }
+    .ticket-line label { font-size:11px; font-weight:900; color:var(--navy); text-transform:uppercase; white-space:nowrap; }
+    .ticket-line input, .ticket-line textarea, .ticket-line select {
+      flex:1; border:none; border-bottom:2px solid #aebccc; padding:6px 3px; font:inherit; font-size:14px; outline:none; background:transparent;
+    }
+    .ticket-line textarea { min-height:72px; resize:vertical; border:1.5px solid #d6dde7; border-radius:10px; padding:10px; }
+    .ticket-section-title { margin:14px 0 8px; font-size:12px; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.35px; }
+    .ticket-table-wrap { overflow:auto; border:1px solid #d6dde7; border-radius:12px; background:white; }
+    .ticket-table { width:100%; border-collapse:collapse; min-width:740px; }
+    .ticket-table th { background:#eff4f8; color:var(--navy); font-size:11px; text-transform:uppercase; padding:7px; border:1px solid #d6dde7; }
+    .ticket-table td { border:1px solid #d6dde7; padding:5px; font-size:13px; }
+    .ticket-table input { width:100%; border:none; border-bottom:1px solid #aebccc; padding:5px 3px; font:inherit; font-size:13px; outline:none; }
+    .ticket-total-box { display:grid; grid-template-columns:1fr minmax(220px,.4fr); gap:14px; margin-top:12px; }
+    .ticket-totals { background:#f8fafc; border:1px solid #d6dde7; border-radius:14px; padding:12px; }
+    .ticket-total-row { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid #e5eaf0; font-size:14px; }
+    .ticket-total-row:last-child { border-bottom:none; font-size:18px; font-weight:900; color:var(--navy); }
+    .sig-box { border:1.5px solid #d6dde7; border-radius:12px; background:white; overflow:hidden; }
+    .sig-box canvas { width:100%; height:90px; display:block; touch-action:none; cursor:crosshair; }
+    .sig-box .sig-actions { display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e5eaf0; padding:6px 8px; font-size:11px; color:var(--muted); }
+    .ticket-detail-preview { border:1px solid #d6dde7; border-radius:14px; padding:14px; background:#fff; }
+    .ticket-status-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    @media (max-width: 700px) {
+      .ticket-grid, .ticket-total-box { grid-template-columns:1fr; }
+      .ticket-top { flex-direction:column; }
+      .ticket-no { text-align:left; }
+    }
 
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
       .project-header-card h2 { font-size: 20px; }
       .photo-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-      .project-summary-grid, .detail-grid, .report-grid, .choice-grid { grid-template-columns: 1fr; }
+      .project-summary-grid, .detail-grid, .report-grid { grid-template-columns: 1fr; }
       .page-header { align-items: stretch; }
       .header-actions { width:100%; }
       .header-actions .btn-add, .header-actions .btn-outline { flex:1; justify-content:center; }
@@ -483,51 +500,19 @@
   </div>
 
   <div class="page-wrap">
-    <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
-      <button class="tab" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
-      <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
+    <div class="page-header">
+      <h2>Projects</h2>
+      <div class="header-actions">
+        <button class="btn-outline admin-only" onclick="openEmployeeModal()">👷 Employee Records</button>
+        <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
+      </div>
     </div>
-
-    <div class="tab-pane" id="main-projects">
-      <div class="page-header">
-        <h2 id="projects-main-title">Choose Work Type</h2>
-        <div class="header-actions">
-          <button class="btn-outline" id="back-to-work-types-btn" onclick="showWorkTypeChoices()" style="display:none;">← Work Types</button>
-          <button class="btn-add admin-only" onclick="openNewProjectModal()">＋ New Project</button>
-        </div>
+    <div id="projects-list">
+      <div class="empty-state">
+        <div class="icon">🏗️</div>
+        <h3>No projects yet</h3>
+        <p>Tap "New Project" to get started</p>
       </div>
-      <div class="search-row" id="project-search-row" style="display:none;">
-        <input class="search-input" id="project-search" placeholder="Search projects by name, job number, location..." oninput="renderProjectList()" />
-      </div>
-      <div id="work-type-list" class="choice-grid">
-        <div class="choice-card" onclick="selectWorkType('Fireproofing')"><div class="icon">🔥</div><h3>Fireproofing</h3><p>Open fireproofing projects and field files.</p></div>
-        <div class="choice-card" onclick="selectWorkType('Demolition')"><div class="icon">🔨</div><h3>Demolition</h3><p>Open demolition jobs and project records.</p></div>
-        <div class="choice-card" onclick="selectWorkType('Asbestos')"><div class="icon">⚠️</div><h3>Asbestos</h3><p>Open asbestos jobs, docs, and photos.</p></div>
-        <div class="choice-card" onclick="selectWorkType('Other')"><div class="icon">📁</div><h3>Other</h3><p>Open miscellaneous or uncategorized projects.</p></div>
-      </div>
-      <div id="projects-list" style="display:none;"></div>
-    </div>
-
-    <div class="tab-pane" id="main-employees">
-      <div class="page-header">
-        <h2>Employee Certs</h2>
-        <div class="header-actions">
-          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
-          <button class="btn-add" onclick="openEmployeeModal()">＋ Add Employee</button>
-        </div>
-      </div>
-      <div class="helper-text" style="margin-bottom:14px;">Search employees, open a worker file, upload certs, and assign workers to jobsites.</div>
-      <div class="search-row">
-        <input class="search-input" id="employee-search" placeholder="Search employee by name, trade, phone, email, cert, or project..." oninput="renderEmployees()" />
-        <select id="employee-status-filter" class="inline-select" onchange="renderEmployees()">
-          <option value="all">All cert statuses</option>
-          <option value="expired">Expired</option>
-          <option value="expiring">Expiring Soon</option>
-          <option value="valid">Valid</option>
-          <option value="missing">No Certs</option>
-        </select>
-      </div>
-      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Employee Certs to load employee records.</p></div>
     </div>
   </div>
 </div>
@@ -561,6 +546,7 @@
       <div class="summary-card"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Organized by category</div></div>
       <div class="summary-card"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
       <div class="summary-card"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
+      <div class="summary-card"><div class="label">Extra Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Extra work orders</div></div>
     </div>
 
     <div class="detail-grid">
@@ -571,7 +557,6 @@
           <div class="row"><span>Job Number</span><strong id="detail-info-job">—</strong></div>
           <div class="row"><span>Location</span><strong id="detail-info-location">—</strong></div>
           <div class="row"><span>Status</span><strong id="detail-info-status">—</strong></div>
-          <div class="row"><span>Type of Work</span><strong id="detail-info-worktype">—</strong></div>
           <div class="row"><span>Created By</span><strong id="detail-info-created-by">—</strong></div>
         </div>
       </div>
@@ -586,8 +571,9 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
+      <button class="tab" onclick="switchTab('tab-tickets', this)">💵 Extra Tickets</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
-      <button class="tab" onclick="switchTab('tab-workers', this); loadProjectWorkers();">🪪 Workers & Certs</button>
+      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -641,6 +627,18 @@
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
     </div>
 
+    <!-- EXTRA WORK TICKETS TAB -->
+    <div class="tab-pane" id="tab-tickets">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Extra Work Tickets</div>
+          <div class="helper-text">Track daily extra work orders for this project. Tickets can be typed, calculated, signed, opened, and printed.</div>
+        </div>
+        <button class="btn-save" onclick="openExtraTicketModal()">＋ New Extra Work Ticket</button>
+      </div>
+      <div id="tickets-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets yet.</p></div>
+    </div>
+
     <!-- FOREMEN TAB -->
     <div class="tab-pane" id="tab-foremen">
       <div class="action-row">
@@ -659,17 +657,19 @@
       </div>
     </div>
 
-
-    <!-- WORKERS & CERTS TAB -->
-    <div class="tab-pane" id="tab-workers">
+    <!-- EMPLOYEES TAB -->
+    <div class="tab-pane" id="tab-employees">
       <div class="action-row">
         <div>
-          <div class="section-label">Assigned Workers & Certification Status</div>
-          <div class="helper-text">Workers linked to this jobsite. Open the employee file from Employee Certs to add or update certifications.</div>
+          <div class="section-label">Employee Records & Certifications</div>
+          <div class="helper-text">Employee files live independently from any one jobsite, so records stay with the employee.</div>
         </div>
-        <button class="btn-outline" onclick="loadProjectWorkers()">↻ Refresh</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
+          <button class="btn-save" onclick="openEmployeeModal()">＋ New Employee</button>
+        </div>
       </div>
-      <div id="project-workers-list"><p style="color:var(--muted);font-size:14px;">No workers assigned to this job yet.</p></div>
+      <div id="employees-list"><p style="color:var(--muted);font-size:14px;">No employee records yet.</p></div>
     </div>
 
     <!-- Sticky upload bar (shown on docs/photos tabs) -->
@@ -697,15 +697,6 @@
     <div class="field">
       <label>Location / Address</label>
       <input type="text" id="np-location" placeholder="e.g. 1 Times Square, New York, NY" />
-    </div>
-    <div class="field">
-      <label>Type of Work</label>
-      <select id="np-work-type" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;outline:none;width:100%;background:white;">
-        <option value="Fireproofing">Fireproofing</option>
-        <option value="Demolition">Demolition</option>
-        <option value="Asbestos">Asbestos</option>
-        <option value="Other">Other</option>
-      </select>
     </div>
     <div class="field">
       <label>Status</label>
@@ -755,18 +746,6 @@
   </div>
 </div>
 
-
-<!-- EMPLOYEE DETAIL MODAL -->
-<div class="modal-overlay" id="modal-employee-detail">
-  <div class="modal" style="max-width:760px;">
-    <h3 id="employee-detail-title">Employee File</h3>
-    <div id="employee-detail-body"></div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('modal-employee-detail')">Close</button>
-    </div>
-  </div>
-</div>
-
 <!-- CERTIFICATION MODAL -->
 <div class="modal-overlay" id="modal-certification">
   <div class="modal">
@@ -791,15 +770,117 @@
     <div class="field"><label>Expiration Date (optional)</label><input type="date" id="cert-exp-date" /></div>
     <div class="field">
       <label>Certification File</label>
-      <input type="file" id="cert-file" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,image/*,application/pdf" style="display:none" onchange="updateCertFileName()" />
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button type="button" class="btn-secondary" onclick="triggerCertFilePicker()">Choose Certification File</button>
-        <span id="cert-file-name" class="helper-text">No file selected</span>
-      </div>
+      <input type="file" id="cert-file" accept=".pdf,.png,.jpg,.jpeg,.heic,.heif,image/*,application/pdf" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" onchange="handleCertFileChange(this)" />
+      <label for="cert-file" class="btn-outline" style="display:flex;justify-content:center;cursor:pointer;">📎 Choose Certification File</label>
+      <div class="mini-note" id="cert-file-name">No file selected yet.</div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-certification')">Cancel</button>
       <button class="btn-save" id="save-cert-btn" onclick="saveCertification()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXTRA WORK TICKET MODAL -->
+<div class="modal-overlay" id="modal-extra-ticket">
+  <div class="modal" style="max-width:920px;">
+    <h3>💵 Daily Extra Work Order</h3>
+    <div class="ticket-paper">
+      <div class="ticket-top">
+        <div class="ticket-logo"><span style="background:var(--navy);color:var(--green);border-radius:8px;padding:8px 10px;font-size:18px;">PAL</span><span>Environmental Services</span></div>
+        <div style="flex:1;text-align:center;"><div class="ticket-title">Daily Extra Work Order</div><div class="helper-text">Linked to current project</div></div>
+        <div><div class="ticket-no" id="ticket-preview-no">NEW</div><div class="helper-text">11-02 Queens Plaza South<br>Long Island City, NY 11101</div></div>
+      </div>
+
+      <div class="ticket-grid">
+        <div class="ticket-line"><label>Date</label><input type="date" id="ticket-date"></div>
+        <div class="ticket-line"><label>Ticket #</label><input type="text" id="ticket-no" placeholder="Auto or type ticket number" oninput="document.getElementById('ticket-preview-no').textContent=this.value||'NEW'"></div>
+        <div class="ticket-line"><label>Contractor Name</label><input type="text" id="ticket-contractor-name"></div>
+        <div class="ticket-line"><label>Job Name</label><input type="text" id="ticket-job-name"></div>
+        <div class="ticket-line"><label>Address</label><input type="text" id="ticket-contractor-address"></div>
+        <div class="ticket-line"><label>Our Job No.</label><input type="text" id="ticket-job-no"></div>
+        <div class="ticket-line"><label>City</label><input type="text" id="ticket-contractor-city"></div>
+        <div class="ticket-line"><label>CC Job No.</label><input type="text" id="ticket-cc-job-no"></div>
+        <div class="ticket-line"><label>ZIP</label><input type="text" id="ticket-contractor-zip"></div>
+        <div class="ticket-line"><label>Location</label><input type="text" id="ticket-location"></div>
+        <div class="ticket-line"><label>Floor No.</label><input type="text" id="ticket-floor-no"></div>
+        <div class="ticket-line"><label>Room No.</label><input type="text" id="ticket-room-no"></div>
+        <div class="ticket-line" style="grid-column:1/-1;align-items:stretch;flex-direction:column;gap:6px;"><label>Authorization to Proceed / Description of Work</label><textarea id="ticket-description" placeholder="Describe the extra work being authorized..."></textarea></div>
+      </div>
+
+      <div class="ticket-grid" style="margin-top:10px;">
+        <div class="ticket-line"><label>Authorized Contractor Signature Name</label><input type="text" id="ticket-auth-name"></div>
+        <div class="ticket-line"><label>Date</label><input type="date" id="ticket-auth-date"></div>
+      </div>
+
+      <div class="ticket-section-title">Labor</div>
+      <div class="ticket-table-wrap">
+        <table class="ticket-table">
+          <thead><tr><th>Reg Time</th><th>Prem Time</th><th>Double Time</th><th>Foreman / Labor Description</th><th>Unit Cost Labor</th><th>Extension</th></tr></thead>
+          <tbody id="ticket-labor-rows"></tbody>
+        </table>
+      </div>
+
+      <div class="ticket-section-title">Equipment Rental / Material Used</div>
+      <div class="ticket-table-wrap">
+        <table class="ticket-table">
+          <thead><tr><th>Quantity</th><th>Size</th><th>Equipment Rental / Material Used</th><th>Unit Cost</th><th>Extension</th></tr></thead>
+          <tbody id="ticket-material-rows"></tbody>
+        </table>
+      </div>
+
+      <div class="ticket-total-box">
+        <div>
+          <div class="ticket-section-title">Accepted By</div>
+          <div class="ticket-grid">
+            <div class="ticket-line"><label>Print Name / Title</label><input type="text" id="ticket-accepted-print"></div>
+            <div class="ticket-line"><label>Company</label><input type="text" id="ticket-accepted-company"></div>
+            <div class="ticket-line"><label>Date</label><input type="date" id="ticket-accepted-date"></div>
+          </div>
+          <div class="ticket-section-title">Digital Signatures</div>
+          <div class="ticket-grid">
+            <div>
+              <label style="font-size:12px;font-weight:900;color:var(--navy);">Contractor Signature</label>
+              <div class="sig-box"><canvas id="ticket-contractor-signature"></canvas><div class="sig-actions"><span>Sign with finger or mouse</span><button class="btn-sm" type="button" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div></div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:900;color:var(--navy);">Accepted Signature</label>
+              <div class="sig-box"><canvas id="ticket-accepted-signature"></canvas><div class="sig-actions"><span>Sign with finger or mouse</span><button class="btn-sm" type="button" onclick="clearTicketSignature('ticket-accepted-signature')">Clear</button></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="ticket-totals">
+          <div class="ticket-line"><label>Bond %</label><input type="number" step="0.01" id="ticket-bond-percent" oninput="calculateTicketTotals()"></div>
+          <div class="ticket-line"><label>Sales Tax %</label><input type="number" step="0.01" id="ticket-tax-percent" oninput="calculateTicketTotals()"></div>
+          <div class="ticket-line"><label>Hrs. Trucking</label><input type="number" step="0.01" id="ticket-trucking-hours" oninput="calculateTicketTotals()"></div>
+          <div class="ticket-line"><label>Trucking $/Hr</label><input type="number" step="0.01" id="ticket-trucking-rate" oninput="calculateTicketTotals()"></div>
+          <div style="margin-top:10px;">
+            <div class="ticket-total-row"><span>Total Labor</span><strong id="ticket-total-labor">$0.00</strong></div>
+            <div class="ticket-total-row"><span>Total Materials</span><strong id="ticket-total-materials">$0.00</strong></div>
+            <div class="ticket-total-row"><span>Bond</span><strong id="ticket-bond-total">$0.00</strong></div>
+            <div class="ticket-total-row"><span>Sales Tax</span><strong id="ticket-tax-total">$0.00</strong></div>
+            <div class="ticket-total-row"><span>Trucking</span><strong id="ticket-trucking-total">$0.00</strong></div>
+            <div class="ticket-total-row"><span>Grand Total</span><strong id="ticket-grand-total">$0.00</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button>
+      <button class="btn-secondary" onclick="calculateTicketTotals()">Recalculate</button>
+      <button class="btn-save" id="save-ticket-btn" onclick="saveExtraTicket()">Save Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXTRA WORK TICKET DETAIL MODAL -->
+<div class="modal-overlay" id="modal-ticket-detail">
+  <div class="modal" style="max-width:860px;">
+    <h3>💵 Extra Work Ticket Details</h3>
+    <div id="ticket-detail-content" class="ticket-detail-preview"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button>
+      <button class="btn-save" onclick="printCurrentTicket()">Print / Save PDF</button>
     </div>
   </div>
 </div>
@@ -837,8 +918,6 @@
   let currentProjectDoc = null;
   let currentEmployeeId = null;
   let allEmployees = [];
-  let allProjects = [];
-  let selectedWorkType = null;
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
@@ -864,21 +943,17 @@
   window.openEmployeeModal = openEmployeeModal;
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
-  window.switchMainTab = switchMainTab;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
-  window.renderEmployees = renderEmployees;
-  window.openEmployeeDetail = openEmployeeDetail;
-  window.assignEmployeeToProject = assignEmployeeToProject;
-  window.removeEmployeeFromProject = removeEmployeeFromProject;
-  window.selectWorkType = selectWorkType;
-  window.showWorkTypeChoices = showWorkTypeChoices;
-  window.renderProjectList = renderProjectList;
-  window.loadProjectWorkers = loadProjectWorkers;
-  window.triggerCertFilePicker = triggerCertFilePicker;
-  window.updateCertFileName = updateCertFileName;
+  window.openExtraTicketModal = openExtraTicketModal;
+  window.saveExtraTicket = saveExtraTicket;
+  window.calculateTicketTotals = calculateTicketTotals;
+  window.clearTicketSignature = clearTicketSignature;
+  window.openTicketDetail = openTicketDetail;
+  window.printCurrentTicket = printCurrentTicket;
   window.deleteEmployee = deleteEmployee;
+  window.handleCertFileChange = handleCertFileChange;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -888,7 +963,6 @@
       showView('view-projects');
       currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
       applyRoleUI();
-      switchMainTab('main-projects');
       loadProjects();
       try {
         const profile = await loadUserProfile(user);
@@ -897,7 +971,6 @@
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
-      switchMainTab('main-projects');
       loadProjects();
     } else {
       currentUser = null;
@@ -1001,96 +1074,56 @@
 
   // ── PROJECTS ──
   function loadProjects() {
+    const list = document.getElementById('projects-list');
+    list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects…</p>';
     const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
     if (unsubProjects) unsubProjects();
     unsubProjects = onSnapshot(q, snap => {
       const docs = [];
       snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
-      allProjects = docs.filter(p => {
+      const filtered = docs.filter(p => {
         if (isOfficeRole()) return true;
         const foremen = Array.isArray(p.foremen) ? p.foremen : [];
         const emailMatch = foremen.some(f => (f.email || '').toLowerCase() === (currentUser?.email || '').toLowerCase());
         const uidMatch = foremen.some(f => f.uid && f.uid === currentUser?.uid);
         return emailMatch || uidMatch || p.createdBy === currentUser?.uid;
       });
-      if (selectedWorkType) renderProjectList();
+      if (!filtered.length) {
+        list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No projects available</h3><p>${isOfficeRole() ? 'Tap "New Project" to get started' : 'You do not have any assigned projects yet.'}</p></div>`;
+        return;
+      }
+      list.innerHTML = '';
+      filtered.forEach(p => {
+        const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
+        const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
+        const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = `
+          <div class="project-icon">🏗️</div>
+          <div class="project-info">
+            <h3>${esc(p.name)}</h3>
+            <div class="project-meta">
+              <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
+              ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
+              ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
+              <span>📄 ${docCount}</span>
+              <span>📸 ${photoCount}</span>
+              <span>👷 ${foremanCount}</span>
+            </div>
+          </div>
+          <span class="chevron">›</span>`;
+        card.onclick = () => openProject(p.id, p);
+        list.appendChild(card);
+      });
       if (requestedProjectId) {
-        const target = allProjects.find(p => p.id === requestedProjectId);
+        const target = filtered.find(p => p.id === requestedProjectId);
         if (target) {
           const id = requestedProjectId;
           requestedProjectId = null;
           openProject(id, target);
         }
       }
-    });
-  }
-
-  function normalizeWorkType(type) {
-    const raw = (type || '').toString().trim().toLowerCase();
-    if (raw.includes('fire')) return 'Fireproofing';
-    if (raw.includes('demo')) return 'Demolition';
-    if (raw.includes('asbestos') || raw.includes('absestos')) return 'Asbestos';
-    return 'Other';
-  }
-
-  function selectWorkType(type) {
-    selectedWorkType = type;
-    document.getElementById('projects-main-title').textContent = `${type} Projects`;
-    document.getElementById('work-type-list').style.display = 'none';
-    document.getElementById('projects-list').style.display = 'block';
-    document.getElementById('project-search-row').style.display = 'flex';
-    document.getElementById('back-to-work-types-btn').style.display = 'inline-flex';
-    const search = document.getElementById('project-search');
-    if (search) search.value = '';
-    renderProjectList();
-  }
-
-  function showWorkTypeChoices() {
-    selectedWorkType = null;
-    document.getElementById('projects-main-title').textContent = 'Choose Work Type';
-    document.getElementById('work-type-list').style.display = 'grid';
-    document.getElementById('projects-list').style.display = 'none';
-    document.getElementById('project-search-row').style.display = 'none';
-    document.getElementById('back-to-work-types-btn').style.display = 'none';
-  }
-
-  function renderProjectList() {
-    const list = document.getElementById('projects-list');
-    if (!list) return;
-    const term = (document.getElementById('project-search')?.value || '').toLowerCase().trim();
-    const filtered = allProjects.filter(p => {
-      const typeMatch = normalizeWorkType(p.workType || p.type || p.category) === (selectedWorkType || 'Other');
-      const hay = [p.name, p.jobNumber, p.location, p.status, p.notes].filter(Boolean).join(' ').toLowerCase();
-      return typeMatch && (!term || hay.includes(term));
-    });
-    if (!filtered.length) {
-      list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No ${selectedWorkType || ''} projects found</h3><p>${isOfficeRole() ? 'Tap New Project to add one, or choose another work type.' : 'You do not have any assigned projects in this work type yet.'}</p></div>`;
-      return;
-    }
-    list.innerHTML = '';
-    filtered.forEach(p => {
-      const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
-      const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
-      const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
-      const card = document.createElement('div');
-      card.className = 'project-card';
-      card.innerHTML = `
-        <div class="project-icon">🏗️</div>
-        <div class="project-info">
-          <h3>${esc(p.name)}</h3>
-          <div class="project-meta">
-            <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
-            <span>🧰 ${esc(normalizeWorkType(p.workType || p.type || p.category))}</span>
-            ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
-            ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
-            <span>📄 ${docCount}</span>
-            <span>📸 ${photoCount}</span>
-            <span>👷 ${foremanCount}</span>
-          </div>
-        </div>
-        <span class="chevron">›</span>`;
-      card.onclick = () => openProject(p.id, p);
-      list.appendChild(card);
     });
   }
 
@@ -1104,7 +1137,6 @@
         name,
         jobNumber: document.getElementById('np-job').value.trim(),
         location: document.getElementById('np-location').value.trim(),
-        workType: document.getElementById('np-work-type').value || 'Other',
         status: document.getElementById('np-status').value,
         notes: document.getElementById('np-notes').value.trim(),
         createdBy: currentUser.uid,
@@ -1142,14 +1174,11 @@
       ${data.jobNumber ? `<span>📋 ${esc(data.jobNumber)}</span>` : ''}
       ${data.location ? `<span>📍 ${esc(data.location)}</span>` : ''}
       <span>Status: ${capitalize(data.status || 'active')}</span>
-      <span>Type: ${esc(normalizeWorkType(data.workType || data.type || data.category))}</span>
     `;
     document.getElementById('detail-info-name').textContent = data.name || '—';
     document.getElementById('detail-info-job').textContent = data.jobNumber || '—';
     document.getElementById('detail-info-location').textContent = data.location || '—';
     document.getElementById('detail-info-status').textContent = capitalize(data.status || 'active');
-    const detailWorkType = document.getElementById('detail-info-worktype');
-    if (detailWorkType) detailWorkType.textContent = normalizeWorkType(data.workType || data.type || data.category);
     document.getElementById('detail-info-created-by').textContent = data.createdByName || '—';
     document.getElementById('detail-project-notes').textContent = data.notes || 'No notes added for this project yet.';
     showView('view-detail');
@@ -1164,7 +1193,9 @@
       loadProjectDocs(id);
       loadProjectPhotos(id);
       loadProjectReports(id);
+      loadExtraTickets(id);
       loadProjectForemen(currentProjectDoc);
+      if (isOfficeRole()) await loadEmployees();
     });
   }
 
@@ -1186,6 +1217,7 @@
     loadProjectDocs(projectId);
     loadProjectPhotos(projectId);
     loadProjectReports(projectId);
+    loadExtraTickets(projectId);
     loadProjectForemen(currentProjectDoc);
     if (isOfficeRole()) await loadEmployees();
   }
@@ -1199,6 +1231,9 @@
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
+    const ticketCount = Number(data?.ticketCount || 0);
+    const ticketEl = document.getElementById('summary-tickets');
+    if (ticketEl) ticketEl.textContent = ticketCount;
   }
 
   function openDailyReportForm() {
@@ -1390,6 +1425,312 @@
     }
   }
 
+
+  // ── EXTRA WORK TICKETS ──
+  let currentTicketForPrint = null;
+
+  function money(n) {
+    const val = Number(n || 0);
+    return val.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  }
+
+  function numberVal(id) {
+    const el = document.getElementById(id);
+    return Number(el?.value || 0) || 0;
+  }
+
+  function buildTicketRows() {
+    const laborBody = document.getElementById('ticket-labor-rows');
+    const materialBody = document.getElementById('ticket-material-rows');
+    if (!laborBody || laborBody.children.length) return;
+    laborBody.innerHTML = '';
+    for (let i = 0; i < 6; i++) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="number" step="0.01" class="ticket-labor-reg" oninput="calculateTicketTotals()"></td>
+        <td><input type="number" step="0.01" class="ticket-labor-prem" oninput="calculateTicketTotals()"></td>
+        <td><input type="number" step="0.01" class="ticket-labor-double" oninput="calculateTicketTotals()"></td>
+        <td><input type="text" class="ticket-labor-desc" placeholder="Foreman / labor description"></td>
+        <td><input type="number" step="0.01" class="ticket-labor-rate" oninput="calculateTicketTotals()"></td>
+        <td><input type="text" class="ticket-labor-ext" readonly></td>`;
+      laborBody.appendChild(tr);
+    }
+    materialBody.innerHTML = '';
+    for (let i = 0; i < 9; i++) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="number" step="0.01" class="ticket-mat-qty" oninput="calculateTicketTotals()"></td>
+        <td><input type="text" class="ticket-mat-size"></td>
+        <td><input type="text" class="ticket-mat-desc" placeholder="Material / equipment"></td>
+        <td><input type="number" step="0.01" class="ticket-mat-cost" oninput="calculateTicketTotals()"></td>
+        <td><input type="text" class="ticket-mat-ext" readonly></td>`;
+      materialBody.appendChild(tr);
+    }
+  }
+
+  function initTicketSignaturePad(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || canvas.dataset.ready === 'yes') return;
+    canvas.dataset.ready = 'yes';
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+      canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#111827';
+    }
+    setTimeout(resize, 60);
+    window.addEventListener('resize', resize);
+    function pos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const t = e.touches ? e.touches[0] : e;
+      return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+    }
+    function start(e) { e.preventDefault(); drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
+    function move(e) { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
+    function end(e) { if (!drawing) return; e.preventDefault(); drawing = false; }
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('mouseleave', end);
+    canvas.addEventListener('touchstart', start, { passive:false });
+    canvas.addEventListener('touchmove', move, { passive:false });
+    canvas.addEventListener('touchend', end, { passive:false });
+  }
+
+  function clearTicketSignature(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+
+  function openExtraTicketModal() {
+    if (!currentProject) { toast('Open a project first'); return; }
+    buildTicketRows();
+    const today = new Date().toISOString().slice(0,10);
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
+    set('ticket-date', today);
+    set('ticket-auth-date', today);
+    set('ticket-accepted-date', today);
+    set('ticket-job-name', currentProject.name || '');
+    set('ticket-job-no', currentProject.jobNumber || '');
+    set('ticket-location', currentProject.location || '');
+    set('ticket-no', '');
+    document.getElementById('ticket-preview-no').textContent = 'NEW';
+    ['ticket-contractor-name','ticket-contractor-address','ticket-contractor-city','ticket-contractor-zip','ticket-cc-job-no','ticket-floor-no','ticket-room-no','ticket-description','ticket-auth-name','ticket-accepted-print','ticket-accepted-company','ticket-bond-percent','ticket-tax-percent','ticket-trucking-hours','ticket-trucking-rate'].forEach(id => set(id,''));
+    document.querySelectorAll('#ticket-labor-rows input, #ticket-material-rows input').forEach(i => i.value = '');
+    clearTicketSignature('ticket-contractor-signature');
+    clearTicketSignature('ticket-accepted-signature');
+    calculateTicketTotals();
+    document.getElementById('modal-extra-ticket').classList.add('open');
+    setTimeout(() => {
+      initTicketSignaturePad('ticket-contractor-signature');
+      initTicketSignaturePad('ticket-accepted-signature');
+    }, 80);
+  }
+
+  function getLaborRowsFromForm() {
+    return Array.from(document.querySelectorAll('#ticket-labor-rows tr')).map(tr => {
+      const reg = Number(tr.querySelector('.ticket-labor-reg')?.value || 0) || 0;
+      const prem = Number(tr.querySelector('.ticket-labor-prem')?.value || 0) || 0;
+      const dbl = Number(tr.querySelector('.ticket-labor-double')?.value || 0) || 0;
+      const unitCost = Number(tr.querySelector('.ticket-labor-rate')?.value || 0) || 0;
+      const extension = (reg + prem + dbl) * unitCost;
+      return { regularHours: reg, premiumHours: prem, doubleHours: dbl, description: tr.querySelector('.ticket-labor-desc')?.value || '', unitCost, extension };
+    }).filter(r => r.regularHours || r.premiumHours || r.doubleHours || r.description || r.unitCost);
+  }
+
+  function getMaterialRowsFromForm() {
+    return Array.from(document.querySelectorAll('#ticket-material-rows tr')).map(tr => {
+      const quantity = Number(tr.querySelector('.ticket-mat-qty')?.value || 0) || 0;
+      const unitCost = Number(tr.querySelector('.ticket-mat-cost')?.value || 0) || 0;
+      const extension = quantity * unitCost;
+      return { quantity, size: tr.querySelector('.ticket-mat-size')?.value || '', description: tr.querySelector('.ticket-mat-desc')?.value || '', unitCost, extension };
+    }).filter(r => r.quantity || r.size || r.description || r.unitCost);
+  }
+
+  function calculateTicketTotals() {
+    const laborRows = getLaborRowsFromForm();
+    const materialRows = getMaterialRowsFromForm();
+    let totalLabor = 0;
+    document.querySelectorAll('#ticket-labor-rows tr').forEach(tr => {
+      const reg = Number(tr.querySelector('.ticket-labor-reg')?.value || 0) || 0;
+      const prem = Number(tr.querySelector('.ticket-labor-prem')?.value || 0) || 0;
+      const dbl = Number(tr.querySelector('.ticket-labor-double')?.value || 0) || 0;
+      const rate = Number(tr.querySelector('.ticket-labor-rate')?.value || 0) || 0;
+      const ext = (reg + prem + dbl) * rate;
+      totalLabor += ext;
+      const out = tr.querySelector('.ticket-labor-ext');
+      if (out) out.value = ext ? money(ext) : '';
+    });
+    let totalMaterials = 0;
+    document.querySelectorAll('#ticket-material-rows tr').forEach(tr => {
+      const qty = Number(tr.querySelector('.ticket-mat-qty')?.value || 0) || 0;
+      const cost = Number(tr.querySelector('.ticket-mat-cost')?.value || 0) || 0;
+      const ext = qty * cost;
+      totalMaterials += ext;
+      const out = tr.querySelector('.ticket-mat-ext');
+      if (out) out.value = ext ? money(ext) : '';
+    });
+    const subtotal = totalLabor + totalMaterials;
+    const bondAmount = subtotal * (numberVal('ticket-bond-percent') / 100);
+    const taxAmount = subtotal * (numberVal('ticket-tax-percent') / 100);
+    const truckingAmount = numberVal('ticket-trucking-hours') * numberVal('ticket-trucking-rate');
+    const grandTotal = subtotal + bondAmount + taxAmount + truckingAmount;
+    const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = money(value); };
+    setText('ticket-total-labor', totalLabor);
+    setText('ticket-total-materials', totalMaterials);
+    setText('ticket-bond-total', bondAmount);
+    setText('ticket-tax-total', taxAmount);
+    setText('ticket-trucking-total', truckingAmount);
+    setText('ticket-grand-total', grandTotal);
+    return { laborRows, materialRows, totalLabor, totalMaterials, bondAmount, taxAmount, truckingAmount, grandTotal };
+  }
+
+  async function saveExtraTicket() {
+    if (!currentProject) return;
+    const btn = document.getElementById('save-ticket-btn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const totals = calculateTicketTotals();
+      const val = id => document.getElementById(id)?.value || '';
+      const contractorSig = document.getElementById('ticket-contractor-signature')?.toDataURL('image/png') || '';
+      const acceptedSig = document.getElementById('ticket-accepted-signature')?.toDataURL('image/png') || '';
+      const payload = {
+        ticketNo: val('ticket-no'), date: val('ticket-date'),
+        contractorName: val('ticket-contractor-name'), contractorAddress: val('ticket-contractor-address'), contractorCity: val('ticket-contractor-city'), contractorZip: val('ticket-contractor-zip'),
+        jobName: val('ticket-job-name'), jobNo: val('ticket-job-no'), ccJobNo: val('ticket-cc-job-no'), location: val('ticket-location'), floorNo: val('ticket-floor-no'), roomNo: val('ticket-room-no'),
+        description: val('ticket-description'), authorizedContractorName: val('ticket-auth-name'), authorizedDate: val('ticket-auth-date'),
+        laborRows: totals.laborRows, materialRows: totals.materialRows,
+        bondPercent: numberVal('ticket-bond-percent'), taxPercent: numberVal('ticket-tax-percent'), truckingHours: numberVal('ticket-trucking-hours'), truckingRate: numberVal('ticket-trucking-rate'),
+        totalLabor: totals.totalLabor, totalMaterials: totals.totalMaterials, bondAmount: totals.bondAmount, taxAmount: totals.taxAmount, truckingAmount: totals.truckingAmount, grandTotal: totals.grandTotal,
+        contractorSignatureData: contractorSig, acceptedSignatureData: acceptedSig,
+        acceptedPrint: val('ticket-accepted-print'), acceptedCompany: val('ticket-accepted-company'), acceptedDate: val('ticket-accepted-date'),
+        projectId: currentProject.id, projectName: currentProject.name || '',
+        createdBy: currentUser.uid, createdByName: currentUser.displayName || currentUser.email, createdAt: serverTimestamp(), createdAtLocal: new Date().toISOString()
+      };
+      await addDoc(collection(db, 'projects', currentProject.id, 'extraTickets'), payload);
+      closeModal('modal-extra-ticket');
+      await loadExtraTickets(currentProject.id);
+      toast('Extra work ticket saved');
+    } catch(e) {
+      console.error(e);
+      toast('Could not save ticket');
+    }
+    btn.disabled = false; btn.textContent = 'Save Ticket';
+  }
+
+  async function loadExtraTickets(projectId) {
+    const list = document.getElementById('tickets-list');
+    if (!list) return;
+    try {
+      const q = query(collection(db, 'projects', projectId, 'extraTickets'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      const rows = [];
+      snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
+      const ticketEl = document.getElementById('summary-tickets');
+      if (ticketEl) ticketEl.textContent = rows.length;
+      if (currentProject) {
+        updateDoc(doc(db, 'projects', projectId), { ticketCount: rows.length }).catch(() => {});
+      }
+      if (!rows.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No extra work tickets yet.</p>'; return; }
+      list.dataset.ticketMap = JSON.stringify(rows);
+      list.innerHTML = '';
+      rows.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'report-card';
+        div.innerHTML = `
+          <div class="report-card-header">
+            <div>
+              <h4>${esc(t.ticketNo || 'Extra Work Ticket')} · ${money(t.grandTotal || 0)}</h4>
+              <div class="report-meta">
+                ${t.date ? `<span>📅 ${esc(t.date)}</span>` : ''}
+                ${t.jobNo ? `<span>📋 ${esc(t.jobNo)}</span>` : ''}
+                ${t.location ? `<span>📍 ${esc(t.location)}</span>` : ''}
+                ${t.createdByName ? `<span>👤 ${esc(t.createdByName)}</span>` : ''}
+              </div>
+            </div>
+            <span class="pill blue">Extra Work</span>
+          </div>
+          <div class="report-snippet">${esc((t.description || 'No description entered').slice(0,220))}${(t.description || '').length > 220 ? '…' : ''}</div>
+          <div class="report-actions">
+            <button class="btn-sm" onclick="openTicketDetail('${t.id}')">Open Ticket</button>
+            <button class="btn-sm" onclick="openTicketDetail('${t.id}', true)">Print / PDF</button>
+          </div>`;
+        list.appendChild(div);
+      });
+    } catch(e) {
+      console.error(e);
+      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load extra work tickets.</p>';
+    }
+  }
+
+  function renderTicketHtml(t) {
+    const laborRows = (t.laborRows || []).map(r => `<tr><td>${esc(r.regularHours || '')}</td><td>${esc(r.premiumHours || '')}</td><td>${esc(r.doubleHours || '')}</td><td>${esc(r.description || '')}</td><td>${money(r.unitCost || 0)}</td><td>${money(r.extension || 0)}</td></tr>`).join('') || '<tr><td colspan="6">No labor entered</td></tr>';
+    const matRows = (t.materialRows || []).map(r => `<tr><td>${esc(r.quantity || '')}</td><td>${esc(r.size || '')}</td><td>${esc(r.description || '')}</td><td>${money(r.unitCost || 0)}</td><td>${money(r.extension || 0)}</td></tr>`).join('') || '<tr><td colspan="5">No materials entered</td></tr>';
+    return `
+      <div class="ticket-top">
+        <div class="ticket-logo"><span style="background:#1b3a5c;color:#78c240;border-radius:8px;padding:8px 10px;font-size:18px;">PAL</span><span>Environmental Services</span></div>
+        <div style="flex:1;text-align:center;"><div class="ticket-title">Daily Extra Work Order</div></div>
+        <div><div class="ticket-no">${esc(t.ticketNo || '')}</div><div style="font-size:12px;color:#6b7280;">11-02 Queens Plaza South<br>Long Island City, NY 11101</div></div>
+      </div>
+      <div class="report-grid">
+        <div class="report-field"><span class="k">Date</span><div class="v">${esc(t.date)}</div></div>
+        <div class="report-field"><span class="k">Job Name</span><div class="v">${esc(t.jobName || t.projectName)}</div></div>
+        <div class="report-field"><span class="k">Our Job No.</span><div class="v">${esc(t.jobNo)}</div></div>
+        <div class="report-field"><span class="k">Location</span><div class="v">${esc(t.location)}</div></div>
+        <div class="report-field"><span class="k">Floor / Room</span><div class="v">${esc([t.floorNo, t.roomNo].filter(Boolean).join(' / '))}</div></div>
+        <div class="report-field"><span class="k">Contractor</span><div class="v">${esc(t.contractorName)}</div></div>
+      </div>
+      <div class="report-field" style="margin-top:12px;"><span class="k">Authorization / Description of Work</span><div class="v">${esc(t.description)}</div></div>
+      <div class="ticket-section-title">Labor</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Reg</th><th>Prem</th><th>Double</th><th>Description</th><th>Unit Cost</th><th>Extension</th></tr></thead><tbody>${laborRows}</tbody></table></div>
+      <div class="ticket-section-title">Equipment Rental / Material Used</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Size</th><th>Description</th><th>Unit Cost</th><th>Extension</th></tr></thead><tbody>${matRows}</tbody></table></div>
+      <div class="ticket-total-box"><div>
+        <div class="ticket-section-title">Signatures</div>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">Contractor Signature</span>${t.contractorSignatureData ? `<img src="${t.contractorSignatureData}" style="max-width:100%;height:70px;object-fit:contain;">` : '<div class="v">Not signed</div>'}</div>
+          <div class="report-field"><span class="k">Accepted Signature</span>${t.acceptedSignatureData ? `<img src="${t.acceptedSignatureData}" style="max-width:100%;height:70px;object-fit:contain;">` : '<div class="v">Not signed</div>'}</div>
+          <div class="report-field"><span class="k">Accepted By</span><div class="v">${esc(t.acceptedPrint)}<br>${esc(t.acceptedCompany)}<br>${esc(t.acceptedDate)}</div></div>
+          <div class="report-field"><span class="k">Authorized Name / Date</span><div class="v">${esc(t.authorizedContractorName)}<br>${esc(t.authorizedDate)}</div></div>
+        </div>
+      </div><div class="ticket-totals">
+        <div class="ticket-total-row"><span>Total Labor</span><strong>${money(t.totalLabor)}</strong></div>
+        <div class="ticket-total-row"><span>Total Materials</span><strong>${money(t.totalMaterials)}</strong></div>
+        <div class="ticket-total-row"><span>Bond</span><strong>${money(t.bondAmount)}</strong></div>
+        <div class="ticket-total-row"><span>Sales Tax</span><strong>${money(t.taxAmount)}</strong></div>
+        <div class="ticket-total-row"><span>Trucking</span><strong>${money(t.truckingAmount)}</strong></div>
+        <div class="ticket-total-row"><span>Grand Total</span><strong>${money(t.grandTotal)}</strong></div>
+      </div></div>`;
+  }
+
+  function openTicketDetail(ticketId, printNow = false) {
+    const list = document.getElementById('tickets-list');
+    const rows = JSON.parse(list?.dataset.ticketMap || '[]');
+    const ticket = rows.find(r => r.id === ticketId);
+    if (!ticket) return;
+    currentTicketForPrint = ticket;
+    document.getElementById('ticket-detail-content').innerHTML = renderTicketHtml(ticket);
+    document.getElementById('modal-ticket-detail').classList.add('open');
+    if (printNow) setTimeout(printCurrentTicket, 250);
+  }
+
+  function printCurrentTicket() {
+    if (!currentTicketForPrint) return;
+    const html = renderTicketHtml(currentTicketForPrint);
+    const w = window.open('', '_blank');
+    if (!w) { toast('Popup blocked. Open ticket first, then print.'); return; }
+    w.document.write(`<!doctype html><html><head><title>Extra Work Ticket</title><style>
+      body{font-family:Arial,sans-serif;padding:24px;color:#111827}.ticket-top{display:flex;justify-content:space-between;gap:12px;border-bottom:2px solid #d6dde7;padding-bottom:10px;margin-bottom:12px}.ticket-logo{display:flex;align-items:center;gap:10px;font-weight:900;color:#1b3a5c;font-size:24px}.ticket-title{text-align:center;font-weight:900;color:#1b3a5c;text-transform:uppercase}.ticket-no{color:#b91c1c;font-weight:900;font-size:18px;text-align:right}.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.report-field{border:1px solid #d6dde7;border-radius:10px;padding:10px;margin-bottom:8px}.k{display:block;font-size:11px;font-weight:900;color:#6b7280;text-transform:uppercase;margin-bottom:5px}.v{white-space:pre-line}.ticket-section-title{margin:14px 0 8px;font-size:12px;font-weight:900;color:#1b3a5c;text-transform:uppercase}.ticket-table{width:100%;border-collapse:collapse}.ticket-table th{background:#eff4f8;color:#1b3a5c;font-size:11px;text-transform:uppercase;padding:7px;border:1px solid #d6dde7}.ticket-table td{border:1px solid #d6dde7;padding:6px;font-size:12px}.ticket-total-box{display:grid;grid-template-columns:1fr .42fr;gap:14px;margin-top:12px}.ticket-totals{background:#f8fafc;border:1px solid #d6dde7;border-radius:14px;padding:12px}.ticket-total-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #e5eaf0}.ticket-total-row:last-child{border-bottom:none;font-size:18px;font-weight:900;color:#1b3a5c}@media print{body{padding:0}.no-print{display:none}}
+    </style></head><body>${html}<script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+    w.document.close();
+  }
+
   // ── FOREMEN ──
   function loadProjectForemen(data) {
     const list = document.getElementById('foremen-list');
@@ -1432,78 +1773,49 @@
 
   // ── EMPLOYEES / CERTIFICATIONS ──
   async function loadEmployees(force = false) {
-    const list = document.getElementById('employees-list-main');
+    if (!isOfficeRole() && !force) return;
+    const list = document.getElementById('employees-list');
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
     try {
       const snap = await getDocs(query(collection(db, 'employees'), orderBy('name', 'asc')));
       allEmployees = [];
       snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
-      renderEmployees();
-      if (currentProject) loadProjectWorkers();
+      if (!allEmployees.length) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No employee records yet.</p>';
+        return;
+      }
+      list.innerHTML = '';
+      allEmployees.forEach(emp => {
+        const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
+        const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+        const card = document.createElement('div');
+        card.className = 'employee-card';
+        card.innerHTML = `
+          <div class="employee-card-header">
+            <div>
+              <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
+              <div class="employee-meta">
+                ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
+                ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
+                ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+              </div>
+            </div>
+            <span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>
+          </div>
+          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
+          <div class="cert-list">${certs.length ? certs.slice(0,6).map(cert => `<span class="cert-item">${esc(cert.title || cert.type)}${cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : ''}</span>`).join('') : '<span class="cert-item">No certifications uploaded yet</span>'}</div>
+          <div class="employee-actions" style="margin-top:12px;">
+            <button class="btn-sm" type="button" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>
+            <button class="btn-sm" type="button" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+            <button class="btn-sm danger" type="button" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
+          </div>`;
+        list.appendChild(card);
+      });
     } catch (e) {
       console.error(e);
       list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load employee records.</p>';
     }
-  }
-
-  function employeeCertCounts(emp) {
-    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-    const counts = { total: certs.length, expired: 0, expiring: 0, valid: 0, noexp: 0 };
-    certs.forEach(cert => {
-      const key = getCertificationStatusKey(cert.expirationDate);
-      if (key === 'expired') counts.expired++;
-      else if (key === 'expiring') counts.expiring++;
-      else if (key === 'valid') counts.valid++;
-      else counts.noexp++;
-    });
-    return counts;
-  }
-
-  function renderEmployees() {
-    const list = document.getElementById('employees-list-main');
-    if (!list) return;
-    const term = (document.getElementById('employee-search')?.value || '').toLowerCase().trim();
-    const filter = document.getElementById('employee-status-filter')?.value || 'all';
-    let rows = allEmployees.filter(emp => {
-      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-      const assignedNames = (emp.assignedProjectIds || []).map(id => allProjects.find(p => p.id === id)?.name || '').join(' ');
-      const hay = [emp.name, emp.trade, emp.email, emp.phone, emp.notes, assignedNames, ...certs.map(c => `${c.title || ''} ${c.type || ''} ${c.fileName || ''}`)].join(' ').toLowerCase();
-      const counts = employeeCertCounts(emp);
-      const statusMatch = filter === 'all' ||
-        (filter === 'missing' && counts.total === 0) ||
-        (filter === 'expired' && counts.expired > 0) ||
-        (filter === 'expiring' && counts.expiring > 0) ||
-        (filter === 'valid' && counts.valid > 0 && counts.expired === 0);
-      return (!term || hay.includes(term)) && statusMatch;
-    });
-    if (!rows.length) {
-      list.innerHTML = '<div class="empty-state"><div class="icon">🪪</div><h3>No matching employee records</h3><p>Try a different search or add a new employee.</p></div>';
-      return;
-    }
-    list.innerHTML = rows.map(emp => {
-      const counts = employeeCertCounts(emp);
-      const warnings = [];
-      if (counts.expired) warnings.push(`<span class="pill expired">${counts.expired} expired</span>`);
-      if (counts.expiring) warnings.push(`<span class="pill expiring">${counts.expiring} expiring</span>`);
-      if (!counts.expired && !counts.expiring && counts.total) warnings.push(`<span class="pill valid">Certs OK</span>`);
-      if (!counts.total) warnings.push(`<span class="pill no-exp">No certs</span>`);
-      const assignedCount = Array.isArray(emp.assignedProjectIds) ? emp.assignedProjectIds.length : 0;
-      return `
-        <div class="employee-simple-card" onclick="openEmployeeDetail('${emp.id}')">
-          <div>
-            <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
-            <div class="employee-meta">
-              ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-              ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-              ${assignedCount ? `<span>🏗️ ${assignedCount} jobsite${assignedCount === 1 ? '' : 's'}</span>` : ''}
-            </div>
-            <div class="status-row">${warnings.join('')}</div>
-          </div>
-          <span class="chevron">›</span>
-        </div>`;
-    }).join('');
-    applyRoleUI();
   }
 
   function openEmployeeModal() {
@@ -1523,7 +1835,7 @@
         trade: document.getElementById('emp-trade').value.trim(),
         notes: document.getElementById('emp-notes').value.trim(),
         certifications: [],
-        assignedProjectIds: [],
+        assignedProjectIds: currentProject ? [currentProject.id] : [],
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
@@ -1537,91 +1849,6 @@
       console.error(e);
     }
     btn.disabled = false; btn.textContent = 'Create Employee';
-  }
-
-  function openEmployeeDetail(employeeId) {
-    currentEmployeeId = employeeId;
-    const emp = allEmployees.find(e => e.id === employeeId);
-    if (!emp) return;
-    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-    const assignedIds = Array.isArray(emp.assignedProjectIds) ? emp.assignedProjectIds : [];
-    document.getElementById('employee-detail-title').textContent = emp.name || 'Employee File';
-    const availableProjects = allProjects.filter(p => !assignedIds.includes(p.id));
-    const assignedProjects = assignedIds.map(id => allProjects.find(p => p.id === id)).filter(Boolean);
-    const body = document.getElementById('employee-detail-body');
-    body.innerHTML = `
-      <div class="employee-detail-block">
-        <div class="employee-meta" style="margin-bottom:8px;">
-          ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-          ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-          ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-        </div>
-        <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
-      </div>
-
-      <div class="employee-detail-block">
-        <div class="action-row" style="margin-bottom:8px;">
-          <div><strong style="color:var(--navy);">Certifications</strong><div class="helper-text">Status is based on expiration date.</div></div>
-          <button class="btn-save" type="button" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
-        </div>
-        ${certs.length ? certs.map(cert => {
-          const key = getCertStatusKey(cert.expirationDate);
-          return `<div class="file-item" style="margin-bottom:8px;">
-            <div class="file-icon">🪪</div>
-            <div class="file-info">
-              <h4>${esc(cert.title || cert.type)}</h4>
-              <p>${cert.issueDate ? `Issued ${esc(cert.issueDate)}` : 'Issue date not set'}${cert.expirationDate ? ` · Expires ${esc(cert.expirationDate)}` : ' · No expiration date'}</p>
-              <div class="status-row"><span class="pill ${key}">${getCertificationStatusLabel(cert.expirationDate)}</span></div>
-            </div>
-            <div class="file-actions"><a href="${cert.url}" target="_blank" class="btn-sm">Open</a></div>
-          </div>`;
-        }).join('') : '<p class="helper-text">No certifications uploaded yet.</p>'}
-      </div>
-
-      <div class="employee-detail-block">
-        <strong style="color:var(--navy);">Linked Jobsites</strong>
-        <div class="helper-text" style="margin:4px 0 12px;">Assign this employee to one or more active projects.</div>
-        ${assignedProjects.length ? assignedProjects.map(p => `<div class="file-item" style="margin-bottom:8px;"><div class="file-icon">🏗️</div><div class="file-info"><h4>${esc(p.name)}</h4><p>${esc(normalizeWorkType(p.workType || p.type || p.category))}${p.jobNumber ? ` · ${esc(p.jobNumber)}` : ''}</p></div><button class="btn-sm danger" onclick="removeEmployeeFromProject('${emp.id}','${p.id}')">Remove</button></div>`).join('') : '<p class="helper-text">This employee is not assigned to any project yet.</p>'}
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-          <select id="assign-project-select" class="inline-select" style="flex:1;min-width:220px;">
-            <option value="">Choose project to link…</option>
-            ${availableProjects.map(p => `<option value="${p.id}">${esc(p.name)} — ${esc(normalizeWorkType(p.workType || p.type || p.category))}</option>`).join('')}
-          </select>
-          <button class="btn-save" onclick="assignEmployeeToProject('${emp.id}')">Link to Jobsite</button>
-        </div>
-      </div>
-
-      <div class="employee-actions" style="margin-top:12px;">
-        <button class="btn-sm danger admin-only" type="button" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
-      </div>`;
-    document.getElementById('modal-employee-detail').classList.add('open');
-    applyRoleUI();
-  }
-
-  async function assignEmployeeToProject(employeeId) {
-    const projectId = document.getElementById('assign-project-select')?.value;
-    if (!projectId) { toast('Choose a project first'); return; }
-    try {
-      await updateDoc(doc(db, 'employees', employeeId), { assignedProjectIds: arrayUnion(projectId) });
-      await loadEmployees(true);
-      openEmployeeDetail(employeeId);
-      toast('Employee linked to jobsite');
-    } catch(e) {
-      console.error(e);
-      toast('Could not link employee');
-    }
-  }
-
-  async function removeEmployeeFromProject(employeeId, projectId) {
-    try {
-      await updateDoc(doc(db, 'employees', employeeId), { assignedProjectIds: arrayRemove(projectId) });
-      await loadEmployees(true);
-      openEmployeeDetail(employeeId);
-      toast('Employee removed from jobsite');
-    } catch(e) {
-      console.error(e);
-      toast('Could not remove employee from jobsite');
-    }
   }
 
   async function toggleEmployeeAssignment(employeeId, assign) {
@@ -1639,61 +1866,34 @@
     }
   }
 
-  async function loadProjectWorkers() {
-    const list = document.getElementById('project-workers-list');
-    if (!list || !currentProject) return;
-    if (!allEmployees.length) {
-      try { await loadEmployees(true); } catch(e) {}
-    }
-    const rows = allEmployees.filter(emp => Array.isArray(emp.assignedProjectIds) && emp.assignedProjectIds.includes(currentProject.id));
-    if (!rows.length) {
-      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No workers assigned to this job yet. Assign workers from the Employee Certs tab.</p>';
-      return;
-    }
-    list.innerHTML = rows.map(emp => {
-      const counts = employeeCertCounts(emp);
-      const pills = [];
-      if (counts.expired) pills.push(`<span class="pill expired">${counts.expired} expired</span>`);
-      if (counts.expiring) pills.push(`<span class="pill expiring">${counts.expiring} expiring</span>`);
-      if (!counts.expired && !counts.expiring && counts.total) pills.push(`<span class="pill valid">Certs OK</span>`);
-      if (!counts.total) pills.push(`<span class="pill no-exp">No certs</span>`);
-      return `<div class="employee-simple-card" onclick="openEmployeeDetail('${emp.id}')"><div><h4>${esc(emp.name || 'Unnamed Employee')}</h4><div class="employee-meta">${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}</div><div class="status-row">${pills.join('')}</div></div><span class="chevron">›</span></div>`;
-    }).join('');
+  function handleCertFileChange(input) {
+    const fileNameEl = document.getElementById('cert-file-name');
+    const file = input?.files?.[0];
+    fileNameEl.textContent = file ? `Selected: ${file.name}` : 'No file selected yet.';
   }
 
-  function triggerCertFilePicker() {
-    const input = document.getElementById('cert-file');
-    if (input) input.click();
-  }
-
-  function updateCertFileName() {
-    const input = document.getElementById('cert-file');
-    const label = document.getElementById('cert-file-name');
-    if (!label) return;
-    label.textContent = input?.files?.[0]?.name || 'No file selected';
+  function resetCertificationModal() {
+    currentEmployeeId = null;
+    document.getElementById('cert-type').value = 'OSHA 30';
+    ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('cert-file').value = '';
+    document.getElementById('cert-file-name').textContent = 'No file selected yet.';
+    document.getElementById('cert-employee-label').textContent = '';
   }
 
   function openCertificationModal(employeeId) {
-    currentEmployeeId = employeeId;
     const emp = allEmployees.find(e => e.id === employeeId);
+    currentEmployeeId = employeeId;
+    resetCertificationModal();
+    currentEmployeeId = employeeId;
     document.getElementById('cert-employee-label').textContent = emp ? `Employee: ${emp.name}` : '';
-    document.getElementById('cert-custom-title').value = '';
-    document.getElementById('cert-issue-date').value = '';
-    document.getElementById('cert-exp-date').value = '';
-    document.getElementById('cert-type').value = 'OSHA 30';
-    const fileInput = document.getElementById('cert-file');
-    if (fileInput) fileInput.value = '';
-    updateCertFileName();
     const modal = document.getElementById('modal-certification');
-    if (modal) {
-      modal.style.zIndex = '3000';
-      modal.classList.add('open');
-    }
+    modal.classList.add('open');
+    modal.style.zIndex = '4000';
   }
 
   async function saveCertification() {
-    if (!currentEmployeeId) return;
-    const savingEmployeeId = currentEmployeeId;
+    if (!currentEmployeeId) { toast('Choose an employee first'); return; }
     const btn = document.getElementById('save-cert-btn');
     const file = document.getElementById('cert-file').files[0];
     if (!file) { toast('Select a certification file first'); return; }
@@ -1701,32 +1901,35 @@
     const title = document.getElementById('cert-custom-title').value.trim() || baseType;
     btn.disabled = true; btn.textContent = 'Uploading…';
     try {
-      const path = `employees/${savingEmployeeId}/certifications/${Date.now()}_${file.name}`;
+      const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${safeFileName}`;
       const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
+      await uploadBytes(storageRef, file, { contentType: file.type || 'application/octet-stream' });
       const url = await getDownloadURL(storageRef);
-      await updateDoc(doc(db, 'employees', savingEmployeeId), {
+      await updateDoc(doc(db, 'employees', currentEmployeeId), {
         certifications: arrayUnion({
           type: baseType,
           title,
           issueDate: document.getElementById('cert-issue-date').value || '',
           expirationDate: document.getElementById('cert-exp-date').value || '',
           fileName: file.name,
+          storagePath: path,
           url,
           uploadedAt: new Date().toISOString(),
           uploadedBy: currentUser.displayName || currentUser.email
         })
       });
-      ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('cert-file').value = '';
-      document.getElementById('cert-type').value = 'OSHA 30';
-      updateCertFileName();
       closeModal('modal-certification');
+      resetCertificationModal();
       await loadEmployees(true);
-      openEmployeeDetail(savingEmployeeId);
       toast('Certification uploaded');
     } catch (e) {
-      toast('Could not upload certification');
+      const msg = String(e?.message || e || '');
+      if (/storage|network|permission/i.test(msg)) {
+        toast('Upload failed. Check iPhone signal / Wi-Fi and try again.');
+      } else {
+        toast('Could not upload certification');
+      }
       console.error(e);
     }
     btn.disabled = false; btn.textContent = 'Upload';
@@ -1739,15 +1942,14 @@
     try {
       await deleteDoc(doc(db, 'employees', employeeId));
       if (currentEmployeeId === employeeId) {
-        currentEmployeeId = null;
         closeModal('modal-certification');
-        closeModal('modal-employee-detail');
+        resetCertificationModal();
       }
       await loadEmployees(true);
       toast('Employee removed');
     } catch (e) {
-      console.error(e);
       toast('Could not remove employee');
+      console.error(e);
     }
   }
 
@@ -1783,30 +1985,6 @@
     document.getElementById('modal-report-detail').classList.add('open');
   }
 
-  function getCertificationStatusKey(expirationDate) {
-    if (!expirationDate) return 'no-exp';
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const exp = new Date(expirationDate + 'T00:00:00');
-    if (Number.isNaN(exp.getTime())) return 'no-exp';
-    const diffDays = Math.ceil((exp - today) / 86400000);
-    if (diffDays < 0) return 'expired';
-    if (diffDays <= 30) return 'expiring';
-    return 'valid';
-  }
-
-  function getCertificationStatusLabel(expirationDate) {
-    const key = getCertificationStatusKey(expirationDate);
-    if (key === 'expired') return 'Expired';
-    if (key === 'expiring') return 'Expiring Soon';
-    if (key === 'valid') return 'Valid';
-    return 'No Expiration';
-  }
-
-  function getCertificationStatusClass(expirationDate) {
-    return getCertificationStatusKey(expirationDate);
-  }
-
   // ── UI HELPERS ──
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1817,45 +1995,24 @@
   function showLogin() { showView('view-login'); }
 
   function openNewProjectModal() {
-    const workType = document.getElementById('np-work-type');
-    if (workType) workType.value = selectedWorkType || 'Fireproofing';
     document.getElementById('modal-new-project').classList.add('open');
   }
 
   function closeModal(id) {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('open');
-    if (id === 'modal-certification') {
-      currentEmployeeId = null;
-      const fileInput = document.getElementById('cert-file');
-      if (fileInput) fileInput.value = '';
-      updateCertFileName();
-    }
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.style.zIndex = '';
   }
 
   function clearModal() {
     ['np-name','np-job','np-location','np-notes'].forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('np-status').value = 'active';
-    const workType = document.getElementById('np-work-type');
-    if (workType) workType.value = selectedWorkType || 'Fireproofing';
-  }
-
-  function switchMainTab(tabId, btn = null) {
-    const panes = document.querySelectorAll('#view-projects > .page-wrap > .tab-pane');
-    panes.forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-    const pane = document.getElementById(tabId);
-    if (pane) pane.classList.add('active');
-    const activeBtn = btn || document.querySelector(`#main-dashboard-tabs .tab[onclick*="${tabId}"]`);
-    if (activeBtn) activeBtn.classList.add('active');
-    if (tabId === 'main-employees') loadEmployees(true);
-    if (tabId === 'main-projects') showWorkTypeChoices();
   }
 
   function switchTab(tabId, btn) {
-    const detailView = document.getElementById('view-detail');
-    detailView.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    detailView.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (btn) btn.classList.add('active');
@@ -1910,7 +2067,7 @@
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification','modal-extra-ticket','modal-ticket-detail'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
