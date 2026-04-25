@@ -588,10 +588,12 @@
     <div class="project-header-card" id="detail-header">
       <h2 id="detail-project-name">Project Name</h2>
       <div class="meta" id="detail-project-meta"></div>
-      <div class="detail-actions">
-        <button class="btn-outline" onclick="openDailyReportForm()">📝 Create Daily Report</button>
-        <button class="btn-outline" onclick="copyProjectLink()">🔗 Copy Project Link</button>
-      </div>
+<div class="detail-actions">
+  <button class="btn-outline" onclick="openDailyReportForm()">Create Daily Report</button>
+  <button class="btn-outline" onclick="openProjectTicketsTab()">Extra Tickets</button>
+  <button class="btn-outline" onclick="openExtraTicketModal()">+ New Ticket</button>
+  <button class="btn-outline" onclick="copyProjectLink()">Copy Project Link</button>
+</div>
     </div>
 
     <div class="project-summary-grid">
@@ -599,7 +601,7 @@
       <div class="summary-card"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Organized by category</div></div>
       <div class="summary-card"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
       <div class="summary-card"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
-      <div class="summary-card"><div class="label">Extra Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Extra work orders</div></div>
+      <div class="summary-card" onclick="openProjectTicketsTab()" style="cursor:pointer;"><div class="label">Extra Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Tap to view / create tickets</div></div>
     </div>
 
     <div class="detail-grid">
@@ -625,12 +627,26 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" onclick="switchTab('tab-tickets', this); loadExtraTickets(currentProject?.id);">💵 Extra Tickets</button>
+      <button class="tab" id="extra-tickets-tab-btn" onclick="switchTab('tab-tickets', this); loadExtraTickets(currentProject?.id);">Extra Tickets</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
       <button class="tab" onclick="switchTab('tab-workers', this); loadProjectWorkers();">🪪 Workers & Certs</button>
     </div>
 
-    <!-- DOCUMENTS TAB -->
+<div class="detail-card" style="margin-bottom:16px;border-left:6px solid var(--green);">
+  <div class="action-row" style="margin-bottom:0;">
+    <div>
+      <h3 style="color:var(--navy);font-size:16px;margin-bottom:4px;">Extra Work Tickets</h3>
+      <p class="helper-text">Create typed extra work orders, capture digital signatures, auto-total labor/materials, and save tickets to this project.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-outline" onclick="openProjectTicketsTab()">View Tickets</button>
+      <button class="btn-save" onclick="openExtraTicketModal()">+ New Extra Work Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENTS TAB -->
+
     <div class="tab-pane active" id="tab-docs">
       <div class="action-row">
         <div>
@@ -1026,6 +1042,7 @@
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
+  window.openProjectTicketsTab = openProjectTicketsTab;
   window.renderEmployees = renderEmployees;
   window.openEmployeeDetail = openEmployeeDetail;
   window.assignEmployeeToProject = assignEmployeeToProject;
@@ -1599,7 +1616,17 @@
     }
   }
 
-  function initTicketSignaturePad(canvasId) {
+function openProjectTicketsTab() {
+  if (!currentProject) { toast('Open a project first'); return; }
+  const btn = document.getElementById('extra-tickets-tab-btn') || document.querySelector('button[onclick*="tab-tickets"]');
+  switchTab('tab-tickets', btn);
+  loadExtraTickets(currentProject.id);
+  const pane = document.getElementById('tab-tickets');
+  if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function initTicketSignaturePad(canvasId) {
+
     const canvas = document.getElementById(canvasId);
     if (!canvas || canvas.dataset.ready === 'yes') return;
     canvas.dataset.ready = 'yes';
