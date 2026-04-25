@@ -408,7 +408,6 @@
       .ticket-no { text-align:left; }
     }
 
-
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
       .project-header-card h2 { font-size: 20px; }
@@ -588,20 +587,19 @@
     <div class="project-header-card" id="detail-header">
       <h2 id="detail-project-name">Project Name</h2>
       <div class="meta" id="detail-project-meta"></div>
-<div class="detail-actions">
-  <button class="btn-outline" onclick="openDailyReportForm()">Create Daily Report</button>
-  <button class="btn-outline" onclick="openProjectTicketsTab()">Extra Tickets</button>
-  <button class="btn-outline" onclick="openExtraTicketModal()">+ New Ticket</button>
-  <button class="btn-outline" onclick="copyProjectLink()">Copy Project Link</button>
-</div>
+      <div class="detail-actions">
+        <button class="btn-outline" onclick="openDailyReportForm()">📝 Create Daily Report</button>
+        <button class="btn-outline" onclick="openExtraTicketModal()">💵 New Extra Ticket</button>
+        <button class="btn-outline" onclick="copyProjectLink()">🔗 Copy Project Link</button>
+      </div>
     </div>
 
     <div class="project-summary-grid">
       <div class="summary-card"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
       <div class="summary-card"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Organized by category</div></div>
       <div class="summary-card"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
+      <div class="summary-card" onclick="openProjectTicketsTab()" style="cursor:pointer;"><div class="label">Extra Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Tap to view tickets</div></div>
       <div class="summary-card"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
-      <div class="summary-card" onclick="openProjectTicketsTab()" style="cursor:pointer;"><div class="label">Extra Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Tap to view / create tickets</div></div>
     </div>
 
     <div class="detail-grid">
@@ -627,26 +625,11 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" id="extra-tickets-tab-btn" onclick="switchTab('tab-tickets', this); loadExtraTickets(currentProject?.id);">Extra Tickets</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
       <button class="tab" onclick="switchTab('tab-workers', this); loadProjectWorkers();">🪪 Workers & Certs</button>
     </div>
 
-<div class="detail-card" style="margin-bottom:16px;border-left:6px solid var(--green);">
-  <div class="action-row" style="margin-bottom:0;">
-    <div>
-      <h3 style="color:var(--navy);font-size:16px;margin-bottom:4px;">Extra Work Tickets</h3>
-      <p class="helper-text">Create typed extra work orders, capture digital signatures, auto-total labor/materials, and save tickets to this project.</p>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn-outline" onclick="openProjectTicketsTab()">View Tickets</button>
-      <button class="btn-save" onclick="openExtraTicketModal()">+ New Extra Work Ticket</button>
-    </div>
-  </div>
-</div>
-
-<!-- DOCUMENTS TAB -->
-
+    <!-- DOCUMENTS TAB -->
     <div class="tab-pane active" id="tab-docs">
       <div class="action-row">
         <div>
@@ -696,19 +679,6 @@
       </div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
     </div>
-
-    <!-- EXTRA WORK TICKETS TAB -->
-    <div class="tab-pane" id="tab-tickets">
-      <div class="action-row">
-        <div>
-          <div class="section-label">Extra Work Tickets</div>
-          <div class="helper-text">Track daily extra work orders for this project. Tickets can be typed, calculated, signed, opened, and printed.</div>
-        </div>
-        <button class="btn-save" onclick="openExtraTicketModal()">＋ New Extra Work Ticket</button>
-      </div>
-      <div id="tickets-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets yet.</p></div>
-    </div>
-
 
     <!-- FOREMEN TAB -->
     <div class="tab-pane" id="tab-foremen">
@@ -1016,6 +986,7 @@
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
+  let currentTicketForPrint = null;
 
   // ── Expose functions to global scope ──
   window.doLogin = doLogin;
@@ -1042,6 +1013,13 @@
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
+  window.openExtraTicketModal = openExtraTicketModal;
+  window.saveExtraTicket = saveExtraTicket;
+  window.calculateTicketTotals = calculateTicketTotals;
+  window.clearTicketSignature = clearTicketSignature;
+  window.loadExtraTickets = loadExtraTickets;
+  window.openTicketDetail = openTicketDetail;
+  window.printCurrentTicket = printCurrentTicket;
   window.openProjectTicketsTab = openProjectTicketsTab;
   window.renderEmployees = renderEmployees;
   window.openEmployeeDetail = openEmployeeDetail;
@@ -1049,12 +1027,6 @@
   window.removeEmployeeFromProject = removeEmployeeFromProject;
   window.selectWorkType = selectWorkType;
   window.showWorkTypeChoices = showWorkTypeChoices;
-  window.openExtraTicketModal = openExtraTicketModal;
-  window.saveExtraTicket = saveExtraTicket;
-  window.calculateTicketTotals = calculateTicketTotals;
-  window.clearTicketSignature = clearTicketSignature;
-  window.openTicketDetail = openTicketDetail;
-  window.printCurrentTicket = printCurrentTicket;
   window.renderProjectList = renderProjectList;
   window.loadProjectWorkers = loadProjectWorkers;
   window.triggerCertFilePicker = triggerCertFilePicker;
@@ -1069,7 +1041,7 @@
       showView('view-projects');
       currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
       applyRoleUI();
-      resetMainDashboard();
+      switchMainTab('main-projects');
       loadProjects();
       try {
         const profile = await loadUserProfile(user);
@@ -1078,7 +1050,7 @@
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
-      resetMainDashboard();
+      switchMainTab('main-projects');
       loadProjects();
     } else {
       currentUser = null;
@@ -1345,7 +1317,6 @@
       loadProjectDocs(id);
       loadProjectPhotos(id);
       loadProjectReports(id);
-      loadExtraTickets(id);
       loadProjectForemen(currentProjectDoc);
     });
   }
@@ -1368,7 +1339,6 @@
     loadProjectDocs(projectId);
     loadProjectPhotos(projectId);
     loadProjectReports(projectId);
-    loadExtraTickets(projectId);
     loadProjectForemen(currentProjectDoc);
     if (isOfficeRole()) await loadEmployees();
   }
@@ -1382,8 +1352,9 @@
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
-    const ticketEl = document.getElementById('summary-tickets');
-    if (ticketEl) ticketEl.textContent = Number(data?.ticketCount || 0);
+    const ticketCount = Number(data?.ticketCount || 0);
+    const ticketSummary = document.getElementById('summary-tickets');
+    if (ticketSummary) ticketSummary.textContent = ticketCount;
   }
 
   function openDailyReportForm() {
@@ -1575,7 +1546,11 @@
     }
   }
 
-  let currentTicketForPrint = null;
+  function openProjectTicketsTab() {
+    const btn = document.getElementById('extra-tickets-tab-btn');
+    switchTab('tab-tickets', btn || document.querySelector('#view-detail .tab'));
+    if (currentProject?.id) loadExtraTickets(currentProject.id);
+  }
 
   function money(n) {
     const val = Number(n || 0);
@@ -1616,17 +1591,7 @@
     }
   }
 
-function openProjectTicketsTab() {
-  if (!currentProject) { toast('Open a project first'); return; }
-  const btn = document.getElementById('extra-tickets-tab-btn') || document.querySelector('button[onclick*="tab-tickets"]');
-  switchTab('tab-tickets', btn);
-  loadExtraTickets(currentProject.id);
-  const pane = document.getElementById('tab-tickets');
-  if (pane) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function initTicketSignaturePad(canvasId) {
-
+  function initTicketSignaturePad(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas || canvas.dataset.ready === 'yes') return;
     canvas.dataset.ready = 'yes';
@@ -1888,8 +1853,6 @@ function initTicketSignaturePad(canvasId) {
     </style></head><body>${html}<script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
     w.document.close();
   }
-
-
 
   // ── FOREMEN ──
   function loadProjectForemen(data) {
@@ -2341,22 +2304,6 @@ function initTicketSignaturePad(canvasId) {
     if (workType) workType.value = selectedWorkType || 'Fireproofing';
   }
 
-  function resetMainDashboard() {
-    selectedWorkType = null;
-    document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-    const workTypeList = document.getElementById('work-type-list');
-    const projectsList = document.getElementById('projects-list');
-    const projectSearchRow = document.getElementById('project-search-row');
-    const backBtn = document.getElementById('back-to-work-types-btn');
-    const title = document.getElementById('projects-main-title');
-    if (title) title.textContent = 'Choose Work Type';
-    if (workTypeList) workTypeList.style.display = 'grid';
-    if (projectsList) { projectsList.style.display = 'none'; projectsList.innerHTML = ''; }
-    if (projectSearchRow) projectSearchRow.style.display = 'none';
-    if (backBtn) backBtn.style.display = 'none';
-  }
-
   function switchMainTab(tabId, btn = null) {
     const panes = document.querySelectorAll('#view-projects > .page-wrap > .tab-pane');
     panes.forEach(p => p.classList.remove('active'));
@@ -2427,7 +2374,7 @@ function initTicketSignaturePad(canvasId) {
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-new-employee','modal-employee-detail','modal-certification','modal-extra-ticket','modal-ticket-detail'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
