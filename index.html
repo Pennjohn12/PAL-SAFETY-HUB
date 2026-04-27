@@ -387,33 +387,6 @@
     .pal-modal-cancel { background: #eef2f7; color: var(--navy); }
 
     
-/* One-page harness checklist tightening */
-#harness-checklist .form-shell {
-  padding: 12px !important;
-}
-#harness-checklist h2 {
-  font-size: 18px !important;
-  margin-bottom: 6px !important;
-}
-#harness-checklist .grid,
-#harness-checklist .grid-2 {
-  gap: 6px !important;
-}
-#harness-checklist label,
-#harness-checklist p {
-  font-size: 12px !important;
-  margin: 2px 0 !important;
-}
-#harness-checklist input,
-#harness-checklist textarea {
-  padding: 4px !important;
-  font-size: 12px !important;
-}
-#harness-checklist .card {
-  padding: 8px !important;
-  margin-bottom: 6px !important;
-}
-
 /* Force single page in print */
 
 
@@ -434,7 +407,6 @@
 }
 
 
-/* FINAL harness one-page print fix */
 @media print {
   #harness-checklist {
     width: 100% !important;
@@ -3266,7 +3238,7 @@ input, textarea, select { color: #000 !important; -webkit-text-fill-color: #000 
 }
 
 @media print {
-  .print-helper-bar { display: none !important; }
+  .print-helper-bar { display: none !important; height:0 !important; padding:0 !important; margin:0 !important; border:0 !important; }
 }
 </style>
 </head>
