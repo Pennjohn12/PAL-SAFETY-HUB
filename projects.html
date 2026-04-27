@@ -752,7 +752,7 @@
 <!-- NEW EMPLOYEE MODAL -->
 <div class="modal-overlay" id="modal-new-employee">
   <div class="modal">
-    <h3>👷 New Employee File</h3>
+    <h3 id="employee-modal-title">👷 New Employee File</h3>
     <div class="field"><label>Employee Name</label><input type="text" id="emp-name" placeholder="Employee full name" /></div>
     <div class="field"><label>Email (optional)</label><input type="email" id="emp-email" placeholder="employee@email.com" /></div>
     <div class="field"><label>Phone (optional)</label><input type="text" id="emp-phone" placeholder="(555) 555-5555" /></div>
@@ -781,7 +781,7 @@
 <!-- CERTIFICATION MODAL -->
 <div class="modal-overlay" id="modal-certification">
   <div class="modal">
-    <h3>🪪 Upload Certification</h3>
+    <h3 id="cert-modal-title">🪪 Upload Certification</h3>
     <div class="mini-note" id="cert-employee-label" style="margin-bottom:14px;"></div>
     <div class="field">
       <label>Certification Type</label>
@@ -822,7 +822,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
@@ -845,6 +845,7 @@
   let currentProject = null;
   let currentProjectDoc = null;
   let currentEmployeeId = null;
+  let currentCertificationUploadedAt = null;
   let allEmployees = [];
   let allProjects = [];
   let allTickets = [];
@@ -872,12 +873,17 @@
   window.copyProjectLink = copyProjectLink;
   window.openReportDetail = openReportDetail;
   window.openEmployeeModal = openEmployeeModal;
+  window.editEmployee = editEmployee;
+  window.deleteEmployee = deleteEmployee;
+  window.updateEmployee = updateEmployee;
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
   window.searchEmployees = searchEmployees;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
+  window.editCertification = editCertification;
+  window.deleteCertification = deleteCertification;
   window.saveCertification = saveCertification;
   window.switchMainTab = switchMainTab;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
@@ -1486,6 +1492,8 @@
         <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
           ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
           <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
+          <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
+          <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Delete Employee</button>
           <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
         </div>`;
       list.appendChild(card);
@@ -1545,7 +1553,11 @@
         <p>${meta}</p>
         <div class="status-row" style="margin-bottom:8px;"><span class="pill ${key}">${getCertStatusText(cert.expirationDate)}</span></div>
         ${preview}
-        <a href="${cert.url}" target="_blank" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="${cert.url}" target="_blank" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
+          <button class="btn-sm" onclick="editCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Edit Cert</button>
+          <button class="btn-sm danger" onclick="deleteCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Delete Cert</button>
+        </div>
       </div>`;
     }).join('') : '<p class="helper-text">No certifications uploaded yet.</p>';
 
@@ -1568,8 +1580,91 @@
   }
 
 
+  function resetEmployeeForm() {
+    ['emp-name','emp-email','emp-phone','emp-trade','emp-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    currentEmployeeId = null;
+    const title = document.getElementById('employee-modal-title');
+    if (title) title.textContent = '👷 New Employee File';
+    const btn = document.getElementById('save-employee-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Create Employee';
+      btn.onclick = saveEmployee;
+    }
+  }
+
   function openEmployeeModal() {
+    resetEmployeeForm();
     document.getElementById('modal-new-employee').classList.add('open');
+  }
+
+  function editEmployee(employeeId) {
+    const emp = allEmployees.find(e => e.id === employeeId);
+    if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
+    currentEmployeeId = employeeId;
+    document.getElementById('emp-name').value = emp.name || '';
+    document.getElementById('emp-email').value = emp.email || '';
+    document.getElementById('emp-phone').value = emp.phone || '';
+    document.getElementById('emp-trade').value = emp.trade || '';
+    document.getElementById('emp-notes').value = emp.notes || '';
+    const title = document.getElementById('employee-modal-title');
+    if (title) title.textContent = '✏️ Edit Employee File';
+    const btn = document.getElementById('save-employee-btn');
+    btn.disabled = false;
+    btn.textContent = 'Update Employee';
+    btn.onclick = updateEmployee;
+    document.getElementById('modal-new-employee').classList.add('open');
+  }
+
+  async function updateEmployee() {
+    if (!currentEmployeeId) { toast('No employee selected'); return; }
+    const name = document.getElementById('emp-name').value.trim();
+    if (!name) { toast('Employee name is required'); return; }
+    const btn = document.getElementById('save-employee-btn');
+    btn.disabled = true; btn.textContent = 'Updating…';
+    try {
+      await updateDoc(doc(db, 'employees', currentEmployeeId), {
+        name,
+        email: document.getElementById('emp-email').value.trim(),
+        phone: document.getElementById('emp-phone').value.trim(),
+        trade: document.getElementById('emp-trade').value.trim(),
+        notes: document.getElementById('emp-notes').value.trim(),
+        updatedAt: new Date().toISOString(),
+        updatedBy: currentUser.displayName || currentUser.email
+      });
+      const editedId = currentEmployeeId;
+      closeModal('modal-new-employee');
+      resetEmployeeForm();
+      await loadEmployees(true);
+      if (document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(editedId);
+      toast('Employee updated');
+    } catch (e) {
+      console.error(e);
+      toast('Could not update employee');
+      btn.disabled = false; btn.textContent = 'Update Employee';
+    }
+  }
+
+  async function deleteEmployee(employeeId) {
+    const emp = allEmployees.find(e => e.id === employeeId);
+    if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
+    const ok = confirm(`Delete ${emp.name || 'this employee'} and all saved certifications?`);
+    if (!ok) return;
+    try {
+      await deleteDoc(doc(db, 'employees', employeeId));
+      if (currentEmployeeId === employeeId) {
+        currentEmployeeId = null;
+        closeModal('modal-employee-detail');
+      }
+      await loadEmployees(true);
+      toast('Employee deleted');
+    } catch (e) {
+      console.error(e);
+      toast('Could not delete employee');
+    }
   }
 
   async function saveEmployee() {
@@ -1590,15 +1685,15 @@
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
       });
-      ['emp-name','emp-email','emp-phone','emp-trade','emp-notes'].forEach(id => document.getElementById(id).value = '');
       closeModal('modal-new-employee');
+      resetEmployeeForm();
       await loadEmployees(true);
       toast('Employee record created');
     } catch (e) {
       toast('Could not create employee');
       console.error(e);
+      btn.disabled = false; btn.textContent = 'Create Employee';
     }
-    btn.disabled = false; btn.textContent = 'Create Employee';
   }
 
   async function toggleEmployeeAssignment(employeeId, assign) {
@@ -1616,11 +1711,128 @@
     }
   }
 
+  function resetCertificationForm() {
+    currentCertificationUploadedAt = null;
+    ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const file = document.getElementById('cert-file');
+    if (file) file.value = '';
+    const type = document.getElementById('cert-type');
+    if (type) type.value = 'OSHA 30';
+    const title = document.getElementById('cert-modal-title');
+    if (title) title.textContent = '🪪 Upload Certification';
+    const btn = document.getElementById('save-cert-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Upload';
+      btn.onclick = saveCertification;
+    }
+  }
+
   function openCertificationModal(employeeId) {
     currentEmployeeId = employeeId;
+    resetCertificationForm();
     const emp = allEmployees.find(e => e.id === employeeId);
     document.getElementById('cert-employee-label').textContent = emp ? `Employee: ${emp.name}` : '';
     document.getElementById('modal-certification').classList.add('open');
+  }
+
+  function editCertification(employeeId, uploadedAt) {
+    currentEmployeeId = employeeId;
+    currentCertificationUploadedAt = uploadedAt;
+    const emp = allEmployees.find(e => e.id === employeeId);
+    const cert = (emp?.certifications || []).find(c => String(c.uploadedAt || '') === String(uploadedAt || ''));
+    if (!emp || !cert) { toast('Certification not found. Tap refresh and try again.'); return; }
+    document.getElementById('cert-type').value = cert.type || 'Other';
+    document.getElementById('cert-custom-title').value = cert.title || '';
+    document.getElementById('cert-issue-date').value = cert.issueDate || '';
+    document.getElementById('cert-exp-date').value = cert.expirationDate || '';
+    document.getElementById('cert-file').value = '';
+    document.getElementById('cert-employee-label').textContent = `Employee: ${emp.name} · Editing: ${cert.title || cert.type || 'Certification'} (choose a new file only if replacing it)`;
+    const title = document.getElementById('cert-modal-title');
+    if (title) title.textContent = '✏️ Edit Certification';
+    const btn = document.getElementById('save-cert-btn');
+    btn.disabled = false;
+    btn.textContent = 'Update Cert';
+    btn.onclick = updateCertification;
+    document.getElementById('modal-certification').classList.add('open');
+  }
+
+  async function updateCertification() {
+    if (!currentEmployeeId || !currentCertificationUploadedAt) { toast('No certification selected'); return; }
+    const emp = allEmployees.find(e => e.id === currentEmployeeId);
+    if (!emp) { toast('Employee not found. Tap refresh and try again.'); return; }
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const idx = certs.findIndex(c => String(c.uploadedAt || '') === String(currentCertificationUploadedAt || ''));
+    if (idx < 0) { toast('Certification not found. Tap refresh and try again.'); return; }
+
+    const btn = document.getElementById('save-cert-btn');
+    const file = document.getElementById('cert-file').files[0];
+    const baseType = document.getElementById('cert-type').value;
+    const title = document.getElementById('cert-custom-title').value.trim() || baseType;
+    btn.disabled = true; btn.textContent = 'Updating…';
+
+    try {
+      let updatedCert = {
+        ...certs[idx],
+        type: baseType,
+        title,
+        issueDate: document.getElementById('cert-issue-date').value || '',
+        expirationDate: document.getElementById('cert-exp-date').value || '',
+        updatedAt: new Date().toISOString(),
+        updatedBy: currentUser.displayName || currentUser.email
+      };
+
+      if (file) {
+        const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${file.name}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        updatedCert = {
+          ...updatedCert,
+          fileName: file.name,
+          mimeType: file.type || '',
+          url,
+          replacedAt: new Date().toISOString()
+        };
+      }
+
+      const updatedCerts = certs.map((c, i) => i === idx ? updatedCert : c);
+      await updateDoc(doc(db, 'employees', currentEmployeeId), { certifications: updatedCerts });
+
+      const employeeIdToOpen = currentEmployeeId;
+      closeModal('modal-certification');
+      resetCertificationForm();
+      await loadEmployees(true);
+      if (document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(employeeIdToOpen);
+      toast('Certification updated');
+    } catch (e) {
+      toast('Could not update certification');
+      console.error(e);
+      btn.disabled = false; btn.textContent = 'Update Cert';
+    }
+  }
+
+  async function deleteCertification(employeeId, uploadedAt) {
+    const emp = allEmployees.find(e => e.id === employeeId);
+    if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const cert = certs.find(c => String(c.uploadedAt || '') === String(uploadedAt || ''));
+    if (!cert) { toast('Certification not found. Tap refresh and try again.'); return; }
+    const ok = confirm(`Delete ${cert.title || cert.type || 'this certification'} from ${emp.name || 'this employee'}?`);
+    if (!ok) return;
+    try {
+      const updatedCerts = certs.filter(c => String(c.uploadedAt || '') !== String(uploadedAt || ''));
+      await updateDoc(doc(db, 'employees', employeeId), { certifications: updatedCerts });
+      await loadEmployees(true);
+      if (document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(employeeId);
+      toast('Certification deleted');
+    } catch (e) {
+      console.error(e);
+      toast('Could not delete certification');
+    }
   }
 
   async function saveCertification() {
@@ -1649,18 +1861,17 @@
           uploadedBy: currentUser.displayName || currentUser.email
         })
       });
-      ['cert-custom-title','cert-issue-date','cert-exp-date'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('cert-file').value = '';
-      document.getElementById('cert-type').value = 'OSHA 30';
+      const employeeIdToOpen = currentEmployeeId;
       closeModal('modal-certification');
+      resetCertificationForm();
       await loadEmployees(true);
-      if (currentEmployeeId && document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(currentEmployeeId);
+      if (document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(employeeIdToOpen);
       toast('Certification uploaded');
     } catch (e) {
       toast('Could not upload certification');
       console.error(e);
+      btn.disabled = false; btn.textContent = 'Upload';
     }
-    btn.disabled = false; btn.textContent = 'Upload';
   }
 
   function openReportDetail(reportId) {
