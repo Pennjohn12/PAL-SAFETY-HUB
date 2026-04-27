@@ -2948,41 +2948,161 @@
     }
     window.toastPalMessage = toastPalMessage;
 
+    function getCleanDocumentTitle() {
+      const active = document.querySelector('.page.active');
+      const title =
+        active?.querySelector('.form-head h2')?.textContent ||
+        active?.querySelector('h2')?.textContent ||
+        'PAL Safety Document';
+
+      return title
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'PAL-Safety-Document';
+    }
+
+    function copyLiveValuesIntoClone(originalPage, clonedPage) {
+      const originalFields = originalPage.querySelectorAll('input, textarea, select');
+      const clonedFields = clonedPage.querySelectorAll('input, textarea, select');
+
+      originalFields.forEach((field, index) => {
+        const clone = clonedFields[index];
+        if (!clone) return;
+
+        if (field.tagName === 'TEXTAREA') {
+          clone.textContent = field.value || '';
+        } else if (field.tagName === 'SELECT') {
+          Array.from(clone.options).forEach(opt => {
+            opt.removeAttribute('selected');
+            if (opt.value === field.value) opt.setAttribute('selected', 'selected');
+          });
+        } else if (field.type === 'checkbox' || field.type === 'radio') {
+          if (field.checked) clone.setAttribute('checked', 'checked');
+          else clone.removeAttribute('checked');
+        } else {
+          clone.setAttribute('value', field.value || '');
+        }
+      });
+
+      const originalCanvases = originalPage.querySelectorAll('canvas');
+      const clonedCanvases = clonedPage.querySelectorAll('canvas');
+
+      originalCanvases.forEach((canvas, index) => {
+        const cloneCanvas = clonedCanvases[index];
+        if (!cloneCanvas) return;
+
+        try {
+          const img = document.createElement('img');
+          img.src = canvas.toDataURL('image/png');
+          img.style.width = '100%';
+          img.style.height = '52px';
+          img.style.objectFit = 'contain';
+          img.style.borderBottom = '2px solid #a9b8c8';
+          cloneCanvas.replaceWith(img);
+        } catch (e) {
+          // If canvas cannot be exported, leave the blank signature line.
+        }
+      });
+    }
+
+    function getPrintableHTML() {
+      const active = document.querySelector('.page.active');
+      if (!active) return '';
+
+      const clonedPage = active.cloneNode(true);
+      copyLiveValuesIntoClone(active, clonedPage);
+
+      clonedPage.classList.add('active');
+      clonedPage.style.display = 'block';
+
+      // Remove app-only controls from the printed/exported copy.
+      clonedPage.querySelectorAll('.sticky-actions, .toolbar, .btn, button, #install-banner').forEach(el => el.remove());
+
+      const styles = Array.from(document.querySelectorAll('style')).map(s => s.innerHTML).join('\n');
+
+      return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${getCleanDocumentTitle()}</title>
+<base href="${location.origin}${location.pathname.replace(/[^\/]*$/, '')}">
+<style>
+${styles}
+@page { size: letter; margin: 0.5in; }
+html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: #1f2937; }
+.page-wrap { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+.page { display: block !important; }
+.header, .tabs, .sticky-actions, .toolbar, #install-banner, .lang-switch { display: none !important; }
+.form-shell { border: none !important; box-shadow: none !important; }
+.card, .policy-card { box-shadow: none !important; }
+input, textarea, select { color: #000 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; }
+</style>
+</head>
+<body>
+<main class="page-wrap">
+${clonedPage.outerHTML}
+</main>
+</body>
+</html>`;
+    }
+
+    function openCleanPrintWindow(messageType = 'document') {
+      const oldTitle = document.title;
+      document.title = getCleanDocumentTitle();
+
+      const printableHTML = getPrintableHTML();
+      const printWindow = window.open('', '_blank');
+
+      if (!printWindow) {
+        // Popup blocked fallback: print current page with clean title.
+        window.print();
+        setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
+        return;
+      }
+
+      printWindow.document.open();
+      printWindow.document.write(printableHTML);
+      printWindow.document.close();
+
+      printWindow.onload = function() {
+        printWindow.document.title = getCleanDocumentTitle();
+        setTimeout(() => {
+          printWindow.focus();
+          printWindow.print();
+          setTimeout(() => { printWindow.close(); }, 500);
+        }, 250);
+      };
+
+      setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
+    }
+
     function printPage() {
-      window.print();
+      openCleanPrintWindow('document');
     }
 
     async function exportCurrentPagePDF() {
-      const activePage = document.querySelector('.page.active');
-      if (!activePage) return;
-      const rawTitle = activePage.querySelector('.form-head h2, .form-head h2, h2')?.textContent || 'PAL-Form';
-      const title = rawTitle.trim().replace(/[^a-z0-9 ]+/gi, ' ').trim();
-      const originalTitle = document.title;
-      document.title = 'PAL — ' + title;
-      window.print();
-      setTimeout(() => { document.title = originalTitle; }, 2000);
+      openCleanPrintWindow('pdf');
     }
 
     async function shareCurrentPage() {
-      const activePage = document.querySelector('.page.active');
-      if (!activePage) return;
-      const title = activePage.querySelector('.form-head h2, h2')?.textContent || 'PAL Safety Hub Form';
-      const form = activePage.querySelector('form[data-save-key]');
-      const data = form ? formToJSON(form) : {};
-      const prettyData = Object.entries(data)
-        .filter(([,v]) => String(v).trim() !== '')
-        .map(([k,v]) => `${k.replace(/_/g, ' ')}: ${v}`)
-        .join('\n');
-      const shareBody = `${title}\n\nPAL Environmental Services\n\n${prettyData || ''}`;
-
-      // Try native share (works on iPhone, Android)
-      if (navigator.share) {
-        try {
-          await navigator.share({ title: `PAL — ${title}`, text: shareBody });
-          return;
-        } catch (err) {
-          if (err && err.name === 'AbortError') return;
+      const cleanTitle = getCleanDocumentTitle().replace(/-/g, ' ');
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: cleanTitle,
+            text: cleanTitle + ' - PAL Safety Hub'
+          });
+        } else {
+          openCleanPrintWindow('share');
         }
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+        openCleanPrintWindow('share');
+      }
+    }
+
       }
 
       // Fallback: open mail client
@@ -3069,31 +3189,6 @@
     }
 
     init();
-  
-  function getCleanDocumentTitle() {
-    const active = document.querySelector('.page.active');
-    const title = active?.querySelector('.form-head h2')?.textContent || active?.querySelector('h2')?.textContent || 'PAL Safety Document';
-    return title.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'PAL-Safety-Document';
-  }
-  function showCleanSavedMessage(type = 'document') {
-    const label = type === 'pdf' ? 'PDF saved to device' : type === 'share' ? 'Ready to share' : 'Saved to device';
-    if (typeof showToast === 'function') showToast(label);
-    else if (typeof toast === 'function') toast(label);
-    else console.log(label);
-  }
-  window.exportCurrentPagePDF = async function() {
-    const oldTitle = document.title;
-    document.title = getCleanDocumentTitle();
-    try { window.print(); showCleanSavedMessage('pdf'); }
-    finally { setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 800); }
-  };
-  window.shareCurrentPage = async function() {
-    const cleanTitle = getCleanDocumentTitle().replace(/-/g, ' ');
-    try {
-      if (navigator.share) { await navigator.share({ title: cleanTitle, text: cleanTitle + ' - PAL Safety Hub' }); showCleanSavedMessage('share'); }
-      else { window.exportCurrentPagePDF(); }
-    } catch (e) { if (!e || e.name !== 'AbortError') window.exportCurrentPagePDF(); }
-  };
 
 </script>
 
