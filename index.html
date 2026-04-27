@@ -354,6 +354,38 @@
       #cover .home-company-grid { grid-template-columns: 1fr; }
     }
 
+
+    /* PAL custom message modal — removes browser URL prefix on app messages */
+    .pal-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+    .pal-modal-overlay.show { display: flex; }
+    .pal-modal-box {
+      background: white;
+      color: var(--text);
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 70px rgba(0,0,0,.28);
+      width: min(420px, 100%);
+      padding: 22px;
+    }
+    .pal-modal-box h3 { margin: 0 0 8px; color: var(--navy); font-size: 18px; }
+    .pal-modal-box p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14px; white-space: pre-line; }
+    .pal-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .pal-modal-actions button {
+      border: 0; border-radius: 10px; padding: 10px 16px;
+      font-weight: 800; cursor: pointer; font: inherit;
+    }
+    .pal-modal-ok { background: var(--navy); color: white; }
+    .pal-modal-cancel { background: #eef2f7; color: var(--navy); }
+
     @media print {
       @page { size: letter; margin: 0.5in; }
 
@@ -472,6 +504,18 @@
   </style>
 </head>
 <body>
+
+  <div class="pal-modal-overlay" id="pal-modal-overlay" role="dialog" aria-modal="true">
+    <div class="pal-modal-box">
+      <h3 id="pal-modal-title">PAL Safety Hub</h3>
+      <p id="pal-modal-message"></p>
+      <div class="pal-modal-actions">
+        <button class="pal-modal-cancel" id="pal-modal-cancel" type="button">Cancel</button>
+        <button class="pal-modal-ok" id="pal-modal-ok" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Android install prompt banner -->
   <div id="install-banner" class="hidden" style="
     position:fixed; bottom:0; left:0; right:0; z-index:9999;
@@ -838,7 +882,7 @@
             </div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('daily-safety-meeting');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('daily-safety-meeting');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-safety-meeting');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('daily-safety-meeting');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('daily-safety-meeting');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-safety-meeting');printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -877,7 +921,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('toolbox-signin');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('toolbox-signin');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('toolbox-signin');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('toolbox-signin');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('toolbox-signin');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('toolbox-signin');printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -983,7 +1027,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('daily-report');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('daily-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-report');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('daily-report');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('daily-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-report');printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -1037,7 +1081,7 @@
           </div>
           <p style="margin-top:8px;"><button class="btn secondary" onclick="addTimesheetRow()">+ Add Worker</button></p>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('daily-timesheet');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('daily-timesheet');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-timesheet');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('daily-timesheet');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('daily-timesheet');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-timesheet');printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -1136,7 +1180,7 @@
           </div>
 
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('weekly-timesheet-fp');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('weekly-timesheet-fp');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('weekly-timesheet-fp');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('weekly-timesheet-fp');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('weekly-timesheet-fp');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('weekly-timesheet-fp');printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -1189,7 +1233,7 @@
             <div class="sig-pad-wrap" id="exp-sig-wrap"><canvas id="exp-sig-canvas"></canvas><button class="sig-clear" type="button" onclick="clearSigById('exp-sig-canvas')">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('expense-report');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('expense-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('expense-report');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('expense-report');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('expense-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('expense-report');printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -1365,7 +1409,7 @@
           </div>
           <p class="save-note">Report all incidents to Richardo Blake (347-844-0476) immediately. A copy of this report must be filed with EH&S within 24 hours of the incident.</p>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="saveForm('incident-report');exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="saveForm('incident-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('incident-report');printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('incident-report');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('incident-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('incident-report');printPage()">Open Save / Print</button></div>
       </div>
     </section>
     <!-- SCISSOR LIFT PRE-USE INSPECTION -->
@@ -1495,10 +1539,10 @@
 
         </div><!-- end form-body -->
         <div class="sticky-actions">
-          <button class="btn secondary" onclick="printPage()">Print</button>
-          <button class="btn pdf" onclick="saveForm('scissor-lift-inspection');exportCurrentPagePDF()">Save as PDF</button>
+          <button class="btn secondary" onclick="printPage()">Open Print View</button>
+          <button class="btn pdf" onclick="saveForm('scissor-lift-inspection');exportCurrentPagePDF()">Open Save / Print</button>
           <button class="btn share" onclick="saveForm('scissor-lift-inspection');shareCurrentPage()">Share File</button>
-          <button class="btn gold" onclick="saveForm('scissor-lift-inspection');printPage()">Print / Save</button>
+          <button class="btn gold" onclick="saveForm('scissor-lift-inspection');printPage()">Open Save / Print</button>
         </div>
       </div>
     </section>
@@ -1584,10 +1628,10 @@
 
         </div><!-- end form-body -->
         <div class="sticky-actions">
-          <button class="btn secondary" onclick="printPage()">Print</button>
-          <button class="btn pdf" onclick="saveForm('scaffold-checklist');exportCurrentPagePDF()">Save as PDF</button>
+          <button class="btn secondary" onclick="printPage()">Open Print View</button>
+          <button class="btn pdf" onclick="saveForm('scaffold-checklist');exportCurrentPagePDF()">Open Save / Print</button>
           <button class="btn share" onclick="saveForm('scaffold-checklist');shareCurrentPage()">Share File</button>
-          <button class="btn gold" onclick="saveForm('scaffold-checklist');printPage()">Print / Save</button>
+          <button class="btn gold" onclick="saveForm('scaffold-checklist');printPage()">Open Save / Print</button>
         </div>
       </div>
     </section>
@@ -1677,10 +1721,10 @@
 
         </div>
         <div class="sticky-actions">
-          <button class="btn secondary" onclick="printPage()">Print</button>
-          <button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">Save as PDF</button>
+          <button class="btn secondary" onclick="printPage()">Open Print View</button>
+          <button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">Open Save / Print</button>
           <button class="btn share" onclick="saveForm('harness-checklist');shareCurrentPage()">Share File</button>
-          <button class="btn gold" onclick="saveForm('harness-checklist');printPage()">Print / Save</button>
+          <button class="btn gold" onclick="saveForm('harness-checklist');printPage()">Open Save / Print</button>
         </div>
       </div>
     </section>
@@ -2191,7 +2235,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Save as PDF</button><button class="btn gold" onclick="printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -2234,7 +2278,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Save as PDF</button><button class="btn gold" onclick="printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -2280,7 +2324,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Save as PDF</button><button class="btn gold" onclick="printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>
     </section>
 
@@ -2359,12 +2403,55 @@
             </div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Save as PDF</button><button class="btn gold" onclick="printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>
     </section>
   </main>
 
   <script>
+
+    function palNotice(message, title = 'PAL Safety Hub') {
+      const overlay = document.getElementById('pal-modal-overlay');
+      const titleEl = document.getElementById('pal-modal-title');
+      const msgEl = document.getElementById('pal-modal-message');
+      const okBtn = document.getElementById('pal-modal-ok');
+      const cancelBtn = document.getElementById('pal-modal-cancel');
+
+      if (!overlay || !titleEl || !msgEl || !okBtn || !cancelBtn) {
+        if (typeof toastPalMessage === 'function') toastPalMessage(String(message || 'Saved to device'));
+        else console.log(message);
+        return Promise.resolve(true);
+      }
+
+      titleEl.textContent = title;
+      msgEl.textContent = String(message || '');
+      cancelBtn.style.display = 'none';
+      overlay.classList.add('show');
+
+      return new Promise(resolve => {
+        okBtn.onclick = () => {
+          overlay.classList.remove('show');
+          resolve(true);
+        };
+        overlay.onclick = (e) => {
+          if (e.target === overlay) {
+            overlay.classList.remove('show');
+            resolve(true);
+          }
+        };
+      });
+    }
+
+    function palSavedMessage(type = 'saved') {
+      const msg = type === 'share'
+        ? 'Open the print view, then use your device share/save options.'
+        : type === 'pdf'
+          ? 'Open the print view, then tap Print / Save PDF.'
+          : 'Open the print view, then tap Print / Save PDF or Return.';
+      if (typeof toastPalMessage === 'function') toastPalMessage(msg);
+      else palNotice(msg);
+    }
+
     let currentLang = localStorage.getItem('pal-language') || 'en';
 
     const navTabs = [
@@ -2905,7 +2992,7 @@
       const key = form.dataset.saveKey;
       const data = formToJSON(form);
       localStorage.setItem(`pal-${key}`, JSON.stringify(data));
-      alert('Saved on this device.');
+      palNotice('Saved on this device.');
     }
 
     function restoreForms() {
@@ -3035,15 +3122,64 @@ body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: #1f
 .form-shell { border: none !important; box-shadow: none !important; }
 .card, .policy-card { box-shadow: none !important; }
 input, textarea, select { color: #000 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; }
+
+.print-helper-bar {
+  display: flex !important;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 99999;
+  background: #ffffff;
+  border-bottom: 1px solid #dde3ea;
+  padding: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+.print-helper-bar button {
+  display: inline-flex !important;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.print-helper-bar .primary { background: #1b3a5c; color: white; }
+.print-helper-bar .secondary { background: #eef2f7; color: #1b3a5c; }
+.print-helper-note {
+  width: 100%;
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+@media print {
+  .print-helper-bar { display: none !important; }
+}
 </style>
 </head>
 <body>
+<div class="print-helper-bar">
+  <button class="primary" onclick="window.print()">Print / Save PDF</button>
+  <button class="secondary" onclick="returnToApp()">Return to PAL Safety Hub</button>
+  <div class="print-helper-note">After saving or sharing, tap Done/Back or Return to PAL Safety Hub.</div>
+</div>
 <main class="page-wrap">
 ${clonedPage.outerHTML}
 </main>
 <script>
 document.title = ${JSON.stringify("${cleanTitle}")};
-window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };
+function returnToApp() {
+  if (window.opener && !window.opener.closed) {
+    window.close();
+  } else {
+    history.back();
+  }
+}
 <\/script>
 </body>
 </html>`;
@@ -3055,7 +3191,9 @@ window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };
       document.title = cleanTitle;
 
       const printWindow = window.open('', '_blank');
+
       if (!printWindow) {
+        // Popup blocked fallback: print current page with clean title.
         window.print();
         setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
         return;
@@ -3065,15 +3203,19 @@ window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };
       printWindow.document.write(getCleanPrintableHTML());
       printWindow.document.close();
 
+      // Do not auto-print and do not auto-close on mobile.
+      // The clean print page now has its own Print / Save PDF and Return buttons.
       setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
     }
 
     function printPage() {
       openCleanPrintWindow();
+      palSavedMessage('saved');
     }
 
     async function exportCurrentPagePDF() {
       openCleanPrintWindow();
+      palSavedMessage('pdf');
     }
 
     async function shareCurrentPage() {
@@ -3140,7 +3282,7 @@ function syncJobNumber(value) {
               <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
             </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Print</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Save as PDF</button><button class="btn share" onclick="shareCurrentPage()">Share File</button><button class="btn gold" onclick="printPage()">Print / Save</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="shareCurrentPage()">Share File</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>`;
       container.querySelectorAll('canvas').forEach(initSigPad);
     }
