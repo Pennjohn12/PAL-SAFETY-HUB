@@ -173,6 +173,7 @@
       z-index: 2000; padding: 20px;
     }
     .modal-overlay.open { display: flex; }
+    #modal-certification.open { z-index: 3000; }
     .modal {
       background: white; border-radius: 20px; padding: 28px;
       width: 100%; max-width: 480px;
@@ -522,7 +523,11 @@
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
-      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Employee Certs to load employee records.</p></div>
+      <div class="field" style="max-width:460px;margin-bottom:16px;">
+        <label>Search Employees</label>
+        <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
+      </div>
+      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Employee Certs to load employee records.</p></div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -869,6 +874,7 @@
   window.openEmployeeModal = openEmployeeModal;
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
+  window.searchEmployees = searchEmployees;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
@@ -1397,53 +1403,93 @@
 
   // ── EMPLOYEES / CERTIFICATIONS ──
   async function loadEmployees(force = false) {
-    if (!isOfficeRole() && !force) return;
     const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
     try {
-      const snap = await getDocs(query(collection(db, 'employees'), orderBy('name', 'asc')));
+      // Read all employees and sort in the browser so every saved employee shows.
+      const snap = await getDocs(collection(db, 'employees'));
       allEmployees = [];
       snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
-      if (!allEmployees.length) {
-        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No employee records yet.</p>';
-        return;
-      }
-      list.innerHTML = '';
-      allEmployees.forEach(emp => {
-        const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
-        const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-        const card = document.createElement('div');
-        card.className = 'employee-card';
-        card.onclick = () => openEmployeeDetail(emp.id);
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.onkeydown = (e) => { if (e.key === 'Enter') openEmployeeDetail(emp.id); };
-        card.innerHTML = `
-          <div class="employee-card-header">
-            <div>
-              <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
-              <div class="employee-meta">
-                ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-                ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-                ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
-              </div>
-            </div>
-            <span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>
-          </div>
-          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'Tap to open employee file and view cert images.'}</div>
-          <div class="cert-list">${certs.length ? certs.slice(0,6).map(cert => `<span class="cert-item">${esc(cert.title || cert.type)}${cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : ''}</span>`).join('') : '<span class="cert-item">No certifications uploaded yet</span>'}</div>
-          <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
-            <button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>
-            <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
-            <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Certs</button>
-          </div>`;
-        list.appendChild(card);
-      });
+      allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+      renderEmployeesList();
     } catch (e) {
-      console.error(e);
-      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load employee records.</p>';
+      console.error('Employee load failed:', e);
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          <h3>Could not load employee records</h3>
+          <p>${esc(e?.message || 'Check Firebase permissions / connection, then tap Refresh.')}</p>
+        </div>`;
     }
+  }
+
+  function searchEmployees(value = '') {
+    renderEmployeesList(value);
+  }
+
+  function renderEmployeesList(filterText = '') {
+    const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
+    if (!list) return;
+    const q = String(filterText || document.getElementById('employee-search')?.value || '').trim().toLowerCase();
+    const employees = allEmployees.filter(emp => {
+      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const haystack = [
+        emp.name, emp.trade, emp.email, emp.phone, emp.notes,
+        ...certs.flatMap(c => [c.title, c.type, c.fileName, c.expirationDate])
+      ].filter(Boolean).join(' ').toLowerCase();
+      return !q || haystack.includes(q);
+    });
+
+    if (!employees.length) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">👷</div>
+          <h3>${q ? 'No matching employees' : 'No employee records yet'}</h3>
+          <p>${q ? 'Try another search.' : 'Tap Add Employee to create the first employee file.'}</p>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    employees.forEach(emp => {
+      const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
+      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const card = document.createElement('div');
+      card.className = 'employee-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.onclick = () => openEmployeeDetail(emp.id);
+      card.onkeydown = (e) => { if (e.key === 'Enter') openEmployeeDetail(emp.id); };
+      const certTags = certs.length
+        ? certs.slice(0, 8).map(cert => {
+            const status = getCertStatusKey(cert.expirationDate);
+            const label = esc(cert.title || cert.type || 'Cert');
+            const exp = cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : '';
+            return `<span class="cert-item pill ${status}">${label}${exp}</span>`;
+          }).join('')
+        : '<span class="cert-item">No certifications uploaded yet</span>';
+      card.innerHTML = `
+        <div class="employee-card-header">
+          <div>
+            <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
+            <div class="employee-meta">
+              ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
+              ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
+              ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+            </div>
+          </div>
+          ${currentProject ? `<span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>` : `<span class="pill neutral">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>`}
+        </div>
+        <div class="helper-text">${emp.notes ? esc(emp.notes) : 'Tap this employee to open the file, view cert images, or upload a cert.'}</div>
+        <div class="cert-list">${certTags}</div>
+        <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
+          ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
+          <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
+          <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+        </div>`;
+      list.appendChild(card);
+    });
   }
 
 
@@ -1808,13 +1854,15 @@
   }
 
   function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    // Scope this to project-detail tabs only. Do not hide the main signed-in tabs.
+    document.querySelectorAll('#view-detail .tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#view-detail .tabs .tab').forEach(t => t.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (btn) btn.classList.add('active');
     const su = document.getElementById('sticky-upload');
-    su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
+    if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
+    if (tabId === 'tab-employees') loadEmployees(true);
   }
 
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
