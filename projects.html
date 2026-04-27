@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#1b3a5c" />
   <title>PAL Projects</title>
+  <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <style>
     :root {
       --navy: #1b3a5c;
@@ -361,6 +362,7 @@
     .pill.neutral { background:#eef2f7; color:#475569; }
     .pill.blue { background:#e8f0fb; color:#1d4f91; }
     .pill.warn { background:#fff5e8; color:#c96d00; }
+    .pill.expired { background:#fff1f2; color:var(--red); }
     .inline-select {
       border:1.5px solid var(--line); border-radius:10px; padding:11px 14px; font:inherit; font-size:14px; outline:none; background:white;
       min-width:180px;
@@ -1498,6 +1500,16 @@
         </div>`;
       list.appendChild(card);
     });
+    mirrorEmployeeLists();
+  }
+
+  function mirrorEmployeeLists() {
+    const main = document.getElementById('employees-list-main');
+    const detail = document.getElementById('employees-list');
+    if (main && detail && main !== detail) {
+      // Keep the Project Detail Employees tab in sync with the main Employee Certs tab.
+      detail.innerHTML = main.innerHTML;
+    }
   }
 
 
@@ -1569,6 +1581,10 @@
           ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
         </div>
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
+        <div class="employee-actions" style="margin-top:12px;">
+          <button class="btn-sm" onclick="editEmployee('${employeeId}')">Detail Edit Employee</button>
+          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Delete Employee</button>
+        </div>
       </div>
       <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
         <div class="action-row" style="margin-bottom:8px;">
