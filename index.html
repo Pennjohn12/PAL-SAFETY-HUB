@@ -415,6 +415,33 @@
 }
 
 /* Force single page in print */
+
+/* EXTRA TIGHT harness for guaranteed one-page */
+#harness-checklist {
+  transform: scale(0.92);
+  transform-origin: top left;
+  width: 108% !important;
+}
+
+#harness-checklist h2 {
+  font-size: 16px !important;
+}
+
+#harness-checklist label,
+#harness-checklist p {
+  font-size: 11px !important;
+}
+
+#harness-checklist input,
+#harness-checklist textarea {
+  font-size: 11px !important;
+  padding: 3px !important;
+}
+
+@media print {
+  body { zoom: 0.95; }
+}
+
 @media print {
   #harness-checklist {
     page-break-inside: avoid !important;
