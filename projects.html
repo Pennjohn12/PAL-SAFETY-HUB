@@ -243,6 +243,15 @@
     }
     .btn-sm.danger { color: var(--red); border-color: #fecdd3; background: #fff1f2; }
 
+    .employee-card { cursor:pointer; }
+    .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
+    .cert-preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:12px; }
+    .cert-preview-card { background:white; border:1px solid var(--line); border-radius:14px; padding:12px; box-shadow:0 4px 12px rgba(16,24,40,.04); }
+    .cert-preview-card h4 { color:var(--navy); font-size:14px; margin-bottom:4px; }
+    .cert-preview-card p { color:var(--muted); font-size:12px; line-height:1.45; margin-bottom:8px; }
+    .cert-preview-img { width:100%; max-height:230px; object-fit:contain; border:1px solid var(--line); border-radius:10px; background:#f8fafc; margin-bottom:8px; }
+    .cert-pdf-box { min-height:130px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; border:1px dashed #aebccc; border-radius:10px; background:#f8fafc; color:var(--navy); font-weight:800; margin-bottom:8px; }
+
     /* Photo grid */
     .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
     .photo-thumb {
@@ -751,6 +760,19 @@
   </div>
 </div>
 
+
+<!-- EMPLOYEE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-employee-detail">
+  <div class="modal" style="max-width:820px;">
+    <h3 id="employee-detail-title">Employee File</h3>
+    <div id="employee-detail-body"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-employee-detail')">Close</button>
+      <button class="btn-save" onclick="openCertificationModal(currentEmployeeId)">Upload Certification</button>
+    </div>
+  </div>
+</div>
+
 <!-- CERTIFICATION MODAL -->
 <div class="modal-overlay" id="modal-certification">
   <div class="modal">
@@ -848,6 +870,7 @@
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
+  window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
   window.saveCertification = saveCertification;
   window.switchMainTab = switchMainTab;
@@ -1375,7 +1398,7 @@
   // ── EMPLOYEES / CERTIFICATIONS ──
   async function loadEmployees(force = false) {
     if (!isOfficeRole() && !force) return;
-    const list = document.getElementById('employees-list');
+    const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
     try {
@@ -1392,6 +1415,10 @@
         const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
         const card = document.createElement('div');
         card.className = 'employee-card';
+        card.onclick = () => openEmployeeDetail(emp.id);
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.onkeydown = (e) => { if (e.key === 'Enter') openEmployeeDetail(emp.id); };
         card.innerHTML = `
           <div class="employee-card-header">
             <div>
@@ -1404,11 +1431,12 @@
             </div>
             <span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>
           </div>
-          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
+          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'Tap to open employee file and view cert images.'}</div>
           <div class="cert-list">${certs.length ? certs.slice(0,6).map(cert => `<span class="cert-item">${esc(cert.title || cert.type)}${cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : ''}</span>`).join('') : '<span class="cert-item">No certifications uploaded yet</span>'}</div>
-          <div class="employee-actions" style="margin-top:12px;">
+          <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
             <button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>
             <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+            <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Certs</button>
           </div>`;
         list.appendChild(card);
       });
@@ -1417,6 +1445,82 @@
       list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load employee records.</p>';
     }
   }
+
+
+  function isImageCert(cert) {
+    const name = String(cert.fileName || cert.name || '').toLowerCase();
+    const url = String(cert.url || '').toLowerCase();
+    const mime = String(cert.mimeType || '').toLowerCase();
+    return mime.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|bmp|heic|heif)(\?|#|$)/.test(name) || /\.(jpg|jpeg|png|gif|webp|bmp|heic|heif)(\?|#|$)/.test(url);
+  }
+
+  function getCertStatusKey(expirationDate) {
+    if (!expirationDate) return 'neutral';
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const exp = new Date(expirationDate + 'T00:00:00');
+    const diffDays = Math.ceil((exp - today) / 86400000);
+    if (diffDays < 0) return 'expired';
+    if (diffDays <= 30) return 'warn';
+    return 'active';
+  }
+
+  function getCertStatusText(expirationDate) {
+    if (!expirationDate) return 'No expiration date';
+    const status = getCertStatusKey(expirationDate);
+    if (status === 'expired') return 'Expired';
+    if (status === 'warn') return 'Expiring soon';
+    return 'Valid';
+  }
+
+  function openEmployeeDetail(employeeId) {
+    currentEmployeeId = employeeId;
+    const emp = allEmployees.find(e => e.id === employeeId);
+    if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const titleEl = document.getElementById('employee-detail-title');
+    const body = document.getElementById('employee-detail-body');
+    if (!titleEl || !body) { toast('Employee detail window missing. Refresh and try again.'); return; }
+    titleEl.textContent = emp.name || 'Employee File';
+
+    const certCards = certs.length ? certs.map(cert => {
+      const key = getCertStatusKey(cert.expirationDate);
+      const title = esc(cert.title || cert.type || 'Certification');
+      const meta = [
+        cert.issueDate ? `Issued: ${esc(cert.issueDate)}` : 'Issue date not set',
+        cert.expirationDate ? `Expires: ${esc(cert.expirationDate)}` : 'No expiration date',
+        cert.fileName ? esc(cert.fileName) : ''
+      ].filter(Boolean).join('<br>');
+      const preview = isImageCert(cert)
+        ? `<a href="${cert.url}" target="_blank"><img class="cert-preview-img" src="${cert.url}" alt="${title}"></a>`
+        : `<div class="cert-pdf-box"><div style="font-size:34px;">📄</div><div>PDF / Document</div></div>`;
+      return `<div class="cert-preview-card">
+        <h4>${title}</h4>
+        <p>${meta}</p>
+        <div class="status-row" style="margin-bottom:8px;"><span class="pill ${key}">${getCertStatusText(cert.expirationDate)}</span></div>
+        ${preview}
+        <a href="${cert.url}" target="_blank" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
+      </div>`;
+    }).join('') : '<p class="helper-text">No certifications uploaded yet.</p>';
+
+    body.innerHTML = `
+      <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
+        <div class="employee-meta" style="margin-bottom:8px;">
+          ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
+          ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
+          ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+        </div>
+        <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
+      </div>
+      <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
+        <div class="action-row" style="margin-bottom:8px;">
+          <div><strong style="color:var(--navy);">Certifications</strong><div class="helper-text">Images show below. PDFs/documents show as a document card with an open button.</div></div>
+        </div>
+        <div class="cert-preview-grid">${certCards}</div>
+      </div>`;
+    document.getElementById('modal-employee-detail').classList.add('open');
+  }
+
 
   function openEmployeeModal() {
     document.getElementById('modal-new-employee').classList.add('open');
@@ -1493,6 +1597,7 @@
           issueDate: document.getElementById('cert-issue-date').value || '',
           expirationDate: document.getElementById('cert-exp-date').value || '',
           fileName: file.name,
+          mimeType: file.type || '',
           url,
           uploadedAt: new Date().toISOString(),
           uploadedBy: currentUser.displayName || currentUser.email
@@ -1503,6 +1608,7 @@
       document.getElementById('cert-type').value = 'OSHA 30';
       closeModal('modal-certification');
       await loadEmployees(true);
+      if (currentEmployeeId && document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(currentEmployeeId);
       toast('Certification uploaded');
     } catch (e) {
       toast('Could not upload certification');
@@ -1758,7 +1864,7 @@
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-new-employee','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
