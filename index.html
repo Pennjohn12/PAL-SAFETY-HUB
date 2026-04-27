@@ -386,7 +386,45 @@
     .pal-modal-ok { background: var(--navy); color: white; }
     .pal-modal-cancel { background: #eef2f7; color: var(--navy); }
 
-    @media print {
+    
+/* One-page harness checklist tightening */
+#harness-checklist .form-shell {
+  padding: 12px !important;
+}
+#harness-checklist h2 {
+  font-size: 18px !important;
+  margin-bottom: 6px !important;
+}
+#harness-checklist .grid,
+#harness-checklist .grid-2 {
+  gap: 6px !important;
+}
+#harness-checklist label,
+#harness-checklist p {
+  font-size: 12px !important;
+  margin: 2px 0 !important;
+}
+#harness-checklist input,
+#harness-checklist textarea {
+  padding: 4px !important;
+  font-size: 12px !important;
+}
+#harness-checklist .card {
+  padding: 8px !important;
+  margin-bottom: 6px !important;
+}
+
+/* Force single page in print */
+@media print {
+  #harness-checklist {
+    page-break-inside: avoid !important;
+  }
+  #harness-checklist * {
+    page-break-inside: avoid !important;
+  }
+}
+
+@media print {
       @page { size: letter; margin: 0.5in; }
 
       /* Hide ALL elements on the page by default */
