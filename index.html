@@ -694,7 +694,39 @@
     </section>
 
     <section class="page" id="pal-policies">
-      <h2 class="section-title">PAL Official Policies</h2>
+      <h2 class="section-title">PAL Policies</h2>
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-top:0;color:var(--navy);">Company Policies &amp; Required References</h3>
+        <p class="muted">This section combines the internal PAL policy items that used to be separate tabs, so the top navigation stays clean and easier for the field to use.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="policy-card">
+          <h4>Program Goals</h4>
+          <p>Keep PAL crews prepared, compliant, informed, and able to access required safety materials in the field without carrying oversized binders between jobs.</p>
+          <button class="btn gold" style="margin-top:12px;" onclick="showPage('goals')">Open Goals</button>
+        </div>
+
+        <div class="policy-card">
+          <h4>Emergency Action Plan (E.A.P.)</h4>
+          <p>For emergency assistance, call <strong>911</strong>. Immediately notify <strong>Richardo Blake (347-844-0476)</strong> following incidents where employees are injured.</p>
+          <button class="btn gold" style="margin-top:12px;" onclick="showPage('eap')">Open E.A.P.</button>
+        </div>
+
+        <div class="policy-card">
+          <h4>Code of Conduct</h4>
+          <p>Maintain professional conduct on all jobsites. Follow safety rules, use required PPE, report hazards, and avoid horseplay or unsafe shortcuts.</p>
+          <button class="btn gold" style="margin-top:12px;" onclick="showPage('code-of-conduct')">Open Code of Conduct</button>
+        </div>
+
+        <div class="policy-card">
+          <h4>Whistleblower</h4>
+          <p>Hotline English: <strong>877-222-2069</strong><br>Hotline Spanish: <strong>800-216-1288</strong><br>Compliance Office: Attn: Richardo Blake<br>Guidepost Solutions LLC: 212-817-6709</p>
+          <button class="btn gold" style="margin-top:12px;" onclick="showPage('whistleblower')">Open Whistleblower</button>
+        </div>
+      </div>
+
+      <h3 class="section-title">Core PAL Safety Policies</h3>
       <div class="grid">
         <div class="policy-card"><h4>Policy 1: PPE Minimum Required</h4><p>At a minimum, all employees must wear hard hats, eye protection, work gloves and boots.</p></div>
         <div class="policy-card"><h4>Policy 2: PPE Required At ALL Times</h4><p>Required at all times: ANSI approved hardhat, high visibility safety vest, ANSI approved safety glasses Z87 or Z87+, work boots, short sleeve shirt with minimum of 4 inches past the shoulder, long pants.</p></div>
@@ -2420,18 +2452,12 @@
     let currentLang = localStorage.getItem('pal-language') || 'en';
 
     const navTabs = [
-      ['cover', { en: 'Cover', es: 'Portada', pl: 'Okładka' }],
+      ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
       ['foreman-kit', { en: "Foreman's Kit", es: 'Kit del Capataz', pl: 'Zestaw Brygadzisty' }, true],
       ['projects-link', { en: '🏗️ Projects', es: '🏗️ Proyectos', pl: '🏗️ Projekty' }],
-      ['contents', { en: 'Contents', es: 'Contenido', pl: 'Spis treści' }],
-      ['training-records', { en: 'Training Records', es: 'Registros de Capacitación', pl: 'Rejestry Szkoleniowe' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
-      ['goals', { en: 'Goals', es: 'Objetivos', pl: 'Cele' }],
-      ['eap', { en: 'E.A.P.', es: 'P.A.E.', pl: 'Plan Awaryjny' }],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
-      ['quick-reference', { en: 'Quick Reference', es: 'Referencia Rápida', pl: 'Szybkie Odniesienie' }],
-      ['code-of-conduct', { en: 'Code of Conduct', es: 'Código de Conducta', pl: 'Kodeks Postępowania' }],
-      ['whistleblower', { en: 'Whistleblower', es: 'Denuncias', pl: 'Sygnalista' }]
+      ['quick-reference', { en: 'Quick Reference', es: 'Referencia Rápida', pl: 'Szybkie Odniesienie' }]
     ];
 
     const uiText = {
