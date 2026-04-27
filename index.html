@@ -416,12 +416,7 @@
 
 /* Force single page in print */
 
-/* EXTRA TIGHT harness for guaranteed one-page */
-#harness-checklist {
-  transform: scale(0.92);
-  transform-origin: top left;
-  width: 108% !important;
-}
+
 
 #harness-checklist h2 {
   font-size: 16px !important;
@@ -436,6 +431,54 @@
 #harness-checklist textarea {
   font-size: 11px !important;
   padding: 3px !important;
+}
+
+
+/* FINAL harness one-page print fix */
+@media print {
+  #harness-checklist {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #harness-checklist h2 {
+    font-size: 15px !important;
+    margin-bottom: 4px !important;
+  }
+
+  #harness-checklist label,
+  #harness-checklist p {
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+    margin: 1px 0 !important;
+  }
+
+  #harness-checklist input,
+  #harness-checklist textarea {
+    font-size: 10.5px !important;
+    padding: 2px !important;
+  }
+
+  #harness-checklist .card {
+    padding: 6px !important;
+    margin-bottom: 4px !important;
+  }
+
+  #harness-checklist .grid,
+  #harness-checklist .grid-2 {
+    gap: 4px !important;
+  }
+
+  /* Prevent phantom extra page */
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  html {
+    height: auto !important;
+  }
 }
 
 @media print {
