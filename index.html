@@ -78,6 +78,24 @@
     .hero h2 { margin: 0 0 10px; font-size: 28px; }
     .hero p { margin: 0; color: rgba(255,255,255,.86); line-height: 1.7; }
 
+    /* Step 1 cleanup: mobile home screen + cleaner action list */
+    .home-actions { display:grid; gap:12px; margin:18px 0 4px; }
+    .home-action {
+      width:100%; border:1px solid var(--line); background:white; border-left:6px solid var(--green-accent);
+      border-radius:16px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px;
+      cursor:pointer; box-shadow:0 6px 18px rgba(16,24,40,.05); text-align:left;
+    }
+    .home-action strong { color:var(--navy); font-size:16px; display:block; margin-bottom:3px; }
+    .home-action span { color:var(--muted); font-size:13px; line-height:1.35; }
+    .home-action .ha-icon { font-size:26px; flex:0 0 auto; }
+    .home-action .ha-arrow { color:var(--muted); font-size:24px; flex:0 0 auto; }
+    .home-action:hover { transform:translateY(-1px); box-shadow:0 10px 24px rgba(16,24,40,.08); }
+    .home-policy-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0 20px; }
+    .home-policy-tile { background:white; border:1px solid var(--line); border-radius:14px; padding:14px; cursor:pointer; }
+    .home-policy-tile h4 { margin:0 0 5px; color:var(--navy); }
+    .home-policy-tile p { margin:0; color:var(--muted); font-size:13px; line-height:1.4; }
+
+
     .grid { display: grid; gap: 16px; }
     .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
@@ -239,7 +257,7 @@
     .sync-note { font-size:12px; color:var(--muted); margin-top:8px; }
 
     @media (max-width: 600px) {
-      .grid-2, .grid-3, .form-grid, .toolbox-grid, .project-context-grid { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .form-grid, .toolbox-grid, .project-context-grid, .home-policy-grid { grid-template-columns: 1fr; }
       .span-2 { grid-column: span 1; }
       .header { padding: 0 10px; }
       .brand-text h1 { font-size: 16px; }
@@ -420,6 +438,26 @@
       #daily-safety-meeting .sig-pad-wrap canvas { height: 28px !important; }
       #daily-safety-meeting .pal-logo svg { width: 36px !important; height: 36px !important; }
       .inspection-grid { gap: 8px !important; }
+
+
+      /* Full-body harness checklist — tightened to fit one printed page */
+      #harness-checklist .form-head { padding: 3px 8px !important; }
+      #harness-checklist .form-head h2 { font-size: 10px !important; }
+      #harness-checklist .form-head p { font-size: 7px !important; }
+      #harness-checklist .form-meta { font-size: 7px !important; }
+      #harness-checklist .pal-logo svg { width: 26px !important; height: 26px !important; }
+      #harness-checklist .form-body { padding: 3px 8px !important; font-size: 7px !important; }
+      #harness-checklist .toolbar { display: none !important; }
+      #harness-checklist .field label { font-size: 7px !important; }
+      #harness-checklist .field input { font-size: 7px !important; padding: 0px 2px !important; }
+      #harness-checklist [style*="grid-template-columns:1fr 1fr"] { gap: 3px !important; margin-bottom: 3px !important; }
+      #harness-checklist table { font-size: 7px !important; page-break-inside: avoid !important; }
+      #harness-checklist th { padding: 2px 4px !important; font-size: 7px !important; }
+      #harness-checklist td { padding: 1px 4px !important; font-size: 7px !important; line-height: 1.12 !important; }
+      #harness-checklist input[type=radio] { width: 8px !important; height: 8px !important; }
+      #harness-checklist p { font-size: 6.5px !important; line-height: 1.15 !important; margin: 2px 0 !important; }
+      #harness-checklist .sticky-actions { display: none !important; }
+
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
   </style>
@@ -475,6 +513,14 @@
       <div class="hero">
         <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
         <p data-en="A mobile-friendly digital safety binder for PAL Environmental Services. Built to keep foremen, supervisors, and field crews ready with the right forms, policies, training references, and toolbox talks at all times." data-es="Un archivador digital de seguridad, compatible con móviles, para PAL Environmental Services. Diseñado para que capataces, supervisores y cuadrillas tengan siempre acceso a formularios, políticas, capacitaciones y charlas de seguridad." data-pl="Mobilny cyfrowy segregator bezpieczeństwa dla PAL Environmental Services. Zbudowany po to, aby brygadziści, kierownicy i załogi mieli zawsze pod ręką właściwe formularze, zasady, szkolenia i odprawy bezpieczeństwa.">A mobile-friendly digital safety binder for PAL Environmental Services. Built to keep foremen, supervisors, and field crews ready with the right forms, policies, training references, and toolbox talks at all times.</p>
+      </div>
+
+      <div class="home-actions" aria-label="PAL Safety Hub Home Navigation">
+        <button class="home-action" onclick="showPage('foreman-kit')"><span class="ha-icon">🧰</span><span><strong data-en="Foreman's Kit" data-es="Kit del Capataz" data-pl="Zestaw Brygadzisty">Foreman's Kit</strong><span data-en="Daily forms, inspections, timesheets, reports, and field paperwork." data-es="Formularios diarios, inspecciones, partes de horas, informes y papeleo de campo." data-pl="Codzienne formularze, inspekcje, karty czasu, raporty i dokumenty terenowe.">Daily forms, inspections, timesheets, reports, and field paperwork.</span></span><span class="ha-arrow">›</span></button>
+        <button class="home-action" onclick="window.location.href='projects.html'"><span class="ha-icon">🏗️</span><span><strong data-en="Projects" data-es="Proyectos" data-pl="Projekty">Projects</strong><span data-en="Project documents, photos, daily reports, extra work tickets, and employee certs." data-es="Documentos del proyecto, fotos, informes diarios, tickets de trabajo extra y certificados." data-pl="Dokumenty projektu, zdjęcia, raporty dzienne, dodatkowe prace i certyfikaty.">Project documents, photos, daily reports, extra work tickets, and employee certs.</span></span><span class="ha-arrow">›</span></button>
+        <button class="home-action" onclick="showPage('pal-policies')"><span class="ha-icon">🏢</span><span><strong data-en="PAL Policies" data-es="Políticas PAL" data-pl="Zasady PAL">PAL Policies</strong><span data-en="Company policies, goals, E.A.P., code of conduct, whistleblower, and training records." data-es="Políticas de la compañía, objetivos, plan de emergencia, código de conducta, denuncias y capacitación." data-pl="Zasady firmy, cele, plan awaryjny, kodeks postępowania, sygnalista i szkolenia.">Company policies, goals, E.A.P., code of conduct, whistleblower, and training records.</span></span><span class="ha-arrow">›</span></button>
+        <button class="home-action" onclick="showPage('toolbox-talks')"><span class="ha-icon">💬</span><span><strong data-en="Toolbox Talks" data-es="Charlas de Seguridad" data-pl="Odprawy BHP">Toolbox Talks</strong><span data-en="Safety topics with sign-in sheets for the crew." data-es="Temas de seguridad con hojas de firma para la cuadrilla." data-pl="Tematy BHP z listami obecności dla załogi.">Safety topics with sign-in sheets for the crew.</span></span><span class="ha-arrow">›</span></button>
+        <button class="home-action" onclick="showPage('quick-reference')"><span class="ha-icon">⚡</span><span><strong data-en="Quick Reference" data-es="Referencia Rápida" data-pl="Szybkie Odniesienie">Quick Reference</strong><span data-en="Important safety numbers, limits, and jobsite reminders." data-es="Números importantes, límites y recordatorios de seguridad." data-pl="Ważne numery, limity i przypomnienia BHP.">Important safety numbers, limits, and jobsite reminders.</span></span><span class="ha-arrow">›</span></button>
       </div>
 
     <!-- CARTOON COVER SCENES -->
@@ -839,7 +885,16 @@
     </section>
 
     <section class="page" id="pal-policies">
-      <h2 class="section-title">PAL Official Policies</h2>
+      <h2 class="section-title" data-en="PAL Policies & Company Info" data-es="Políticas PAL e Información de la Compañía" data-pl="Zasady PAL i Informacje Firmowe">PAL Policies & Company Info</h2>
+      <div class="home-policy-grid">
+        <div class="home-policy-tile" onclick="showPage('goals')"><h4 data-en="Program Goals" data-es="Objetivos del Programa" data-pl="Cele Programu">Program Goals</h4><p data-en="Purpose and goals of the safety hub." data-es="Propósito y objetivos del centro de seguridad." data-pl="Cel i założenia centrum bezpieczeństwa.">Purpose and goals of the safety hub.</p></div>
+        <div class="home-policy-tile" onclick="showPage('eap')"><h4 data-en="Emergency Action Plan" data-es="Plan de Acción de Emergencia" data-pl="Plan Działań Awaryjnych">Emergency Action Plan</h4><p data-en="Emergency steps and reporting contact." data-es="Pasos de emergencia y contacto de reporte." data-pl="Kroki awaryjne i kontakt zgłoszeniowy.">Emergency steps and reporting contact.</p></div>
+        <div class="home-policy-tile" onclick="showPage('code-of-conduct')"><h4 data-en="Code of Conduct" data-es="Código de Conducta" data-pl="Kodeks Postępowania">Code of Conduct</h4><p data-en="Professional conduct and jobsite expectations." data-es="Conducta profesional y expectativas en obra." data-pl="Profesjonalne zachowanie i oczekiwania na budowie.">Professional conduct and jobsite expectations.</p></div>
+        <div class="home-policy-tile" onclick="showPage('whistleblower')"><h4 data-en="Whistleblower" data-es="Denuncias" data-pl="Sygnalista">Whistleblower</h4><p data-en="Hotlines and reporting contacts." data-es="Líneas directas y contactos de reporte." data-pl="Numery infolinii i kontakty zgłoszeniowe.">Hotlines and reporting contacts.</p></div>
+        <div class="home-policy-tile" onclick="showPage('training-records')"><h4 data-en="Training Records" data-es="Registros de Capacitación" data-pl="Rejestry Szkoleniowe">Training Records</h4><p data-en="Minimum training records before work." data-es="Capacitación mínima antes de trabajar." data-pl="Minimalne szkolenia przed rozpoczęciem pracy.">Minimum training records before work.</p></div>
+        <div class="home-policy-tile" onclick="showPage('contents')"><h4 data-en="All Safety Topics" data-es="Todos los Temas de Seguridad" data-pl="Wszystkie Tematy BHP">All Safety Topics</h4><p data-en="Open the full contents list if needed." data-es="Abra la lista completa de contenido si es necesario." data-pl="W razie potrzeby otwórz pełny spis treści.">Open the full contents list if needed.</p></div>
+      </div>
+      <h2 class="section-title" data-en="PAL Official Policies" data-es="Políticas Oficiales PAL" data-pl="Oficjalne Zasady PAL">PAL Official Policies</h2>
       <div class="grid">
         <div class="policy-card"><h4>Policy 1: PPE Minimum Required</h4><p>At a minimum, all employees must wear hard hats, eye protection, work gloves and boots.</p></div>
         <div class="policy-card"><h4>Policy 2: PPE Required At ALL Times</h4><p>Required at all times: ANSI approved hardhat, high visibility safety vest, ANSI approved safety glasses Z87 or Z87+, work boots, short sleeve shirt with minimum of 4 inches past the shoulder, long pants.</p></div>
@@ -2565,18 +2620,12 @@
     let currentLang = localStorage.getItem('pal-language') || 'en';
 
     const navTabs = [
-      ['cover', { en: 'Cover', es: 'Portada', pl: 'Okładka' }],
+      ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
       ['foreman-kit', { en: "Foreman's Kit", es: 'Kit del Capataz', pl: 'Zestaw Brygadzisty' }, true],
       ['projects-link', { en: '🏗️ Projects', es: '🏗️ Proyectos', pl: '🏗️ Projekty' }],
-      ['contents', { en: 'Contents', es: 'Contenido', pl: 'Spis treści' }],
-      ['training-records', { en: 'Training Records', es: 'Registros de Capacitación', pl: 'Rejestry Szkoleniowe' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
-      ['goals', { en: 'Goals', es: 'Objetivos', pl: 'Cele' }],
-      ['eap', { en: 'E.A.P.', es: 'P.A.E.', pl: 'Plan Awaryjny' }],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
-      ['quick-reference', { en: 'Quick Reference', es: 'Referencia Rápida', pl: 'Szybkie Odniesienie' }],
-      ['code-of-conduct', { en: 'Code of Conduct', es: 'Código de Conducta', pl: 'Kodeks Postępowania' }],
-      ['whistleblower', { en: 'Whistleblower', es: 'Denuncias', pl: 'Sygnalista' }]
+      ['quick-reference', { en: 'Quick Reference', es: 'Referencia Rápida', pl: 'Szybkie Odniesienie' }]
     ];
 
     const uiText = {
@@ -3109,7 +3158,7 @@
       const key = form.dataset.saveKey;
       const data = formToJSON(form);
       localStorage.setItem(`pal-${key}`, JSON.stringify(data));
-      alert('Saved on this device.');
+      toastPalMessage('Saved on this device.');
     }
 
     function restoreForms() {
@@ -3162,7 +3211,7 @@
       const rawTitle = activePage.querySelector('.form-head h2, .form-head h2, h2')?.textContent || 'PAL-Form';
       const title = rawTitle.trim().replace(/[^a-z0-9 ]+/gi, ' ').trim();
       const originalTitle = document.title;
-      document.title = 'PAL — ' + title;
+      document.title = 'PAL Safety Form - ' + title;
       window.print();
       setTimeout(() => { document.title = originalTitle; }, 2000);
     }
@@ -3182,7 +3231,7 @@
       // Try native share (works on iPhone, Android)
       if (navigator.share) {
         try {
-          await navigator.share({ title: `PAL — ${title}`, text: shareBody });
+          await navigator.share({ title: `PAL Safety Form - ${title}`, text: shareBody });
           return;
         } catch (err) {
           if (err && err.name === 'AbortError') return;
@@ -3190,7 +3239,7 @@
       }
 
       // Fallback: open mail client
-      const mailSubject = encodeURIComponent(`PAL — ${title}`);
+      const mailSubject = encodeURIComponent(`PAL Safety Form - ${title}`);
       const mailBody = encodeURIComponent(shareBody);
       const mailLink = `mailto:?subject=${mailSubject}&body=${mailBody}`;
       const a = document.createElement('a');
@@ -3201,12 +3250,12 @@
       if (navigator.clipboard) {
         try {
           await navigator.clipboard.writeText(shareBody);
-          alert('Copied to clipboard — paste into email or text.');
+          toastPalMessage('Copied to clipboard — paste into email or text.');
           return;
         } catch (err) {}
       }
 
-      alert('Share is not available on this device/browser. Use Save as PDF from Print, then email the PDF manually.');
+      toastPalMessage('Share is not available here. Use Print / Save as PDF, then email the file.');
     }
 
     function syncJobNumber(value) {
