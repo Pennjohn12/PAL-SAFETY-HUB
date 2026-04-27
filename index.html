@@ -308,7 +308,7 @@
     }
 
 
-    /* Home dashboard patch — left-aligned menu + fireproofing image */
+    /* Home dashboard patch — left-aligned Foreman's Kit menu + fireproofing image */
     #cover .home-dashboard {
       display: grid;
       grid-template-columns: minmax(260px, 0.9fr) minmax(280px, 1.1fr);
@@ -326,90 +326,33 @@
       justify-content: space-between;
       min-height: 460px;
     }
-    #cover .home-panel h2 {
-      margin: 0 0 8px;
-      font-size: 30px;
-      line-height: 1.05;
-    }
-    #cover .home-panel p {
-      margin: 0;
-      color: rgba(255,255,255,.86);
-      line-height: 1.55;
-      font-size: 14px;
-    }
-    #cover .home-menu {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 22px;
-      width: 100%;
-    }
+    #cover .home-panel h2 { margin: 0 0 8px; font-size: 30px; line-height: 1.05; }
+    #cover .home-panel p { margin: 0; color: rgba(255,255,255,.86); line-height: 1.55; font-size: 14px; }
+    #cover .home-menu { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 22px; width: 100%; }
     #cover .home-menu button {
-      width: 100%;
-      text-align: left;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.1);
-      color: white;
-      border-radius: 14px;
-      padding: 13px 14px;
-      font: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      width: 100%; text-align: left; border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.1); color: white; border-radius: 14px; padding: 13px 14px;
+      font: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
-    #cover .home-menu button:hover {
-      background: var(--green-accent);
-      color: var(--navy);
-    }
-    #cover .home-menu .arrow {
-      opacity: .75;
-      font-size: 18px;
-    }
+    #cover .home-menu button:hover { background: var(--green-accent); color: var(--navy); }
+    #cover .home-menu .arrow { opacity: .75; font-size: 18px; }
     #cover .home-visual {
-      border-radius: 22px;
-      overflow: hidden;
-      min-height: 460px;
-      background: #dbe7ef;
-      border: 1px solid var(--line);
-      box-shadow: 0 12px 30px rgba(26,39,68,.16);
-      position: relative;
+      border-radius: 22px; overflow: hidden; min-height: 460px; background: #dbe7ef;
+      border: 1px solid var(--line); box-shadow: 0 12px 30px rgba(26,39,68,.16); position: relative;
     }
-    #cover .home-visual img {
-      width: 100%;
-      height: 100%;
-      min-height: 460px;
-      object-fit: cover;
-      display: block;
-    }
+    #cover .home-visual img { width: 100%; height: 100%; min-height: 460px; object-fit: cover; display: block; }
     #cover .home-visual-label {
-      position: absolute;
-      left: 14px;
-      bottom: 14px;
-      background: rgba(27,58,92,.92);
-      color: white;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: 800;
+      position: absolute; left: 14px; bottom: 14px; background: rgba(27,58,92,.92); color: white;
+      border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: 800;
     }
-    #cover .home-company-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 14px;
-      margin-top: 18px;
-    }
+    #cover .home-company-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 18px; }
     @media (max-width: 760px) {
       #cover .home-dashboard { grid-template-columns: 1fr; }
       #cover .home-panel, #cover .home-visual, #cover .home-visual img { min-height: auto; }
       #cover .home-visual img { aspect-ratio: 4 / 3; }
       #cover .home-company-grid { grid-template-columns: 1fr; }
     }
-
 
     @media print {
       @page { size: letter; margin: 0.5in; }
@@ -580,15 +523,14 @@
         <div class="home-panel">
           <div>
             <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
-            <p data-en="A field-ready safety hub for PAL Environmental Services. Open forms, toolbox talks, policies, projects, and employee certifications fast from one clean home screen." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra formularios, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do formularzy, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Open forms, toolbox talks, policies, projects, and employee certifications fast from one clean home screen.</p>
+            <p data-en="A field-ready safety hub for PAL Environmental Services. Open the Foreman's Kit, toolbox talks, policies, projects, and employee certifications fast from one clean home screen." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Open the Foreman's Kit, toolbox talks, policies, projects, and employee certifications fast from one clean home screen.</p>
 
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="window.location.href='projects.html'"><span>🏗️ Projects</span><span class="arrow">›</span></button>
               <button onclick="showPage('foreman-kit')"><span>🦺 Foreman's Kit</span><span class="arrow">›</span></button>
+              <button onclick="window.location.href='projects.html'"><span>🏗️ Projects</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="window.location.href='projects.html'"><span>🪪 Employee Certs</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
-              <button onclick="showPage('quick-reference')"><span>⚡ Quick Reference</span><span class="arrow">›</span></button>
             </div>
           </div>
           <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
@@ -700,39 +642,7 @@
     </section>
 
     <section class="page" id="pal-policies">
-      <h2 class="section-title">PAL Policies</h2>
-      <div class="card" style="margin-bottom:16px;">
-        <h3 style="margin-top:0;color:var(--navy);">Company Policies &amp; Required References</h3>
-        <p class="muted">This section combines the internal PAL policy items that used to be separate tabs, so the top navigation stays clean and easier for the field to use.</p>
-      </div>
-
-      <div class="grid grid-2">
-        <div class="policy-card">
-          <h4>Program Goals</h4>
-          <p>Keep PAL crews prepared, compliant, informed, and able to access required safety materials in the field without carrying oversized binders between jobs.</p>
-          <button class="btn gold" style="margin-top:12px;" onclick="showPage('goals')">Open Goals</button>
-        </div>
-
-        <div class="policy-card">
-          <h4>Emergency Action Plan (E.A.P.)</h4>
-          <p>For emergency assistance, call <strong>911</strong>. Immediately notify <strong>Richardo Blake (347-844-0476)</strong> following incidents where employees are injured.</p>
-          <button class="btn gold" style="margin-top:12px;" onclick="showPage('eap')">Open E.A.P.</button>
-        </div>
-
-        <div class="policy-card">
-          <h4>Code of Conduct</h4>
-          <p>Maintain professional conduct on all jobsites. Follow safety rules, use required PPE, report hazards, and avoid horseplay or unsafe shortcuts.</p>
-          <button class="btn gold" style="margin-top:12px;" onclick="showPage('code-of-conduct')">Open Code of Conduct</button>
-        </div>
-
-        <div class="policy-card">
-          <h4>Whistleblower</h4>
-          <p>Hotline English: <strong>877-222-2069</strong><br>Hotline Spanish: <strong>800-216-1288</strong><br>Compliance Office: Attn: Richardo Blake<br>Guidepost Solutions LLC: 212-817-6709</p>
-          <button class="btn gold" style="margin-top:12px;" onclick="showPage('whistleblower')">Open Whistleblower</button>
-        </div>
-      </div>
-
-      <h3 class="section-title">Core PAL Safety Policies</h3>
+      <h2 class="section-title">PAL Official Policies</h2>
       <div class="grid">
         <div class="policy-card"><h4>Policy 1: PPE Minimum Required</h4><p>At a minimum, all employees must wear hard hats, eye protection, work gloves and boots.</p></div>
         <div class="policy-card"><h4>Policy 2: PPE Required At ALL Times</h4><p>Required at all times: ANSI approved hardhat, high visibility safety vest, ANSI approved safety glasses Z87 or Z87+, work boots, short sleeve shirt with minimum of 4 inches past the shoulder, long pants.</p></div>
@@ -3159,7 +3069,33 @@
     }
 
     init();
-  </script>
+  
+  function getCleanDocumentTitle() {
+    const active = document.querySelector('.page.active');
+    const title = active?.querySelector('.form-head h2')?.textContent || active?.querySelector('h2')?.textContent || 'PAL Safety Document';
+    return title.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'PAL-Safety-Document';
+  }
+  function showCleanSavedMessage(type = 'document') {
+    const label = type === 'pdf' ? 'PDF saved to device' : type === 'share' ? 'Ready to share' : 'Saved to device';
+    if (typeof showToast === 'function') showToast(label);
+    else if (typeof toast === 'function') toast(label);
+    else console.log(label);
+  }
+  window.exportCurrentPagePDF = async function() {
+    const oldTitle = document.title;
+    document.title = getCleanDocumentTitle();
+    try { window.print(); showCleanSavedMessage('pdf'); }
+    finally { setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 800); }
+  };
+  window.shareCurrentPage = async function() {
+    const cleanTitle = getCleanDocumentTitle().replace(/-/g, ' ');
+    try {
+      if (navigator.share) { await navigator.share({ title: cleanTitle, text: cleanTitle + ' - PAL Safety Hub' }); showCleanSavedMessage('share'); }
+      else { window.exportCurrentPagePDF(); }
+    } catch (e) { if (!e || e.name !== 'AbortError') window.exportCurrentPagePDF(); }
+  };
+
+</script>
 
   <script>
     // Register service worker for offline support + PWA installability on Android
@@ -3445,97 +3381,7 @@
     function escapeHtml(str) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
-  
-
-  function getCleanDocumentTitle() {
-    const active = document.querySelector('.page.active');
-    const title =
-      active?.querySelector('.form-head h2')?.textContent ||
-      active?.querySelector('h2')?.textContent ||
-      'PAL Safety Document';
-
-    return title
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '') || 'PAL-Safety-Document';
-  }
-
-  function cleanShareFileName(ext = 'pdf') {
-    return `${getCleanDocumentTitle()}-${new Date().toISOString().slice(0,10)}.${ext}`;
-  }
-
-  function showCleanSavedMessage(type = 'document') {
-    const label = type === 'pdf' ? 'PDF saved to device' :
-                  type === 'image' ? 'Image saved to device' :
-                  type === 'share' ? 'Ready to share' :
-                  'Saved to device';
-    if (typeof showToast === 'function') showToast(label);
-    else if (typeof toast === 'function') toast(label);
-    else console.log(label);
-  }
-
-
-
-  const palOriginalPrintPage = typeof printPage === 'function' ? printPage : null;
-  window.printPage = function() {
-    const oldTitle = document.title;
-    document.title = getCleanDocumentTitle();
-    try {
-      window.print();
-      showCleanSavedMessage('document');
-    } finally {
-      setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 800);
-    }
-  };
-
-
-
-  window.exportCurrentPagePDF = async function() {
-    const oldTitle = document.title;
-    document.title = getCleanDocumentTitle();
-
-    try {
-      // Browser/iPhone export still uses the native print/share dialog,
-      // but the title is now clean so it will not show the GitHub address as the document name.
-      window.print();
-      showCleanSavedMessage('pdf');
-    } finally {
-      setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 800);
-    }
-  };
-
-
-
-  window.shareCurrentPage = async function() {
-    const cleanTitle = getCleanDocumentTitle().replace(/-/g, ' ');
-    const shareData = {
-      title: cleanTitle,
-      text: `${cleanTitle} - PAL Safety Hub`
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        showCleanSavedMessage('share');
-      } else {
-        const oldTitle = document.title;
-        document.title = getCleanDocumentTitle();
-        window.print();
-        setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 800);
-        showCleanSavedMessage('pdf');
-      }
-    } catch (e) {
-      if (e && e.name === 'AbortError') return;
-      console.error(e);
-      const oldTitle = document.title;
-      document.title = getCleanDocumentTitle();
-      window.print();
-      setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 800);
-    }
-  };
-
-</script>
+  </script>
 
 </body>
 </html>
