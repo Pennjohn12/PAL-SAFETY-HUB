@@ -705,9 +705,10 @@
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button><button class="tab-btn" onclick="openProjectTicketsTab()">Extra Work Tickets</button>
+      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
+      <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
       <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
     </div>
@@ -719,7 +720,7 @@
           <div class="section-label">Uploaded Documents</div>
           <div class="helper-text">Project-specific files stored with this job.</div>
         </div>
-        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button><button class="tab-btn" onclick="openProjectTicketsTab()">Extra Work Tickets</button>
+        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button>
       </div>
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
       <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
@@ -761,6 +762,20 @@
         <button class="btn-save" onclick="openDailyReportForm()">📝 New Daily Report</button>
       </div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
+    </div>
+
+
+    <!-- EXTRA WORK TICKETS TAB -->
+    <div class="tab-pane" id="tab-project-tickets">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Extra Work Tickets</div>
+          <div class="helper-text">Tickets tied to this project only. Office can open, price, edit, print, and track totals here.</div>
+        </div>
+        <button class="btn-save" onclick="openExtraWorkTicketModal(currentProject?.id || '')">＋ New Ticket for This Project</button>
+      </div>
+      <div id="project-ticket-dashboard-summary"></div>
+      <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
     </div>
 
     <!-- FOREMEN TAB -->
@@ -1252,6 +1267,7 @@
       loadProjectReports(id);
       loadProjectForemen(currentProjectDoc);
       if (isOfficeRole()) await loadEmployees();
+      if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
     });
   }
 
@@ -2148,6 +2164,79 @@
   }
 
 
+
+  function getCurrentProjectTicketsData() {
+    const project = currentProject || {};
+    const tickets = Array.isArray(project.extraTickets) ? project.extraTickets : [];
+
+    const totals = tickets.reduce((acc, t) => {
+      acc.count += 1;
+      acc.labor += Number(t.laborTotal || 0);
+      acc.materials += Number(t.materialTotal || 0);
+      acc.equipment += Number(t.equipmentTotal || 0);
+      acc.bond += Number(t.bondTotal || 0);
+      acc.tax += Number(t.taxTotal || 0);
+      acc.other += Number(t.otherTotal || 0);
+      acc.grand += Number(t.grandTotal || 0);
+      return acc;
+    }, { count:0, labor:0, materials:0, equipment:0, bond:0, tax:0, other:0, grand:0 });
+
+    return { tickets, totals };
+  }
+
+  function renderProjectTicketsTab() {
+    const summaryEl = document.getElementById('project-ticket-dashboard-summary');
+    const listEl = document.getElementById('project-ticket-list');
+    if (!summaryEl && !listEl) return;
+
+    const data = getCurrentProjectTicketsData();
+    const t = data.totals;
+
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="ticket-dashboard">
+          <div class="ticket-total-box labor"><strong>${money(t.labor)}</strong><span>Labor</span></div>
+          <div class="ticket-total-box material"><strong>${money(t.materials)}</strong><span>Materials</span></div>
+          <div class="ticket-total-box equipment"><strong>${money(t.equipment)}</strong><span>Equipment</span></div>
+          <div class="ticket-total-box other"><strong>${money(t.bond + t.tax + t.other)}</strong><span>Bond / Tax / Other</span></div>
+          <div class="ticket-total-box grand"><strong>${money(t.grand)}</strong><span>Project Total · ${t.count} Ticket${t.count === 1 ? '' : 's'}</span></div>
+        </div>`;
+    }
+
+    if (listEl) {
+      if (!data.tickets.length) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">💵</div>
+            <h3>No extra work tickets yet</h3>
+            <p>Create the first ticket for this project when extra work needs to be tracked.</p>
+          </div>`;
+        return;
+      }
+
+      listEl.innerHTML = data.tickets
+        .slice()
+        .sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')))
+        .map(t => `
+          <div class="ticket-card" onclick="openTicketDetail('${currentProject.id}','${t.id}')">
+            <div class="ticket-card-head">
+              <div>
+                <h4>${esc(t.ticketNo || 'Extra Work Ticket')}</h4>
+                <div class="ticket-meta">
+                  ${t.date ? `<span>📅 ${esc(t.date)}</span>` : ''}
+                  ${t.status ? `<span>🏷️ ${esc(t.status)}</span>` : ''}
+                  ${t.authorizedBy ? `<span>✍️ ${esc(t.authorizedBy)}</span>` : ''}
+                </div>
+              </div>
+              <div class="ticket-total">${money(t.grandTotal || 0)}</div>
+            </div>
+            ${t.description ? `<p style="margin-top:10px;color:var(--text);font-size:14px;line-height:1.45;">${esc(t.description).slice(0,180)}${String(t.description).length > 180 ? '…' : ''}</p>` : ''}
+          </div>
+        `).join('');
+    }
+  }
+
+
   function getTicketDashboardData() {
     const tickets = [];
     allProjects.forEach(project => {
@@ -2441,7 +2530,7 @@
       editingTicketProjectId=null; editingTicketId=null; editingTicketOriginal=null;
       const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
       closeModal('modal-extra-ticket');
-      loadProjects(); loadMainTickets();
+      loadProjects(); loadMainTickets(); renderProjectTicketsTab();
     } catch(e){
       console.error(e); toast('Ticket save failed: '+e.message);
     }
@@ -2505,6 +2594,7 @@
     const su = document.getElementById('sticky-upload');
     if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
     if (tabId === 'tab-employees') loadEmployees(true);
+    if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
   }
 
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
@@ -2565,57 +2655,6 @@
   // Enter key shortcuts
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
-
-function openProjectTicketsTab() {
-  document.querySelectorAll('.tab-view').forEach(v => v.style.display='none');
-  document.getElementById('project-extra-tickets-view').style.display='block';
-  renderProjectTickets();
-}
-
-function getCurrentProject() {
-  return allProjects.find(p => p.id === currentProjectId);
-}
-
-function renderProjectTickets() {
-  const project = getCurrentProject();
-  if (!project) return;
-
-  const tickets = project.extraTickets || [];
-
-  let labor=0, materials=0, equipment=0, total=0;
-
-  tickets.forEach(t=>{
-    labor += Number(t.laborTotal||0);
-    materials += Number(t.materialTotal||0);
-    equipment += Number(t.equipmentTotal||0);
-    total += Number(t.grandTotal||0);
-  });
-
-  document.getElementById('project-ticket-summary').innerHTML = `
-    <div class="ticket-dashboard">
-      <div class="ticket-total-box labor"><strong>${money(labor)}</strong><span>Labor</span></div>
-      <div class="ticket-total-box material"><strong>${money(materials)}</strong><span>Materials</span></div>
-      <div class="ticket-total-box equipment"><strong>${money(equipment)}</strong><span>Equipment</span></div>
-      <div class="ticket-total-box grand"><strong>${money(total)}</strong><span>Total</span></div>
-    </div>
-  `;
-
-  document.getElementById('project-ticket-list').innerHTML = tickets.map(t=>`
-    <div class="ticket-card">
-      <div><strong>${t.ticketNo || 'No #'}</strong></div>
-      <div>${t.description || ''}</div>
-      <div>${money(t.grandTotal||0)}</div>
-      <button onclick="openTicketDetail('${project.id}','${t.id}')">Open</button>
-    </div>
-  `).join('');
-}
-
-function createProjectTicket() {
-  const project = getCurrentProject();
-  if (!project) return;
-  openExtraWorkTicketModal(project.id);
-}
 </script>
-
 </body>
 </html>
