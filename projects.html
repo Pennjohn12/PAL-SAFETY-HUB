@@ -260,6 +260,59 @@
     }
     .btn-sm.danger { color: var(--red); border-color: #fecdd3; background: #fff1f2; }
 
+
+    .cert-alert-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 16px;
+    }
+    .cert-alert-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    }
+    .cert-alert-box strong { display:block; font-size:22px; margin-bottom:2px; }
+    .cert-alert-box span { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .cert-alert-box.valid { border-left: 5px solid #16a34a; }
+    .cert-alert-box.soon { border-left: 5px solid #d97706; }
+    .cert-alert-box.expired { border-left: 5px solid #dc2626; }
+    .cert-status-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      border-radius:999px;
+      padding:4px 8px;
+      font-size:11px;
+      font-weight:900;
+      margin-left:6px;
+      white-space:nowrap;
+    }
+    .cert-status-pill.active, .cert-status-pill.valid { background:#dcfce7; color:#166534; }
+    .cert-status-pill.warn, .cert-status-pill.soon { background:#fef3c7; color:#92400e; }
+    .cert-status-pill.expired { background:#fee2e2; color:#991b1b; }
+    .cert-warning-list {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+      background: #fff;
+    }
+    .cert-warning-row {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      align-items:center;
+    }
+    .cert-warning-row:first-child { border-top:0; }
+    .cert-warning-main { font-weight:800; color:var(--text); }
+    .cert-warning-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+    @media(max-width:700px){ .cert-alert-summary { grid-template-columns: 1fr; } .cert-warning-row{align-items:flex-start; flex-direction:column;} }
+
     .employee-card { cursor:pointer; }
     .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
     .cert-preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:12px; }
@@ -540,6 +593,8 @@
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
+      <div id="cert-alert-summary-main"></div>
+      <div id="cert-alert-list-main"></div>
       <div class="field" style="max-width:460px;margin-bottom:16px;">
         <label>Search Employees</label>
         <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
@@ -1456,7 +1511,91 @@
     renderEmployeesList(value);
   }
 
+
+  function getCertDaysUntil(expirationDate) {
+    if (!expirationDate) return null;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const exp = new Date(expirationDate + 'T00:00:00');
+    if (Number.isNaN(exp.getTime())) return null;
+    return Math.ceil((exp - today) / 86400000);
+  }
+
+  function getCertAlertData() {
+    const allCerts = [];
+    allEmployees.forEach(emp => {
+      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      certs.forEach(cert => {
+        const days = getCertDaysUntil(cert.expirationDate);
+        const status = getCertStatusKey(cert.expirationDate);
+        allCerts.push({
+          employeeId: emp.id,
+          employeeName: emp.name || 'Unnamed Employee',
+          certTitle: cert.title || cert.type || 'Certification',
+          expirationDate: cert.expirationDate || '',
+          days,
+          status
+        });
+      });
+    });
+
+    const expired = allCerts.filter(c => c.status === 'expired');
+    const soon = allCerts.filter(c => c.status === 'warn');
+    const valid = allCerts.filter(c => c.status === 'active');
+
+    return {
+      allCerts,
+      expired,
+      soon,
+      valid,
+      warnings: [...expired, ...soon].sort((a,b) => (a.days ?? 9999) - (b.days ?? 9999))
+    };
+  }
+
+  function renderCertAlerts() {
+    const data = getCertAlertData();
+
+    const summaryHTML = `
+      <div class="cert-alert-summary">
+        <div class="cert-alert-box expired"><strong>${data.expired.length}</strong><span>Expired Certs</span></div>
+        <div class="cert-alert-box soon"><strong>${data.soon.length}</strong><span>Expiring Within 30 Days</span></div>
+        <div class="cert-alert-box valid"><strong>${data.valid.length}</strong><span>Valid Certs</span></div>
+      </div>`;
+
+    const warningHTML = data.warnings.length ? `
+      <div class="cert-warning-list">
+        ${data.warnings.slice(0, 12).map(c => `
+          <div class="cert-warning-row">
+            <div>
+              <div class="cert-warning-main">${esc(c.employeeName)} — ${esc(c.certTitle)}</div>
+              <div class="cert-warning-sub">${c.expirationDate ? `Expires: ${esc(c.expirationDate)}` : 'No expiration date'}</div>
+            </div>
+            <span class="cert-status-pill ${c.status}">${c.status === 'expired' ? '🔴 Expired' : `🟡 ${c.days} day${c.days === 1 ? '' : 's'} left`}</span>
+          </div>`).join('')}
+      </div>` : `
+      <div class="cert-warning-list">
+        <div class="cert-warning-row">
+          <div>
+            <div class="cert-warning-main">No expired or expiring certifications</div>
+            <div class="cert-warning-sub">Anything with an expiration date inside 30 days will show here.</div>
+          </div>
+          <span class="cert-status-pill active">🟢 Clear</span>
+        </div>
+      </div>`;
+
+    ['cert-alert-summary-main','cert-alert-summary-detail'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = summaryHTML;
+    });
+    ['cert-alert-list-main','cert-alert-list-detail'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = warningHTML;
+    });
+  }
+
+
   function renderEmployeesList(filterText = '') {
+    renderCertAlerts();
     const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
     if (!list) return;
     const q = String(filterText || document.getElementById('employee-search')?.value || '').trim().toLowerCase();
@@ -1494,7 +1633,7 @@
             const status = getCertStatusKey(cert.expirationDate);
             const label = esc(cert.title || cert.type || 'Cert');
             const exp = cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : '';
-            return `<span class="cert-item pill ${status}">${label}${exp}</span>`;
+            return `<span class="cert-item pill ${status}">${label}${exp} · ${getCertStatusText(cert.expirationDate)}</span>`;
           }).join('')
         : '<span class="cert-item">No certifications uploaded yet</span>';
       card.innerHTML = `
