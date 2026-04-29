@@ -705,7 +705,7 @@
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
+      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button><button class="tab-btn" onclick="openProjectTicketsTab()">Extra Work Tickets</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
@@ -719,7 +719,7 @@
           <div class="section-label">Uploaded Documents</div>
           <div class="helper-text">Project-specific files stored with this job.</div>
         </div>
-        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button>
+        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button><button class="tab-btn" onclick="openProjectTicketsTab()">Extra Work Tickets</button>
       </div>
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
       <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
@@ -2565,6 +2565,57 @@
   // Enter key shortcuts
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+
+function openProjectTicketsTab() {
+  document.querySelectorAll('.tab-view').forEach(v => v.style.display='none');
+  document.getElementById('project-extra-tickets-view').style.display='block';
+  renderProjectTickets();
+}
+
+function getCurrentProject() {
+  return allProjects.find(p => p.id === currentProjectId);
+}
+
+function renderProjectTickets() {
+  const project = getCurrentProject();
+  if (!project) return;
+
+  const tickets = project.extraTickets || [];
+
+  let labor=0, materials=0, equipment=0, total=0;
+
+  tickets.forEach(t=>{
+    labor += Number(t.laborTotal||0);
+    materials += Number(t.materialTotal||0);
+    equipment += Number(t.equipmentTotal||0);
+    total += Number(t.grandTotal||0);
+  });
+
+  document.getElementById('project-ticket-summary').innerHTML = `
+    <div class="ticket-dashboard">
+      <div class="ticket-total-box labor"><strong>${money(labor)}</strong><span>Labor</span></div>
+      <div class="ticket-total-box material"><strong>${money(materials)}</strong><span>Materials</span></div>
+      <div class="ticket-total-box equipment"><strong>${money(equipment)}</strong><span>Equipment</span></div>
+      <div class="ticket-total-box grand"><strong>${money(total)}</strong><span>Total</span></div>
+    </div>
+  `;
+
+  document.getElementById('project-ticket-list').innerHTML = tickets.map(t=>`
+    <div class="ticket-card">
+      <div><strong>${t.ticketNo || 'No #'}</strong></div>
+      <div>${t.description || ''}</div>
+      <div>${money(t.grandTotal||0)}</div>
+      <button onclick="openTicketDetail('${project.id}','${t.id}')">Open</button>
+    </div>
+  `).join('');
+}
+
+function createProjectTicket() {
+  const project = getCurrentProject();
+  if (!project) return;
+  openExtraWorkTicketModal(project.id);
+}
 </script>
+
 </body>
 </html>
