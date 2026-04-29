@@ -111,6 +111,37 @@
     .ticket-status-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; }
     .ticket-office-note { background:#eef4fa; border:1px solid var(--line); border-radius:12px; padding:10px 12px; color:var(--navy); font-size:13px; font-weight:700; margin-bottom:10px; }
 
+
+    .ticket-dashboard {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 16px;
+    }
+    .ticket-total-box {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.04);
+      border-left: 5px solid var(--navy);
+    }
+    .ticket-total-box.labor { border-left-color: #2563eb; }
+    .ticket-total-box.material { border-left-color: #16a34a; }
+    .ticket-total-box.equipment { border-left-color: #7c3aed; }
+    .ticket-total-box.other { border-left-color: #d97706; }
+    .ticket-total-box.grand { border-left-color: #dc2626; }
+    .ticket-total-box strong { display:block; font-size:19px; color:var(--text); margin-bottom:3px; white-space:nowrap; }
+    .ticket-total-box span { color:var(--muted); font-size:12px; font-weight:800; }
+    .ticket-dashboard-table { background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:10px 0 16px; }
+    .ticket-dashboard-row { display:grid; grid-template-columns: 1.2fr repeat(5, .7fr); gap:8px; align-items:center; padding:10px 12px; border-top:1px solid var(--line); font-size:13px; }
+    .ticket-dashboard-row:first-child { border-top:0; }
+    .ticket-dashboard-row.header { background:#f8fafc; color:var(--navy); font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:.3px; }
+    .ticket-dashboard-project { font-weight:900; color:var(--text); }
+    .ticket-dashboard-muted { color:var(--muted); font-size:12px; margin-top:2px; }
+    .ticket-money { font-weight:850; white-space:nowrap; }
+    @media(max-width:850px){ .ticket-dashboard { grid-template-columns:1fr; } .ticket-dashboard-table { overflow-x:auto; } .ticket-dashboard-row { min-width:760px; } }
+
     .ticket-card {
       background: white; border: 1px solid var(--line); border-radius: 16px;
       padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(16,24,40,.04);
@@ -611,6 +642,8 @@
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Create and track extra work tickets. Each ticket is linked to the project/jobsite it belongs to.</div>
+      <div id="ticket-dashboard-summary"></div>
+      <div id="ticket-dashboard-by-project"></div>
       <div class="search-row">
         <input class="search-input" id="ticket-search" placeholder="Search tickets by project, ticket #, description, contractor..." oninput="renderMainTickets()" />
         <select id="ticket-project-filter" class="inline-select" onchange="renderMainTickets()">
@@ -2113,6 +2146,121 @@
     allTickets.sort((a,b) => String(b.createdAt || b.date || '').localeCompare(String(a.createdAt || a.date || '')));
     renderMainTickets();
   }
+
+
+  function getTicketDashboardData() {
+    const tickets = [];
+    allProjects.forEach(project => {
+      const projectTickets = Array.isArray(project.extraTickets) ? project.extraTickets : [];
+      projectTickets.forEach(ticket => {
+        tickets.push({
+          ...ticket,
+          projectId: project.id,
+          projectName: project.name || ticket.projectName || 'Unnamed Project',
+          projectJobNumber: project.jobNumber || ticket.projectJobNumber || ticket.jobNumber || ''
+        });
+      });
+    });
+
+    const totals = tickets.reduce((acc, t) => {
+      acc.count += 1;
+      acc.labor += Number(t.laborTotal || 0);
+      acc.materials += Number(t.materialTotal || 0);
+      acc.equipment += Number(t.equipmentTotal || 0);
+      acc.bond += Number(t.bondTotal || 0);
+      acc.tax += Number(t.taxTotal || 0);
+      acc.other += Number(t.otherTotal || 0);
+      acc.grand += Number(t.grandTotal || 0);
+      return acc;
+    }, { count:0, labor:0, materials:0, equipment:0, bond:0, tax:0, other:0, grand:0 });
+
+    const byProjectMap = {};
+    tickets.forEach(t => {
+      const key = t.projectId || t.projectName || 'unknown';
+      if (!byProjectMap[key]) {
+        byProjectMap[key] = {
+          projectId: t.projectId,
+          projectName: t.projectName || 'Unnamed Project',
+          projectJobNumber: t.projectJobNumber || '',
+          count: 0,
+          labor: 0,
+          materials: 0,
+          equipment: 0,
+          other: 0,
+          grand: 0
+        };
+      }
+      byProjectMap[key].count += 1;
+      byProjectMap[key].labor += Number(t.laborTotal || 0);
+      byProjectMap[key].materials += Number(t.materialTotal || 0);
+      byProjectMap[key].equipment += Number(t.equipmentTotal || 0);
+      byProjectMap[key].other += Number(t.bondTotal || 0) + Number(t.taxTotal || 0) + Number(t.otherTotal || 0);
+      byProjectMap[key].grand += Number(t.grandTotal || 0);
+    });
+
+    const byProject = Object.values(byProjectMap).sort((a,b) => b.grand - a.grand);
+    return { tickets, totals, byProject };
+  }
+
+  function renderTicketDashboard() {
+    const summaryEl = document.getElementById('ticket-dashboard-summary');
+    const byProjectEl = document.getElementById('ticket-dashboard-by-project');
+    if (!summaryEl && !byProjectEl) return;
+
+    const data = getTicketDashboardData();
+    const t = data.totals;
+
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="ticket-dashboard">
+          <div class="ticket-total-box labor"><strong>${money(t.labor)}</strong><span>Labor Total</span></div>
+          <div class="ticket-total-box material"><strong>${money(t.materials)}</strong><span>Material Total</span></div>
+          <div class="ticket-total-box equipment"><strong>${money(t.equipment)}</strong><span>Equipment Total</span></div>
+          <div class="ticket-total-box other"><strong>${money(t.bond + t.tax + t.other)}</strong><span>Bond / Tax / Other</span></div>
+          <div class="ticket-total-box grand"><strong>${money(t.grand)}</strong><span>Grand Total · ${t.count} Ticket${t.count === 1 ? '' : 's'}</span></div>
+        </div>`;
+    }
+
+    if (byProjectEl) {
+      if (!data.byProject.length) {
+        byProjectEl.innerHTML = `
+          <div class="ticket-dashboard-table">
+            <div class="ticket-dashboard-row">
+              <div>
+                <div class="ticket-dashboard-project">No ticket totals yet</div>
+                <div class="ticket-dashboard-muted">Once tickets are submitted or priced, project totals will show here.</div>
+              </div>
+            </div>
+          </div>`;
+        return;
+      }
+
+      byProjectEl.innerHTML = `
+        <div class="ticket-dashboard-table">
+          <div class="ticket-dashboard-row header">
+            <div>Project</div>
+            <div>Tickets</div>
+            <div>Labor</div>
+            <div>Materials</div>
+            <div>Equipment</div>
+            <div>Grand Total</div>
+          </div>
+          ${data.byProject.map(p => `
+            <div class="ticket-dashboard-row">
+              <div>
+                <div class="ticket-dashboard-project">${esc(p.projectName)}</div>
+                <div class="ticket-dashboard-muted">${p.projectJobNumber ? `Job # ${esc(p.projectJobNumber)}` : 'No job number'}</div>
+              </div>
+              <div class="ticket-money">${p.count}</div>
+              <div class="ticket-money">${money(p.labor)}</div>
+              <div class="ticket-money">${money(p.materials)}</div>
+              <div class="ticket-money">${money(p.equipment)}</div>
+              <div class="ticket-money">${money(p.grand)}</div>
+            </div>`).join('')}
+        </div>`;
+    }
+  }
+
 
   function renderMainTickets() {
     const list = document.getElementById('tickets-list-main');
