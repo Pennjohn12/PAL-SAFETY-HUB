@@ -112,6 +112,36 @@
     .ticket-office-note { background:#eef4fa; border:1px solid var(--line); border-radius:12px; padding:10px 12px; color:var(--navy); font-size:13px; font-weight:700; margin-bottom:10px; }
 
 
+
+    .pricing-lock-note {
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-left:5px solid var(--green);
+      border-radius:14px;
+      padding:10px 12px;
+      color:var(--navy);
+      font-size:13px;
+      font-weight:800;
+      margin:10px 0 12px;
+    }
+    .pricing-locked input,
+    .pricing-locked select,
+    .pricing-locked textarea {
+      background:#f3f4f6 !important;
+      color:#6b7280 !important;
+      cursor:not-allowed !important;
+    }
+    .pricing-locked-label {
+      display:inline-flex;
+      border-radius:999px;
+      padding:3px 8px;
+      background:#e5e7eb;
+      color:#4b5563;
+      font-size:11px;
+      font-weight:900;
+      margin-left:6px;
+    }
+
     .ticket-dashboard {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -930,7 +960,7 @@
 
 
 <!-- EXTRA WORK TICKET MODAL -->
-<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>💵 PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate</th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost</th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate</th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
+<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>💵 PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
 <div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>💵 Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
 
 <!-- TOAST -->
@@ -2385,6 +2415,39 @@
     `).join('');
   }
 
+
+  function applyTicketPricingLock() {
+    const office = isOfficeRole();
+    const note = document.getElementById('ticket-pricing-lock-note');
+    if (note) {
+      note.textContent = office
+        ? 'Office pricing mode: rates, costs, totals, tax, bond, and markup are editable.'
+        : 'Field mode: fill the work details. Final pricing is completed by the office.';
+    }
+
+    const selectors = [
+      '.tl-rate',
+      '.tl-total',
+      '.tm-cost',
+      '.tm-total',
+      '.te-rate',
+      '.te-total',
+      '#ticket-bond-total',
+      '#ticket-tax-total',
+      '#ticket-other-total'
+    ];
+
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        el.disabled = !office;
+        el.readOnly = !office;
+        const cell = el.closest('td') || el.closest('.cell') || el.parentElement;
+        if (cell) cell.classList.toggle('pricing-locked', !office);
+      });
+    });
+  }
+
+
   function openExtraWorkTicketModal(projectId = '', existingTicket = null) {
     refreshTicketProjectOptions();
 
@@ -2432,6 +2495,7 @@
 
     updateTicketGrandTotal();
     document.getElementById('modal-extra-ticket').classList.add('open');
+    applyTicketPricingLock();
     setTimeout(initTicketSignaturePads, 50);
     const ps = document.getElementById('ticket-project-select'); if (ps) ps.onchange = () => fillTicketProjectInfo(ps.value);
   }
@@ -2443,9 +2507,9 @@
     set('ticket-job-number', p.jobNumber || ''); set('ticket-location', p.location || ''); set('ticket-work-type', normalizeWorkType(p.workType || p.type || p.category || ''));
   }
 
-  function addTicketLaborRow(row={}) { const tb=document.getElementById('ticket-labor-rows'); if(!tb)return; const tr=document.createElement('tr'); tr.innerHTML=`<td><input class="tl-name" value="${esc(row.name||'')}" placeholder="Name / classification"></td><td><input class="tl-trade" value="${esc(row.trade||'')}" placeholder="Trade"></td><td><input type="number" step="0.25" class="tl-st" value="${row.st||''}" oninput="updateTicketGrandTotal()"></td><td><input type="number" step="0.25" class="tl-ot" value="${row.ot||''}" oninput="updateTicketGrandTotal()"></td><td><input type="number" step="0.25" class="tl-dt" value="${row.dt||''}" oninput="updateTicketGrandTotal()"></td><td><input type="number" step="0.01" class="tl-rate" value="${row.rate||''}" oninput="updateTicketGrandTotal()" placeholder="0.00"></td><td><input class="tl-total" readonly value="$0.00"></td><td><button type="button" class="row-btn" onclick="removeTicketRow(this)">Remove</button></td>`; tb.appendChild(tr); updateTicketGrandTotal(); }
-  function addTicketMaterialRow(row={}) { const tb=document.getElementById('ticket-material-rows'); if(!tb)return; const tr=document.createElement('tr'); tr.innerHTML=`<td><input type="number" step="0.01" class="tm-qty" value="${row.qty||''}" oninput="updateTicketGrandTotal()"></td><td><input class="tm-unit" value="${esc(row.unit||'')}" placeholder="EA / bags"></td><td><input class="tm-desc" value="${esc(row.description||'')}" placeholder="Material description"></td><td><input type="number" step="0.01" class="tm-cost" value="${row.unitCost||''}" oninput="updateTicketGrandTotal()" placeholder="0.00"></td><td><input class="tm-total" readonly value="$0.00"></td><td><button type="button" class="row-btn" onclick="removeTicketRow(this)">Remove</button></td>`; tb.appendChild(tr); updateTicketGrandTotal(); }
-  function addTicketEquipmentRow(row={}) { const tb=document.getElementById('ticket-equipment-rows'); if(!tb)return; const tr=document.createElement('tr'); tr.innerHTML=`<td><input type="number" step="0.01" class="te-qty" value="${row.qty||''}" oninput="updateTicketGrandTotal()"></td><td><input class="te-desc" value="${esc(row.description||'')}" placeholder="Lift / dumpster / rental"></td><td><input type="number" step="0.01" class="te-rate" value="${row.rate||''}" oninput="updateTicketGrandTotal()" placeholder="0.00"></td><td><input class="te-total" readonly value="$0.00"></td><td><button type="button" class="row-btn" onclick="removeTicketRow(this)">Remove</button></td>`; tb.appendChild(tr); updateTicketGrandTotal(); }
+  function addTicketLaborRow(row={}) { const tb=document.getElementById('ticket-labor-rows'); if(!tb)return; const tr=document.createElement('tr'); tr.innerHTML=`<td><input class="tl-name" value="${esc(row.name||'')}" placeholder="Name / classification"></td><td><input class="tl-trade" value="${esc(row.trade||'')}" placeholder="Trade"></td><td><input type="number" step="0.25" class="tl-st" value="${row.st||''}" oninput="updateTicketGrandTotal()"></td><td><input type="number" step="0.25" class="tl-ot" value="${row.ot||''}" oninput="updateTicketGrandTotal()"></td><td><input type="number" step="0.25" class="tl-dt" value="${row.dt||''}" oninput="updateTicketGrandTotal()"></td><td><input type="number" step="0.01" class="tl-rate" value="${row.rate||''}" oninput="updateTicketGrandTotal()" placeholder="0.00"></td><td><input class="tl-total" readonly value="$0.00"></td><td><button type="button" class="row-btn" onclick="removeTicketRow(this)">Remove</button></td>`; tb.appendChild(tr); updateTicketGrandTotal(); applyTicketPricingLock(); }
+  function addTicketMaterialRow(row={}) { const tb=document.getElementById('ticket-material-rows'); if(!tb)return; const tr=document.createElement('tr'); tr.innerHTML=`<td><input type="number" step="0.01" class="tm-qty" value="${row.qty||''}" oninput="updateTicketGrandTotal()"></td><td><input class="tm-unit" value="${esc(row.unit||'')}" placeholder="EA / bags"></td><td><input class="tm-desc" value="${esc(row.description||'')}" placeholder="Material description"></td><td><input type="number" step="0.01" class="tm-cost" value="${row.unitCost||''}" oninput="updateTicketGrandTotal()" placeholder="0.00"></td><td><input class="tm-total" readonly value="$0.00"></td><td><button type="button" class="row-btn" onclick="removeTicketRow(this)">Remove</button></td>`; tb.appendChild(tr); updateTicketGrandTotal(); applyTicketPricingLock(); }
+  function addTicketEquipmentRow(row={}) { const tb=document.getElementById('ticket-equipment-rows'); if(!tb)return; const tr=document.createElement('tr'); tr.innerHTML=`<td><input type="number" step="0.01" class="te-qty" value="${row.qty||''}" oninput="updateTicketGrandTotal()"></td><td><input class="te-desc" value="${esc(row.description||'')}" placeholder="Lift / dumpster / rental"></td><td><input type="number" step="0.01" class="te-rate" value="${row.rate||''}" oninput="updateTicketGrandTotal()" placeholder="0.00"></td><td><input class="te-total" readonly value="$0.00"></td><td><button type="button" class="row-btn" onclick="removeTicketRow(this)">Remove</button></td>`; tb.appendChild(tr); updateTicketGrandTotal(); applyTicketPricingLock(); }
   function removeTicketRow(btn){ const tr=btn.closest('tr'); if(tr)tr.remove(); updateTicketGrandTotal(); }
 
   function collectTicketRows(){
