@@ -142,6 +142,69 @@
       margin-left:6px;
     }
 
+
+    .warehouse-dashboard {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+      margin:12px 0 16px;
+    }
+    .warehouse-box {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,.04);
+      border-left:5px solid var(--navy);
+    }
+    .warehouse-box strong { display:block; font-size:20px; margin-bottom:3px; color:var(--text); }
+    .warehouse-box span { color:var(--muted); font-size:12px; font-weight:800; }
+    .warehouse-box.out { border-left-color:#2563eb; }
+    .warehouse-box.received { border-left-color:#16a34a; }
+    .warehouse-box.returning { border-left-color:#d97706; }
+    .warehouse-box.back { border-left-color:#7c3aed; }
+    .warehouse-list {
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .warehouse-card {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      box-shadow:0 4px 12px rgba(0,0,0,.04);
+      cursor:pointer;
+    }
+    .warehouse-card-head {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .warehouse-card h4 { margin:0 0 4px; color:var(--navy); }
+    .warehouse-meta {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .warehouse-status {
+      display:inline-flex;
+      border-radius:999px;
+      padding:5px 9px;
+      font-size:11px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .warehouse-status.sent { background:#dbeafe; color:#1d4ed8; }
+    .warehouse-status.received { background:#dcfce7; color:#166534; }
+    .warehouse-status.returning { background:#fef3c7; color:#92400e; }
+    .warehouse-status.back { background:#ede9fe; color:#5b21b6; }
+    @media(max-width:850px){ .warehouse-dashboard { grid-template-columns:1fr; } .warehouse-card-head { flex-direction:column; } }
+
     .ticket-dashboard {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -627,6 +690,7 @@
       <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
+      <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
 
     <div class="tab-pane active" id="main-projects">
@@ -680,7 +744,27 @@
           <option value="all">All Projects</option>
         </select>
       </div>
+
       <div id="tickets-list-main"><p style="color:var(--muted);font-size:14px;">Click Extra Work Tickets to load tickets.</p></div>
+    </div>
+
+    <div class="tab-pane" id="main-warehouse">
+      <div class="page-header">
+        <h2>Warehouse / Equipment</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadWarehouse()">↻ Refresh</button>
+          <button class="btn-add" onclick="openWarehouseItemModal()">＋ Add Equipment Movement</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Track equipment and materials leaving the warehouse, arriving at the job, returning from the job, and coming back to the warehouse.</div>
+      <div id="warehouse-dashboard-main"></div>
+      <div class="search-row">
+        <input class="search-input" id="warehouse-search" placeholder="Search by item, ID, project, status, notes..." oninput="renderWarehouse()" />
+        <select id="warehouse-project-filter" class="inline-select" onchange="renderWarehouse()">
+          <option value="all">All Projects</option>
+        </select>
+      </div>
+      <div id="warehouse-list-main"><p style="color:var(--muted);font-size:14px;">Click Warehouse to load equipment records.</p></div>
     </div>
   </div>
 </div>
@@ -739,6 +823,7 @@
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
       <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
+      <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
       <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
     </div>
@@ -806,6 +891,20 @@
       </div>
       <div id="project-ticket-dashboard-summary"></div>
       <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
+    </div>
+
+
+    <!-- WAREHOUSE / EQUIPMENT TAB -->
+    <div class="tab-pane" id="tab-project-warehouse">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Warehouse / Equipment</div>
+          <div class="helper-text">Equipment and materials tied to this project only. QR scanning can be added later; Phase 1 is manual and QR-ready.</div>
+        </div>
+        <button class="btn-save" onclick="openWarehouseItemModal(currentProject?.id || '')">＋ Add Item for This Project</button>
+      </div>
+      <div id="warehouse-dashboard-project"></div>
+      <div id="warehouse-list-project"><p style="color:var(--muted);font-size:14px;">No warehouse records for this project yet.</p></div>
     </div>
 
     <!-- FOREMEN TAB -->
@@ -963,6 +1062,57 @@
 <div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>💵 PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
 <div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>💵 Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
 
+
+<div class="modal-overlay" id="modal-warehouse-item">
+  <div class="modal" style="max-width:720px;">
+    <h3>📦 Warehouse / Equipment Movement</h3>
+    <div class="form-grid">
+      <div class="field span-2">
+        <label>Project / Jobsite</label>
+        <select id="warehouse-project-select"></select>
+      </div>
+      <div class="field">
+        <label>Item Name</label>
+        <input id="warehouse-item-name" placeholder="Ladder, spray machine, gang box, PPE, etc." />
+      </div>
+      <div class="field">
+        <label>Item ID / QR Number</label>
+        <input id="warehouse-item-id" placeholder="EQ-001 / QR number / serial #" />
+      </div>
+      <div class="field">
+        <label>Quantity</label>
+        <input id="warehouse-qty" type="number" min="0" step="1" value="1" />
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select id="warehouse-status">
+          <option value="sent">Sent from Warehouse</option>
+          <option value="received">Received on Job</option>
+          <option value="returning">Returned from Job</option>
+          <option value="back">Back at Warehouse</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input id="warehouse-date" type="date" />
+      </div>
+      <div class="field">
+        <label>Handled By</label>
+        <input id="warehouse-handled-by" placeholder="Name / foreman / warehouse" />
+      </div>
+      <div class="field span-2">
+        <label>Notes</label>
+        <textarea id="warehouse-notes" rows="3" placeholder="Condition, location, returned damaged, missing pieces, etc."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-warehouse-item')">Cancel</button>
+      <button class="btn-save" id="save-warehouse-btn" onclick="saveWarehouseItem()">Save Movement</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -999,6 +1149,9 @@
   let allEmployees = [];
   let allProjects = [];
   let allTickets = [];
+  let allWarehouseItems = [];
+  let editingWarehouseProjectId = null;
+  let editingWarehouseItemId = null;
   let selectedTicket = null;
   let editingTicketProjectId = null;
   let editingTicketId = null;
@@ -1052,6 +1205,11 @@
   window.renderMainTickets = renderMainTickets;
   window.openTicketDetail = openTicketDetail;
   window.printTicketDetail = printTicketDetail;
+  window.loadWarehouse = loadWarehouse;
+  window.renderWarehouse = renderWarehouse;
+  window.openWarehouseItemModal = openWarehouseItemModal;
+  window.saveWarehouseItem = saveWarehouseItem;
+  window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
 
   // ── Auth state ──
@@ -1298,6 +1456,7 @@
       loadProjectForemen(currentProjectDoc);
       if (isOfficeRole()) await loadEmployees();
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
+      if (document.getElementById('tab-project-warehouse')?.classList.contains('active')) renderProjectWarehouseTab();
     });
   }
 
@@ -2195,6 +2354,242 @@
 
 
 
+
+  function warehouseStatusLabel(status) {
+    const map = {
+      sent: 'Sent from Warehouse',
+      received: 'Received on Job',
+      returning: 'Returned from Job',
+      back: 'Back at Warehouse'
+    };
+    return map[status] || status || 'Sent from Warehouse';
+  }
+
+  function refreshWarehouseProjectOptions() {
+    const selects = ['warehouse-project-select', 'warehouse-project-filter'];
+    selects.forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      const current = sel.value;
+      if (id === 'warehouse-project-filter') {
+        sel.innerHTML = '<option value="all">All Projects</option>' + allProjects.map(p => `<option value="${p.id}">${esc(p.name || 'Unnamed Project')}${p.jobNumber ? ' · ' + esc(p.jobNumber) : ''}</option>`).join('');
+      } else {
+        sel.innerHTML = '<option value="">Select a project…</option>' + allProjects.map(p => `<option value="${p.id}">${esc(p.name || 'Unnamed Project')}${p.jobNumber ? ' · ' + esc(p.jobNumber) : ''}</option>`).join('');
+      }
+      if (current && Array.from(sel.options).some(o => o.value === current)) sel.value = current;
+    });
+  }
+
+  function loadWarehouse() {
+    refreshWarehouseProjectOptions();
+    allWarehouseItems = [];
+    allProjects.forEach(project => {
+      const items = Array.isArray(project.warehouseItems) ? project.warehouseItems : [];
+      items.forEach(item => {
+        allWarehouseItems.push({
+          ...item,
+          projectId: project.id,
+          projectName: project.name || item.projectName || 'Unnamed Project',
+          projectJobNumber: project.jobNumber || item.projectJobNumber || ''
+        });
+      });
+    });
+    renderWarehouse();
+  }
+
+  function getWarehouseSummary(items) {
+    return items.reduce((acc, item) => {
+      const status = item.status || 'sent';
+      acc[status] = (acc[status] || 0) + Number(item.qty || 1);
+      acc.total += Number(item.qty || 1);
+      return acc;
+    }, { sent:0, received:0, returning:0, back:0, total:0 });
+  }
+
+  function warehouseDashboardHTML(items) {
+    const s = getWarehouseSummary(items);
+    return `
+      <div class="warehouse-dashboard">
+        <div class="warehouse-box out"><strong>${s.sent}</strong><span>Sent from Warehouse</span></div>
+        <div class="warehouse-box received"><strong>${s.received}</strong><span>Received on Job</span></div>
+        <div class="warehouse-box returning"><strong>${s.returning}</strong><span>Returned from Job</span></div>
+        <div class="warehouse-box back"><strong>${s.back}</strong><span>Back at Warehouse</span></div>
+      </div>`;
+  }
+
+  function warehouseCardHTML(item) {
+    const status = item.status || 'sent';
+    return `
+      <div class="warehouse-card" onclick="openWarehouseItemDetail('${item.projectId}','${item.id}')">
+        <div class="warehouse-card-head">
+          <div>
+            <h4>${esc(item.itemName || 'Unnamed Item')}</h4>
+            <div class="warehouse-meta">
+              ${item.itemId ? `<span>🏷️ ${esc(item.itemId)}</span>` : ''}
+              ${item.qty ? `<span>Qty: ${esc(item.qty)}</span>` : ''}
+              ${item.projectName ? `<span>🏗️ ${esc(item.projectName)}</span>` : ''}
+              ${item.date ? `<span>📅 ${esc(item.date)}</span>` : ''}
+              ${item.handledBy ? `<span>👤 ${esc(item.handledBy)}</span>` : ''}
+            </div>
+            ${item.notes ? `<p style="margin-top:8px;color:var(--muted);font-size:13px;line-height:1.4;">${esc(item.notes)}</p>` : ''}
+          </div>
+          <span class="warehouse-status ${status}">${warehouseStatusLabel(status)}</span>
+        </div>
+      </div>`;
+  }
+
+  function renderWarehouse() {
+    refreshWarehouseProjectOptions();
+    const q = String(document.getElementById('warehouse-search')?.value || '').toLowerCase().trim();
+    const filterProject = document.getElementById('warehouse-project-filter')?.value || 'all';
+
+    let items = allWarehouseItems.filter(item => {
+      const haystack = [item.itemName, item.itemId, item.projectName, item.projectJobNumber, item.status, item.notes, item.handledBy].filter(Boolean).join(' ').toLowerCase();
+      const matchesSearch = !q || haystack.includes(q);
+      const matchesProject = filterProject === 'all' || item.projectId === filterProject;
+      return matchesSearch && matchesProject;
+    });
+
+    const dash = document.getElementById('warehouse-dashboard-main');
+    if (dash) dash.innerHTML = warehouseDashboardHTML(items);
+
+    const list = document.getElementById('warehouse-list-main');
+    if (!list) return;
+
+    if (!items.length) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">📦</div><h3>No warehouse records yet</h3><p>Add equipment or material movement to start tracking.</p></div>`;
+      return;
+    }
+
+    list.innerHTML = `<div class="warehouse-list">${items.map(warehouseCardHTML).join('')}</div>`;
+  }
+
+  function renderProjectWarehouseTab() {
+    const summaryEl = document.getElementById('warehouse-dashboard-project');
+    const listEl = document.getElementById('warehouse-list-project');
+    if (!summaryEl && !listEl) return;
+
+    const items = Array.isArray(currentProject?.warehouseItems) ? currentProject.warehouseItems.map(item => ({
+      ...item,
+      projectId: currentProject.id,
+      projectName: currentProject.name || '',
+      projectJobNumber: currentProject.jobNumber || ''
+    })) : [];
+
+    if (summaryEl) summaryEl.innerHTML = warehouseDashboardHTML(items);
+
+    if (!listEl) return;
+    if (!items.length) {
+      listEl.innerHTML = `<div class="empty-state"><div class="icon">📦</div><h3>No warehouse records for this project</h3><p>Add equipment or materials assigned to this job.</p></div>`;
+      return;
+    }
+
+    listEl.innerHTML = `<div class="warehouse-list">${items.map(warehouseCardHTML).join('')}</div>`;
+  }
+
+  function openWarehouseItemModal(projectId = '', existingItem = null) {
+    refreshWarehouseProjectOptions();
+
+    editingWarehouseProjectId = existingItem?.projectId || projectId || '';
+    editingWarehouseItemId = existingItem?.id || null;
+
+    const fields = {
+      'warehouse-item-name': existingItem?.itemName || '',
+      'warehouse-item-id': existingItem?.itemId || '',
+      'warehouse-qty': existingItem?.qty || 1,
+      'warehouse-status': existingItem?.status || 'sent',
+      'warehouse-date': existingItem?.date || new Date().toISOString().slice(0,10),
+      'warehouse-handled-by': existingItem?.handledBy || currentUser?.displayName || currentUser?.email || '',
+      'warehouse-notes': existingItem?.notes || ''
+    };
+
+    Object.entries(fields).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+
+    const projectSelect = document.getElementById('warehouse-project-select');
+    if (projectSelect) {
+      projectSelect.value = editingWarehouseProjectId || '';
+      projectSelect.disabled = !!existingItem || !!projectId;
+    }
+
+    const btn = document.getElementById('save-warehouse-btn');
+    if (btn) btn.textContent = existingItem ? 'Update Movement' : 'Save Movement';
+
+    document.getElementById('modal-warehouse-item').classList.add('open');
+  }
+
+  async function saveWarehouseItem() {
+    const projectId = document.getElementById('warehouse-project-select')?.value || editingWarehouseProjectId || '';
+    if (!projectId) { toast('Select the project this item belongs to.'); return; }
+
+    const project = allProjects.find(p => p.id === projectId);
+    const btn = document.getElementById('save-warehouse-btn');
+    if (btn) { btn.disabled = true; btn.textContent = editingWarehouseItemId ? 'Updating…' : 'Saving…'; }
+
+    try {
+      const item = {
+        id: editingWarehouseItemId || `w_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+        itemName: document.getElementById('warehouse-item-name').value.trim(),
+        itemId: document.getElementById('warehouse-item-id').value.trim(),
+        qty: Number(document.getElementById('warehouse-qty').value || 1),
+        status: document.getElementById('warehouse-status').value || 'sent',
+        date: document.getElementById('warehouse-date').value || new Date().toISOString().slice(0,10),
+        handledBy: document.getElementById('warehouse-handled-by').value.trim(),
+        notes: document.getElementById('warehouse-notes').value.trim(),
+        projectName: project?.name || '',
+        projectJobNumber: project?.jobNumber || '',
+        updatedBy: currentUser?.uid || '',
+        updatedByName: currentUser?.displayName || currentUser?.email || '',
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!item.itemName) { toast('Item name is required.'); return; }
+
+      const ref = doc(db, 'projects', projectId);
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {};
+      const currentItems = Array.isArray(data.warehouseItems) ? data.warehouseItems : [];
+
+      let updatedItems;
+      if (editingWarehouseItemId) {
+        updatedItems = currentItems.map(x => x.id === editingWarehouseItemId ? item : x);
+        if (!updatedItems.some(x => x.id === editingWarehouseItemId)) updatedItems.push(item);
+      } else {
+        item.createdBy = currentUser?.uid || '';
+        item.createdByName = currentUser?.displayName || currentUser?.email || '';
+        item.createdAt = new Date().toISOString();
+        updatedItems = [...currentItems, item];
+      }
+
+      await updateDoc(ref, { warehouseItems: updatedItems });
+
+      editingWarehouseProjectId = null;
+      editingWarehouseItemId = null;
+      const ps = document.getElementById('warehouse-project-select');
+      if (ps) ps.disabled = false;
+      closeModal('modal-warehouse-item');
+      loadProjects();
+      loadWarehouse();
+      renderProjectWarehouseTab();
+      toast('Warehouse record saved');
+    } catch (e) {
+      console.error(e);
+      toast('Warehouse save failed: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Movement'; }
+    }
+  }
+
+  function openWarehouseItemDetail(projectId, itemId) {
+    const project = allProjects.find(p => p.id === projectId) || currentProject;
+    const item = (project?.warehouseItems || []).find(x => x.id === itemId);
+    if (!item) { toast('Warehouse item not found. Refresh and try again.'); return; }
+    openWarehouseItemModal(projectId, { ...item, projectId });
+  }
+
+
   function getCurrentProjectTicketsData() {
     const project = currentProject || {};
     const tickets = Array.isArray(project.extraTickets) ? project.extraTickets : [];
@@ -2625,6 +3020,11 @@
 
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
+    if (id === 'modal-warehouse-item') {
+      editingWarehouseProjectId=null; editingWarehouseItemId=null;
+      const ps = document.getElementById('warehouse-project-select'); if (ps) ps.disabled = false;
+      const btn = document.getElementById('save-warehouse-btn'); if (btn) btn.textContent = 'Save Movement';
+    }
     if (id === 'modal-extra-ticket') {
       editingTicketProjectId=null; editingTicketId=null; editingTicketOriginal=null;
       const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
@@ -2659,6 +3059,7 @@
     if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
     if (tabId === 'tab-employees') loadEmployees(true);
     if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
+    if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
   }
 
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
