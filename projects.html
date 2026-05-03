@@ -143,6 +143,75 @@
     }
 
 
+
+    .daily-dashboard {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+      margin:12px 0 16px;
+    }
+    .daily-box {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,.04);
+      border-left:5px solid var(--navy);
+    }
+    .daily-box strong { display:block; font-size:20px; margin-bottom:3px; color:var(--text); }
+    .daily-box span { color:var(--muted); font-size:12px; font-weight:800; }
+    .daily-box.crew { border-left-color:#2563eb; }
+    .daily-box.hours { border-left-color:#16a34a; }
+    .daily-box.delays { border-left-color:#d97706; }
+    .daily-box.safety { border-left-color:#dc2626; }
+    .daily-report-form-grid {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+    }
+    .daily-report-form-grid .span-2 { grid-column: span 2; }
+    .daily-report-form-grid .span-4 { grid-column: 1 / -1; }
+    .report-photo-list {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .report-photo-chip {
+      background:#eef2f7;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--navy);
+      font-weight:800;
+    }
+    .report-detail-photos {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .report-detail-photos a {
+      display:block;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#f8fafc;
+    }
+    .report-detail-photos img {
+      width:100%;
+      height:110px;
+      object-fit:cover;
+      display:block;
+    }
+    @media(max-width:850px){
+      .daily-dashboard { grid-template-columns:1fr; }
+      .daily-report-form-grid { grid-template-columns:1fr; }
+      .daily-report-form-grid .span-2,
+      .daily-report-form-grid .span-4 { grid-column: auto; }
+    }
+
     .warehouse-dashboard {
       display:grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -873,6 +942,7 @@
         <div>
           <div class="section-label">Daily Field Reports</div>
           <div class="helper-text">Create a new report from this project or open past reports with full details.</div>
+          <div id="daily-report-dashboard"></div>
         </div>
         <button class="btn-save" onclick="openDailyReportForm()">📝 New Daily Report</button>
       </div>
@@ -1063,6 +1133,99 @@
 <div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>💵 Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
 
 
+
+<div class="modal-overlay" id="modal-daily-report-v2">
+  <div class="modal" style="max-width:980px;">
+    <h3>📝 Daily Report 2.0</h3>
+    <div class="daily-report-form-grid">
+      <div class="field">
+        <label>Date</label>
+        <input id="dr-date" type="date" />
+      </div>
+      <div class="field">
+        <label>Foreman / Supervisor</label>
+        <input id="dr-supervisor" placeholder="Name" />
+      </div>
+      <div class="field">
+        <label>Crew Total</label>
+        <input id="dr-crew-total" type="number" min="0" placeholder="0" />
+      </div>
+      <div class="field">
+        <label>Man-Hours</label>
+        <input id="dr-man-hours" type="number" min="0" step="0.25" placeholder="0" />
+      </div>
+
+      <div class="field">
+        <label>Weather / Conditions</label>
+        <input id="dr-weather" placeholder="Clear, rain, cold, windy..." />
+      </div>
+      <div class="field">
+        <label>Temperature</label>
+        <input id="dr-temp" placeholder="72°F" />
+      </div>
+      <div class="field">
+        <label>Work Status</label>
+        <select id="dr-status">
+          <option value="On Track">On Track</option>
+          <option value="Delayed">Delayed</option>
+          <option value="Inspection">Inspection</option>
+          <option value="Complete">Complete</option>
+          <option value="No Work">No Work</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>% Complete</label>
+        <input id="dr-percent" type="number" min="0" max="100" placeholder="0" />
+      </div>
+
+      <div class="field span-2">
+        <label>Floors / Areas Worked</label>
+        <input id="dr-floors" placeholder="Floor 3, stair B, mechanical room..." />
+      </div>
+      <div class="field span-2">
+        <label>Toolbox Talk Topic</label>
+        <input id="dr-toolbox-topic" placeholder="Falls, PPE, silica, housekeeping..." />
+      </div>
+
+      <div class="field span-4">
+        <label>Work Completed Today</label>
+        <textarea id="dr-work" rows="4" placeholder="Describe work completed, areas worked, manpower, production, and major details..."></textarea>
+      </div>
+
+      <div class="field span-2">
+        <label>Deliveries / Materials / Equipment</label>
+        <textarea id="dr-deliveries" rows="3" placeholder="Materials delivered, equipment used, rentals, warehouse items, etc."></textarea>
+      </div>
+      <div class="field span-2">
+        <label>Issues / Delays</label>
+        <textarea id="dr-delays" rows="3" placeholder="Access issues, GC delays, missing material, weather, manpower, safety holds..."></textarea>
+      </div>
+
+      <div class="field span-2">
+        <label>Safety Notes / Incidents</label>
+        <textarea id="dr-safety" rows="3" placeholder="Near misses, incidents, safety concerns, inspections, corrective actions..."></textarea>
+      </div>
+      <div class="field span-2">
+        <label>Additional Notes</label>
+        <textarea id="dr-notes" rows="3" placeholder="Anything else office should know..."></textarea>
+      </div>
+
+      <div class="field span-4">
+        <label>Attach Photos</label>
+        <input id="dr-photos" type="file" multiple accept="image/*" capture="environment" onchange="previewDailyReportPhotos(this)" />
+        <div class="helper-text">Photos save with the report and also stay tied to this project.</div>
+        <div id="dr-photo-preview" class="report-photo-list"></div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-daily-report-v2')">Cancel</button>
+      <button class="btn-save" id="save-daily-report-btn" onclick="saveDailyReportV2()">Save Daily Report</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="modal-overlay" id="modal-warehouse-item">
   <div class="modal" style="max-width:720px;">
     <h3>📦 Warehouse / Equipment Movement</h3>
@@ -1177,6 +1340,8 @@
   window.handlePhotoUpload = handlePhotoUpload;
   window.addForeman = addForeman;
   window.openDailyReportForm = openDailyReportForm;
+  window.saveDailyReportV2 = saveDailyReportV2;
+  window.previewDailyReportPhotos = previewDailyReportPhotos;
   window.copyProjectLink = copyProjectLink;
   window.openReportDetail = openReportDetail;
   window.openEmployeeModal = openEmployeeModal;
@@ -1495,15 +1660,117 @@
 
   function openDailyReportForm() {
     if (!currentProject) return;
-    const payload = {
-      id: currentProject.id,
-      name: currentProject.name || '',
-      jobNumber: currentProject.jobNumber || '',
-      location: currentProject.location || '',
-      status: currentProject.status || 'active'
+    const today = new Date().toISOString().slice(0,10);
+    const fields = {
+      'dr-date': today,
+      'dr-supervisor': currentUser?.displayName || currentUser?.email || '',
+      'dr-crew-total': '',
+      'dr-man-hours': '',
+      'dr-weather': '',
+      'dr-temp': '',
+      'dr-status': 'On Track',
+      'dr-percent': '',
+      'dr-floors': '',
+      'dr-toolbox-topic': '',
+      'dr-work': '',
+      'dr-deliveries': '',
+      'dr-delays': '',
+      'dr-safety': '',
+      'dr-notes': ''
     };
-    localStorage.setItem('pal-current-project', JSON.stringify(payload));
-    window.location.href = `index.html?page=daily-report&projectId=${encodeURIComponent(currentProject.id)}`;
+    Object.entries(fields).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value;
+    });
+    const photoInput = document.getElementById('dr-photos');
+    if (photoInput) photoInput.value = '';
+    const preview = document.getElementById('dr-photo-preview');
+    if (preview) preview.innerHTML = '';
+    document.getElementById('modal-daily-report-v2').classList.add('open');
+  }
+
+  function previewDailyReportPhotos(input) {
+    const preview = document.getElementById('dr-photo-preview');
+    if (!preview) return;
+    const files = Array.from(input.files || []);
+    preview.innerHTML = files.length
+      ? files.map(f => `<span class="report-photo-chip">📷 ${esc(f.name)}</span>`).join('')
+      : '';
+  }
+
+  async function saveDailyReportV2() {
+    if (!currentProject) return;
+    const btn = document.getElementById('save-daily-report-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+    try {
+      const reportIdSeed = `dr_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+      const photoInput = document.getElementById('dr-photos');
+      const files = Array.from(photoInput?.files || []);
+      const photoRecords = [];
+
+      for (const file of files) {
+        const path = `projects/${currentProject.id}/dailyReports/${reportIdSeed}/${Date.now()}_${file.name}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        photoRecords.push({
+          name: file.name,
+          url,
+          category: 'Daily Report',
+          uploadedBy: currentUser?.displayName || currentUser?.email || '',
+          uploadedAt: new Date().toISOString()
+        });
+      }
+
+      const report = {
+        date: document.getElementById('dr-date').value || new Date().toISOString().slice(0,10),
+        supervisor: document.getElementById('dr-supervisor').value.trim(),
+        foreman: document.getElementById('dr-supervisor').value.trim(),
+        crew_total: document.getElementById('dr-crew-total').value,
+        man_hours: document.getElementById('dr-man-hours').value,
+        conditions: document.getElementById('dr-weather').value.trim(),
+        temp: document.getElementById('dr-temp').value.trim(),
+        status: document.getElementById('dr-status').value,
+        percent_complete: document.getElementById('dr-percent').value,
+        floors: document.getElementById('dr-floors').value.trim(),
+        toolbox_topic: document.getElementById('dr-toolbox-topic').value.trim(),
+        toolbox_yes_no: document.getElementById('dr-toolbox-topic').value.trim() ? 'Yes' : '',
+        work_description: document.getElementById('dr-work').value.trim(),
+        delivery_description: document.getElementById('dr-deliveries').value.trim(),
+        issues: document.getElementById('dr-delays').value.trim(),
+        safety_notes: document.getElementById('dr-safety').value.trim(),
+        safety_incidents: document.getElementById('dr-safety').value.trim() ? 'See safety notes' : 'None reported',
+        notes: document.getElementById('dr-notes').value.trim(),
+        photos: photoRecords,
+        photoCount: photoRecords.length,
+        job_name: currentProject.name || '',
+        job_number: currentProject.jobNumber || '',
+        projectId: currentProject.id,
+        submittedBy: currentUser?.uid || '',
+        submittedByName: currentUser?.displayName || currentUser?.email || '',
+        submittedAt: new Date().toISOString(),
+        createdAt: serverTimestamp()
+      };
+
+      await addDoc(collection(db, 'projects', currentProject.id, 'reports'), report);
+
+      if (photoRecords.length) {
+        await updateDoc(doc(db, 'projects', currentProject.id), {
+          photos: arrayUnion(...photoRecords)
+        });
+      }
+
+      closeModal('modal-daily-report-v2');
+      await loadProjectReports(currentProject.id);
+      loadProjectPhotos(currentProject.id);
+      toast('Daily report saved');
+    } catch (e) {
+      console.error(e);
+      toast('Daily report save failed: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Daily Report'; }
+    }
   }
 
   async function copyProjectLink() {
@@ -1636,6 +1903,30 @@
   }
 
   // ── DAILY REPORTS ──
+
+  function renderDailyReportDashboard(rows = []) {
+    const el = document.getElementById('daily-report-dashboard');
+    if (!el) return;
+
+    const totals = rows.reduce((acc, r) => {
+      acc.reports += 1;
+      acc.crew += Number(r.crew_total || 0);
+      acc.hours += Number(r.man_hours || 0);
+      if ((r.status || '').toLowerCase().includes('delay') || String(r.issues || '').trim()) acc.delays += 1;
+      if (String(r.safety_notes || r.safety_incidents || '').trim() && String(r.safety_incidents || '').toLowerCase() !== 'none reported') acc.safety += 1;
+      return acc;
+    }, { reports:0, crew:0, hours:0, delays:0, safety:0 });
+
+    el.innerHTML = `
+      <div class="daily-dashboard">
+        <div class="daily-box crew"><strong>${totals.crew}</strong><span>Total Crew Logged</span></div>
+        <div class="daily-box hours"><strong>${totals.hours}</strong><span>Total Man-Hours</span></div>
+        <div class="daily-box delays"><strong>${totals.delays}</strong><span>Reports with Delays</span></div>
+        <div class="daily-box safety"><strong>${totals.safety}</strong><span>Safety Notes / Incidents</span></div>
+      </div>`;
+  }
+
+
   async function loadProjectReports(projectId) {
     const list = document.getElementById('reports-list');
     try {
@@ -1644,13 +1935,14 @@
       const rows = [];
       snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
       document.getElementById('summary-reports').textContent = rows.length;
+      renderDailyReportDashboard(rows);
       if (currentProject) {
         const projectRef = doc(db, 'projects', projectId);
         if ((currentProjectDoc?.reportCount || 0) !== rows.length) {
           updateDoc(projectRef, { reportCount: rows.length }).catch(() => {});
         }
       }
-      if (!rows.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p>'; return; }
+      if (!rows.length) { renderDailyReportDashboard([]); list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p>'; return; }
       list.innerHTML = '';
       rows.forEach(r => {
         const row = document.createElement('div');
@@ -1664,6 +1956,8 @@
                 ${r.job_number ? `<span>📋 ${esc(r.job_number)}</span>` : ''}
                 ${r.conditions ? `<span>☁️ ${esc(r.conditions)}</span>` : ''}
                 ${r.crew_total ? `<span>👥 ${esc(r.crew_total)} workers</span>` : ''}
+                ${r.man_hours ? `<span>⏱️ ${esc(r.man_hours)} hrs</span>` : ''}
+                ${r.photoCount ? `<span>📷 ${esc(r.photoCount)} photos</span>` : ''}
               </div>
             </div>
             <span class="pill blue">${esc(r.status || 'Report')}</span>
@@ -2315,7 +2609,9 @@
       ['Safety Notes', report.safety_notes],
       ['Additional Notes', report.notes]
     ].filter(([,value]) => value);
-    grid.innerHTML = fields.map(([k, v]) => `<div class="report-field"><span class="k">${esc(k)}</span><div class="v">${esc(v)}</div></div>`).join('');
+    const photos = Array.isArray(report.photos) ? report.photos : [];
+    const photoHTML = photos.length ? `<div class="report-field" style="grid-column:1/-1;"><span class="k">Attached Photos</span><div class="report-detail-photos">${photos.map(p => `<a href="${p.url}" target="_blank"><img src="${p.url}" alt="${esc(p.name || 'Daily report photo')}"></a>`).join('')}</div></div>` : '';
+    grid.innerHTML = fields.map(([k, v]) => `<div class="report-field"><span class="k">${esc(k)}</span><div class="v">${esc(v)}</div></div>`).join('') + photoHTML;
     document.getElementById('modal-report-detail').classList.add('open');
   }
 
