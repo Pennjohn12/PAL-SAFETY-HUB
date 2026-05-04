@@ -913,6 +913,12 @@
         </div>
         <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button>
       </div>
+      
+      <div class="detail-card" style="margin:12px 0;">
+        <h3 style="margin-bottom:6px;">Signature Workflow</h3>
+        <div class="helper-text">Best field method: open or download the document, sign it using the device markup/signature tool, then upload the signed copy back into this project. We can later add an in-app “Send for Signature / Sign & Save” workflow if you want it built directly into PAL Safety Hub.</div>
+      </div>
+
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
       <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
     </div>
@@ -934,13 +940,15 @@
             <option value="Incident">Incident</option>
             <option value="Inspection">Inspection</option>
           </select>
-          <button class="btn-save" onclick="document.getElementById('photo-file-input').click()">📸 Add Photos</button>
+          <button class="btn-save" onclick="document.getElementById('photo-camera-input').click()">📸 Take Photo</button>
+          <button class="btn-outline" onclick="document.getElementById('photo-library-input').click()">🖼️ Upload from Photos</button>
         </div>
       </div>
       <div id="photos-sections"></div>
       <div class="photo-grid" id="photos-grid"></div>
       <p id="no-photos-msg" style="color:var(--muted);font-size:14px;">No photos yet.</p>
-      <input type="file" id="photo-file-input" multiple accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)" />
+      <input type="file" id="photo-camera-input" multiple accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)" />
+      <input type="file" id="photo-library-input" multiple accept="image/*" style="display:none" onchange="handlePhotoUpload(this)" />
     </div>
 
     <!-- DAILY REPORTS TAB -->
@@ -1020,7 +1028,7 @@
     <!-- Sticky upload bar (shown on docs/photos tabs) -->
     <div class="sticky-upload" id="sticky-upload">
       <button class="btn-upload" onclick="document.getElementById('doc-file-input').click()">📎 Upload Docs</button>
-      <button class="btn-upload green" onclick="document.getElementById('photo-file-input').click()">📸 Add Photos</button>
+      <button class="btn-upload green" onclick="document.getElementById('photo-camera-input').click()">📸 Take Photo</button><button class="btn-upload" onclick="document.getElementById('photo-library-input').click()">🖼️ Photo Library</button>
     </div>
   </div>
 </div>
@@ -1809,6 +1817,24 @@
       const response = await fetch(url);
       if (!response.ok) throw new Error('File download failed');
       const blob = await response.blob();
+
+      // Laptop / Chrome / Edge: use a real Save As window when available.
+      if ('showSaveFilePicker' in window) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: cleanName,
+          types: [{
+            description: 'Project file',
+            accept: { [blob.type || 'application/octet-stream']: ['.' + (cleanName.split('.').pop() || 'file')] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        toast('File saved to device');
+        return;
+      }
+
+      // iPhone/iPad and other browsers.
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = objectUrl;
@@ -1819,12 +1845,17 @@
       setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
       toast('File saved to device');
     } catch (e) {
+      if (e && e.name === 'AbortError') {
+        toast('Save cancelled');
+        return;
+      }
       console.error(e);
-      toast('Opening file. Use device save/share if download is blocked.');
+      toast('Opening backup. Use browser download/save if needed.');
       const a = document.createElement('a');
       a.href = url;
       a.download = cleanName;
       a.rel = 'noopener';
+      a.target = '_blank';
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -1852,7 +1883,7 @@
           <button class="btn-sm" onclick="downloadProjectFile('${d.url}', '${esc(d.name)}')">Download</button>
           <a href="${d.url}" target="_blank" rel="noopener" class="btn-sm">Open Backup</a>
         </div>
-        <div class="file-clean-note">Use Download for the cleanest save/share flow.</div>`;
+        <div class="file-clean-note">Use Download for the cleanest save/share flow. On laptop, choose where to save when prompted.</div>`;
       list.appendChild(row);
     });
   }
