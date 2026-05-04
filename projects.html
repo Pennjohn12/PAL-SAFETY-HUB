@@ -957,7 +957,7 @@
           <div class="section-label">Extra Work Tickets</div>
           <div class="helper-text">Tickets tied to this project only. Office can open, price, edit, print, and track totals here.</div>
         </div>
-        <button class="btn-save" onclick="openExtraWorkTicketModal(currentProject?.id || '')">＋ New Ticket for This Project</button>
+        <button class="btn-save" type="button" onclick="openProjectTicketModal()">＋ New Ticket for This Project</button>
       </div>
       <div id="project-ticket-dashboard-summary"></div>
       <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
@@ -986,7 +986,7 @@
         </div>
       </div>
       <div id="foremen-list"><p style="color:var(--muted);font-size:14px;">No foremen assigned yet.</p></div>
-      <div style="margin-top:16px;" class="admin-only">
+      <div style="margin-top:16px;">
         <div class="section-label">Add Foreman by Email</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <input type="email" id="add-foreman-email" placeholder="foreman@palcorp.com" style="flex:1;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;font:inherit;font-size:14px;outline:none;min-width:200px;" />
@@ -1359,6 +1359,7 @@
   window.saveCertification = saveCertification;
   window.switchMainTab = switchMainTab;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
+  window.openProjectTicketModal = openProjectTicketModal;
   window.saveExtraWorkTicket = saveExtraWorkTicket;
   window.updateTicketGrandTotal = updateTicketGrandTotal;
   window.addTicketLaborRow = addTicketLaborRow;
@@ -1999,20 +2000,37 @@
   }
 
   async function addForeman() {
-    const email = document.getElementById('add-foreman-email').value.trim();
+    const input = document.getElementById('add-foreman-email');
+    const email = String(input?.value || '').trim().toLowerCase();
     if (!email) { toast('Enter an email address'); return; }
-    if (!currentProject) return;
+    if (!currentProject?.id) { toast('Open a project first.'); return; }
+
+    const foremanRecord = {
+      email,
+      uid: '',
+      name: email.split('@')[0],
+      role: 'foreman',
+      addedAt: new Date().toISOString(),
+      addedBy: currentUser?.email || ''
+    };
+
     try {
       await updateDoc(doc(db, 'projects', currentProject.id), {
-        foremen: arrayUnion({ email, uid: '', name: email.split('@')[0], role: 'foreman', addedAt: new Date().toISOString() })
+        foremen: arrayUnion(foremanRecord)
       });
-      // refresh
+
       const snap = await getDoc(doc(db, 'projects', currentProject.id));
-      loadProjectForemen(snap.data());
-      document.getElementById('add-foreman-email').value = '';
-      toast(`✅ ${email} added`);
+      if (snap.exists()) {
+        currentProjectDoc = snap.data();
+        currentProject = { id: currentProject.id, ...snap.data() };
+        loadProjectForemen(currentProjectDoc);
+      }
+
+      if (input) input.value = '';
+      toast(`✅ ${email} added as foreman`);
     } catch(e) {
-      toast('Error: ' + e.message);
+      console.error('Add foreman failed:', e);
+      toast('Could not add foreman: ' + e.message);
     }
   }
 
@@ -3139,6 +3157,16 @@
   }
 
 
+
+  function openProjectTicketModal() {
+    const projectId = currentProject?.id || new URLSearchParams(window.location.search).get('projectId') || '';
+    if (!projectId) {
+      toast('Open a project first, then create the ticket.');
+      return;
+    }
+    openExtraWorkTicketModal(projectId);
+  }
+
   function openExtraWorkTicketModal(projectId = '', existingTicket = null) {
     refreshTicketProjectOptions();
 
@@ -3153,7 +3181,10 @@
     if (saveBtn) saveBtn.textContent = existingTicket ? 'Update Ticket' : 'Save Ticket';
 
     const projectSelect = document.getElementById('ticket-project-select');
-    if (projectSelect) projectSelect.disabled = !!existingTicket;
+    if (projectSelect) {
+      projectSelect.disabled = !!existingTicket || !!projectId;
+      if (projectId) projectSelect.value = projectId;
+    }
 
     if (existingTicket) {
       document.getElementById('ticket-number').value = existingTicket.ticketNo || '';
@@ -3223,7 +3254,7 @@
   function getTicketSignature(id){ const c=document.getElementById(id); if(!c)return ''; try{return c.toDataURL('image/png')}catch(e){return ''} }
 
   async function saveExtraWorkTicket(){
-    const projectId=document.getElementById('ticket-project-select')?.value||editingTicketProjectId||'';
+    const projectId=editingTicketProjectId||document.getElementById('ticket-project-select')?.value||'';
     if(!projectId){toast('Select the project this ticket belongs to.'); return;}
     const project=allProjects.find(p=>p.id===projectId);
     const btn=document.getElementById('save-ticket-btn');
