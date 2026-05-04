@@ -446,7 +446,14 @@
     .file-info { flex: 1; min-width: 0; }
     .file-info h4 { font-size: 14px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
     .file-info p { font-size: 12px; color: var(--muted); }
-    .file-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .file-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap:wrap; }
+
+    .file-clean-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
     .btn-sm {
       background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
       padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--navy);
@@ -1343,6 +1350,7 @@
   window.saveDailyReportV2 = saveDailyReportV2;
   window.previewDailyReportPhotos = previewDailyReportPhotos;
   window.copyProjectLink = copyProjectLink;
+  window.downloadProjectFile = downloadProjectFile;
   window.openReportDetail = openReportDetail;
   window.openEmployeeModal = openEmployeeModal;
   window.editEmployee = editEmployee;
@@ -1786,6 +1794,44 @@
   }
 
   // ── DOCUMENTS ──
+
+  function getCleanFileName(name = 'PAL-Project-File') {
+    return String(name || 'PAL-Project-File')
+      .replace(/[\\/:*?"<>|]+/g, '-')
+      .replace(/\s+/g, ' ')
+      .trim() || 'PAL-Project-File';
+  }
+
+  async function downloadProjectFile(url, fileName = 'PAL-Project-File') {
+    const cleanName = getCleanFileName(fileName);
+    try {
+      toast('Preparing download…');
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('File download failed');
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = cleanName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+      toast('File saved to device');
+    } catch (e) {
+      console.error(e);
+      toast('Opening file. Use device save/share if download is blocked.');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = cleanName;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+  }
+
+
   async function loadProjectDocs(projectId) {
     const snap = await getDoc(doc(db, 'projects', projectId));
     const data = snap.data();
@@ -1803,8 +1849,10 @@
           <p>${d.uploadedBy} · ${formatDate(d.uploadedAt)}</p>
         </div>
         <div class="file-actions">
-          <a href="${d.url}" target="_blank" class="btn-sm">Open</a>
-        </div>`;
+          <button class="btn-sm" onclick="downloadProjectFile('${d.url}', '${esc(d.name)}')">Download</button>
+          <a href="${d.url}" target="_blank" rel="noopener" class="btn-sm">Open Backup</a>
+        </div>
+        <div class="file-clean-note">Use Download for the cleanest save/share flow.</div>`;
       list.appendChild(row);
     });
   }
