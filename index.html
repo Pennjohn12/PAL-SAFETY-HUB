@@ -189,11 +189,43 @@
       cursor: crosshair;
       touch-action: none;
     }
-    .sig-clear {
-      position: absolute; top: 2px; right: 2px;
+    .sig-clear, .sig-type-btn {
+      position: absolute; top: 2px;
       background: rgba(0,0,0,0.08); border: none; border-radius: 4px;
       font-size: 10px; color: #666; padding: 2px 5px; cursor: pointer;
       line-height: 1.4;
+    }
+    .sig-clear { right: 2px; }
+    .sig-type-btn { right: 46px; }
+    .sig-type-panel {
+      display: none;
+      gap: 5px;
+      align-items: center;
+      margin-top: 3px;
+    }
+    .sig-pad-wrap.type-open .sig-type-panel { display: flex; }
+    .sig-type-input {
+      flex: 1;
+      min-width: 80px;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 7px !important;
+      padding: 5px 7px !important;
+      font-size: 12px !important;
+      background: white !important;
+    }
+    .sig-apply-btn {
+      border: 0;
+      border-radius: 7px;
+      background: var(--navy);
+      color: white;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    @media (min-width: 760px) {
+      .sig-pad-wrap canvas { height: 60px; }
     }
     .back-page { background: #f0fae8; padding: 16px; border-radius: 14px; border: 1px solid #78c240; margin-top: 16px; }
     .warn-box { background: #fff1f2; border: 1px solid #fecdd3; color: #991b1b; padding: 12px 14px; border-radius: 12px; font-weight: 700; }
@@ -579,7 +611,7 @@
       #daily-safety-meeting .sig-pad-wrap canvas { height: 28px !important; }
       #daily-safety-meeting .pal-logo svg { width: 36px !important; height: 36px !important; }
       .inspection-grid { gap: 8px !important; }
-      .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
+      .toolbar, .btn.secondary, .save-note, #install-banner, .sig-type-btn, .sig-type-panel { display: none !important; }
     }
   </style>
 </head>
@@ -2790,22 +2822,54 @@
     }
 
     function initSigPad(canvas) {
+      if (canvas._sigInited) return;
       canvas._sigInited = true;
+      const wrap = canvas.closest('.sig-pad-wrap');
       const dpr = window.devicePixelRatio || 1;
+
+      function ensureTypedSignatureControls() {
+        if (!wrap || wrap.querySelector('.sig-type-btn')) return;
+        const typeBtn = document.createElement('button');
+        typeBtn.type = 'button';
+        typeBtn.className = 'sig-type-btn';
+        typeBtn.textContent = 'Type';
+        typeBtn.title = 'Type a signature for laptop/trackpad use';
+        typeBtn.onclick = () => wrap.classList.toggle('type-open');
+
+        const panel = document.createElement('div');
+        panel.className = 'sig-type-panel';
+        panel.innerHTML = '<input class="sig-type-input" placeholder="Type name"><button type="button" class="sig-apply-btn">Use</button>';
+        panel.querySelector('.sig-apply-btn').onclick = () => applyTypedSignature(canvas, panel.querySelector('.sig-type-input').value);
+        panel.querySelector('.sig-type-input').addEventListener('keydown', e => {
+          if (e.key === 'Enter') applyTypedSignature(canvas, e.currentTarget.value);
+        });
+
+        wrap.insertBefore(typeBtn, wrap.querySelector('.sig-clear') || canvas.nextSibling);
+        wrap.appendChild(panel);
+      }
+
       function resize() {
+        const data = canvas.toDataURL ? canvas.toDataURL('image/png') : '';
         const w = canvas.offsetWidth || 200;
-        const h = 52;
+        const h = parseInt(getComputedStyle(canvas).height, 10) || 52;
         canvas.width = w * dpr;
         canvas.height = h * dpr;
         const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (data) {
+          const img = new Image();
+          img.onload = () => ctx.drawImage(img, 0, 0, w, h);
+          img.src = data;
+        }
       }
+      ensureTypedSignatureControls();
       resize();
+      window.addEventListener('resize', () => setTimeout(resize, 100));
 
       function getCtx() {
         const ctx = canvas.getContext('2d');
         ctx.strokeStyle = '#1b3a5c';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.25;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         return ctx;
@@ -2816,18 +2880,10 @@
 
       function getXY(e) {
         const r = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / dpr / r.width;
-        const scaleY = canvas.height / dpr / r.height;
-        if (e.touches && e.touches.length > 0) {
-          return [
-            (e.touches[0].clientX - r.left) * scaleX,
-            (e.touches[0].clientY - r.top) * scaleY
-          ];
-        }
-        return [
-          (e.clientX - r.left) * scaleX,
-          (e.clientY - r.top) * scaleY
-        ];
+        const scaleX = (canvas.width / dpr) / r.width;
+        const scaleY = (canvas.height / dpr) / r.height;
+        const t = e.touches && e.touches.length ? e.touches[0] : e;
+        return [(t.clientX - r.left) * scaleX, (t.clientY - r.top) * scaleY];
       }
 
       function onStart(e) {
@@ -2846,30 +2902,50 @@
         ctx.stroke();
         lastX = x; lastY = y;
       }
-      function onEnd(e) {
-        drawing = false;
-      }
+      function onEnd() { drawing = false; }
 
-      // Mouse
-      canvas.addEventListener('mousedown', onStart);
-      canvas.addEventListener('mousemove', onMove);
-      canvas.addEventListener('mouseup', onEnd);
-      canvas.addEventListener('mouseleave', onEnd);
-      // Touch
-      canvas.addEventListener('touchstart', onStart, { passive: false });
-      canvas.addEventListener('touchmove', onMove, { passive: false });
-      canvas.addEventListener('touchend', onEnd);
+      if (window.PointerEvent) {
+        canvas.addEventListener('pointerdown', onStart);
+        canvas.addEventListener('pointermove', onMove);
+        canvas.addEventListener('pointerup', onEnd);
+        canvas.addEventListener('pointerleave', onEnd);
+      } else {
+        canvas.addEventListener('mousedown', onStart);
+        canvas.addEventListener('mousemove', onMove);
+        canvas.addEventListener('mouseup', onEnd);
+        canvas.addEventListener('mouseleave', onEnd);
+        canvas.addEventListener('touchstart', onStart, { passive: false });
+        canvas.addEventListener('touchmove', onMove, { passive: false });
+        canvas.addEventListener('touchend', onEnd);
+      }
+    }
+
+    function applyTypedSignature(canvas, name) {
+      const clean = (name || '').trim();
+      if (!clean) return;
+      const dpr = window.devicePixelRatio || 1;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#1b3a5c';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.font = `${Math.max(20, Math.min(34, w / Math.max(clean.length * 0.55, 8)))}px Brush Script MT, Segoe Script, Comic Sans MS, cursive`;
+      ctx.fillText(clean, w / 2, h * 0.58, w - 12);
+      const wrap = canvas.closest('.sig-pad-wrap');
+      if (wrap) wrap.classList.remove('type-open');
     }
 
     function clearSig(btn) {
       const canvas = btn.closest('.sig-pad-wrap').querySelector('canvas');
-      const dpr = window.devicePixelRatio || 1;
-      canvas.getContext('2d').clearRect(0, 0, canvas.width / dpr * dpr, canvas.height / dpr * dpr);
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     }
 
     // Init any signature canvases already in the HTML (incident report signatures)
     function initAllSigPads() {
-      document.querySelectorAll('.signature-cell canvas').forEach(initSigPad);
+      document.querySelectorAll('.sig-pad-wrap canvas').forEach(initSigPad);
     }
 
     function addWorkerRow(name='', role='', hrs='', ot='') {
