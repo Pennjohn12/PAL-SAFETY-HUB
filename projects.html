@@ -327,58 +327,6 @@
     @media (max-width: 600px) { .ticket-grid { grid-template-columns: 1fr; } }
     .ticket-paper{background:#fff;color:#111;border:2px solid #111;padding:14px;border-radius:6px;font-family:Arial,sans-serif}.ticket-top{display:grid;grid-template-columns:130px 1fr 170px;gap:10px;align-items:center;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:8px}.ticket-logo-box{border:2px solid #111;padding:10px 8px;text-align:center;font-weight:900;font-size:24px;color:var(--navy);line-height:1}.ticket-logo-box small{display:block;font-size:9px;color:#111;letter-spacing:.5px;margin-top:3px}.ticket-title{text-align:center;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:.5px}.ticket-no-box{border:1.5px solid #111;padding:8px;font-size:13px;font-weight:800}.ticket-line-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #111;border-left:1px solid #111;margin-bottom:8px}.ticket-line-grid .cell{border-right:1px solid #111;border-bottom:1px solid #111;padding:6px;min-height:50px}.ticket-line-grid .wide{grid-column:span 2}.ticket-paper label,.ticket-label{display:block;font-size:10px;text-transform:uppercase;font-weight:900;color:#111;letter-spacing:.3px;margin-bottom:3px}.ticket-paper input,.ticket-paper textarea,.ticket-paper select{width:100%;border:0;border-bottom:1px solid #555;border-radius:0;padding:4px 2px;font:inherit;font-size:13px;background:transparent;outline:none}.ticket-paper textarea{border:1px solid #555;min-height:72px;resize:vertical;padding:6px}.ticket-section-head{background:#111;color:#fff;font-size:12px;font-weight:900;padding:5px 8px;text-transform:uppercase;letter-spacing:.5px;margin-top:8px}.ticket-table-wrap{overflow-x:auto;border-left:1px solid #111;border-right:1px solid #111}.ticket-table{width:100%;border-collapse:collapse;min-width:720px}.ticket-table th{background:#e5e7eb;color:#111;border:1px solid #111;padding:5px;font-size:10px;text-transform:uppercase;text-align:center}.ticket-table td{border:1px solid #111;padding:3px}.ticket-table input{border:0;padding:5px 3px;font-size:13px}.ticket-table .row-btn{background:#fff1f2;color:var(--red);border:1px solid #fecdd3;border-radius:6px;padding:5px 8px;cursor:pointer;font-size:11px;font-weight:800}.ticket-actions-inline{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ticket-summary{display:grid;grid-template-columns:1fr 280px;gap:12px;margin-top:10px;align-items:start}.ticket-total-box{border:1.5px solid #111}.ticket-total-row{display:grid;grid-template-columns:1fr 110px;border-bottom:1px solid #111}.ticket-total-row:last-child{border-bottom:0}.ticket-total-row span{padding:7px 8px;font-size:12px;font-weight:800;border-right:1px solid #111}.ticket-total-row input{border:0;text-align:right;font-weight:800}.ticket-grand-row{background:#f3f4f6;font-size:15px}.ticket-sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.ticket-sign-box{border:1.5px solid #111;padding:6px;min-height:92px}.ticket-sign-box canvas{width:100%;height:58px;border-bottom:1.5px solid #111;touch-action:none;display:block}@media(max-width:600px){.ticket-top{grid-template-columns:1fr}.ticket-title{text-align:left}.ticket-line-grid{grid-template-columns:1fr}.ticket-line-grid .wide{grid-column:span 1}.ticket-summary{grid-template-columns:1fr}.ticket-sign-grid{grid-template-columns:1fr}}
 
-
-
-    /* DEVICE SMOOTHING PATCH: consistent tab/action behavior on phone, iPad, and laptop */
-    .tabs { scrollbar-width: thin; }
-    .tabs::-webkit-scrollbar { height: 6px; }
-    .tabs::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
-    @media (max-width: 760px) {
-      .page-wrap { padding-left: 12px; padding-right: 12px; }
-      .header { height: auto; min-height: 64px; padding-top: 8px; padding-bottom: 8px; }
-      .brand-text p { display: none; }
-      .user-chip span { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .tabs { gap: 6px; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-      .tab { padding: 10px 12px; font-size: 13px; }
-      .modal { width: min(100%, 96vw); padding: 20px 16px; }
-      .modal-overlay { align-items: flex-start; overflow-y: auto; padding-top: 12px; }
-      .file-item, .foreman-row { align-items: flex-start; }
-      .file-actions { width: 100%; }
-      .file-actions .btn-sm { flex: 1; text-align: center; }
-    }
-
-    .signature-helper-note {
-      margin-top: 6px;
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-    .ticket-sign-type-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .ticket-sign-type-row input {
-      flex: 1;
-      border: 1px solid var(--line) !important;
-      border-radius: 8px !important;
-      padding: 7px 8px !important;
-      font-size: 12px !important;
-      background: white !important;
-    }
-    .ticket-sign-type-row button {
-      border: 0;
-      border-radius: 8px;
-      background: var(--navy);
-      color: white;
-      font-size: 12px;
-      font-weight: 900;
-      padding: 7px 10px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    @media print { .ticket-sign-type-row, .signature-helper-note { display: none !important; } }
-
     .btn-primary {
       width: 100%; background: var(--navy); color: white;
       border: none; border-radius: 12px; padding: 14px;
@@ -3380,48 +3328,7 @@
     const bond=Number(document.getElementById('ticket-bond-total')?.value||0),tax=Number(document.getElementById('ticket-tax-total')?.value||0),other=Number(document.getElementById('ticket-other-total')?.value||0); const set=(id,val)=>{const el=document.getElementById(id); if(el)el.value=money(val);}; set('ticket-labor-total',laborTotal); set('ticket-material-total',materialTotal); set('ticket-equipment-total',equipmentTotal); set('ticket-grand-total',laborTotal+materialTotal+equipmentTotal+bond+tax+other);
   }
 
-  function initTicketSignaturePads(){
-    ['ticket-contractor-signature','ticket-pal-signature'].forEach(id=>{
-      const canvas=document.getElementById(id);
-      if(!canvas||canvas.dataset.ready==='1')return;
-      canvas.dataset.ready='1';
-      const box=canvas.closest('.ticket-sign-box');
-      if(box && !box.querySelector('.ticket-sign-type-row')){
-        const row=document.createElement('div');
-        row.className='ticket-sign-type-row';
-        row.innerHTML='<input placeholder="Type name for laptop signature"><button type="button">Use</button>';
-        row.querySelector('button').onclick=()=>applyTypedTicketSignature(id,row.querySelector('input').value);
-        row.querySelector('input').addEventListener('keydown',e=>{if(e.key==='Enter')applyTypedTicketSignature(id,e.currentTarget.value);});
-        box.appendChild(row);
-        const note=document.createElement('div');
-        note.className='signature-helper-note';
-        note.textContent='Draw with finger/mouse or type a name and press Use.';
-        box.appendChild(note);
-      }
-      const resize=()=>{
-        const old=canvas.toDataURL ? canvas.toDataURL('image/png') : '';
-        const r=canvas.getBoundingClientRect();
-        canvas.width=Math.max(300,Math.floor(r.width*2));
-        canvas.height=116;
-        const ctx=canvas.getContext('2d');
-        ctx.lineWidth=4; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#111';
-        if(old){const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height); img.src=old;}
-      };
-      resize();
-      let drawing=false;
-      const pos=e=>{const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)}};
-      const start=e=>{e.preventDefault(); drawing=true; const p=pos(e); const ctx=canvas.getContext('2d'); ctx.beginPath(); ctx.moveTo(p.x,p.y)};
-      const move=e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); const ctx=canvas.getContext('2d'); ctx.lineTo(p.x,p.y); ctx.stroke()};
-      const end=()=>{drawing=false};
-      if(window.PointerEvent){canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',end);canvas.addEventListener('pointerleave',end);} else {canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);}
-    });
-  }
-  function applyTypedTicketSignature(id,name){
-    const c=document.getElementById(id); const clean=(name||'').trim(); if(!c||!clean)return;
-    const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); ctx.fillStyle='#111'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.font=`${Math.max(34,Math.min(54,c.width/Math.max(clean.length*.55,8)))}px Brush Script MT, Segoe Script, Comic Sans MS, cursive`;
-    ctx.fillText(clean,c.width/2,c.height*.58,c.width-24);
-  }
+  function initTicketSignaturePads(){ ['ticket-contractor-signature','ticket-pal-signature'].forEach(id=>{const canvas=document.getElementById(id); if(!canvas||canvas.dataset.ready==='1')return; canvas.dataset.ready='1'; const resize=()=>{const r=canvas.getBoundingClientRect(); canvas.width=Math.max(300,Math.floor(r.width*2)); canvas.height=116; const ctx=canvas.getContext('2d'); ctx.lineWidth=4; ctx.lineCap='round'; ctx.strokeStyle='#111';}; resize(); let drawing=false; const pos=e=>{const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)}}; const start=e=>{e.preventDefault(); drawing=true; const p=pos(e); const ctx=canvas.getContext('2d'); ctx.beginPath(); ctx.moveTo(p.x,p.y)}; const move=e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); const ctx=canvas.getContext('2d'); ctx.lineTo(p.x,p.y); ctx.stroke()}; const end=()=>{drawing=false}; canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end); canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end); }); }
   function clearTicketSignature(id){ const c=document.getElementById(id); if(!c)return; c.getContext('2d').clearRect(0,0,c.width,c.height); }
   function getTicketSignature(id){ const c=document.getElementById(id); if(!c)return ''; try{return c.toDataURL('image/png')}catch(e){return ''} }
 

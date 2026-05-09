@@ -189,43 +189,11 @@
       cursor: crosshair;
       touch-action: none;
     }
-    .sig-clear, .sig-type-btn {
-      position: absolute; top: 2px;
+    .sig-clear {
+      position: absolute; top: 2px; right: 2px;
       background: rgba(0,0,0,0.08); border: none; border-radius: 4px;
       font-size: 10px; color: #666; padding: 2px 5px; cursor: pointer;
       line-height: 1.4;
-    }
-    .sig-clear { right: 2px; }
-    .sig-type-btn { right: 46px; }
-    .sig-type-panel {
-      display: none;
-      gap: 5px;
-      align-items: center;
-      margin-top: 3px;
-    }
-    .sig-pad-wrap.type-open .sig-type-panel { display: flex; }
-    .sig-type-input {
-      flex: 1;
-      min-width: 80px;
-      border: 1px solid #cbd5e1 !important;
-      border-radius: 7px !important;
-      padding: 5px 7px !important;
-      font-size: 12px !important;
-      background: white !important;
-    }
-    .sig-apply-btn {
-      border: 0;
-      border-radius: 7px;
-      background: var(--navy);
-      color: white;
-      padding: 5px 8px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    @media (min-width: 760px) {
-      .sig-pad-wrap canvas { height: 60px; }
     }
     .back-page { background: #f0fae8; padding: 16px; border-radius: 14px; border: 1px solid #78c240; margin-top: 16px; }
     .warn-box { background: #fff1f2; border: 1px solid #fecdd3; color: #991b1b; padding: 12px 14px; border-radius: 12px; font-weight: 700; }
@@ -386,6 +354,41 @@
       #cover .home-company-grid { grid-template-columns: 1fr; }
     }
 
+
+
+
+    /* Employee Safety & Checklist access patch */
+    .employee-access-note {
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-left:6px solid var(--green-accent);
+      border-radius:16px;
+      padding:14px 16px;
+      margin:14px 0;
+      color:var(--text);
+      font-size:14px;
+      line-height:1.55;
+    }
+    .restricted-card {
+      border-left:6px solid var(--navy);
+      background:linear-gradient(180deg,#fff,#f8fafc);
+    }
+    .checklist-link-box {
+      background:#eef4fa;
+      border:1px solid #cddceb;
+      border-radius:14px;
+      padding:12px;
+      margin:0 0 12px;
+    }
+    .checklist-link-box h4 { margin:0 0 8px; color:var(--navy); font-size:14px; }
+    @media print {
+      .employee-access-note, .restricted-card { box-shadow:none !important; }
+      .checklist-link-box { padding:4px 6px !important; margin:0 0 4px !important; border-radius:8px !important; }
+      .checklist-link-box h4 { display:none !important; }
+      .checklist-link-box .form-grid { gap:3px !important; }
+      .checklist-link-box .field label { font-size:7px !important; }
+      .checklist-link-box .field input { font-size:7px !important; padding:0 2px !important; }
+    }
 
     /* PAL custom message modal — removes browser URL prefix on app messages */
     .pal-modal-overlay {
@@ -611,7 +614,7 @@
       #daily-safety-meeting .sig-pad-wrap canvas { height: 28px !important; }
       #daily-safety-meeting .pal-logo svg { width: 36px !important; height: 36px !important; }
       .inspection-grid { gap: 8px !important; }
-      .toolbar, .btn.secondary, .save-note, #install-banner, .sig-type-btn, .sig-type-panel { display: none !important; }
+      .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
   </style>
 </head>
@@ -679,18 +682,17 @@
         <div class="home-panel">
           <div>
             <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
-            <p data-en="A field-ready safety hub for PAL Environmental Services. Open the Foreman's Kit, toolbox talks, policies, projects, and employee certifications fast from one clean home screen." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Open the Foreman's Kit, toolbox talks, policies, projects, and employee certifications fast from one clean home screen.</p>
+            <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
 
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="showPage('foreman-kit')"><span>🦺 Foreman's Kit</span><span class="arrow">›</span></button>
-              <button onclick="window.location.href='projects.html'"><span>🏗️ Projects</span><span class="arrow">›</span></button>
+              <button onclick="showPage('employee-safety')"><span>🦺 Employee Safety &amp; Checklists</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
-              <button onclick="window.location.href='projects.html'"><span>🪪 Employee Certs</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
+              <button onclick="window.location.href='projects.html'"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></button>
             </div>
           </div>
           <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
-            PAL Environmental Services · Field Forms · Policies · Training References
+            PAL Environmental Services · Employee Safety · Checklists · Protected Office Tools
           </div>
         </div>
 
@@ -709,6 +711,34 @@
       <div class="card" style="margin-top:14px;">
         <h3 style="margin-top:0;color:var(--navy);">Printing Note</h3>
         <p class="muted" style="margin-bottom:0;">Double-sided / front-and-back printing is controlled by the printer or phone print window. Use the printer settings to choose two-sided printing when available. Browser print headers and footers are controlled by the device/browser print settings.</p>
+      </div>
+    </section>
+
+
+    <section class="page" id="employee-safety">
+      <div class="card">
+        <h2 style="margin-top:0;color:var(--navy);">Employee Safety &amp; Checklists</h2>
+        <p class="muted">Basic safety sheets and inspection checklists employees can use in the field. Payroll, new-hire paperwork, employee records, project dashboards, and office tools stay behind sign-in.</p>
+      </div>
+
+      <div class="employee-access-note">
+        Employees can complete the checklist they need, link it to a project/job number or foreman, then print/share it. Foremen or office staff can later attach the completed sheet to the correct project record.
+      </div>
+
+      <div class="kit-section-title">Field Checklists</div>
+      <div class="grid grid-2">
+        <div class="kit-card" onclick="showPage('harness-checklist')"><div class="kit-icon">🦺</div><h4>Full-Body Harness Inspection</h4><p>Pre-use harness inspection checklist</p></div>
+        <div class="kit-card" onclick="showPage('scissor-lift-inspection')"><div class="kit-icon">🔧</div><h4>Scissor Lift Pre-Use Inspection</h4><p>Pre-start walk-around, powered checks &amp; workplace</p></div>
+        <div class="kit-card" onclick="showPage('scaffold-checklist')"><div class="kit-icon">🏗️</div><h4>Scaffolding Safety Checklist</h4><p>Pre-use scaffold inspection — general &amp; special</p></div>
+        <div class="kit-card" onclick="showPage('incident-report')"><div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
+      </div>
+
+      <div class="kit-section-title">Safety Information</div>
+      <div class="grid grid-2">
+        <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>Safety topics employees can review in the field</p></div>
+        <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
+        <div class="kit-card" onclick="showPage('quick-reference')"><div class="kit-icon">⚡</div><h4>Quick Reference</h4><p>Important safety numbers and field rules</p></div>
+        <div class="kit-card restricted-card" onclick="window.location.href='projects.html'"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, payroll, employee certs, tickets, and private company tools</p></div>
       </div>
     </section>
 
@@ -778,7 +808,7 @@
           <li><a onclick="showPage('quick-reference')">Quick Reference</a></li>
           <li><a onclick="showPage('code-of-conduct')">Code of Conduct</a></li>
           <li><a onclick="showPage('whistleblower')">Whistleblower</a></li>
-          <li><a onclick="showPage('foreman-kit')">Foreman's Kit</a></li>
+          <li><a onclick="showPage('employee-safety')">Employee Safety &amp; Checklists</a></li>
         </ol>
       </div>
     </section>
@@ -1360,7 +1390,7 @@
 </svg></div><div class="title-wrap"><h2>Incident / Accident Investigation Report</h2><p>PAL Environmental Services — Complete all sections</p></div><div class="form-meta">Form: PAL-INC-001<br>Rev: 1.0<br>Date: 2026</div></div>
         <div class="form-body">
           <div class="toolbar">
-            <button class="btn secondary" onclick="showPage('foreman-kit')">← Back to Foreman's Kit</button>
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('incident-report')">🗑 Clear Sheet</button>
           </div>
           <div class="warn-box" style="margin-bottom:14px;">⚠️ Report ALL incidents immediately — no matter how minor. Call Richardo Blake (347-844-0476) for any injury.</div>
@@ -1541,13 +1571,22 @@
 
         <div class="form-body">
           <div class="toolbar">
-            <button class="btn secondary" onclick="showPage('foreman-kit')">← Back to Foreman's Kit</button>
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('scissor-lift-inspection')">🗑 Clear Sheet</button>
           </div>
 
           <div class="warn-box" style="margin-bottom:14px;">⚠️ Do NOT operate this equipment if any item is marked NO. Remove from service and notify your supervisor immediately.</div>
 
           <form data-save-key="scissor-lift-inspection">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
             <div class="form-grid" style="margin-top:8px;">
               <div class="field"><label>Operator Name</label><input name="operator_name"></div>
               <div class="field"><label>Date</label><input type="date" name="date"></div>
@@ -1676,7 +1715,7 @@
 
         <div class="form-body">
           <div class="toolbar">
-            <button class="btn secondary" onclick="showPage('foreman-kit')">← Back to Foreman's Kit</button>
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('scaffold-checklist')">🗑 Clear Sheet</button>
           </div>
 
@@ -1684,6 +1723,15 @@
 
           <!-- TOP: Date, Inspector info, Signature — all above the table -->
           <form data-save-key="scaffold-checklist">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
             <div class="form-grid" style="margin-bottom:8px;">
               <div class="field"><label>Date</label><input type="date" name="date"></div>
               <div class="field"><label>Location / Job Site</label><input name="location"></div>
@@ -1765,11 +1813,20 @@
 
         <div class="form-body">
           <div class="toolbar">
-            <button class="btn secondary" onclick="showPage('foreman-kit')">← Back to Foreman's Kit</button>
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('harness-checklist')">🗑 Clear Sheet</button>
           </div>
 
           <form data-save-key="harness-checklist">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
               <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
               <div class="field"><label>Date of First Use</label><input type="date" name="date_first_use"></div>
@@ -2568,8 +2625,8 @@
 
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
-      ['foreman-kit', { en: "Foreman's Kit", es: 'Kit del Capataz', pl: 'Zestaw Brygadzisty' }, true],
-      ['projects-link', { en: '🏗️ Projects', es: '🏗️ Proyectos', pl: '🏗️ Projekty' }],
+      ['employee-safety', { en: 'Employee Safety', es: 'Seguridad del Empleado', pl: 'Bezpieczeństwo Pracownika' }, true],
+      ['projects-link', { en: '🔐 Login', es: '🔐 Acceso', pl: '🔐 Logowanie' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }]
     ];
@@ -2714,7 +2771,7 @@
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
         if (id === 'projects-link') {
-          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">🏗️ Projects</button>`;
+          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">🔐 Login</button>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
@@ -2757,7 +2814,7 @@
       document.querySelector('#whistleblower .card h2').textContent = t.whistleTitle;
 
       document.querySelectorAll('.toolbar .btn.secondary').forEach(btn => {
-        if (btn.textContent.includes('Back')) btn.textContent = t.backKit;
+        if (btn.textContent.includes('Back to Foreman')) btn.textContent = t.backKit;
       });
       document.querySelectorAll('.sticky-actions').forEach(bar => {
         const btns = bar.querySelectorAll('button');
@@ -2769,6 +2826,12 @@
     }
 
     function showPage(id) {
+      const restrictedPublicPages = new Set(['foreman-kit','daily-safety-meeting','toolbox-signin','daily-report','daily-timesheet','weekly-timesheet-fp','expense-report','new-hire-orientation','new-hire-drug-consent','new-hire-scaffold','new-hire-w4']);
+      if (restrictedPublicPages.has(id)) {
+        palNotice('This form is for foreman, supervisor, or office access. Please sign in through the protected dashboard.');
+        window.location.href = 'projects.html';
+        return;
+      }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const page = document.getElementById(id);
       if (page) page.classList.add('active');
@@ -2822,54 +2885,22 @@
     }
 
     function initSigPad(canvas) {
-      if (canvas._sigInited) return;
       canvas._sigInited = true;
-      const wrap = canvas.closest('.sig-pad-wrap');
       const dpr = window.devicePixelRatio || 1;
-
-      function ensureTypedSignatureControls() {
-        if (!wrap || wrap.querySelector('.sig-type-btn')) return;
-        const typeBtn = document.createElement('button');
-        typeBtn.type = 'button';
-        typeBtn.className = 'sig-type-btn';
-        typeBtn.textContent = 'Type';
-        typeBtn.title = 'Type a signature for laptop/trackpad use';
-        typeBtn.onclick = () => wrap.classList.toggle('type-open');
-
-        const panel = document.createElement('div');
-        panel.className = 'sig-type-panel';
-        panel.innerHTML = '<input class="sig-type-input" placeholder="Type name"><button type="button" class="sig-apply-btn">Use</button>';
-        panel.querySelector('.sig-apply-btn').onclick = () => applyTypedSignature(canvas, panel.querySelector('.sig-type-input').value);
-        panel.querySelector('.sig-type-input').addEventListener('keydown', e => {
-          if (e.key === 'Enter') applyTypedSignature(canvas, e.currentTarget.value);
-        });
-
-        wrap.insertBefore(typeBtn, wrap.querySelector('.sig-clear') || canvas.nextSibling);
-        wrap.appendChild(panel);
-      }
-
       function resize() {
-        const data = canvas.toDataURL ? canvas.toDataURL('image/png') : '';
         const w = canvas.offsetWidth || 200;
-        const h = parseInt(getComputedStyle(canvas).height, 10) || 52;
+        const h = 52;
         canvas.width = w * dpr;
         canvas.height = h * dpr;
         const ctx = canvas.getContext('2d');
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        if (data) {
-          const img = new Image();
-          img.onload = () => ctx.drawImage(img, 0, 0, w, h);
-          img.src = data;
-        }
+        ctx.scale(dpr, dpr);
       }
-      ensureTypedSignatureControls();
       resize();
-      window.addEventListener('resize', () => setTimeout(resize, 100));
 
       function getCtx() {
         const ctx = canvas.getContext('2d');
         ctx.strokeStyle = '#1b3a5c';
-        ctx.lineWidth = 2.25;
+        ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         return ctx;
@@ -2880,10 +2911,18 @@
 
       function getXY(e) {
         const r = canvas.getBoundingClientRect();
-        const scaleX = (canvas.width / dpr) / r.width;
-        const scaleY = (canvas.height / dpr) / r.height;
-        const t = e.touches && e.touches.length ? e.touches[0] : e;
-        return [(t.clientX - r.left) * scaleX, (t.clientY - r.top) * scaleY];
+        const scaleX = canvas.width / dpr / r.width;
+        const scaleY = canvas.height / dpr / r.height;
+        if (e.touches && e.touches.length > 0) {
+          return [
+            (e.touches[0].clientX - r.left) * scaleX,
+            (e.touches[0].clientY - r.top) * scaleY
+          ];
+        }
+        return [
+          (e.clientX - r.left) * scaleX,
+          (e.clientY - r.top) * scaleY
+        ];
       }
 
       function onStart(e) {
@@ -2902,50 +2941,30 @@
         ctx.stroke();
         lastX = x; lastY = y;
       }
-      function onEnd() { drawing = false; }
-
-      if (window.PointerEvent) {
-        canvas.addEventListener('pointerdown', onStart);
-        canvas.addEventListener('pointermove', onMove);
-        canvas.addEventListener('pointerup', onEnd);
-        canvas.addEventListener('pointerleave', onEnd);
-      } else {
-        canvas.addEventListener('mousedown', onStart);
-        canvas.addEventListener('mousemove', onMove);
-        canvas.addEventListener('mouseup', onEnd);
-        canvas.addEventListener('mouseleave', onEnd);
-        canvas.addEventListener('touchstart', onStart, { passive: false });
-        canvas.addEventListener('touchmove', onMove, { passive: false });
-        canvas.addEventListener('touchend', onEnd);
+      function onEnd(e) {
+        drawing = false;
       }
-    }
 
-    function applyTypedSignature(canvas, name) {
-      const clean = (name || '').trim();
-      if (!clean) return;
-      const dpr = window.devicePixelRatio || 1;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width / dpr;
-      const h = canvas.height / dpr;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = '#1b3a5c';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.font = `${Math.max(20, Math.min(34, w / Math.max(clean.length * 0.55, 8)))}px Brush Script MT, Segoe Script, Comic Sans MS, cursive`;
-      ctx.fillText(clean, w / 2, h * 0.58, w - 12);
-      const wrap = canvas.closest('.sig-pad-wrap');
-      if (wrap) wrap.classList.remove('type-open');
+      // Mouse
+      canvas.addEventListener('mousedown', onStart);
+      canvas.addEventListener('mousemove', onMove);
+      canvas.addEventListener('mouseup', onEnd);
+      canvas.addEventListener('mouseleave', onEnd);
+      // Touch
+      canvas.addEventListener('touchstart', onStart, { passive: false });
+      canvas.addEventListener('touchmove', onMove, { passive: false });
+      canvas.addEventListener('touchend', onEnd);
     }
 
     function clearSig(btn) {
       const canvas = btn.closest('.sig-pad-wrap').querySelector('canvas');
-      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.getContext('2d').clearRect(0, 0, canvas.width / dpr * dpr, canvas.height / dpr * dpr);
     }
 
     // Init any signature canvases already in the HTML (incident report signatures)
     function initAllSigPads() {
-      document.querySelectorAll('.sig-pad-wrap canvas').forEach(initSigPad);
+      document.querySelectorAll('.signature-cell canvas').forEach(initSigPad);
     }
 
     function addWorkerRow(name='', role='', hrs='', ot='') {
