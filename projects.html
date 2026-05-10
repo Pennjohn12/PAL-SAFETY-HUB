@@ -212,6 +212,42 @@
       .daily-report-form-grid .span-4 { grid-column: auto; }
     }
 
+
+
+    .payroll-dashboard {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+      margin:12px 0 16px;
+    }
+    .payroll-box {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,.04);
+      border-left:5px solid var(--navy);
+    }
+    .payroll-box strong { display:block; font-size:20px; margin-bottom:3px; color:var(--text); }
+    .payroll-box span { color:var(--muted); font-size:12px; font-weight:800; }
+    .payroll-box.st { border-left-color:#2563eb; }
+    .payroll-box.ot { border-left-color:#d97706; }
+    .payroll-box.dt { border-left-color:#dc2626; }
+    .payroll-box.total { border-left-color:#16a34a; }
+    .payroll-card {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:10px;
+      box-shadow:0 4px 12px rgba(0,0,0,.04);
+    }
+    .payroll-card-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .payroll-card h4 { margin:0 0 4px; color:var(--navy); }
+    .payroll-meta { display:flex; gap:8px; flex-wrap:wrap; color:var(--muted); font-size:12px; font-weight:700; }
+    .payroll-hours-pill { display:inline-flex; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:900; background:#eef4fa; color:var(--navy); white-space:nowrap; }
+    @media(max-width:850px){ .payroll-dashboard { grid-template-columns:1fr; } .payroll-card-head { flex-direction:column; } }
+
     .warehouse-dashboard {
       display:grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -326,58 +362,6 @@
 
     @media (max-width: 600px) { .ticket-grid { grid-template-columns: 1fr; } }
     .ticket-paper{background:#fff;color:#111;border:2px solid #111;padding:14px;border-radius:6px;font-family:Arial,sans-serif}.ticket-top{display:grid;grid-template-columns:130px 1fr 170px;gap:10px;align-items:center;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:8px}.ticket-logo-box{border:2px solid #111;padding:10px 8px;text-align:center;font-weight:900;font-size:24px;color:var(--navy);line-height:1}.ticket-logo-box small{display:block;font-size:9px;color:#111;letter-spacing:.5px;margin-top:3px}.ticket-title{text-align:center;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:.5px}.ticket-no-box{border:1.5px solid #111;padding:8px;font-size:13px;font-weight:800}.ticket-line-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #111;border-left:1px solid #111;margin-bottom:8px}.ticket-line-grid .cell{border-right:1px solid #111;border-bottom:1px solid #111;padding:6px;min-height:50px}.ticket-line-grid .wide{grid-column:span 2}.ticket-paper label,.ticket-label{display:block;font-size:10px;text-transform:uppercase;font-weight:900;color:#111;letter-spacing:.3px;margin-bottom:3px}.ticket-paper input,.ticket-paper textarea,.ticket-paper select{width:100%;border:0;border-bottom:1px solid #555;border-radius:0;padding:4px 2px;font:inherit;font-size:13px;background:transparent;outline:none}.ticket-paper textarea{border:1px solid #555;min-height:72px;resize:vertical;padding:6px}.ticket-section-head{background:#111;color:#fff;font-size:12px;font-weight:900;padding:5px 8px;text-transform:uppercase;letter-spacing:.5px;margin-top:8px}.ticket-table-wrap{overflow-x:auto;border-left:1px solid #111;border-right:1px solid #111}.ticket-table{width:100%;border-collapse:collapse;min-width:720px}.ticket-table th{background:#e5e7eb;color:#111;border:1px solid #111;padding:5px;font-size:10px;text-transform:uppercase;text-align:center}.ticket-table td{border:1px solid #111;padding:3px}.ticket-table input{border:0;padding:5px 3px;font-size:13px}.ticket-table .row-btn{background:#fff1f2;color:var(--red);border:1px solid #fecdd3;border-radius:6px;padding:5px 8px;cursor:pointer;font-size:11px;font-weight:800}.ticket-actions-inline{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ticket-summary{display:grid;grid-template-columns:1fr 280px;gap:12px;margin-top:10px;align-items:start}.ticket-total-box{border:1.5px solid #111}.ticket-total-row{display:grid;grid-template-columns:1fr 110px;border-bottom:1px solid #111}.ticket-total-row:last-child{border-bottom:0}.ticket-total-row span{padding:7px 8px;font-size:12px;font-weight:800;border-right:1px solid #111}.ticket-total-row input{border:0;text-align:right;font-weight:800}.ticket-grand-row{background:#f3f4f6;font-size:15px}.ticket-sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.ticket-sign-box{border:1.5px solid #111;padding:6px;min-height:92px}.ticket-sign-box canvas{width:100%;height:58px;border-bottom:1.5px solid #111;touch-action:none;display:block}@media(max-width:600px){.ticket-top{grid-template-columns:1fr}.ticket-title{text-align:left}.ticket-line-grid{grid-template-columns:1fr}.ticket-line-grid .wide{grid-column:span 1}.ticket-summary{grid-template-columns:1fr}.ticket-sign-grid{grid-template-columns:1fr}}
-
-
-
-    /* DEVICE SMOOTHING PATCH: consistent tab/action behavior on phone, iPad, and laptop */
-    .tabs { scrollbar-width: thin; }
-    .tabs::-webkit-scrollbar { height: 6px; }
-    .tabs::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
-    @media (max-width: 760px) {
-      .page-wrap { padding-left: 12px; padding-right: 12px; }
-      .header { height: auto; min-height: 64px; padding-top: 8px; padding-bottom: 8px; }
-      .brand-text p { display: none; }
-      .user-chip span { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .tabs { gap: 6px; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-      .tab { padding: 10px 12px; font-size: 13px; }
-      .modal { width: min(100%, 96vw); padding: 20px 16px; }
-      .modal-overlay { align-items: flex-start; overflow-y: auto; padding-top: 12px; }
-      .file-item, .foreman-row { align-items: flex-start; }
-      .file-actions { width: 100%; }
-      .file-actions .btn-sm { flex: 1; text-align: center; }
-    }
-
-    .signature-helper-note {
-      margin-top: 6px;
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-    .ticket-sign-type-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .ticket-sign-type-row input {
-      flex: 1;
-      border: 1px solid var(--line) !important;
-      border-radius: 8px !important;
-      padding: 7px 8px !important;
-      font-size: 12px !important;
-      background: white !important;
-    }
-    .ticket-sign-type-row button {
-      border: 0;
-      border-radius: 8px;
-      background: var(--navy);
-      color: white;
-      font-size: 12px;
-      font-weight: 900;
-      padding: 7px 10px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    @media print { .ticket-sign-type-row, .signature-helper-note { display: none !important; } }
 
     .btn-primary {
       width: 100%; background: var(--navy); color: white;
@@ -646,7 +630,7 @@
     }
     .btn-outline:hover { border-color: var(--navy); }
     .project-summary-grid {
-      display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin: 0 0 20px;
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:12px; margin: 0 0 20px;
     }
     .summary-card {
       background:white; border:1px solid var(--line); border-radius:16px; padding:16px;
@@ -848,6 +832,19 @@
       <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
       <div id="cert-alert-summary-main"></div>
       <div id="cert-alert-list-main"></div>
+
+      <div class="detail-card" id="cert-email-alert-panel" style="margin:12px 0 16px;">
+        <h3>📧 Weekly Certification Email Alert</h3>
+        <div class="helper-text" style="margin-bottom:10px;">Send a manual weekly email listing expired certifications and certifications expiring within 30 days.</div>
+        <div class="search-row" style="margin-bottom:10px;">
+          <input class="search-input" id="cert-email-recipient" type="email" placeholder="Recipient email, e.g. safety@palcorp.com" />
+          <button class="btn-outline" type="button" onclick="previewCertAlertEmail()">Preview Alert</button>
+          <button class="btn-save" type="button" onclick="openCertAlertEmailDraft()">Open Email Draft</button>
+          <button class="btn-outline" type="button" onclick="copyCertAlertEmailText()">Copy Email Text</button>
+        </div>
+        <div id="cert-email-preview" class="helper-text">Load Employee Certs first, then tap Preview Alert.</div>
+      </div>
+
       <div class="field" style="max-width:460px;margin-bottom:16px;">
         <label>Search Employees</label>
         <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
@@ -925,6 +922,7 @@
       <div class="summary-card"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
       <div class="summary-card"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Organized by category</div></div>
       <div class="summary-card"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
+      <div class="summary-card"><div class="label">Man-Hours</div><div class="value" id="summary-payroll-hours">0</div><div class="sub">Payroll hours logged</div></div>
       <div class="summary-card"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
     </div>
 
@@ -950,6 +948,7 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
+      <button class="tab" onclick="switchTab('tab-project-payroll', this)">⏱️ Payroll / Man-Hours</button>
       <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
@@ -1014,6 +1013,20 @@
         <button class="btn-save" onclick="openDailyReportForm()">📝 New Daily Report</button>
       </div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
+    </div>
+
+
+    <!-- PAYROLL / MAN-HOURS TAB -->
+    <div class="tab-pane" id="tab-project-payroll">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Payroll / Project Man-Hours</div>
+          <div class="helper-text">Track labor hours tied to this project. Use this for office review, job costing, and weekly payroll backup.</div>
+        </div>
+        <button class="btn-save" type="button" onclick="openPayrollEntryModal()">＋ Add Payroll Entry</button>
+      </div>
+      <div id="project-payroll-dashboard"></div>
+      <div id="project-payroll-list"><p style="color:var(--muted);font-size:14px;">No payroll hours entered yet.</p></div>
     </div>
 
 
@@ -1293,6 +1306,59 @@
 </div>
 
 
+<div class="modal-overlay" id="modal-payroll-entry">
+  <div class="modal" style="max-width:760px;">
+    <h3>⏱️ Payroll / Man-Hours Entry</h3>
+    <div class="daily-report-form-grid">
+      <div class="field span-2">
+        <label>Project</label>
+        <input id="payroll-project-display" readonly placeholder="Current project" />
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input id="payroll-date" type="date" />
+      </div>
+      <div class="field">
+        <label>Shift / Week Ending</label>
+        <input id="payroll-week" placeholder="Optional" />
+      </div>
+      <div class="field span-2">
+        <label>Employee / Crew Member</label>
+        <input id="payroll-employee" placeholder="Employee name" />
+      </div>
+      <div class="field span-2">
+        <label>Trade / Classification</label>
+        <input id="payroll-trade" placeholder="Fireproofer, laborer, operating engineer, firewatch..." />
+      </div>
+      <div class="field">
+        <label>Regular Hours</label>
+        <input id="payroll-st-hours" type="number" min="0" step="0.25" placeholder="0" oninput="updatePayrollEntryTotal()" />
+      </div>
+      <div class="field">
+        <label>OT Hours</label>
+        <input id="payroll-ot-hours" type="number" min="0" step="0.25" placeholder="0" oninput="updatePayrollEntryTotal()" />
+      </div>
+      <div class="field">
+        <label>DT Hours</label>
+        <input id="payroll-dt-hours" type="number" min="0" step="0.25" placeholder="0" oninput="updatePayrollEntryTotal()" />
+      </div>
+      <div class="field">
+        <label>Total Hours</label>
+        <input id="payroll-total-hours" readonly value="0" />
+      </div>
+      <div class="field span-4">
+        <label>Work / Notes</label>
+        <textarea id="payroll-notes" rows="3" placeholder="Optional notes: floors worked, cost code, work performed, ticket number, etc."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-payroll-entry')">Cancel</button>
+      <button class="btn-save" id="save-payroll-btn" onclick="savePayrollEntry()">Save Payroll Entry</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="modal-overlay" id="modal-warehouse-item">
   <div class="modal" style="max-width:720px;">
     <h3>📦 Warehouse / Equipment Movement</h3>
@@ -1380,6 +1446,7 @@
   let allProjects = [];
   let allTickets = [];
   let allWarehouseItems = [];
+  let editingPayrollEntryId = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1419,6 +1486,9 @@
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
   window.searchEmployees = searchEmployees;
+  window.previewCertAlertEmail = previewCertAlertEmail;
+  window.openCertAlertEmailDraft = openCertAlertEmailDraft;
+  window.copyCertAlertEmailText = copyCertAlertEmailText;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
@@ -1439,6 +1509,9 @@
   window.renderMainTickets = renderMainTickets;
   window.openTicketDetail = openTicketDetail;
   window.printTicketDetail = printTicketDetail;
+  window.openPayrollEntryModal = openPayrollEntryModal;
+  window.savePayrollEntry = savePayrollEntry;
+  window.updatePayrollEntryTotal = updatePayrollEntryTotal;
   window.loadWarehouse = loadWarehouse;
   window.renderWarehouse = renderWarehouse;
   window.openWarehouseItemModal = openWarehouseItemModal;
@@ -1689,6 +1762,7 @@
       loadProjectReports(id);
       loadProjectForemen(currentProjectDoc);
       if (isOfficeRole()) await loadEmployees();
+      if (document.getElementById('tab-project-payroll')?.classList.contains('active')) renderProjectPayrollTab();
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
       if (document.getElementById('tab-project-warehouse')?.classList.contains('active')) renderProjectWarehouseTab();
     });
@@ -1721,10 +1795,14 @@
     const photos = Array.isArray(data?.photos) ? data.photos.length : 0;
     const foremen = Array.isArray(data?.foremen) ? data.foremen.length : 0;
     const reportCount = Number(data?.reportCount || 0);
+    const payrollEntries = Array.isArray(data?.payrollEntries) ? data.payrollEntries : [];
+    const payrollHours = payrollEntries.reduce((sum, row) => sum + Number(row.totalHours || row.hours || 0), 0);
     document.getElementById('summary-docs').textContent = docs;
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
+    const payrollSummaryEl = document.getElementById('summary-payroll-hours');
+    if (payrollSummaryEl) payrollSummaryEl.textContent = formatHours(payrollHours);
   }
 
   function openDailyReportForm() {
@@ -2275,6 +2353,69 @@
   }
 
 
+  function formatCertAlertLine(c) {
+    const expText = c.expirationDate ? c.expirationDate : 'No expiration date listed';
+    const dayText = c.status === 'expired'
+      ? `Expired${typeof c.days === 'number' ? ` ${Math.abs(c.days)} day${Math.abs(c.days) === 1 ? '' : 's'} ago` : ''}`
+      : `Expires in ${c.days} day${c.days === 1 ? '' : 's'}`;
+    return `- ${c.employeeName} — ${c.certTitle} — ${expText} (${dayText})`;
+  }
+
+  function buildCertAlertEmail() {
+    const data = getCertAlertData();
+    const today = new Date().toLocaleDateString();
+    const expiredLines = data.expired.length
+      ? data.expired.sort((a,b) => (a.days ?? 0) - (b.days ?? 0)).map(formatCertAlertLine).join('\n')
+      : '- None';
+    const soonLines = data.soon.length
+      ? data.soon.sort((a,b) => (a.days ?? 9999) - (b.days ?? 9999)).map(formatCertAlertLine).join('\n')
+      : '- None';
+
+    const subject = `PAL Safety Hub - Weekly Certification Alert - ${today}`;
+    const body = `PAL Safety Hub - Weekly Certification Alert\nDate: ${today}\n\nExpired Certifications:\n${expiredLines}\n\nCertifications Expiring Within 30 Days:\n${soonLines}\n\nPlease review employee files in PAL Safety Hub and update certification records as needed.`;
+    return { subject, body, data };
+  }
+
+  function previewCertAlertEmail() {
+    const preview = document.getElementById('cert-email-preview');
+    if (!preview) return;
+    const { subject, body, data } = buildCertAlertEmail();
+    const total = data.expired.length + data.soon.length;
+    preview.innerHTML = `
+      <div style="background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--text);white-space:pre-wrap;font-size:13px;line-height:1.45;">
+        <strong>${esc(subject)}</strong>\n\n${esc(body)}
+      </div>
+      <div class="mini-note">${total ? `${total} certification alert item${total === 1 ? '' : 's'} ready to send.` : 'No expired or soon-expiring certifications found.'}</div>`;
+  }
+
+  function openCertAlertEmailDraft() {
+    const recipient = String(document.getElementById('cert-email-recipient')?.value || '').trim();
+    if (!recipient) {
+      toast('Enter a recipient email first.');
+      const input = document.getElementById('cert-email-recipient');
+      if (input) input.focus();
+      return;
+    }
+    const { subject, body } = buildCertAlertEmail();
+    const mailto = `mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  }
+
+  async function copyCertAlertEmailText() {
+    const { subject, body } = buildCertAlertEmail();
+    const text = `Subject: ${subject}\n\n${body}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('Certification alert email copied.');
+    } catch (e) {
+      console.error('Copy failed:', e);
+      const preview = document.getElementById('cert-email-preview');
+      if (preview) preview.innerHTML = `<div style="background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;white-space:pre-wrap;font-size:13px;">${esc(text)}</div>`;
+      toast('Copy blocked — preview text shown.');
+    }
+  }
+
+
   function renderEmployeesList(filterText = '') {
     renderCertAlerts();
     const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
@@ -2809,6 +2950,156 @@
     };
     return map[status] || status || 'Sent from Warehouse';
   }
+
+
+  function formatHours(value) {
+    const n = Number(value || 0);
+    if (!Number.isFinite(n)) return '0';
+    return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.00$/, '').replace(/0$/, '');
+  }
+
+  function getProjectPayrollEntries() {
+    return Array.isArray(currentProject?.payrollEntries) ? currentProject.payrollEntries : [];
+  }
+
+  function getPayrollSummary(entries) {
+    return entries.reduce((acc, row) => {
+      acc.count += 1;
+      acc.st += Number(row.stHours || 0);
+      acc.ot += Number(row.otHours || 0);
+      acc.dt += Number(row.dtHours || 0);
+      acc.total += Number(row.totalHours || 0);
+      return acc;
+    }, { count:0, st:0, ot:0, dt:0, total:0 });
+  }
+
+  function payrollDashboardHTML(entries) {
+    const s = getPayrollSummary(entries);
+    return `
+      <div class="payroll-dashboard">
+        <div class="payroll-box st"><strong>${formatHours(s.st)}</strong><span>Regular Hours</span></div>
+        <div class="payroll-box ot"><strong>${formatHours(s.ot)}</strong><span>OT Hours</span></div>
+        <div class="payroll-box dt"><strong>${formatHours(s.dt)}</strong><span>DT Hours</span></div>
+        <div class="payroll-box total"><strong>${formatHours(s.total)}</strong><span>Total Man-Hours</span></div>
+      </div>`;
+  }
+
+  function payrollCardHTML(row) {
+    const total = Number(row.totalHours || 0);
+    return `
+      <div class="payroll-card">
+        <div class="payroll-card-head">
+          <div>
+            <h4>${esc(row.employee || 'Unnamed Employee')}</h4>
+            <div class="payroll-meta">
+              ${row.date ? `<span>📅 ${esc(row.date)}</span>` : ''}
+              ${row.week ? `<span>Week/Shift: ${esc(row.week)}</span>` : ''}
+              ${row.trade ? `<span>👷 ${esc(row.trade)}</span>` : ''}
+              <span>ST: ${formatHours(row.stHours)}</span>
+              <span>OT: ${formatHours(row.otHours)}</span>
+              <span>DT: ${formatHours(row.dtHours)}</span>
+              ${row.createdByName ? `<span>Logged by: ${esc(row.createdByName)}</span>` : ''}
+            </div>
+            ${row.notes ? `<p style="margin-top:8px;color:var(--muted);font-size:13px;line-height:1.4;white-space:pre-line;">${esc(row.notes)}</p>` : ''}
+          </div>
+          <span class="payroll-hours-pill">${formatHours(total)} hrs</span>
+        </div>
+      </div>`;
+  }
+
+  function renderProjectPayrollTab() {
+    const dashboard = document.getElementById('project-payroll-dashboard');
+    const list = document.getElementById('project-payroll-list');
+    if (!dashboard && !list) return;
+    const entries = getProjectPayrollEntries().slice().sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')));
+    if (dashboard) dashboard.innerHTML = payrollDashboardHTML(entries);
+    if (!list) return;
+    if (!entries.length) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">⏱️</div><h3>No payroll hours for this project yet</h3><p>Add worker hours to track project man-hours.</p></div>`;
+      return;
+    }
+    list.innerHTML = entries.map(payrollCardHTML).join('');
+  }
+
+  function updatePayrollEntryTotal() {
+    const st = Number(document.getElementById('payroll-st-hours')?.value || 0);
+    const ot = Number(document.getElementById('payroll-ot-hours')?.value || 0);
+    const dt = Number(document.getElementById('payroll-dt-hours')?.value || 0);
+    const totalEl = document.getElementById('payroll-total-hours');
+    if (totalEl) totalEl.value = formatHours(st + ot + dt);
+  }
+
+  function openPayrollEntryModal() {
+    if (!currentProject) { toast('Open a project first.'); return; }
+    editingPayrollEntryId = null;
+    const fields = {
+      'payroll-project-display': `${currentProject.name || 'Current Project'}${currentProject.jobNumber ? ' · ' + currentProject.jobNumber : ''}`,
+      'payroll-date': new Date().toISOString().slice(0,10),
+      'payroll-week': '',
+      'payroll-employee': '',
+      'payroll-trade': '',
+      'payroll-st-hours': '',
+      'payroll-ot-hours': '',
+      'payroll-dt-hours': '',
+      'payroll-total-hours': '0',
+      'payroll-notes': ''
+    };
+    Object.entries(fields).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+    const btn = document.getElementById('save-payroll-btn');
+    if (btn) btn.textContent = 'Save Payroll Entry';
+    document.getElementById('modal-payroll-entry').classList.add('open');
+  }
+
+  async function savePayrollEntry() {
+    if (!currentProject?.id) { toast('Open a project first.'); return; }
+    const employee = document.getElementById('payroll-employee')?.value.trim() || '';
+    if (!employee) { toast('Employee name is required.'); return; }
+    const stHours = Number(document.getElementById('payroll-st-hours')?.value || 0);
+    const otHours = Number(document.getElementById('payroll-ot-hours')?.value || 0);
+    const dtHours = Number(document.getElementById('payroll-dt-hours')?.value || 0);
+    const totalHours = stHours + otHours + dtHours;
+    if (totalHours <= 0) { toast('Enter at least one hour.'); return; }
+
+    const btn = document.getElementById('save-payroll-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+    try {
+      const entry = {
+        id: `pay_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+        date: document.getElementById('payroll-date')?.value || new Date().toISOString().slice(0,10),
+        week: document.getElementById('payroll-week')?.value.trim() || '',
+        employee,
+        trade: document.getElementById('payroll-trade')?.value.trim() || '',
+        stHours,
+        otHours,
+        dtHours,
+        totalHours,
+        notes: document.getElementById('payroll-notes')?.value.trim() || '',
+        createdBy: currentUser?.uid || '',
+        createdByName: currentUser?.displayName || currentUser?.email || '',
+        createdAt: new Date().toISOString()
+      };
+      const ref = doc(db, 'projects', currentProject.id);
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {};
+      const currentEntries = Array.isArray(data.payrollEntries) ? data.payrollEntries : [];
+      const updatedEntries = [...currentEntries, entry];
+      await updateDoc(ref, { payrollEntries: updatedEntries });
+      closeModal('modal-payroll-entry');
+      currentProject.payrollEntries = updatedEntries;
+      updateProjectSummary({ ...(currentProjectDoc || currentProject), payrollEntries: updatedEntries });
+      renderProjectPayrollTab();
+      toast('Payroll hours saved');
+    } catch(e) {
+      console.error(e);
+      toast('Payroll save failed: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll Entry'; }
+    }
+  }
+
 
   function refreshWarehouseProjectOptions() {
     const selects = ['warehouse-project-select', 'warehouse-project-filter'];
@@ -3380,48 +3671,7 @@
     const bond=Number(document.getElementById('ticket-bond-total')?.value||0),tax=Number(document.getElementById('ticket-tax-total')?.value||0),other=Number(document.getElementById('ticket-other-total')?.value||0); const set=(id,val)=>{const el=document.getElementById(id); if(el)el.value=money(val);}; set('ticket-labor-total',laborTotal); set('ticket-material-total',materialTotal); set('ticket-equipment-total',equipmentTotal); set('ticket-grand-total',laborTotal+materialTotal+equipmentTotal+bond+tax+other);
   }
 
-  function initTicketSignaturePads(){
-    ['ticket-contractor-signature','ticket-pal-signature'].forEach(id=>{
-      const canvas=document.getElementById(id);
-      if(!canvas||canvas.dataset.ready==='1')return;
-      canvas.dataset.ready='1';
-      const box=canvas.closest('.ticket-sign-box');
-      if(box && !box.querySelector('.ticket-sign-type-row')){
-        const row=document.createElement('div');
-        row.className='ticket-sign-type-row';
-        row.innerHTML='<input placeholder="Type name for laptop signature"><button type="button">Use</button>';
-        row.querySelector('button').onclick=()=>applyTypedTicketSignature(id,row.querySelector('input').value);
-        row.querySelector('input').addEventListener('keydown',e=>{if(e.key==='Enter')applyTypedTicketSignature(id,e.currentTarget.value);});
-        box.appendChild(row);
-        const note=document.createElement('div');
-        note.className='signature-helper-note';
-        note.textContent='Draw with finger/mouse or type a name and press Use.';
-        box.appendChild(note);
-      }
-      const resize=()=>{
-        const old=canvas.toDataURL ? canvas.toDataURL('image/png') : '';
-        const r=canvas.getBoundingClientRect();
-        canvas.width=Math.max(300,Math.floor(r.width*2));
-        canvas.height=116;
-        const ctx=canvas.getContext('2d');
-        ctx.lineWidth=4; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#111';
-        if(old){const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height); img.src=old;}
-      };
-      resize();
-      let drawing=false;
-      const pos=e=>{const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)}};
-      const start=e=>{e.preventDefault(); drawing=true; const p=pos(e); const ctx=canvas.getContext('2d'); ctx.beginPath(); ctx.moveTo(p.x,p.y)};
-      const move=e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); const ctx=canvas.getContext('2d'); ctx.lineTo(p.x,p.y); ctx.stroke()};
-      const end=()=>{drawing=false};
-      if(window.PointerEvent){canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',end);canvas.addEventListener('pointerleave',end);} else {canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);}
-    });
-  }
-  function applyTypedTicketSignature(id,name){
-    const c=document.getElementById(id); const clean=(name||'').trim(); if(!c||!clean)return;
-    const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); ctx.fillStyle='#111'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.font=`${Math.max(34,Math.min(54,c.width/Math.max(clean.length*.55,8)))}px Brush Script MT, Segoe Script, Comic Sans MS, cursive`;
-    ctx.fillText(clean,c.width/2,c.height*.58,c.width-24);
-  }
+  function initTicketSignaturePads(){ ['ticket-contractor-signature','ticket-pal-signature'].forEach(id=>{const canvas=document.getElementById(id); if(!canvas||canvas.dataset.ready==='1')return; canvas.dataset.ready='1'; const resize=()=>{const r=canvas.getBoundingClientRect(); canvas.width=Math.max(300,Math.floor(r.width*2)); canvas.height=116; const ctx=canvas.getContext('2d'); ctx.lineWidth=4; ctx.lineCap='round'; ctx.strokeStyle='#111';}; resize(); let drawing=false; const pos=e=>{const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(canvas.width/r.width),y:(t.clientY-r.top)*(canvas.height/r.height)}}; const start=e=>{e.preventDefault(); drawing=true; const p=pos(e); const ctx=canvas.getContext('2d'); ctx.beginPath(); ctx.moveTo(p.x,p.y)}; const move=e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); const ctx=canvas.getContext('2d'); ctx.lineTo(p.x,p.y); ctx.stroke()}; const end=()=>{drawing=false}; canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end); canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end); }); }
   function clearTicketSignature(id){ const c=document.getElementById(id); if(!c)return; c.getContext('2d').clearRect(0,0,c.width,c.height); }
   function getTicketSignature(id){ const c=document.getElementById(id); if(!c)return ''; try{return c.toDataURL('image/png')}catch(e){return ''} }
 
@@ -3519,6 +3769,11 @@
 
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
+    if (id === 'modal-payroll-entry') {
+      editingPayrollEntryId = null;
+      const btn = document.getElementById('save-payroll-btn');
+      if (btn) btn.textContent = 'Save Payroll Entry';
+    }
     if (id === 'modal-warehouse-item') {
       editingWarehouseProjectId=null; editingWarehouseItemId=null;
       const ps = document.getElementById('warehouse-project-select'); if (ps) ps.disabled = false;
@@ -3557,6 +3812,7 @@
     const su = document.getElementById('sticky-upload');
     if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
     if (tabId === 'tab-employees') loadEmployees(true);
+    if (tabId === 'tab-project-payroll') renderProjectPayrollTab();
     if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
     if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
   }
