@@ -6,12 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#1b3a5c" />
   <title>PAL Safety Hub</title>
-  <!-- LOGIN_RESTORE_FROM_LAST_KNOWN_WORKING_TICKET_FIX_2026_05_11 -->
-
-  <!-- EXTRA_WORK_TICKET_MULTI_SAVE_FIX_2026_05_10 -->
-  <!-- TICKET_CLICK_HARD_FIX_REAL_WORKING_2026_05_10 -->
-  <!-- TICKET_CLICK_HARD_FIX_VERIFIED_REWRITE_2026 -->
-  <!-- TICKET_REPAIR_PAYROLL_MANHOURS_BUILD_2026_05_11 -->
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <style>
     :root {
@@ -217,42 +211,6 @@
       .daily-report-form-grid .span-2,
       .daily-report-form-grid .span-4 { grid-column: auto; }
     }
-
-
-
-    .payroll-dashboard {
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:10px;
-      margin:12px 0 16px;
-    }
-    .payroll-box {
-      background:white;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,.04);
-      border-left:5px solid var(--navy);
-    }
-    .payroll-box strong { display:block; font-size:20px; margin-bottom:3px; color:var(--text); }
-    .payroll-box span { color:var(--muted); font-size:12px; font-weight:800; }
-    .payroll-box.st { border-left-color:#2563eb; }
-    .payroll-box.ot { border-left-color:#d97706; }
-    .payroll-box.dt { border-left-color:#dc2626; }
-    .payroll-box.total { border-left-color:#16a34a; }
-    .payroll-card {
-      background:white;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      margin-bottom:10px;
-      box-shadow:0 4px 12px rgba(0,0,0,.04);
-    }
-    .payroll-card-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
-    .payroll-card h4 { margin:0 0 4px; color:var(--navy); }
-    .payroll-meta { display:flex; gap:8px; flex-wrap:wrap; color:var(--muted); font-size:12px; font-weight:700; }
-    .payroll-hours-pill { display:inline-flex; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:900; background:#eef4fa; color:var(--navy); white-space:nowrap; }
-    @media(max-width:850px){ .payroll-dashboard { grid-template-columns:1fr; } .payroll-card-head { flex-direction:column; } }
 
     .warehouse-dashboard {
       display:grid;
@@ -636,7 +594,7 @@
     }
     .btn-outline:hover { border-color: var(--navy); }
     .project-summary-grid {
-      display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:12px; margin: 0 0 20px;
+      display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin: 0 0 20px;
     }
     .summary-card {
       background:white; border:1px solid var(--line); border-radius:16px; padding:16px;
@@ -691,6 +649,86 @@
     .report-field .k { display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.35px; margin-bottom:6px; }
     .report-field .v { font-size:14px; color:var(--text); white-space:pre-line; }
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
+
+
+    /* PROJECT_BREAKDOWN_WEEK_MONTH_SAFE_PATCH_2026_05_11 */
+    .project-breakdown-panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 0 0 20px;
+      box-shadow: 0 4px 14px rgba(16,24,40,.05);
+    }
+    .breakdown-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .breakdown-head h3 { margin:0 0 4px; color:var(--navy); font-size:16px; }
+    .breakdown-toggle { display:flex; gap:8px; flex-wrap:wrap; }
+    .breakdown-btn {
+      background:#fff;
+      color:var(--navy);
+      border:1.5px solid var(--line);
+      border-radius:999px;
+      padding:8px 12px;
+      font:inherit;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .breakdown-btn.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+    .breakdown-grid {
+      display:grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .breakdown-box {
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      border-left:5px solid var(--navy);
+    }
+    .breakdown-box strong { display:block; color:var(--text); font-size:20px; margin-bottom:2px; }
+    .breakdown-box span { color:var(--muted); font-size:12px; font-weight:800; }
+    .breakdown-list {
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      margin-top:12px;
+    }
+    .breakdown-row {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      border-top:1px solid var(--line);
+      padding:10px 12px;
+      font-size:13px;
+    }
+    .breakdown-row:first-child { border-top:0; }
+    .breakdown-row-title { color:var(--navy); font-weight:900; }
+    .breakdown-row-sub { color:var(--muted); font-size:12px; margin-top:2px; }
+    .breakdown-pill {
+      white-space:nowrap;
+      border-radius:999px;
+      background:#eef2f7;
+      color:#475569;
+      padding:5px 8px;
+      font-size:11px;
+      font-weight:900;
+    }
+    @media(max-width:850px){
+      .breakdown-grid { grid-template-columns:1fr; }
+      .breakdown-row { flex-direction:column; }
+    }
 
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
@@ -807,7 +845,7 @@
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
       <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
-      <button class="tab" onclick="forceMainTicketsTab(this)">💵 Extra Work Tickets</button>
+      <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
 
@@ -838,19 +876,6 @@
       <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
       <div id="cert-alert-summary-main"></div>
       <div id="cert-alert-list-main"></div>
-
-      <div class="detail-card" id="cert-email-alert-panel" style="margin:12px 0 16px;">
-        <h3>📧 Weekly Certification Email Alert</h3>
-        <div class="helper-text" style="margin-bottom:10px;">Send a manual weekly email listing expired certifications and certifications expiring within 30 days.</div>
-        <div class="search-row" style="margin-bottom:10px;">
-          <input class="search-input" id="cert-email-recipient" type="email" placeholder="Recipient email, e.g. safety@palcorp.com" />
-          <button class="btn-outline" type="button" onclick="previewCertAlertEmail()">Preview Alert</button>
-          <button class="btn-save" type="button" onclick="openCertAlertEmailDraft()">Open Email Draft</button>
-          <button class="btn-outline" type="button" onclick="copyCertAlertEmailText()">Copy Email Text</button>
-        </div>
-        <div id="cert-email-preview" class="helper-text">Load Employee Certs first, then tap Preview Alert.</div>
-      </div>
-
       <div class="field" style="max-width:460px;margin-bottom:16px;">
         <label>Search Employees</label>
         <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
@@ -928,7 +953,6 @@
       <div class="summary-card"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
       <div class="summary-card"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Organized by category</div></div>
       <div class="summary-card"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
-      <div class="summary-card"><div class="label">Man-Hours</div><div class="value" id="summary-payroll-hours">0</div><div class="sub">Payroll hours logged</div></div>
       <div class="summary-card"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
     </div>
 
@@ -950,12 +974,26 @@
       </div>
     </div>
 
+    <div class="project-breakdown-panel" id="project-breakdown-panel">
+      <div class="breakdown-head">
+        <div>
+          <h3>Project Breakdown</h3>
+          <div class="helper-text">Quick view of project activity by overall, current week, or current month. This uses existing project data only.</div>
+        </div>
+        <div class="breakdown-toggle">
+          <button class="breakdown-btn active" id="breakdown-btn-overall" type="button" onclick="setProjectBreakdownView('overall')">Overall</button>
+          <button class="breakdown-btn" id="breakdown-btn-week" type="button" onclick="setProjectBreakdownView('week')">This Week</button>
+          <button class="breakdown-btn" id="breakdown-btn-month" type="button" onclick="setProjectBreakdownView('month')">This Month</button>
+        </div>
+      </div>
+      <div id="project-breakdown-content"></div>
+    </div>
+
     <div class="tabs">
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" onclick="switchTab('tab-project-payroll', this)">⏱️ Payroll / Man-Hours</button>
-      <button class="tab" onclick="forceProjectTicketsTab(this)">💵 Extra Work Tickets</button>
+      <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
       <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
@@ -1019,20 +1057,6 @@
         <button class="btn-save" onclick="openDailyReportForm()">📝 New Daily Report</button>
       </div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
-    </div>
-
-
-    <!-- PAYROLL / MAN-HOURS TAB -->
-    <div class="tab-pane" id="tab-project-payroll">
-      <div class="action-row">
-        <div>
-          <div class="section-label">Payroll / Project Man-Hours</div>
-          <div class="helper-text">Track labor hours tied to this project. Use this for office review, job costing, and weekly payroll backup.</div>
-        </div>
-        <button class="btn-save" type="button" onclick="openPayrollEntryModal()">＋ Add Payroll Entry</button>
-      </div>
-      <div id="project-payroll-dashboard"></div>
-      <div id="project-payroll-list"><p style="color:var(--muted);font-size:14px;">No payroll hours entered yet.</p></div>
     </div>
 
 
@@ -1215,7 +1239,7 @@
 
 
 <!-- EXTRA WORK TICKET MODAL -->
-<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>💵 PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-secondary" id="save-new-ticket-btn" onclick="saveExtraWorkTicket(true)">Save & New Ticket</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket(false)">Save Ticket</button></div></div></div>
+<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>💵 PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
 <div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>💵 Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
 
 
@@ -1312,59 +1336,6 @@
 </div>
 
 
-<div class="modal-overlay" id="modal-payroll-entry">
-  <div class="modal" style="max-width:760px;">
-    <h3>⏱️ Payroll / Man-Hours Entry</h3>
-    <div class="daily-report-form-grid">
-      <div class="field span-2">
-        <label>Project</label>
-        <input id="payroll-project-display" readonly placeholder="Current project" />
-      </div>
-      <div class="field">
-        <label>Date</label>
-        <input id="payroll-date" type="date" />
-      </div>
-      <div class="field">
-        <label>Shift / Week Ending</label>
-        <input id="payroll-week" placeholder="Optional" />
-      </div>
-      <div class="field span-2">
-        <label>Employee / Crew Member</label>
-        <input id="payroll-employee" placeholder="Employee name" />
-      </div>
-      <div class="field span-2">
-        <label>Trade / Classification</label>
-        <input id="payroll-trade" placeholder="Fireproofer, laborer, operating engineer, firewatch..." />
-      </div>
-      <div class="field">
-        <label>Regular Hours</label>
-        <input id="payroll-st-hours" type="number" min="0" step="0.25" placeholder="0" oninput="updatePayrollEntryTotal()" />
-      </div>
-      <div class="field">
-        <label>OT Hours</label>
-        <input id="payroll-ot-hours" type="number" min="0" step="0.25" placeholder="0" oninput="updatePayrollEntryTotal()" />
-      </div>
-      <div class="field">
-        <label>DT Hours</label>
-        <input id="payroll-dt-hours" type="number" min="0" step="0.25" placeholder="0" oninput="updatePayrollEntryTotal()" />
-      </div>
-      <div class="field">
-        <label>Total Hours</label>
-        <input id="payroll-total-hours" readonly value="0" />
-      </div>
-      <div class="field span-4">
-        <label>Work / Notes</label>
-        <textarea id="payroll-notes" rows="3" placeholder="Optional notes: floors worked, cost code, work performed, ticket number, etc."></textarea>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('modal-payroll-entry')">Cancel</button>
-      <button class="btn-save" id="save-payroll-btn" onclick="savePayrollEntry()">Save Payroll Entry</button>
-    </div>
-  </div>
-</div>
-
-
 <div class="modal-overlay" id="modal-warehouse-item">
   <div class="modal" style="max-width:720px;">
     <h3>📦 Warehouse / Equipment Movement</h3>
@@ -1446,13 +1417,14 @@
   let currentUserProfile = null;
   let currentProject = null;
   let currentProjectDoc = null;
+  let currentProjectReports = [];
+  let currentBreakdownView = "overall";
   let currentEmployeeId = null;
   let currentCertificationUploadedAt = null;
   let allEmployees = [];
   let allProjects = [];
   let allTickets = [];
   let allWarehouseItems = [];
-  let editingPayrollEntryId = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1476,6 +1448,7 @@
   window.openProject = openProject;
   window.backToProjects = backToProjects;
   window.switchTab = switchTab;
+  window.setProjectBreakdownView = setProjectBreakdownView;
   window.handleDocUpload = handleDocUpload;
   window.handlePhotoUpload = handlePhotoUpload;
   window.addForeman = addForeman;
@@ -1492,9 +1465,6 @@
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
   window.searchEmployees = searchEmployees;
-  window.previewCertAlertEmail = previewCertAlertEmail;
-  window.openCertAlertEmailDraft = openCertAlertEmailDraft;
-  window.copyCertAlertEmailText = copyCertAlertEmailText;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
@@ -1515,9 +1485,6 @@
   window.renderMainTickets = renderMainTickets;
   window.openTicketDetail = openTicketDetail;
   window.printTicketDetail = printTicketDetail;
-  window.openPayrollEntryModal = openPayrollEntryModal;
-  window.savePayrollEntry = savePayrollEntry;
-  window.updatePayrollEntryTotal = updatePayrollEntryTotal;
   window.loadWarehouse = loadWarehouse;
   window.renderWarehouse = renderWarehouse;
   window.openWarehouseItemModal = openWarehouseItemModal;
@@ -1763,14 +1730,15 @@
       currentProjectDoc = snap.data();
       currentProject = { id, ...snap.data() };
       updateProjectSummary(currentProjectDoc);
+      renderProjectBreakdown();
       loadProjectDocs(id);
       loadProjectPhotos(id);
       loadProjectReports(id);
       loadProjectForemen(currentProjectDoc);
       if (isOfficeRole()) await loadEmployees();
-      if (document.getElementById('tab-project-payroll')?.classList.contains('active')) renderProjectPayrollTab();
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
       if (document.getElementById('tab-project-warehouse')?.classList.contains('active')) renderProjectWarehouseTab();
+      renderProjectBreakdown();
     });
   }
 
@@ -1789,6 +1757,7 @@
     if (!snap.exists()) return;
     currentProjectDoc = snap.data();
     updateProjectSummary(currentProjectDoc);
+    renderProjectBreakdown();
     loadProjectDocs(projectId);
     loadProjectPhotos(projectId);
     loadProjectReports(projectId);
@@ -1801,14 +1770,164 @@
     const photos = Array.isArray(data?.photos) ? data.photos.length : 0;
     const foremen = Array.isArray(data?.foremen) ? data.foremen.length : 0;
     const reportCount = Number(data?.reportCount || 0);
-    const payrollEntries = Array.isArray(data?.payrollEntries) ? data.payrollEntries : [];
-    const payrollHours = payrollEntries.reduce((sum, row) => sum + Number(row.totalHours || row.hours || 0), 0);
     document.getElementById('summary-docs').textContent = docs;
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
-    const payrollSummaryEl = document.getElementById('summary-payroll-hours');
-    if (payrollSummaryEl) payrollSummaryEl.textContent = formatHours(payrollHours);
+  }
+
+
+  // PROJECT_BREAKDOWN_WEEK_MONTH_SAFE_PATCH_2026_05_11
+  function parseActivityDate(value) {
+    if (!value) return null;
+    if (value?.toDate && typeof value.toDate === 'function') return value.toDate();
+    const raw = String(value);
+    const d = raw.includes('T') ? new Date(raw) : new Date(raw + 'T00:00:00');
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  function getActivityDate(item) {
+    return parseActivityDate(
+      item.date || item.submittedAt || item.uploadedAt || item.createdAt || item.updatedAt || item.time || ''
+    );
+  }
+
+  function startOfWeekMonday(date = new Date()) {
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+    const day = d.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+    d.setDate(d.getDate() + diff);
+    return d;
+  }
+
+  function startOfMonth(date = new Date()) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  function isInBreakdownWindow(date, mode) {
+    if (mode === 'overall') return true;
+    if (!date) return false;
+    const now = new Date();
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+    if (mode === 'week') return d >= startOfWeekMonday(now);
+    if (mode === 'month') return d >= startOfMonth(now);
+    return true;
+  }
+
+  function setProjectBreakdownView(mode = 'overall') {
+    currentBreakdownView = mode;
+    ['overall','week','month'].forEach(m => {
+      const btn = document.getElementById(`breakdown-btn-${m}`);
+      if (btn) btn.classList.toggle('active', m === mode);
+    });
+    renderProjectBreakdown();
+  }
+
+  function getProjectBreakdownItems() {
+    if (!currentProjectDoc && !currentProject) return [];
+    const items = [];
+    const docs = Array.isArray(currentProjectDoc?.documents) ? currentProjectDoc.documents : [];
+    docs.forEach(d => items.push({
+      type:'Document',
+      icon:'📄',
+      title:d.name || 'Document uploaded',
+      sub:d.uploadedBy ? `Uploaded by ${d.uploadedBy}` : 'Project document',
+      date:getActivityDate(d)
+    }));
+
+    const photos = Array.isArray(currentProjectDoc?.photos) ? currentProjectDoc.photos : [];
+    photos.forEach(p => items.push({
+      type:'Photo',
+      icon:'📸',
+      title:p.name || 'Photo uploaded',
+      sub:p.category ? `Category: ${p.category}` : 'Project photo',
+      date:getActivityDate(p)
+    }));
+
+    const reports = Array.isArray(currentProjectReports) ? currentProjectReports : [];
+    reports.forEach(r => items.push({
+      type:'Daily Report',
+      icon:'📋',
+      title:r.date ? `Daily Report · ${r.date}` : 'Daily Report',
+      sub:r.supervisor ? `Supervisor: ${r.supervisor}` : (r.status || 'Field report'),
+      date:getActivityDate(r)
+    }));
+
+    const projectTickets = Array.isArray(allTickets) && currentProject
+      ? allTickets.filter(t => String(t.projectId || '') === String(currentProject.id || ''))
+      : [];
+    projectTickets.forEach(t => items.push({
+      type:'Ticket',
+      icon:'💵',
+      title:t.ticketNo || 'Extra Work Ticket',
+      sub:t.description || t.status || 'Extra work ticket',
+      date:getActivityDate(t),
+      amount:Number(t.grandTotal || 0)
+    }));
+
+    const projectWarehouse = Array.isArray(allWarehouseItems) && currentProject
+      ? allWarehouseItems.filter(w => String(w.projectId || '') === String(currentProject.id || ''))
+      : [];
+    projectWarehouse.forEach(w => items.push({
+      type:'Warehouse',
+      icon:'📦',
+      title:w.itemName || w.name || 'Warehouse item',
+      sub:w.status || w.notes || 'Equipment/material movement',
+      date:getActivityDate(w)
+    }));
+
+    return items;
+  }
+
+  function renderProjectBreakdown() {
+    const el = document.getElementById('project-breakdown-content');
+    if (!el) return;
+
+    const mode = currentBreakdownView || 'overall';
+    const items = getProjectBreakdownItems().filter(item => isInBreakdownWindow(item.date, mode));
+    const counts = items.reduce((acc, item) => {
+      acc[item.type] = (acc[item.type] || 0) + 1;
+      if (item.type === 'Ticket') acc.ticketTotal += Number(item.amount || 0);
+      return acc;
+    }, { Document:0, Photo:0, 'Daily Report':0, Ticket:0, Warehouse:0, ticketTotal:0 });
+
+    const label = mode === 'week' ? 'This Week' : mode === 'month' ? 'This Month' : 'Overall';
+    const sorted = items.slice().sort((a,b) => {
+      const ad = a.date ? a.date.getTime() : 0;
+      const bd = b.date ? b.date.getTime() : 0;
+      return bd - ad;
+    });
+    const ticketTotalText = (typeof money === 'function') ? money(counts.ticketTotal || 0) : ('$' + Number(counts.ticketTotal || 0).toFixed(2));
+
+    el.innerHTML = `
+      <div class="breakdown-grid">
+        <div class="breakdown-box"><strong>${counts.Document || 0}</strong><span>Documents · ${label}</span></div>
+        <div class="breakdown-box"><strong>${counts.Photo || 0}</strong><span>Photos · ${label}</span></div>
+        <div class="breakdown-box"><strong>${counts['Daily Report'] || 0}</strong><span>Daily Reports · ${label}</span></div>
+        <div class="breakdown-box"><strong>${counts.Ticket || 0}</strong><span>Extra Work Tickets · ${label}</span></div>
+        <div class="breakdown-box"><strong>${counts.Warehouse || 0}</strong><span>Warehouse Items · ${label}</span></div>
+      </div>
+      <div class="mini-note">Ticket total for this view: <strong>${ticketTotalText}</strong></div>
+      ${sorted.length ? `
+        <div class="breakdown-list">
+          ${sorted.slice(0, 20).map(item => `
+            <div class="breakdown-row">
+              <div>
+                <div class="breakdown-row-title">${item.icon} ${esc(item.title)}</div>
+                <div class="breakdown-row-sub">${esc(String(item.sub || '').slice(0, 160))}${String(item.sub || '').length > 160 ? '…' : ''}</div>
+              </div>
+              <div class="breakdown-pill">${item.date ? item.date.toLocaleDateString() : 'No date'} · ${item.type}</div>
+            </div>
+          `).join('')}
+        </div>` : `
+        <div class="empty-state" style="padding:24px 12px;">
+          <div class="icon">📊</div>
+          <h3>No activity for ${label}</h3>
+          <p>Documents, photos, reports, tickets, and warehouse items will show here once they are added.</p>
+        </div>`}
+    `;
   }
 
   function openDailyReportForm() {
@@ -2150,6 +2269,8 @@
       const snap = await getDocs(q);
       const rows = [];
       snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
+      currentProjectReports = rows;
+      renderProjectBreakdown();
       document.getElementById('summary-reports').textContent = rows.length;
       renderDailyReportDashboard(rows);
       if (currentProject) {
@@ -2356,69 +2477,6 @@
       const el = document.getElementById(id);
       if (el) el.innerHTML = warningHTML;
     });
-  }
-
-
-  function formatCertAlertLine(c) {
-    const expText = c.expirationDate ? c.expirationDate : 'No expiration date listed';
-    const dayText = c.status === 'expired'
-      ? `Expired${typeof c.days === 'number' ? ` ${Math.abs(c.days)} day${Math.abs(c.days) === 1 ? '' : 's'} ago` : ''}`
-      : `Expires in ${c.days} day${c.days === 1 ? '' : 's'}`;
-    return `- ${c.employeeName} — ${c.certTitle} — ${expText} (${dayText})`;
-  }
-
-  function buildCertAlertEmail() {
-    const data = getCertAlertData();
-    const today = new Date().toLocaleDateString();
-    const expiredLines = data.expired.length
-      ? data.expired.sort((a,b) => (a.days ?? 0) - (b.days ?? 0)).map(formatCertAlertLine).join('\n')
-      : '- None';
-    const soonLines = data.soon.length
-      ? data.soon.sort((a,b) => (a.days ?? 9999) - (b.days ?? 9999)).map(formatCertAlertLine).join('\n')
-      : '- None';
-
-    const subject = `PAL Safety Hub - Weekly Certification Alert - ${today}`;
-    const body = `PAL Safety Hub - Weekly Certification Alert\nDate: ${today}\n\nExpired Certifications:\n${expiredLines}\n\nCertifications Expiring Within 30 Days:\n${soonLines}\n\nPlease review employee files in PAL Safety Hub and update certification records as needed.`;
-    return { subject, body, data };
-  }
-
-  function previewCertAlertEmail() {
-    const preview = document.getElementById('cert-email-preview');
-    if (!preview) return;
-    const { subject, body, data } = buildCertAlertEmail();
-    const total = data.expired.length + data.soon.length;
-    preview.innerHTML = `
-      <div style="background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--text);white-space:pre-wrap;font-size:13px;line-height:1.45;">
-        <strong>${esc(subject)}</strong>\n\n${esc(body)}
-      </div>
-      <div class="mini-note">${total ? `${total} certification alert item${total === 1 ? '' : 's'} ready to send.` : 'No expired or soon-expiring certifications found.'}</div>`;
-  }
-
-  function openCertAlertEmailDraft() {
-    const recipient = String(document.getElementById('cert-email-recipient')?.value || '').trim();
-    if (!recipient) {
-      toast('Enter a recipient email first.');
-      const input = document.getElementById('cert-email-recipient');
-      if (input) input.focus();
-      return;
-    }
-    const { subject, body } = buildCertAlertEmail();
-    const mailto = `mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-  }
-
-  async function copyCertAlertEmailText() {
-    const { subject, body } = buildCertAlertEmail();
-    const text = `Subject: ${subject}\n\n${body}`;
-    try {
-      await navigator.clipboard.writeText(text);
-      toast('Certification alert email copied.');
-    } catch (e) {
-      console.error('Copy failed:', e);
-      const preview = document.getElementById('cert-email-preview');
-      if (preview) preview.innerHTML = `<div style="background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;white-space:pre-wrap;font-size:13px;">${esc(text)}</div>`;
-      toast('Copy blocked — preview text shown.');
-    }
   }
 
 
@@ -2957,156 +3015,6 @@
     return map[status] || status || 'Sent from Warehouse';
   }
 
-
-  function formatHours(value) {
-    const n = Number(value || 0);
-    if (!Number.isFinite(n)) return '0';
-    return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.00$/, '').replace(/0$/, '');
-  }
-
-  function getProjectPayrollEntries() {
-    return Array.isArray(currentProject?.payrollEntries) ? currentProject.payrollEntries : [];
-  }
-
-  function getPayrollSummary(entries) {
-    return entries.reduce((acc, row) => {
-      acc.count += 1;
-      acc.st += Number(row.stHours || 0);
-      acc.ot += Number(row.otHours || 0);
-      acc.dt += Number(row.dtHours || 0);
-      acc.total += Number(row.totalHours || 0);
-      return acc;
-    }, { count:0, st:0, ot:0, dt:0, total:0 });
-  }
-
-  function payrollDashboardHTML(entries) {
-    const s = getPayrollSummary(entries);
-    return `
-      <div class="payroll-dashboard">
-        <div class="payroll-box st"><strong>${formatHours(s.st)}</strong><span>Regular Hours</span></div>
-        <div class="payroll-box ot"><strong>${formatHours(s.ot)}</strong><span>OT Hours</span></div>
-        <div class="payroll-box dt"><strong>${formatHours(s.dt)}</strong><span>DT Hours</span></div>
-        <div class="payroll-box total"><strong>${formatHours(s.total)}</strong><span>Total Man-Hours</span></div>
-      </div>`;
-  }
-
-  function payrollCardHTML(row) {
-    const total = Number(row.totalHours || 0);
-    return `
-      <div class="payroll-card">
-        <div class="payroll-card-head">
-          <div>
-            <h4>${esc(row.employee || 'Unnamed Employee')}</h4>
-            <div class="payroll-meta">
-              ${row.date ? `<span>📅 ${esc(row.date)}</span>` : ''}
-              ${row.week ? `<span>Week/Shift: ${esc(row.week)}</span>` : ''}
-              ${row.trade ? `<span>👷 ${esc(row.trade)}</span>` : ''}
-              <span>ST: ${formatHours(row.stHours)}</span>
-              <span>OT: ${formatHours(row.otHours)}</span>
-              <span>DT: ${formatHours(row.dtHours)}</span>
-              ${row.createdByName ? `<span>Logged by: ${esc(row.createdByName)}</span>` : ''}
-            </div>
-            ${row.notes ? `<p style="margin-top:8px;color:var(--muted);font-size:13px;line-height:1.4;white-space:pre-line;">${esc(row.notes)}</p>` : ''}
-          </div>
-          <span class="payroll-hours-pill">${formatHours(total)} hrs</span>
-        </div>
-      </div>`;
-  }
-
-  function renderProjectPayrollTab() {
-    const dashboard = document.getElementById('project-payroll-dashboard');
-    const list = document.getElementById('project-payroll-list');
-    if (!dashboard && !list) return;
-    const entries = getProjectPayrollEntries().slice().sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')));
-    if (dashboard) dashboard.innerHTML = payrollDashboardHTML(entries);
-    if (!list) return;
-    if (!entries.length) {
-      list.innerHTML = `<div class="empty-state"><div class="icon">⏱️</div><h3>No payroll hours for this project yet</h3><p>Add worker hours to track project man-hours.</p></div>`;
-      return;
-    }
-    list.innerHTML = entries.map(payrollCardHTML).join('');
-  }
-
-  function updatePayrollEntryTotal() {
-    const st = Number(document.getElementById('payroll-st-hours')?.value || 0);
-    const ot = Number(document.getElementById('payroll-ot-hours')?.value || 0);
-    const dt = Number(document.getElementById('payroll-dt-hours')?.value || 0);
-    const totalEl = document.getElementById('payroll-total-hours');
-    if (totalEl) totalEl.value = formatHours(st + ot + dt);
-  }
-
-  function openPayrollEntryModal() {
-    if (!currentProject) { toast('Open a project first.'); return; }
-    editingPayrollEntryId = null;
-    const fields = {
-      'payroll-project-display': `${currentProject.name || 'Current Project'}${currentProject.jobNumber ? ' · ' + currentProject.jobNumber : ''}`,
-      'payroll-date': new Date().toISOString().slice(0,10),
-      'payroll-week': '',
-      'payroll-employee': '',
-      'payroll-trade': '',
-      'payroll-st-hours': '',
-      'payroll-ot-hours': '',
-      'payroll-dt-hours': '',
-      'payroll-total-hours': '0',
-      'payroll-notes': ''
-    };
-    Object.entries(fields).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el) el.value = val;
-    });
-    const btn = document.getElementById('save-payroll-btn');
-    if (btn) btn.textContent = 'Save Payroll Entry';
-    document.getElementById('modal-payroll-entry').classList.add('open');
-  }
-
-  async function savePayrollEntry() {
-    if (!currentProject?.id) { toast('Open a project first.'); return; }
-    const employee = document.getElementById('payroll-employee')?.value.trim() || '';
-    if (!employee) { toast('Employee name is required.'); return; }
-    const stHours = Number(document.getElementById('payroll-st-hours')?.value || 0);
-    const otHours = Number(document.getElementById('payroll-ot-hours')?.value || 0);
-    const dtHours = Number(document.getElementById('payroll-dt-hours')?.value || 0);
-    const totalHours = stHours + otHours + dtHours;
-    if (totalHours <= 0) { toast('Enter at least one hour.'); return; }
-
-    const btn = document.getElementById('save-payroll-btn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
-    try {
-      const entry = {
-        id: `pay_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
-        date: document.getElementById('payroll-date')?.value || new Date().toISOString().slice(0,10),
-        week: document.getElementById('payroll-week')?.value.trim() || '',
-        employee,
-        trade: document.getElementById('payroll-trade')?.value.trim() || '',
-        stHours,
-        otHours,
-        dtHours,
-        totalHours,
-        notes: document.getElementById('payroll-notes')?.value.trim() || '',
-        createdBy: currentUser?.uid || '',
-        createdByName: currentUser?.displayName || currentUser?.email || '',
-        createdAt: new Date().toISOString()
-      };
-      const ref = doc(db, 'projects', currentProject.id);
-      const snap = await getDoc(ref);
-      const data = snap.exists() ? snap.data() : {};
-      const currentEntries = Array.isArray(data.payrollEntries) ? data.payrollEntries : [];
-      const updatedEntries = [...currentEntries, entry];
-      await updateDoc(ref, { payrollEntries: updatedEntries });
-      closeModal('modal-payroll-entry');
-      currentProject.payrollEntries = updatedEntries;
-      updateProjectSummary({ ...(currentProjectDoc || currentProject), payrollEntries: updatedEntries });
-      renderProjectPayrollTab();
-      toast('Payroll hours saved');
-    } catch(e) {
-      console.error(e);
-      toast('Payroll save failed: ' + e.message);
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll Entry'; }
-    }
-  }
-
-
   function refreshWarehouseProjectOptions() {
     const selects = ['warehouse-project-select', 'warehouse-project-filter'];
     selects.forEach(id => {
@@ -3606,9 +3514,7 @@
     ['ticket-labor-rows','ticket-material-rows','ticket-equipment-rows'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
 
     const saveBtn = document.getElementById('save-ticket-btn');
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = existingTicket ? 'Update Ticket' : 'Save Ticket'; }
-    const saveNewBtn = document.getElementById('save-new-ticket-btn');
-    if (saveNewBtn) { saveNewBtn.disabled = false; saveNewBtn.style.display = existingTicket ? 'none' : 'inline-flex'; }
+    if (saveBtn) saveBtn.textContent = existingTicket ? 'Update Ticket' : 'Save Ticket';
 
     const projectSelect = document.getElementById('ticket-project-select');
     if (projectSelect) {
@@ -3683,17 +3589,13 @@
   function clearTicketSignature(id){ const c=document.getElementById(id); if(!c)return; c.getContext('2d').clearRect(0,0,c.width,c.height); }
   function getTicketSignature(id){ const c=document.getElementById(id); if(!c)return ''; try{return c.toDataURL('image/png')}catch(e){return ''} }
 
-  // EXTRA_WORK_TICKET_MULTI_SAVE_FIX_2026_05_10
-  async function saveExtraWorkTicket(keepOpenForNext = false){
+  async function saveExtraWorkTicket(){
     const projectId=editingTicketProjectId||document.getElementById('ticket-project-select')?.value||'';
     if(!projectId){toast('Select the project this ticket belongs to.'); return;}
     const project=allProjects.find(p=>p.id===projectId);
     const btn=document.getElementById('save-ticket-btn');
-    const saveNewBtn=document.getElementById('save-new-ticket-btn');
-    if(btn){ btn.disabled=true; btn.textContent=editingTicketId ? 'Updating…' : 'Saving…'; }
-    if(saveNewBtn){ saveNewBtn.disabled=true; saveNewBtn.textContent='Saving…'; }
+    btn.disabled=true; btn.textContent=editingTicketId ? 'Updating…' : 'Saving…';
 
-    let savedOk = false;
     try{
       const rows=collectTicketRows();
       const laborTotal=rows.labor.reduce((s,r)=>s+Number(r.total||0),0);
@@ -3707,7 +3609,6 @@
       const ticket={
         ...existing,
         id: editingTicketId || `t_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
-        projectId: projectId,
         ticketNo:document.getElementById('ticket-number').value.trim(),
         status:document.getElementById('ticket-status')?.value || existing.status || 'Submitted',
         date:document.getElementById('ticket-date').value,
@@ -3737,7 +3638,7 @@
         ticket.createdByName=currentUser.displayName||currentUser.email;
         ticket.createdAt=new Date().toISOString();
         await updateDoc(doc(db,'projects',projectId),{extraTickets:arrayUnion(ticket)});
-        toast(keepOpenForNext ? 'Ticket saved. Ready for next ticket.' : 'Extra work ticket submitted');
+        toast('Extra work ticket submitted');
       } else {
         const freshSnap = await getDoc(doc(db,'projects',projectId));
         const freshData = freshSnap.exists() ? freshSnap.data() : {};
@@ -3746,37 +3647,22 @@
         if (!updatedTickets.some(t => t.id === editingTicketId)) updatedTickets.push(ticket);
         await updateDoc(doc(db,'projects',projectId),{extraTickets:updatedTickets});
         toast('Ticket updated');
-        keepOpenForNext = false;
       }
 
-      savedOk = true;
-      const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
       editingTicketProjectId=null; editingTicketId=null; editingTicketOriginal=null;
-
-      try { await refreshProjectDetail(projectId); } catch(_e) {}
-      try { loadProjects(); } catch(_e) {}
-      try { loadMainTickets(); } catch(_e) {}
-      try { renderProjectTicketsTab(); } catch(_e) {}
-
-      if (keepOpenForNext) {
-        // Keep the workflow moving for multiple tickets: reopen a clean blank ticket tied to the same project.
-        setTimeout(() => openExtraWorkTicketModal(projectId), 150);
-      } else {
-        closeModal('modal-extra-ticket');
-      }
+      const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
+      closeModal('modal-extra-ticket');
+      loadProjects(); loadMainTickets(); renderProjectTicketsTab();
     } catch(e){
-      console.error(e); toast('Ticket save failed: '+(e?.message || e));
-    } finally {
-      if(btn){ btn.disabled=false; btn.textContent='Save Ticket'; }
-      if(saveNewBtn){ saveNewBtn.disabled=false; saveNewBtn.textContent='Save & New Ticket'; }
+      console.error(e); toast('Ticket save failed: '+e.message);
     }
+    btn.disabled=false; btn.textContent='Save Ticket';
   }
 
   function ticketPaperHTML(t){ const laborRows=(t.labor||[]).map(r=>`<tr><td>${esc(r.name||'')}</td><td>${esc(r.trade||'')}</td><td>${r.st||''}</td><td>${r.ot||''}</td><td>${r.dt||''}</td><td>${money(r.rate||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="7">No labor listed</td></tr>'; const matRows=(t.materials||[]).map(r=>`<tr><td>${r.qty||''}</td><td>${esc(r.unit||'')}</td><td>${esc(r.description||'')}</td><td>${money(r.unitCost||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="5">No materials listed</td></tr>'; const eqRows=(t.equipment||[]).map(r=>`<tr><td>${r.qty||''}</td><td>${esc(r.description||'')}</td><td>${money(r.rate||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="4">No equipment listed</td></tr>'; const sig1=t.contractorSignature?`<img src="${t.contractorSignature}" style="max-height:55px;max-width:100%;">`:'<br><br>'; const sig2=t.palSignature?`<img src="${t.palSignature}" style="max-height:55px;max-width:100%;">`:'<br><br>'; return `<div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><div class="ticket-label">Ticket No.</div>${esc(t.ticketNo||'—')}</div></div><div class="ticket-line-grid"><div class="cell wide"><div class="ticket-label">Project / Jobsite</div>${esc(t.projectName||'—')}</div><div class="cell"><div class="ticket-label">Date</div>${esc(t.date||'—')}</div><div class="cell"><div class="ticket-label">Status</div>${esc(t.status||'Submitted')}</div><div class="cell"><div class="ticket-label">PAL Job No.</div>${esc(t.jobNumber||t.projectJobNumber||'—')}</div><div class="cell wide"><div class="ticket-label">Contractor / Authorized By</div>${esc(t.authorizedBy||'—')}</div><div class="cell"><div class="ticket-label">Location / Floor</div>${esc(t.location||'—')}</div><div class="cell"><div class="ticket-label">Work Type</div>${esc(t.workType||'—')}</div></div><div class="ticket-label">Authorization to proceed / Description of extra work</div><div style="border:1px solid #555;min-height:70px;padding:8px;white-space:pre-line;">${esc(t.description||'—')}</div><div class="ticket-section-head">Labor / Time</div><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate</th><th>Total</th></tr></thead><tbody>${laborRows}</tbody></table><div class="ticket-section-head">Material</div><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost</th><th>Total</th></tr></thead><tbody>${matRows}</tbody></table><div class="ticket-section-head">Equipment Rental / Trucking</div><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate</th><th>Total</th></tr></thead><tbody>${eqRows}</tbody></table><div class="ticket-summary"><div><div class="ticket-label">Notes</div><div style="border:1px solid #555;min-height:70px;padding:8px;white-space:pre-line;">${esc(t.notes||'')}</div><div class="ticket-sign-grid"><div class="ticket-sign-box"><div class="ticket-label">Contractor Signature</div>${sig1}</div><div class="ticket-sign-box"><div class="ticket-label">PAL Accepted By</div>${sig2}</div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><span>${money(t.laborTotal||0)}</span></div><div class="ticket-total-row"><span>Material Total</span><span>${money(t.materialTotal||0)}</span></div><div class="ticket-total-row"><span>Equipment / Rental</span><span>${money(t.equipmentTotal||0)}</span></div><div class="ticket-total-row"><span>Bond / Insurance</span><span>${money(t.bondTotal||0)}</span></div><div class="ticket-total-row"><span>Tax</span><span>${money(t.taxTotal||0)}</span></div><div class="ticket-total-row"><span>Other / Markup</span><span>${money(t.otherTotal||0)}</span></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><span>${money(t.grandTotal||0)}</span></div></div></div></div>`; }
   function openTicketDetail(projectId,ticketId){ const project=allProjects.find(p=>p.id===projectId); const ticket=(project?.extraTickets||[]).find(t=>t.id===ticketId); if(!ticket){toast('Ticket not found yet. Try refresh.');return;} selectedTicket={...ticket,projectId,projectName:project?.name||ticket.projectName||'',projectJobNumber:project?.jobNumber||ticket.projectJobNumber||''}; document.getElementById('ticket-detail-grid').innerHTML=ticketPaperHTML(selectedTicket); document.getElementById('modal-ticket-detail').classList.add('open'); }
   function editSelectedTicket(){ if(!selectedTicket){toast('Open a ticket first.'); return;} closeModal('modal-ticket-detail'); openExtraWorkTicketModal(selectedTicket.projectId, selectedTicket); }
-  function printTicketDetail(){ if(!selectedTicket)return; const w=window.open('','_blank'); if(!w){toast('Popup blocked. Allow popups to print ticket.');return;} w.document.write(`<!doctype html><html><head><title>PAL Safety Hub - Extra Work Ticket</title><style>${document.querySelector('style').innerHTML}body{background:#fff;padding:16px}.modal-actions,.header,.tabs,button{display:none!important}.ticket-paper{max-width:980px;margin:auto}</style></head><body>${ticketPaperHTML(selectedTicket)}<p><button onclick="window.print()">Print / Save as File</button></p>
-</body></html>`); w.document.close(); }
+  function printTicketDetail(){ if(!selectedTicket)return; const w=window.open('','_blank'); if(!w){toast('Popup blocked. Allow popups to print ticket.');return;} w.document.write(`<!doctype html><html><head><title>PAL Safety Hub - Extra Work Ticket</title><style>${document.querySelector('style').innerHTML}body{background:#fff;padding:16px}.modal-actions,.header,.tabs,button{display:none!important}.ticket-paper{max-width:980px;margin:auto}</style></head><body>${ticketPaperHTML(selectedTicket)}<p><button onclick="window.print()">Print / Save as File</button></p></body></html>`); w.document.close(); }
 
   function money(n) {
     return new Intl.NumberFormat('en-US', { style:'currency', currency:'USD' }).format(Number(n || 0));
@@ -3797,11 +3683,6 @@
 
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
-    if (id === 'modal-payroll-entry') {
-      editingPayrollEntryId = null;
-      const btn = document.getElementById('save-payroll-btn');
-      if (btn) btn.textContent = 'Save Payroll Entry';
-    }
     if (id === 'modal-warehouse-item') {
       editingWarehouseProjectId=null; editingWarehouseItemId=null;
       const ps = document.getElementById('warehouse-project-select'); if (ps) ps.disabled = false;
@@ -3810,8 +3691,7 @@
     if (id === 'modal-extra-ticket') {
       editingTicketProjectId=null; editingTicketId=null; editingTicketOriginal=null;
       const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
-      const btn = document.getElementById('save-ticket-btn'); if (btn) { btn.disabled=false; btn.textContent = 'Save Ticket'; }
-      const saveNewBtn = document.getElementById('save-new-ticket-btn'); if (saveNewBtn) { saveNewBtn.disabled=false; saveNewBtn.textContent='Save & New Ticket'; saveNewBtn.style.display='inline-flex'; }
+      const btn = document.getElementById('save-ticket-btn'); if (btn) btn.textContent = 'Save Ticket';
     }
   }
 
@@ -3841,113 +3721,9 @@
     const su = document.getElementById('sticky-upload');
     if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
     if (tabId === 'tab-employees') loadEmployees(true);
-    if (tabId === 'tab-project-payroll') renderProjectPayrollTab();
     if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
     if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
   }
-
-  // TICKET_CLICK_HARD_FIX_REAL_WORKING_2026_05_10
-  // Extra Work Ticket click repair for laptop/browser.
-  // These wrappers make the tabs/buttons open even if normal tab logic gets interrupted after a saved ticket.
-  window.forceMainTicketsTab = forceMainTicketsTab;
-  window.forceProjectTicketsTab = forceProjectTicketsTab;
-  window.forceOpenExtraWorkTicketModal = forceOpenExtraWorkTicketModal;
-  window.forceOpenProjectTicketModal = forceOpenProjectTicketModal;
-
-  function forceMainTicketsTab(btn) {
-    try {
-      document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
-      const pane = document.getElementById('main-tickets');
-      if (pane) pane.classList.add('active');
-      const sticky = document.getElementById('sticky-upload');
-      if (sticky) sticky.style.display = 'none';
-      if (typeof refreshTicketProjectOptions === 'function') refreshTicketProjectOptions();
-      if (typeof loadMainTickets === 'function') loadMainTickets();
-      if (typeof renderMainTickets === 'function') renderMainTickets();
-    } catch (err) {
-      console.error('forceMainTicketsTab failed:', err);
-      if (typeof toast === 'function') toast('Ticket tab had an issue opening. Refresh and try again.');
-    }
-  }
-
-  function forceProjectTicketsTab(btn) {
-    try {
-      document.querySelectorAll('#view-detail .tab-pane').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('#view-detail .tabs .tab').forEach(t => t.classList.remove('active'));
-      const pane = document.getElementById('tab-project-tickets');
-      if (pane) pane.classList.add('active');
-      if (btn) btn.classList.add('active');
-      const sticky = document.getElementById('sticky-upload');
-      if (sticky) sticky.style.display = 'none';
-      if (typeof renderProjectTicketsTab === 'function') renderProjectTicketsTab();
-    } catch (err) {
-      console.error('forceProjectTicketsTab failed:', err);
-      if (typeof toast === 'function') toast('Project ticket tab had an issue opening. Refresh and try again.');
-    }
-  }
-
-  function forceOpenExtraWorkTicketModal(projectId = '') {
-    try {
-      const modal = document.getElementById('modal-extra-ticket');
-      const saveBtn = document.getElementById('save-ticket-btn');
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Ticket';
-      }
-
-      editingTicketOriginal = null;
-      editingTicketId = null;
-      editingTicketProjectId = projectId || '';
-
-      if (typeof refreshTicketProjectOptions === 'function') refreshTicketProjectOptions();
-      if (typeof openExtraWorkTicketModal === 'function') {
-        openExtraWorkTicketModal(projectId || '');
-      } else if (modal) {
-        modal.classList.add('open');
-      }
-
-      setTimeout(() => {
-        const ps = document.getElementById('ticket-project-select');
-        if (ps) {
-          ps.disabled = !!projectId;
-          if (projectId) ps.value = projectId;
-        }
-        if (typeof fillTicketProjectInfo === 'function') fillTicketProjectInfo(projectId || ps?.value || '');
-      }, 25);
-    } catch (err) {
-      console.error('forceOpenExtraWorkTicketModal failed:', err);
-      if (typeof toast === 'function') toast('Ticket form had an issue opening. Refresh and try again.');
-    }
-  }
-
-  function forceOpenProjectTicketModal() {
-    const projectId = currentProject?.id || new URLSearchParams(window.location.search).get('projectId') || '';
-    if (!projectId) {
-      if (typeof toast === 'function') toast('Open a project first, then create the ticket.');
-      return;
-    }
-    forceOpenExtraWorkTicketModal(projectId);
-  }
-
-
-  // EXTRA_WORK_TICKET_CLEAN_NEW_BUTTON_FIX_2026_05_10
-  // These wrappers keep New Ticket in CREATE mode every time.
-  const _palOriginalOpenExtraWorkTicketModal = openExtraWorkTicketModal;
-  openExtraWorkTicketModal = function(projectId = '', existingTicket = null) {
-    if (!existingTicket) {
-      editingTicketOriginal = null;
-      editingTicketId = null;
-      editingTicketProjectId = projectId || '';
-      selectedTicket = null;
-      const detail = document.getElementById('modal-ticket-detail');
-      if (detail) detail.classList.remove('open');
-    }
-    return _palOriginalOpenExtraWorkTicketModal(projectId, existingTicket);
-  };
-  window.openExtraWorkTicketModal = openExtraWorkTicketModal;
-  window.openProjectTicketModal = openProjectTicketModal;
 
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
 
@@ -4008,8 +3784,5 @@
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
 </script>
-
-
-<!-- EXTRA_WORK_TICKET_CLEAN_NEW_BUTTON_FIX_2026_05_10: Removed old duplicate fallback scripts that could keep the ticket modal stuck in prior state. -->
 </body>
 </html>
