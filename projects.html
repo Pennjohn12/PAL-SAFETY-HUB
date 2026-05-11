@@ -861,7 +861,7 @@
         <h2>Extra Work Tickets</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadMainTickets()">↻ Refresh</button>
-          <button class="btn-add" onclick="forceOpenExtraWorkTicket(false)">＋ New Ticket</button>
+          <button class="btn-add" onclick="openExtraWorkTicketModal()">＋ New Ticket</button>
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Create and track extra work tickets. Each ticket is linked to the project/jobsite it belongs to.</div>
@@ -1041,7 +1041,7 @@
           <div class="section-label">Extra Work Tickets</div>
           <div class="helper-text">Tickets tied to this project only. Office can open, price, edit, print, and track totals here.</div>
         </div>
-        <button class="btn-save" type="button" onclick="forceOpenExtraWorkTicket(true)">＋ New Ticket for This Project</button>
+        <button class="btn-save" type="button" onclick="openProjectTicketModal()">＋ New Ticket for This Project</button>
       </div>
       <div id="project-ticket-dashboard-summary"></div>
       <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
@@ -3928,6 +3928,25 @@
     }
     forceOpenExtraWorkTicketModal(projectId);
   }
+
+
+  // EXTRA_WORK_TICKET_CLEAN_NEW_BUTTON_FIX_2026_05_10
+  // These wrappers keep New Ticket in CREATE mode every time.
+  const _palOriginalOpenExtraWorkTicketModal = openExtraWorkTicketModal;
+  openExtraWorkTicketModal = function(projectId = '', existingTicket = null) {
+    if (!existingTicket) {
+      editingTicketOriginal = null;
+      editingTicketId = null;
+      editingTicketProjectId = projectId || '';
+      selectedTicket = null;
+      const detail = document.getElementById('modal-ticket-detail');
+      if (detail) detail.classList.remove('open');
+    }
+    return _palOriginalOpenExtraWorkTicketModal(projectId, existingTicket);
+  };
+  window.openExtraWorkTicketModal = openExtraWorkTicketModal;
+  window.openProjectTicketModal = openProjectTicketModal;
+
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
 
   function toast(msg) {
@@ -3988,187 +4007,7 @@
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
 </script>
 
-<script>
-/* PAL EXTRA WORK TICKETS LAPTOP HARD FIX - plain JS fallback */
-(function(){
-  function setActiveButton(btn, scopeSelector){
-    var scope = scopeSelector ? document.querySelector(scopeSelector) : null;
-    if(scope){ scope.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); }); }
-    if(btn) btn.classList.add('active');
-  }
-  function hidePanes(selector){ document.querySelectorAll(selector).forEach(function(p){ p.classList.remove('active'); }); }
-  function showPane(id){ var pane = document.getElementById(id); if(pane){ pane.classList.add('active'); pane.style.display = 'block'; } return pane; }
 
-  window.forceMainTicketsTab = function(btn){
-    try{
-      setActiveButton(btn, '#main-dashboard-tabs');
-      hidePanes('#view-projects > .page-wrap > .tab-pane');
-      showPane('main-tickets');
-      if(typeof window.loadMainTickets === 'function') setTimeout(window.loadMainTickets, 0);
-      var list = document.getElementById('tickets-list-main');
-      if(list && !list.innerHTML.trim()){ list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Click New Ticket to create an extra work ticket.</p>'; }
-    }catch(e){ console.error('PAL ticket main tab fallback failed', e); }
-  };
-
-  window.forceProjectTicketsTab = function(btn){
-    try{
-      setActiveButton(btn, '#view-detail .tabs');
-      hidePanes('#view-detail .tab-pane');
-      showPane('tab-project-tickets');
-      var su = document.getElementById('sticky-upload'); if(su) su.style.display = 'none';
-      if(typeof window.renderProjectTicketsTab === 'function') setTimeout(window.renderProjectTicketsTab, 0);
-      var list = document.getElementById('project-ticket-list');
-      if(list && !list.innerHTML.trim()){ list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Click New Ticket for This Project to create an extra work ticket.</p>'; }
-    }catch(e){ console.error('PAL project ticket tab fallback failed', e); }
-  };
-
-  window.forceOpenExtraWorkTicket = function(projectOnly){
-    try{
-      if(projectOnly && typeof window.openProjectTicketModal === 'function') return window.openProjectTicketModal();
-      if(typeof window.openExtraWorkTicketModal === 'function') return window.openExtraWorkTicketModal();
-      var modal = document.getElementById('modal-extra-ticket');
-      if(modal) modal.classList.add('open');
-    }catch(e){ console.error('PAL open ticket fallback failed', e); }
-  };
-
-  document.addEventListener('click', function(event){
-    var btn = event.target.closest('button');
-    if(!btn) return;
-    var txt = (btn.textContent || '').trim();
-    if(btn.closest('#main-dashboard-tabs') && txt.indexOf('Extra Work Tickets') !== -1){
-      event.preventDefault(); event.stopPropagation(); window.forceMainTicketsTab(btn);
-    }
-    if(btn.closest('#view-detail .tabs') && txt.indexOf('Extra Work Tickets') !== -1){
-      event.preventDefault(); event.stopPropagation(); window.forceProjectTicketsTab(btn);
-    }
-    if(txt.indexOf('New Ticket for This Project') !== -1){
-      event.preventDefault(); event.stopPropagation(); window.forceOpenExtraWorkTicket(true);
-    }
-    if(txt.indexOf('New Ticket') !== -1 && btn.closest('#main-tickets')){
-      event.preventDefault(); event.stopPropagation(); window.forceOpenExtraWorkTicket(false);
-    }
-  }, true);
-})();
-</script>
-
-<script>
-/* EXTRA_TICKET_ALWAYS_NEW_TICKET_FIX_2026_05_10
-   Purpose: force every New Ticket button to open a clean CREATE form.
-   Existing tickets should only open when Edit Ticket passes an existingTicket object.
-*/
-(function(){
-  var originalOpenExtra = window.openExtraWorkTicketModal;
-  var originalOpenProject = window.openProjectTicketModal;
-
-  function byId(id){ return document.getElementById(id); }
-
-  function clearCanvas(id){
-    try {
-      var c = byId(id);
-      if (!c) return;
-      var ctx = c.getContext && c.getContext('2d');
-      if (ctx) ctx.clearRect(0,0,c.width || c.offsetWidth || 600,c.height || c.offsetHeight || 120);
-    } catch(e){}
-  }
-
-  function hardResetTicketForm(projectId){
-    try {
-      // Close any ticket detail view so New Ticket never reopens the old ticket.
-      var detail = byId('modal-ticket-detail');
-      if (detail) detail.classList.remove('open');
-
-      // Clear basic fields.
-      ['ticket-number','ticket-date','ticket-job-number','ticket-authorized-by','ticket-location','ticket-work-type','ticket-description','ticket-bond-total','ticket-tax-total','ticket-other-total','ticket-notes'].forEach(function(id){
-        var el = byId(id); if (el) el.value = '';
-      });
-      var status = byId('ticket-status');
-      if (status) status.value = 'Submitted';
-      var date = byId('ticket-date');
-      if (date) date.value = new Date().toISOString().slice(0,10);
-
-      // Clear line item rows and rebuild one starter row in each section.
-      ['ticket-labor-rows','ticket-material-rows','ticket-equipment-rows'].forEach(function(id){ var el=byId(id); if(el) el.innerHTML=''; });
-      if (typeof window.addTicketLaborRow === 'function') window.addTicketLaborRow();
-      if (typeof window.addTicketMaterialRow === 'function') window.addTicketMaterialRow();
-      if (typeof window.addTicketEquipmentRow === 'function') window.addTicketEquipmentRow();
-
-      // Project select: if opened inside a project, lock to that project; otherwise let office choose.
-      var ps = byId('ticket-project-select');
-      if (ps) {
-        ps.disabled = !!projectId;
-        if (projectId) ps.value = projectId;
-      }
-      if (typeof window.fillTicketProjectInfo === 'function') window.fillTicketProjectInfo(projectId || (ps && ps.value) || '');
-
-      // Clear signatures and reset buttons.
-      clearCanvas('ticket-contractor-signature');
-      clearCanvas('ticket-pal-signature');
-      var saveBtn = byId('save-ticket-btn');
-      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Ticket'; }
-      var saveNewBtn = byId('save-new-ticket-btn');
-      if (saveNewBtn) { saveNewBtn.disabled = false; saveNewBtn.textContent = 'Save & New Ticket'; saveNewBtn.style.display = 'inline-flex'; }
-
-      if (typeof window.updateTicketGrandTotal === 'function') window.updateTicketGrandTotal();
-      if (typeof window.applyTicketPricingLock === 'function') window.applyTicketPricingLock();
-      if (typeof window.initTicketSignaturePads === 'function') setTimeout(window.initTicketSignaturePads, 50);
-    } catch(e) { console.error('PAL ticket hard reset failed', e); }
-  }
-
-  window.palOpenFreshExtraWorkTicket = function(projectId){
-    projectId = projectId || '';
-    try {
-      if (typeof originalOpenExtra === 'function') {
-        // Passing null forces CREATE mode in the original module function.
-        originalOpenExtra(projectId, null);
-      } else {
-        var modal = byId('modal-extra-ticket');
-        if (modal) modal.classList.add('open');
-      }
-      // Run a second reset after the original opener finishes to clear any stale edit/detail state.
-      setTimeout(function(){ hardResetTicketForm(projectId); }, 80);
-    } catch(e) {
-      console.error('PAL fresh ticket open failed', e);
-      var modal = byId('modal-extra-ticket');
-      if (modal) modal.classList.add('open');
-      hardResetTicketForm(projectId);
-    }
-  };
-
-  window.openExtraWorkTicketModal = function(projectId, existingTicket){
-    // Edit mode stays edit mode only when a real existing ticket object is passed.
-    if (existingTicket && typeof existingTicket === 'object' && existingTicket.id && typeof originalOpenExtra === 'function') {
-      return originalOpenExtra(projectId || existingTicket.projectId || '', existingTicket);
-    }
-    return window.palOpenFreshExtraWorkTicket(projectId || '');
-  };
-
-  window.openProjectTicketModal = function(){
-    var projectId = '';
-    try { projectId = (window.currentProject && window.currentProject.id) || new URLSearchParams(window.location.search).get('projectId') || ''; } catch(e){}
-    if (!projectId && typeof originalOpenProject === 'function') {
-      // Try the original in case its module has access to currentProject.
-      try { return originalOpenProject(); } catch(e) { console.warn('Original project ticket opener failed', e); }
-    }
-    if (!projectId) { if (typeof window.toast === 'function') window.toast('Open a project first, then create the ticket.'); return; }
-    return window.palOpenFreshExtraWorkTicket(projectId);
-  };
-
-  // Capture New Ticket clicks and force clean create mode before older inline handlers can reopen stale data.
-  document.addEventListener('click', function(event){
-    var btn = event.target.closest && event.target.closest('button');
-    if (!btn) return;
-    var txt = (btn.textContent || '').trim();
-    if (txt.indexOf('New Ticket for This Project') !== -1) {
-      event.preventDefault(); event.stopImmediatePropagation();
-      return window.openProjectTicketModal();
-    }
-    if (txt.indexOf('New Ticket') !== -1 && btn.closest('#main-tickets')) {
-      event.preventDefault(); event.stopImmediatePropagation();
-      return window.palOpenFreshExtraWorkTicket('');
-    }
-  }, true);
-})();
-</script>
-
+<!-- EXTRA_WORK_TICKET_CLEAN_NEW_BUTTON_FIX_2026_05_10: Removed old duplicate fallback scripts that could keep the ticket modal stuck in prior state. -->
 </body>
 </html>
