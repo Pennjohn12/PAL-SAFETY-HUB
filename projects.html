@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#1b3a5c" />
   <title>PAL Safety Hub</title>
+  <!-- TICKET_CLICK_HARD_FIX_REAL_WORKING_2026_05_10 -->
   <!-- TICKET_CLICK_HARD_FIX_VERIFIED_REWRITE_2026 -->
   <!-- TICKET_REPAIR_PAYROLL_MANHOURS_BUILD_2026_05_11 -->
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
@@ -3697,6 +3698,7 @@
       const ticket={
         ...existing,
         id: editingTicketId || `t_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+        projectId: projectId,
         ticketNo:document.getElementById('ticket-number').value.trim(),
         status:document.getElementById('ticket-status')?.value || existing.status || 'Submitted',
         date:document.getElementById('ticket-date').value,
@@ -3740,7 +3742,10 @@
       editingTicketProjectId=null; editingTicketId=null; editingTicketOriginal=null;
       const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
       closeModal('modal-extra-ticket');
-      loadProjects(); loadMainTickets(); renderProjectTicketsTab();
+      try { await refreshProjectDetail(projectId); } catch(_e) {}
+      try { loadProjects(); } catch(_e) {}
+      try { loadMainTickets(); } catch(_e) {}
+      try { renderProjectTicketsTab(); } catch(_e) {}
     } catch(e){
       console.error(e); toast('Ticket save failed: '+e.message);
     }
@@ -3820,13 +3825,13 @@
     if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
   }
 
-
-
-  // TICKET_CLICK_HARD_FIX_VERIFIED_REWRITE
-  // ── Extra Work Tickets hard repair for laptop/browser clicks ──
-  // This keeps the ticket tabs working even if an inline onclick gets cached or blocked.
+  // TICKET_CLICK_HARD_FIX_REAL_WORKING_2026_05_10
+  // Extra Work Ticket click repair for laptop/browser.
+  // These wrappers make the tabs/buttons open even if normal tab logic gets interrupted after a saved ticket.
   window.forceMainTicketsTab = forceMainTicketsTab;
   window.forceProjectTicketsTab = forceProjectTicketsTab;
+  window.forceOpenExtraWorkTicketModal = forceOpenExtraWorkTicketModal;
+  window.forceOpenProjectTicketModal = forceOpenProjectTicketModal;
 
   function forceMainTicketsTab(btn) {
     try {
@@ -3835,11 +3840,14 @@
       document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
       const pane = document.getElementById('main-tickets');
       if (pane) pane.classList.add('active');
-      refreshTicketProjectOptions();
-      loadMainTickets();
+      const sticky = document.getElementById('sticky-upload');
+      if (sticky) sticky.style.display = 'none';
+      if (typeof refreshTicketProjectOptions === 'function') refreshTicketProjectOptions();
+      if (typeof loadMainTickets === 'function') loadMainTickets();
+      if (typeof renderMainTickets === 'function') renderMainTickets();
     } catch (err) {
-      console.error('Ticket tab repair failed:', err);
-      toast('Ticket tab had an issue opening. Refresh and try again.');
+      console.error('forceMainTicketsTab failed:', err);
+      if (typeof toast === 'function') toast('Ticket tab had an issue opening. Refresh and try again.');
     }
   }
 
@@ -3850,28 +3858,57 @@
       const pane = document.getElementById('tab-project-tickets');
       if (pane) pane.classList.add('active');
       if (btn) btn.classList.add('active');
-      const su = document.getElementById('sticky-upload');
-      if (su) su.style.display = 'none';
-      renderProjectTicketsTab();
+      const sticky = document.getElementById('sticky-upload');
+      if (sticky) sticky.style.display = 'none';
+      if (typeof renderProjectTicketsTab === 'function') renderProjectTicketsTab();
     } catch (err) {
-      console.error('Project ticket tab repair failed:', err);
-      toast('Project tickets had an issue opening. Refresh and try again.');
+      console.error('forceProjectTicketsTab failed:', err);
+      if (typeof toast === 'function') toast('Project ticket tab had an issue opening. Refresh and try again.');
     }
   }
 
-  document.addEventListener('click', (event) => {
-    const btn = event.target.closest('button');
-    if (!btn) return;
-    const txt = (btn.textContent || '').trim();
-    if (btn.closest('#main-dashboard-tabs') && txt.includes('Extra Work Tickets')) {
-      event.preventDefault();
-      forceMainTicketsTab(btn);
+  function forceOpenExtraWorkTicketModal(projectId = '') {
+    try {
+      const modal = document.getElementById('modal-extra-ticket');
+      const saveBtn = document.getElementById('save-ticket-btn');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Ticket';
+      }
+
+      editingTicketOriginal = null;
+      editingTicketId = null;
+      editingTicketProjectId = projectId || '';
+
+      if (typeof refreshTicketProjectOptions === 'function') refreshTicketProjectOptions();
+      if (typeof openExtraWorkTicketModal === 'function') {
+        openExtraWorkTicketModal(projectId || '');
+      } else if (modal) {
+        modal.classList.add('open');
+      }
+
+      setTimeout(() => {
+        const ps = document.getElementById('ticket-project-select');
+        if (ps) {
+          ps.disabled = !!projectId;
+          if (projectId) ps.value = projectId;
+        }
+        if (typeof fillTicketProjectInfo === 'function') fillTicketProjectInfo(projectId || ps?.value || '');
+      }, 25);
+    } catch (err) {
+      console.error('forceOpenExtraWorkTicketModal failed:', err);
+      if (typeof toast === 'function') toast('Ticket form had an issue opening. Refresh and try again.');
     }
-    if (btn.closest('#view-detail .tabs') && txt.includes('Extra Work Tickets')) {
-      event.preventDefault();
-      forceProjectTicketsTab(btn);
+  }
+
+  function forceOpenProjectTicketModal() {
+    const projectId = currentProject?.id || new URLSearchParams(window.location.search).get('projectId') || '';
+    if (!projectId) {
+      if (typeof toast === 'function') toast('Open a project first, then create the ticket.');
+      return;
     }
-  });
+    forceOpenExtraWorkTicketModal(projectId);
+  }
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
 
   function toast(msg) {
