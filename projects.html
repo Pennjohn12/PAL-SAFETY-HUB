@@ -701,6 +701,29 @@
       .sticky-upload { flex-direction: column; }
       .sticky-upload .btn-upload { width:100%; }
     }
+  
+
+    /* PROJECT_PAYROLL_SHEETS_WEEKLY_MONTHLY_PATCH_2026_05_11 */
+    .project-breakdown-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .project-breakdown-tabs button { border:1px solid var(--line); background:white; color:var(--navy); border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; }
+    .project-breakdown-tabs button.active { background:var(--navy); color:white; }
+    .breakdown-grid { display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap:10px; margin:10px 0 14px; }
+    .breakdown-box { background:white; border:1px solid var(--line); border-radius:14px; padding:12px; border-left:5px solid var(--navy); box-shadow:0 4px 12px rgba(0,0,0,.04); }
+    .breakdown-box strong { display:block; font-size:20px; color:var(--text); }
+    .breakdown-box span { color:var(--muted); font-size:12px; font-weight:800; }
+    .payroll-sheet-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px; }
+    .payroll-sheet-tabs button { border:1px solid var(--line); background:white; color:var(--navy); border-radius:10px; padding:9px 12px; font-weight:800; cursor:pointer; }
+    .payroll-sheet-tabs button.active { background:var(--navy); color:white; }
+    .payroll-sheet-grid { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
+    .payroll-sheet-card { background:white; border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px; box-shadow:0 4px 12px rgba(16,24,40,.04); }
+    .payroll-sheet-card h4 { color:var(--navy); margin:0 0 4px; }
+    .payroll-sheet-card .meta { color:var(--muted); font-size:12px; display:flex; gap:8px; flex-wrap:wrap; }
+    .payroll-table-mini { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+    .payroll-table-mini th,.payroll-table-mini td { border:1px solid var(--line); padding:6px; }
+    .payroll-table-mini th { background:#f8fafc; color:var(--navy); }
+    @media(max-width:850px){ .breakdown-grid { grid-template-columns:1fr 1fr; } .payroll-sheet-grid{ grid-template-columns:1fr; } }
+    @media(max-width:600px){ .breakdown-grid { grid-template-columns:1fr; } }
+
   </style>
 </head>
 <body>
@@ -806,6 +829,7 @@
       <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="forceMainTicketsTab(this)">💵 Extra Work Tickets</button>
+      <button class="tab" onclick="switchMainTab('main-payroll', this)">⏱️ Payroll Sheets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
 
@@ -875,6 +899,25 @@
       </div>
 
       <div id="tickets-list-main"><p style="color:var(--muted);font-size:14px;">Click Extra Work Tickets to load tickets.</p></div>
+    </div>
+
+
+    <div class="tab-pane" id="main-payroll">
+      <div class="page-header">
+        <h2>Payroll Sheets</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="renderMainPayrollSheets()">↻ Refresh</button>
+          <button class="btn-add" onclick="openProjectPayrollSheetModal('daily')">＋ Daily Payroll Sheet</button>
+          <button class="btn-add" onclick="openProjectPayrollSheetModal('weekly')">＋ Weekly Payroll Sheet</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Create daily or weekly payroll sheets and link them to the correct project/job number.</div>
+      <div id="main-payroll-dashboard"></div>
+      <div class="search-row">
+        <input class="search-input" id="main-payroll-search" placeholder="Search payroll by project, employee, week, notes..." oninput="renderMainPayrollSheets()" />
+        <select id="main-payroll-project-filter" class="inline-select" onchange="renderMainPayrollSheets()"><option value="all">All Projects</option></select>
+      </div>
+      <div id="main-payroll-list"><p style="color:var(--muted);font-size:14px;">Create or refresh payroll sheets to view them here.</p></div>
     </div>
 
     <div class="tab-pane" id="main-warehouse">
@@ -948,6 +991,22 @@
       </div>
     </div>
 
+    <div class="detail-card" id="project-breakdown-card" style="margin-bottom:20px;">
+      <div class="action-row" style="margin-bottom:4px;">
+        <div>
+          <h3 style="margin:0;color:var(--navy);">Project Breakdown</h3>
+          <div class="helper-text">Overall view first, then weekly and monthly snapshots for documents, photos, reports, tickets, payroll, and warehouse activity.</div>
+        </div>
+      </div>
+      <div class="project-breakdown-tabs">
+        <button class="active" type="button" onclick="renderProjectBreakdown('overall', this)">Overall</button>
+        <button type="button" onclick="renderProjectBreakdown('weekly', this)">Weekly Breakdown</button>
+        <button type="button" onclick="renderProjectBreakdown('monthly', this)">Monthly Breakdown</button>
+      </div>
+      <div id="project-breakdown-output"></div>
+    </div>
+
+
     <div class="tabs">
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
@@ -1020,17 +1079,26 @@
     </div>
 
 
-    <!-- PAYROLL / MAN-HOURS TAB -->
+    <!-- PAYROLL SHEETS TAB -->
     <div class="tab-pane" id="tab-project-payroll">
       <div class="action-row">
         <div>
-          <div class="section-label">Payroll / Project Man-Hours</div>
-          <div class="helper-text">Track labor hours tied to this project. Use this for office review, job costing, and weekly payroll backup.</div>
+          <div class="section-label">Project Payroll Sheets</div>
+          <div class="helper-text">Use the same daily/weekly payroll sheet flow, but tied directly to this project for man-hour tracking and office review.</div>
         </div>
-        <button class="btn-save" type="button" onclick="openPayrollEntryModal()">＋ Add Payroll Entry</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-save" type="button" onclick="openProjectPayrollSheetModal('daily', currentProject?.id || '')">＋ Daily Payroll Sheet</button>
+          <button class="btn-outline" type="button" onclick="openProjectPayrollSheetModal('weekly', currentProject?.id || '')">＋ Weekly Payroll Sheet</button>
+        </div>
+      </div>
+      <div class="payroll-sheet-tabs">
+        <button class="active" type="button" onclick="renderProjectPayrollTab('overview', this)">Overview</button>
+        <button type="button" onclick="renderProjectPayrollTab('daily', this)">Daily Sheets</button>
+        <button type="button" onclick="renderProjectPayrollTab('weekly', this)">Weekly Sheets</button>
+        <button type="button" onclick="renderProjectPayrollTab('monthly', this)">Monthly Breakdown</button>
       </div>
       <div id="project-payroll-dashboard"></div>
-      <div id="project-payroll-list"><p style="color:var(--muted);font-size:14px;">No payroll hours entered yet.</p></div>
+      <div id="project-payroll-list"><p style="color:var(--muted);font-size:14px;">No payroll sheets linked to this project yet.</p></div>
     </div>
 
 
@@ -1414,6 +1482,68 @@
 
 
 <!-- TOAST -->
+
+
+<div class="modal-overlay" id="modal-project-payroll-sheet">
+  <div class="modal" style="max-width:980px;">
+    <h3 id="payroll-sheet-title">⏱️ Project Payroll Sheet</h3>
+    <div class="daily-report-form-grid">
+      <div class="field span-2">
+        <label>Link to Project / Jobsite</label>
+        <select id="payroll-sheet-project-select"></select>
+      </div>
+      <div class="field">
+        <label>Sheet Type</label>
+        <select id="payroll-sheet-type" onchange="togglePayrollSheetType()">
+          <option value="daily">Daily Payroll Sheet</option>
+          <option value="weekly">Weekly Payroll Sheet</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date / Week Ending</label>
+        <input id="payroll-sheet-date" type="date" />
+      </div>
+      <div class="field span-2">
+        <label>Supervisor / Foreman</label>
+        <input id="payroll-sheet-foreman" placeholder="Supervisor / foreman name" />
+      </div>
+      <div class="field span-2">
+        <label>Notes / Work Performed / Floors</label>
+        <input id="payroll-sheet-notes" placeholder="SOFP floors, areas, cost code notes, ticket notes..." />
+      </div>
+    </div>
+
+    <div class="ticket-section-head" id="payroll-sheet-section-head">Daily Payroll Rows</div>
+    <div class="ticket-table-wrap">
+      <table class="ticket-table" id="payroll-sheet-table">
+        <thead id="payroll-sheet-head"></thead>
+        <tbody id="payroll-sheet-rows"></tbody>
+      </table>
+    </div>
+    <div class="ticket-actions-inline">
+      <button type="button" class="btn-secondary" onclick="addPayrollSheetRow()">+ Add Worker Row</button>
+    </div>
+
+    <div class="ticket-summary">
+      <div>
+        <label>Payroll Sheet Notes</label>
+        <textarea id="payroll-sheet-long-notes" rows="4" placeholder="Anything payroll/office should know..."></textarea>
+      </div>
+      <div class="ticket-total-box">
+        <div class="ticket-total-row"><span>Regular Total</span><input id="payroll-sheet-st-total" readonly value="0" /></div>
+        <div class="ticket-total-row"><span>OT Total</span><input id="payroll-sheet-ot-total" readonly value="0" /></div>
+        <div class="ticket-total-row"><span>Total Man-Hours</span><input id="payroll-sheet-total" readonly value="0" /></div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-project-payroll-sheet')">Cancel</button>
+      <button class="btn-save" id="save-payroll-sheet-btn" onclick="saveProjectPayrollSheet()">Save Payroll Sheet</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT_PAYROLL_SHEETS_WEEKLY_MONTHLY_PATCH_2026_05_11 -->
 <div class="toast" id="toast"></div>
 
 <!-- ══════════════════════════════════════════════
@@ -3827,6 +3957,7 @@
     if (pane) pane.classList.add('active');
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
+    if (tabId === 'main-payroll') { refreshPayrollProjectOptions(); renderMainPayrollSheets(); }
   }
 
   function switchTab(tabId, btn) {
@@ -3947,6 +4078,333 @@
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
 
+
+  // PROJECT_PAYROLL_SHEETS_WEEKLY_MONTHLY_PATCH_2026_05_11
+  let currentPayrollSheetView = 'overview';
+
+  window.openProjectPayrollSheetModal = openProjectPayrollSheetModal;
+  window.togglePayrollSheetType = togglePayrollSheetType;
+  window.addPayrollSheetRow = addPayrollSheetRow;
+  window.updatePayrollSheetTotals = updatePayrollSheetTotals;
+  window.saveProjectPayrollSheet = saveProjectPayrollSheet;
+  window.renderMainPayrollSheets = renderMainPayrollSheets;
+  window.renderProjectBreakdown = renderProjectBreakdown;
+
+  function getProjectPayrollSheets(project = currentProject) {
+    const sheets = Array.isArray(project?.payrollSheets) ? project.payrollSheets : [];
+    const entries = Array.isArray(project?.payrollEntries) ? project.payrollEntries : [];
+    const converted = entries.map(e => ({
+      id: e.id || `legacy_${Math.random().toString(36).slice(2)}`,
+      type: 'daily',
+      date: e.date || '',
+      foreman: e.createdByName || '',
+      notes: e.notes || '',
+      longNotes: '',
+      rows: [{ employee:e.employee || '', trade:e.trade || '', st:Number(e.stHours||0), ot:Number(e.otHours||0), dt:Number(e.dtHours||0), total:Number(e.totalHours||0), notes:e.notes || '' }],
+      totals: { st:Number(e.stHours||0), ot:Number(e.otHours||0), dt:Number(e.dtHours||0), total:Number(e.totalHours||0) },
+      legacy:true,
+      createdAt:e.createdAt || ''
+    }));
+    return [...sheets, ...converted];
+  }
+
+  function payrollSheetTotals(sheets) {
+    return sheets.reduce((a,s) => {
+      const t = s.totals || {};
+      a.count += 1;
+      a.daily += s.type === 'daily' ? 1 : 0;
+      a.weekly += s.type === 'weekly' ? 1 : 0;
+      a.st += Number(t.st || 0);
+      a.ot += Number(t.ot || 0);
+      a.dt += Number(t.dt || 0);
+      a.total += Number(t.total || 0);
+      return a;
+    }, {count:0,daily:0,weekly:0,st:0,ot:0,dt:0,total:0});
+  }
+
+  function refreshPayrollProjectOptions(selectedProjectId='') {
+    const ids = ['payroll-sheet-project-select','main-payroll-project-filter'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const keepAll = id === 'main-payroll-project-filter';
+      el.innerHTML = keepAll ? '<option value="all">All Projects</option>' : '<option value="">Select project…</option>';
+      allProjects.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name || 'Unnamed Project'}${p.jobNumber ? ' · ' + p.jobNumber : ''}`;
+        el.appendChild(opt);
+      });
+      if (selectedProjectId) el.value = selectedProjectId;
+    });
+  }
+
+  function openProjectPayrollSheetModal(type='daily', projectId='') {
+    const selectedProjectId = projectId || currentProject?.id || '';
+    refreshPayrollProjectOptions(selectedProjectId);
+    const typeEl = document.getElementById('payroll-sheet-type');
+    if (typeEl) typeEl.value = type === 'weekly' ? 'weekly' : 'daily';
+    const dateEl = document.getElementById('payroll-sheet-date');
+    if (dateEl) dateEl.value = new Date().toISOString().slice(0,10);
+    const foremanEl = document.getElementById('payroll-sheet-foreman');
+    if (foremanEl) foremanEl.value = currentUser?.displayName || currentUser?.email || '';
+    ['payroll-sheet-notes','payroll-sheet-long-notes'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    const rows = document.getElementById('payroll-sheet-rows');
+    if (rows) rows.innerHTML = '';
+    togglePayrollSheetType();
+    addPayrollSheetRow();
+    document.getElementById('modal-project-payroll-sheet')?.classList.add('open');
+  }
+
+  function togglePayrollSheetType() {
+    const type = document.getElementById('payroll-sheet-type')?.value || 'daily';
+    const title = document.getElementById('payroll-sheet-title');
+    const section = document.getElementById('payroll-sheet-section-head');
+    const head = document.getElementById('payroll-sheet-head');
+    const rows = document.getElementById('payroll-sheet-rows');
+    if (title) title.textContent = type === 'weekly' ? '⏱️ Weekly Payroll Sheet' : '⏱️ Daily Payroll Sheet';
+    if (section) section.textContent = type === 'weekly' ? 'Weekly Payroll Rows' : 'Daily Payroll Rows';
+    if (head) {
+      head.innerHTML = type === 'weekly'
+        ? '<tr><th>Employee</th><th>Trade / Role</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th><th>Total</th><th></th></tr>'
+        : '<tr><th>Employee</th><th>Trade / Role</th><th>ST Hours</th><th>OT Hours</th><th>DT Hours</th><th>Total</th><th>Notes</th><th></th></tr>';
+    }
+    if (rows) rows.innerHTML = '';
+    addPayrollSheetRow();
+    updatePayrollSheetTotals();
+  }
+
+  function addPayrollSheetRow(row={}) {
+    const type = document.getElementById('payroll-sheet-type')?.value || 'daily';
+    const body = document.getElementById('payroll-sheet-rows');
+    if (!body) return;
+    const tr = document.createElement('tr');
+    if (type === 'weekly') {
+      tr.innerHTML = `
+        <td><input class="ps-employee" value="${esc(row.employee||'')}" placeholder="Name"></td>
+        <td><input class="ps-trade" value="${esc(row.trade||'')}" placeholder="Trade"></td>
+        ${['mon','tue','wed','thu','fri','sat','sun'].map(d => `<td><input class="ps-day ps-${d}" type="number" min="0" step="0.25" value="${row[d] || ''}" oninput="updatePayrollSheetTotals()"></td>`).join('')}
+        <td><input class="ps-total" readonly value="0"></td>
+        <td><button class="row-btn" type="button" onclick="this.closest('tr').remove(); updatePayrollSheetTotals();">Remove</button></td>`;
+    } else {
+      tr.innerHTML = `
+        <td><input class="ps-employee" value="${esc(row.employee||'')}" placeholder="Name"></td>
+        <td><input class="ps-trade" value="${esc(row.trade||'')}" placeholder="Trade"></td>
+        <td><input class="ps-st" type="number" min="0" step="0.25" value="${row.st || ''}" oninput="updatePayrollSheetTotals()"></td>
+        <td><input class="ps-ot" type="number" min="0" step="0.25" value="${row.ot || ''}" oninput="updatePayrollSheetTotals()"></td>
+        <td><input class="ps-dt" type="number" min="0" step="0.25" value="${row.dt || ''}" oninput="updatePayrollSheetTotals()"></td>
+        <td><input class="ps-total" readonly value="0"></td>
+        <td><input class="ps-notes" value="${esc(row.notes||'')}" placeholder="Notes"></td>
+        <td><button class="row-btn" type="button" onclick="this.closest('tr').remove(); updatePayrollSheetTotals();">Remove</button></td>`;
+    }
+    body.appendChild(tr);
+    updatePayrollSheetTotals();
+  }
+
+  function collectPayrollSheetRows() {
+    const type = document.getElementById('payroll-sheet-type')?.value || 'daily';
+    return Array.from(document.querySelectorAll('#payroll-sheet-rows tr')).map(tr => {
+      const employee = tr.querySelector('.ps-employee')?.value.trim() || '';
+      const trade = tr.querySelector('.ps-trade')?.value.trim() || '';
+      if (type === 'weekly') {
+        const days = {};
+        ['mon','tue','wed','thu','fri','sat','sun'].forEach(d => days[d] = Number(tr.querySelector('.ps-'+d)?.value || 0));
+        const total = Object.values(days).reduce((s,n)=>s+n,0);
+        tr.querySelector('.ps-total').value = formatHours(total);
+        return { employee, trade, ...days, st:total, ot:0, dt:0, total };
+      }
+      const st = Number(tr.querySelector('.ps-st')?.value || 0);
+      const ot = Number(tr.querySelector('.ps-ot')?.value || 0);
+      const dt = Number(tr.querySelector('.ps-dt')?.value || 0);
+      const total = st + ot + dt;
+      tr.querySelector('.ps-total').value = formatHours(total);
+      return { employee, trade, st, ot, dt, total, notes: tr.querySelector('.ps-notes')?.value.trim() || '' };
+    }).filter(r => r.employee || r.total > 0);
+  }
+
+  function updatePayrollSheetTotals() {
+    const rows = collectPayrollSheetRows();
+    const totals = rows.reduce((a,r)=>{ a.st += Number(r.st||0); a.ot += Number(r.ot||0); a.dt += Number(r.dt||0); a.total += Number(r.total||0); return a; }, {st:0,ot:0,dt:0,total:0});
+    const set = (id,val) => { const el=document.getElementById(id); if(el) el.value=formatHours(val); };
+    set('payroll-sheet-st-total', totals.st);
+    set('payroll-sheet-ot-total', totals.ot);
+    set('payroll-sheet-total', totals.total);
+    return { rows, totals };
+  }
+
+  async function saveProjectPayrollSheet() {
+    const projectId = document.getElementById('payroll-sheet-project-select')?.value || currentProject?.id || '';
+    if (!projectId) { toast('Select a project first.'); return; }
+    const { rows, totals } = updatePayrollSheetTotals();
+    if (!rows.length || totals.total <= 0) { toast('Add at least one worker row with hours.'); return; }
+    const project = allProjects.find(p => p.id === projectId) || currentProject || {};
+    const sheet = {
+      id: `payroll_sheet_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+      type: document.getElementById('payroll-sheet-type')?.value || 'daily',
+      date: document.getElementById('payroll-sheet-date')?.value || new Date().toISOString().slice(0,10),
+      projectId,
+      projectName: project.name || '',
+      jobNumber: project.jobNumber || '',
+      foreman: document.getElementById('payroll-sheet-foreman')?.value.trim() || '',
+      notes: document.getElementById('payroll-sheet-notes')?.value.trim() || '',
+      longNotes: document.getElementById('payroll-sheet-long-notes')?.value.trim() || '',
+      rows,
+      totals,
+      createdBy: currentUser?.uid || '',
+      createdByName: currentUser?.displayName || currentUser?.email || '',
+      createdAt: new Date().toISOString()
+    };
+    const btn = document.getElementById('save-payroll-sheet-btn');
+    if (btn) { btn.disabled=true; btn.textContent='Saving…'; }
+    try {
+      const ref = doc(db, 'projects', projectId);
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {};
+      const existing = Array.isArray(data.payrollSheets) ? data.payrollSheets : [];
+      const updated = [...existing, sheet];
+      await updateDoc(ref, { payrollSheets: updated });
+      if (currentProject?.id === projectId) {
+        currentProject.payrollSheets = updated;
+        currentProjectDoc = { ...(currentProjectDoc || currentProject), payrollSheets: updated };
+        updateProjectSummary(currentProjectDoc);
+        renderProjectPayrollTab(currentPayrollSheetView);
+        renderProjectBreakdown('overall');
+      }
+      const idx = allProjects.findIndex(p => p.id === projectId);
+      if (idx >= 0) allProjects[idx].payrollSheets = updated;
+      closeModal('modal-project-payroll-sheet');
+      renderMainPayrollSheets();
+      toast('Payroll sheet saved to project');
+    } catch(e) {
+      console.error(e); toast('Payroll sheet save failed: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled=false; btn.textContent='Save Payroll Sheet'; }
+    }
+  }
+
+  function payrollSheetCardHTML(sheet) {
+    const rows = Array.isArray(sheet.rows) ? sheet.rows : [];
+    const miniRows = rows.slice(0,6).map(r => `<tr><td>${esc(r.employee)}</td><td>${esc(r.trade)}</td><td>${formatHours(r.total)}</td></tr>`).join('');
+    return `<div class="payroll-sheet-card">
+      <h4>${sheet.type === 'weekly' ? 'Weekly Payroll Sheet' : 'Daily Payroll Sheet'} · ${formatDate(sheet.date)}</h4>
+      <div class="meta"><span>${esc(sheet.projectName || currentProject?.name || '')}</span>${sheet.jobNumber ? `<span>Job # ${esc(sheet.jobNumber)}</span>` : ''}<span>${formatHours(sheet.totals?.total)} hrs</span>${sheet.foreman ? `<span>Foreman: ${esc(sheet.foreman)}</span>` : ''}</div>
+      ${sheet.notes ? `<p style="margin:8px 0;color:var(--muted);font-size:13px;">${esc(sheet.notes)}</p>` : ''}
+      <table class="payroll-table-mini"><thead><tr><th>Employee</th><th>Trade</th><th>Hours</th></tr></thead><tbody>${miniRows || '<tr><td colspan="3">No rows</td></tr>'}</tbody></table>
+      ${rows.length > 6 ? `<div class="mini-note">+ ${rows.length-6} more worker rows</div>` : ''}
+    </div>`;
+  }
+
+  function renderProjectPayrollTab(view='overview', btn=null) {
+    currentPayrollSheetView = view || currentPayrollSheetView || 'overview';
+    if (btn) { btn.parentElement?.querySelectorAll('button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+    const dashboard = document.getElementById('project-payroll-dashboard');
+    const list = document.getElementById('project-payroll-list');
+    if (!dashboard || !list) return;
+    let sheets = getProjectPayrollSheets();
+    const totals = payrollSheetTotals(sheets);
+    dashboard.innerHTML = `<div class="payroll-dashboard">
+      <div class="payroll-box total"><strong>${formatHours(totals.total)}</strong><span>Total Man-Hours</span></div>
+      <div class="payroll-box st"><strong>${formatHours(totals.st)}</strong><span>Regular / Daily Hours</span></div>
+      <div class="payroll-box ot"><strong>${formatHours(totals.ot)}</strong><span>OT Hours</span></div>
+      <div class="payroll-box dt"><strong>${totals.count}</strong><span>Payroll Sheets</span></div>
+    </div>`;
+    if (currentPayrollSheetView === 'daily') sheets = sheets.filter(s => s.type === 'daily');
+    if (currentPayrollSheetView === 'weekly') sheets = sheets.filter(s => s.type === 'weekly');
+    if (currentPayrollSheetView === 'monthly') {
+      list.innerHTML = renderGroupedPayrollSheets(sheets, 'month'); return;
+    }
+    sheets = sheets.slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+    list.innerHTML = sheets.length ? sheets.map(payrollSheetCardHTML).join('') : `<div class="empty-state"><div class="icon">⏱️</div><h3>No payroll sheets yet</h3><p>Add a daily or weekly payroll sheet for this project.</p></div>`;
+  }
+
+  function renderGroupedPayrollSheets(sheets, mode='month') {
+    const groups = {};
+    sheets.forEach(s => {
+      const d = s.date ? new Date(s.date + 'T12:00:00') : new Date();
+      const key = mode === 'week' ? weekKey(d) : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      groups[key] = groups[key] || [];
+      groups[key].push(s);
+    });
+    const keys = Object.keys(groups).sort().reverse();
+    if (!keys.length) return `<div class="empty-state"><div class="icon">⏱️</div><h3>No payroll sheets found</h3></div>`;
+    return keys.map(k => {
+      const g = groups[k]; const t = payrollSheetTotals(g);
+      return `<div class="detail-card"><h3>${esc(k)}</h3><div class="breakdown-grid"><div class="breakdown-box"><strong>${formatHours(t.total)}</strong><span>Man-Hours</span></div><div class="breakdown-box"><strong>${t.count}</strong><span>Sheets</span></div><div class="breakdown-box"><strong>${t.daily}</strong><span>Daily</span></div><div class="breakdown-box"><strong>${t.weekly}</strong><span>Weekly</span></div></div>${g.map(payrollSheetCardHTML).join('')}</div>`;
+    }).join('');
+  }
+
+  function getAllPayrollSheets() {
+    return allProjects.flatMap(p => getProjectPayrollSheets(p).map(s => ({...s, projectId:p.id, projectName:p.name || s.projectName || '', jobNumber:p.jobNumber || s.jobNumber || ''})));
+  }
+
+  function renderMainPayrollSheets() {
+    refreshPayrollProjectOptions();
+    const dash = document.getElementById('main-payroll-dashboard');
+    const list = document.getElementById('main-payroll-list');
+    if (!dash || !list) return;
+    let sheets = getAllPayrollSheets();
+    const projectFilter = document.getElementById('main-payroll-project-filter')?.value || 'all';
+    const search = (document.getElementById('main-payroll-search')?.value || '').toLowerCase();
+    if (projectFilter !== 'all') sheets = sheets.filter(s => s.projectId === projectFilter);
+    if (search) sheets = sheets.filter(s => `${s.projectName} ${s.jobNumber} ${s.foreman} ${s.notes} ${(s.rows||[]).map(r=>r.employee+' '+r.trade).join(' ')}`.toLowerCase().includes(search));
+    const totals = payrollSheetTotals(sheets);
+    dash.innerHTML = `<div class="payroll-dashboard"><div class="payroll-box total"><strong>${formatHours(totals.total)}</strong><span>Total Man-Hours</span></div><div class="payroll-box st"><strong>${totals.count}</strong><span>Payroll Sheets</span></div><div class="payroll-box ot"><strong>${totals.daily}</strong><span>Daily</span></div><div class="payroll-box dt"><strong>${totals.weekly}</strong><span>Weekly</span></div></div>`;
+    sheets = sheets.slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+    list.innerHTML = sheets.length ? sheets.map(payrollSheetCardHTML).join('') : `<div class="empty-state"><div class="icon">⏱️</div><h3>No payroll sheets found</h3><p>Create daily or weekly sheets and link them to projects.</p></div>`;
+  }
+
+  function weekKey(d) {
+    const date = new Date(d); const day = date.getDay(); const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(date.setDate(diff));
+    return `Week of ${monday.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+  }
+
+  function getItemDate(item) { return item?.date || item?.uploadedAt || item?.createdAt || item?.timestamp || ''; }
+  function countByRange(items, start, end) {
+    return items.filter(i => { const raw=getItemDate(i); if(!raw) return false; const d=new Date(String(raw).includes('T')?raw:raw+'T12:00:00'); return d>=start && d<=end; }).length;
+  }
+
+  function renderProjectBreakdown(mode='overall', btn=null) {
+    if (btn) { btn.parentElement?.querySelectorAll('button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+    const out = document.getElementById('project-breakdown-output');
+    if (!out || !currentProject) return;
+    const docs = Array.isArray(currentProject.documents) ? currentProject.documents : [];
+    const photos = Array.isArray(currentProject.photos) ? currentProject.photos : [];
+    const reports = Array.isArray(currentProject.reports) ? currentProject.reports : [];
+    const tickets = getProjectTickets ? getProjectTickets() : [];
+    const payroll = getProjectPayrollSheets();
+    const warehouse = allWarehouseItems.filter(x => x.projectId === currentProject.id);
+    const allBuckets = {docs, photos, reports, tickets, payroll, warehouse};
+    if (mode === 'overall') {
+      const p = payrollSheetTotals(payroll);
+      out.innerHTML = `<div class="breakdown-grid"><div class="breakdown-box"><strong>${docs.length}</strong><span>Documents</span></div><div class="breakdown-box"><strong>${photos.length}</strong><span>Photos</span></div><div class="breakdown-box"><strong>${reports.length || Number(currentProject.reportCount||0)}</strong><span>Daily Reports</span></div><div class="breakdown-box"><strong>${tickets.length}</strong><span>Tickets</span></div><div class="breakdown-box"><strong>${formatHours(p.total)}</strong><span>Man-Hours</span></div><div class="breakdown-box"><strong>${warehouse.length}</strong><span>Warehouse Items</span></div></div>`;
+      return;
+    }
+    const groups = {};
+    Object.entries(allBuckets).forEach(([name,arr]) => arr.forEach(item => {
+      const raw = getItemDate(item); if (!raw) return;
+      const d = new Date(String(raw).includes('T') ? raw : raw+'T12:00:00');
+      const key = mode === 'weekly' ? weekKey(d) : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      groups[key] = groups[key] || {docs:0,photos:0,reports:0,tickets:0,payroll:0,warehouse:0,manhours:0};
+      groups[key][name] += 1;
+      if (name === 'payroll') groups[key].manhours += Number(item.totals?.total || 0);
+    }));
+    const keys = Object.keys(groups).sort().reverse();
+    if (!keys.length) { out.innerHTML = `<div class="empty-state"><div class="icon">📊</div><h3>No dated activity found yet</h3><p>As reports, photos, documents, tickets and payroll sheets are added, weekly/monthly breakdowns will show here.</p></div>`; return; }
+    out.innerHTML = keys.map(k => { const g=groups[k]; return `<div class="detail-card" style="margin-bottom:10px;"><h3>${esc(k)}</h3><div class="breakdown-grid"><div class="breakdown-box"><strong>${g.docs}</strong><span>Docs</span></div><div class="breakdown-box"><strong>${g.photos}</strong><span>Photos</span></div><div class="breakdown-box"><strong>${g.reports}</strong><span>Reports</span></div><div class="breakdown-box"><strong>${g.tickets}</strong><span>Tickets</span></div><div class="breakdown-box"><strong>${formatHours(g.manhours)}</strong><span>Man-Hours</span></div><div class="breakdown-box"><strong>${g.warehouse}</strong><span>Warehouse</span></div></div></div>`; }).join('');
+  }
+
+  // Override old project summary so legacy entries + new payroll sheets both count.
+  const _palOriginalUpdateProjectSummary = updateProjectSummary;
+  updateProjectSummary = function(data) {
+    _palOriginalUpdateProjectSummary(data);
+    const payrollHours = getProjectPayrollSheets(data).reduce((sum,s)=>sum+Number(s.totals?.total||0),0);
+    const payrollSummaryEl = document.getElementById('summary-payroll-hours');
+    if (payrollSummaryEl) payrollSummaryEl.textContent = formatHours(payrollHours);
+    setTimeout(() => renderProjectBreakdown('overall'), 0);
+  };
+
+
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
 
   function toast(msg) {
@@ -3994,7 +4452,7 @@
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-new-employee','modal-employee-detail','modal-certification','modal-project-payroll-sheet'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
