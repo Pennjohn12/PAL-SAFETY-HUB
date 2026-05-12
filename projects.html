@@ -650,88 +650,6 @@
     .report-field .v { font-size:14px; color:var(--text); white-space:pre-line; }
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
 
-
-    /* PROJECT_BREAKDOWN_CATEGORY_FILTER_PATCH_2026_05_11 */
-    .project-breakdown-panel {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      margin: 0 0 20px;
-      box-shadow: 0 4px 14px rgba(16,24,40,.05);
-    }
-    .breakdown-head {
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-    .breakdown-head h3 { margin:0 0 4px; color:var(--navy); font-size:16px; }
-    .breakdown-toggle { display:flex; gap:8px; flex-wrap:wrap; }
-    .breakdown-subtitle { margin: 14px 0 8px; font-size:12px; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.35px; }
-    .breakdown-category-row { display:flex; gap:8px; flex-wrap:wrap; margin: 4px 0 12px; }
-    .breakdown-btn {
-      background:#fff;
-      color:var(--navy);
-      border:1.5px solid var(--line);
-      border-radius:999px;
-      padding:8px 12px;
-      font:inherit;
-      font-size:13px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .breakdown-btn.active { background:var(--navy); color:#fff; border-color:var(--navy); }
-    .breakdown-grid {
-      display:grid;
-      grid-template-columns: repeat(5, minmax(0,1fr));
-      gap:10px;
-      margin-top:12px;
-    }
-    .breakdown-box {
-      background:#f8fafc;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      border-left:5px solid var(--navy);
-    }
-    .breakdown-box strong { display:block; color:var(--text); font-size:20px; margin-bottom:2px; }
-    .breakdown-box span { color:var(--muted); font-size:12px; font-weight:800; }
-    .breakdown-list {
-      border:1px solid var(--line);
-      border-radius:14px;
-      overflow:hidden;
-      background:#fff;
-      margin-top:12px;
-    }
-    .breakdown-row {
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      border-top:1px solid var(--line);
-      padding:10px 12px;
-      font-size:13px;
-    }
-    .breakdown-row:first-child { border-top:0; }
-    .breakdown-row-title { color:var(--navy); font-weight:900; }
-    .breakdown-row-sub { color:var(--muted); font-size:12px; margin-top:2px; }
-    .breakdown-pill {
-      white-space:nowrap;
-      border-radius:999px;
-      background:#eef2f7;
-      color:#475569;
-      padding:5px 8px;
-      font-size:11px;
-      font-weight:900;
-    }
-    @media(max-width:850px){
-      .breakdown-grid { grid-template-columns:1fr; }
-      .breakdown-row { flex-direction:column; }
-    }
-
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
       .project-header-card h2 { font-size: 20px; }
@@ -885,6 +803,38 @@
       <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Employee Certs to load employee records.</p></div>
     </div>
 
+
+
+    <!-- NEW HIRE / PRE-SITE INTAKE TAB -->
+    <div class="tab-pane" id="main-new-hires">
+      <div class="page-header">
+        <h2>New Hire / Pre-Site Intake</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadNewHireIntakes()">↻ Refresh</button>
+          <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Link</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">
+        Phase 1: create a pre-site intake request, copy the message, and text it to the employee manually. Later we can add automatic SMS/email sending and a public upload form.
+      </div>
+
+      <div class="project-summary-grid" id="new-hire-intake-summary">
+        <div class="summary-card"><div class="label">Pending</div><div class="value" id="nhi-pending">0</div><div class="sub">Waiting for employee info</div></div>
+        <div class="summary-card"><div class="label">Ready for Review</div><div class="value" id="nhi-review">0</div><div class="sub">Submitted / certs uploaded</div></div>
+        <div class="summary-card"><div class="label">Good To Work</div><div class="value" id="nhi-approved">0</div><div class="sub">Approved by office/foreman</div></div>
+        <div class="summary-card"><div class="label">Missing Info</div><div class="value" id="nhi-missing">0</div><div class="sub">Needs correction</div></div>
+      </div>
+
+      <div class="detail-card" style="margin-bottom:14px;">
+        <h3>How this will work</h3>
+        <p class="helper-text" style="margin-bottom:0;">
+          Office/foreman creates the intake, copies the text message, and sends it to the worker. The employee will eventually use the link to fill out info and upload cert photos before arriving onsite. This tab tracks the request and approval status.
+        </p>
+      </div>
+
+      <div id="new-hire-intake-list"><p style="color:var(--muted);font-size:14px;">Click Refresh or New Hire Intake to load requests.</p></div>
+    </div>
+
     <div class="tab-pane" id="main-tickets">
       <div class="page-header">
         <h2>Extra Work Tickets</h2>
@@ -980,53 +930,10 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" onclick="switchTab('tab-breakdown', this); setProjectBreakdownView('overall'); setProjectBreakdownCategory('Document')">📊 Breakdown (2-Row)</button>
       <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
       <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
-    </div>
-
-
-    <!-- BREAKDOWN_TWO_ROW_VISIBLE_FINAL_DUKE_2026_05_12 -->
-    <!-- PROJECT BREAKDOWN TAB -->
-    <div class="tab-pane" id="tab-breakdown">
-      <div class="action-row">
-        <div>
-          <div class="section-label">Project Breakdown</div>
-          <div class="helper-text">Review project activity overall, this week, or this month.</div>
-        </div>
-      </div>
-      
-      <div class="detail-card" style="border-left:5px solid var(--green); margin-bottom:12px;">
-        <h3 style="margin-bottom:6px;">Breakdown Filters</h3>
-        <div class="helper-text">Pick a time period first, then pick the job section you want to review.</div>
-      </div>
-      <div class="project-breakdown-panel" id="project-breakdown-panel">
-      <div class="breakdown-head">
-        <div>
-          <h3>Project Breakdown</h3>
-          <div class="helper-text">Quick view of project activity by overall, current week, or current month. This uses existing project data only.</div>
-        </div>
-        <div class="breakdown-toggle">
-          <button class="breakdown-btn active" id="breakdown-btn-overall" type="button" onclick="setProjectBreakdownView('overall')">Overall</button>
-          <button class="breakdown-btn" id="breakdown-btn-week" type="button" onclick="setProjectBreakdownView('week')">This Week</button>
-          <button class="breakdown-btn" id="breakdown-btn-month" type="button" onclick="setProjectBreakdownView('month')">This Month</button>
-        </div>
-      </div>
-      <div class="breakdown-subtitle">Choose job section</div>
-      <div class="breakdown-category-row">
-        <button class="breakdown-btn active" id="breakdown-cat-Document" type="button" onclick="setProjectBreakdownCategory('Document')">📄 Documents</button>
-        <button class="breakdown-btn" id="breakdown-cat-Photo" type="button" onclick="setProjectBreakdownCategory('Photo')">📸 Photos</button>
-        <button class="breakdown-btn" id="breakdown-cat-DailyReport" type="button" onclick="setProjectBreakdownCategory('Daily Report')">📋 Reports</button>
-        <button class="breakdown-btn" id="breakdown-cat-Ticket" type="button" onclick="setProjectBreakdownCategory('Ticket')">💵 Tickets</button>
-        <button class="breakdown-btn" id="breakdown-cat-Warehouse" type="button" onclick="setProjectBreakdownCategory('Warehouse')">📦 Warehouse</button>
-        <button class="breakdown-btn" id="breakdown-cat-Payroll" type="button" onclick="setProjectBreakdownCategory('Payroll')">⏱️ Payroll</button>
-      </div>
-      <div id="project-breakdown-content"></div>
-    </div>
-
-
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -1416,6 +1323,43 @@
 </div>
 
 
+
+
+<!-- NEW HIRE PRE-SITE INTAKE MODAL -->
+<div class="modal-overlay" id="modal-new-hire-intake">
+  <div class="modal" style="max-width:720px;">
+    <h3>🧾 New Hire / Pre-Site Intake</h3>
+    <div class="form-grid">
+      <div class="field"><label>Employee Name</label><input id="nhi-name" placeholder="Employee full name" /></div>
+      <div class="field"><label>Phone Number</label><input id="nhi-phone" placeholder="(555) 555-5555" /></div>
+      <div class="field"><label>Email (optional)</label><input id="nhi-email" type="email" placeholder="employee@email.com" /></div>
+      <div class="field"><label>Trade / Role</label><input id="nhi-trade" placeholder="Fireproofer / Laborer / Fire Watch" /></div>
+      <div class="field span-2"><label>Project / Jobsite</label><select id="nhi-project"><option value="">No project selected</option></select></div>
+      <div class="field"><label>Foreman / Supervisor</label><input id="nhi-foreman" placeholder="Foreman name" /></div>
+      <div class="field"><label>Start Date</label><input id="nhi-start-date" type="date" /></div>
+      <div class="field span-2"><label>Required Certs / Documents</label><textarea id="nhi-required" rows="3" placeholder="OSHA 30, SST, Scaffold, Fire Watch, G60, ID, etc."></textarea></div>
+      <div class="field span-2"><label>Notes</label><textarea id="nhi-notes" rows="3" placeholder="Anything office/foreman should know..."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-new-hire-intake')">Cancel</button>
+      <button class="btn-save" id="save-new-hire-intake-btn" onclick="saveNewHireIntake()">Create Intake</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW HIRE INTAKE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-new-hire-intake-detail">
+  <div class="modal" style="max-width:820px;">
+    <h3>🧾 Intake Details</h3>
+    <div id="new-hire-intake-detail-body"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-new-hire-intake-detail')">Close</button>
+      <button class="btn-outline" onclick="copySelectedNewHireIntakeMessage()">Copy Text Message</button>
+      <button class="btn-save" onclick="markSelectedNewHireGoodToWork()">Mark Good To Work</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1447,15 +1391,14 @@
   let currentUserProfile = null;
   let currentProject = null;
   let currentProjectDoc = null;
-  let currentProjectReports = [];
-  let currentBreakdownView = "overall";
-  let currentBreakdownCategory = "Document";
   let currentEmployeeId = null;
   let currentCertificationUploadedAt = null;
   let allEmployees = [];
   let allProjects = [];
   let allTickets = [];
   let allWarehouseItems = [];
+  let allNewHireIntakes = [];
+  let selectedNewHireIntake = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1479,8 +1422,6 @@
   window.openProject = openProject;
   window.backToProjects = backToProjects;
   window.switchTab = switchTab;
-  window.setProjectBreakdownView = setProjectBreakdownView;
-  window.setProjectBreakdownCategory = setProjectBreakdownCategory;
   window.handleDocUpload = handleDocUpload;
   window.handlePhotoUpload = handlePhotoUpload;
   window.addForeman = addForeman;
@@ -1523,6 +1464,12 @@
   window.saveWarehouseItem = saveWarehouseItem;
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
+  window.openNewHireIntakeModal = openNewHireIntakeModal;
+  window.saveNewHireIntake = saveNewHireIntake;
+  window.loadNewHireIntakes = loadNewHireIntakes;
+  window.openNewHireIntakeDetail = openNewHireIntakeDetail;
+  window.copySelectedNewHireIntakeMessage = copySelectedNewHireIntakeMessage;
+  window.markSelectedNewHireGoodToWork = markSelectedNewHireGoodToWork;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -1762,7 +1709,6 @@
       currentProjectDoc = snap.data();
       currentProject = { id, ...snap.data() };
       updateProjectSummary(currentProjectDoc);
-      renderProjectBreakdown();
       loadProjectDocs(id);
       loadProjectPhotos(id);
       loadProjectReports(id);
@@ -1770,7 +1716,6 @@
       if (isOfficeRole()) await loadEmployees();
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
       if (document.getElementById('tab-project-warehouse')?.classList.contains('active')) renderProjectWarehouseTab();
-      renderProjectBreakdown();
     });
   }
 
@@ -1789,7 +1734,6 @@
     if (!snap.exists()) return;
     currentProjectDoc = snap.data();
     updateProjectSummary(currentProjectDoc);
-    renderProjectBreakdown();
     loadProjectDocs(projectId);
     loadProjectPhotos(projectId);
     loadProjectReports(projectId);
@@ -1806,182 +1750,6 @@
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
-  }
-
-
-  // PROJECT_BREAKDOWN_CATEGORY_FILTER_PATCH_2026_05_11
-  function parseActivityDate(value) {
-    if (!value) return null;
-    if (value?.toDate && typeof value.toDate === 'function') return value.toDate();
-    const raw = String(value);
-    const d = raw.includes('T') ? new Date(raw) : new Date(raw + 'T00:00:00');
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
-  function getActivityDate(item) {
-    return parseActivityDate(
-      item.date || item.submittedAt || item.uploadedAt || item.createdAt || item.updatedAt || item.time || ''
-    );
-  }
-
-  function startOfWeekMonday(date = new Date()) {
-    const d = new Date(date);
-    d.setHours(0,0,0,0);
-    const day = d.getDay();
-    const diff = (day === 0 ? -6 : 1) - day;
-    d.setDate(d.getDate() + diff);
-    return d;
-  }
-
-  function startOfMonth(date = new Date()) {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
-  }
-
-  function isInBreakdownWindow(date, mode) {
-    if (mode === 'overall') return true;
-    if (!date) return false;
-    const now = new Date();
-    const d = new Date(date);
-    d.setHours(0,0,0,0);
-    if (mode === 'week') return d >= startOfWeekMonday(now);
-    if (mode === 'month') return d >= startOfMonth(now);
-    return true;
-  }
-
-  function setProjectBreakdownView(mode = 'overall') {
-    currentBreakdownView = mode;
-    ['overall','week','month'].forEach(m => {
-      const btn = document.getElementById(`breakdown-btn-${m}`);
-      if (btn) btn.classList.toggle('active', m === mode);
-    });
-    renderProjectBreakdown();
-  }
-
-  function breakdownCategoryButtonId(type) {
-    if (type === 'Daily Report') return 'DailyReport';
-    return String(type || '').replace(/[^A-Za-z0-9]/g, '');
-  }
-
-  function setProjectBreakdownCategory(type = 'Document') {
-    currentBreakdownCategory = type;
-    ['Document','Photo','Daily Report','Ticket','Warehouse','Payroll'].forEach(t => {
-      const btn = document.getElementById(`breakdown-cat-${breakdownCategoryButtonId(t)}`);
-      if (btn) btn.classList.toggle('active', t === type);
-    });
-    renderProjectBreakdown();
-  }
-
-  function getProjectBreakdownItems() {
-    if (!currentProjectDoc && !currentProject) return [];
-    const items = [];
-    const docs = Array.isArray(currentProjectDoc?.documents) ? currentProjectDoc.documents : [];
-    docs.forEach(d => items.push({
-      type:'Document',
-      icon:'📄',
-      title:d.name || 'Document uploaded',
-      sub:d.uploadedBy ? `Uploaded by ${d.uploadedBy}` : 'Project document',
-      date:getActivityDate(d)
-    }));
-
-    const photos = Array.isArray(currentProjectDoc?.photos) ? currentProjectDoc.photos : [];
-    photos.forEach(p => items.push({
-      type:'Photo',
-      icon:'📸',
-      title:p.name || 'Photo uploaded',
-      sub:p.category ? `Category: ${p.category}` : 'Project photo',
-      date:getActivityDate(p)
-    }));
-
-    const reports = Array.isArray(currentProjectReports) ? currentProjectReports : [];
-    reports.forEach(r => items.push({
-      type:'Daily Report',
-      icon:'📋',
-      title:r.date ? `Daily Report · ${r.date}` : 'Daily Report',
-      sub:r.supervisor ? `Supervisor: ${r.supervisor}` : (r.status || 'Field report'),
-      date:getActivityDate(r)
-    }));
-
-    const projectTickets = Array.isArray(allTickets) && currentProject
-      ? allTickets.filter(t => String(t.projectId || '') === String(currentProject.id || ''))
-      : [];
-    projectTickets.forEach(t => items.push({
-      type:'Ticket',
-      icon:'💵',
-      title:t.ticketNo || 'Extra Work Ticket',
-      sub:t.description || t.status || 'Extra work ticket',
-      date:getActivityDate(t),
-      amount:Number(t.grandTotal || 0)
-    }));
-
-    const projectWarehouse = Array.isArray(allWarehouseItems) && currentProject
-      ? allWarehouseItems.filter(w => String(w.projectId || '') === String(currentProject.id || ''))
-      : [];
-    projectWarehouse.forEach(w => items.push({
-      type:'Warehouse',
-      icon:'📦',
-      title:w.itemName || w.name || 'Warehouse item',
-      sub:w.status || w.notes || 'Equipment/material movement',
-      date:getActivityDate(w)
-    }));
-
-    return items;
-  }
-
-  function renderProjectBreakdown() {
-    const el = document.getElementById('project-breakdown-content');
-    if (!el) return;
-
-    const mode = currentBreakdownView || 'overall';
-    const category = currentBreakdownCategory || 'Document';
-    const allWindowItems = getProjectBreakdownItems().filter(item => isInBreakdownWindow(item.date, mode));
-    const items = allWindowItems.filter(item => item.type === category);
-    const counts = allWindowItems.reduce((acc, item) => {
-      acc[item.type] = (acc[item.type] || 0) + 1;
-      if (item.type === 'Ticket') acc.ticketTotal += Number(item.amount || 0);
-      return acc;
-    }, { Document:0, Photo:0, 'Daily Report':0, Ticket:0, Warehouse:0, Payroll:0, ticketTotal:0 });
-
-    const label = mode === 'week' ? 'This Week' : mode === 'month' ? 'This Month' : 'Overall';
-    const catLabel = category === 'Document' ? 'Documents' : category === 'Photo' ? 'Photos' : category === 'Daily Report' ? 'Daily Reports' : category === 'Ticket' ? 'Extra Work Tickets' : category === 'Warehouse' ? 'Warehouse Items' : 'Payroll';
-    const sorted = items.slice().sort((a,b) => {
-      const ad = a.date ? a.date.getTime() : 0;
-      const bd = b.date ? b.date.getTime() : 0;
-      return bd - ad;
-    });
-    const ticketTotalText = (typeof money === 'function') ? money(counts.ticketTotal || 0) : ('$' + Number(counts.ticketTotal || 0).toFixed(2));
-
-    el.innerHTML = `
-      <div class="breakdown-grid">
-        <div class="breakdown-box"><strong>${counts.Document || 0}</strong><span>Documents · ${label}</span></div>
-        <div class="breakdown-box"><strong>${counts.Photo || 0}</strong><span>Photos · ${label}</span></div>
-        <div class="breakdown-box"><strong>${counts['Daily Report'] || 0}</strong><span>Daily Reports · ${label}</span></div>
-        <div class="breakdown-box"><strong>${counts.Ticket || 0}</strong><span>Extra Work Tickets · ${label}</span></div>
-        <div class="breakdown-box"><strong>${counts.Warehouse || 0}</strong><span>Warehouse Items · ${label}</span></div>
-      </div>
-      <div class="mini-note">Showing <strong>${catLabel}</strong> for <strong>${label}</strong>. Ticket total for this view: <strong>${ticketTotalText}</strong></div>
-      ${category === 'Payroll' ? `
-        <div class="empty-state" style="padding:24px 12px;">
-          <div class="icon">⏱️</div>
-          <h3>Payroll section coming next</h3>
-          <p>This tab is reserved so payroll sheets can be tied into weekly/monthly project breakdowns without changing the rest of the dashboard.</p>
-        </div>` : sorted.length ? `
-        <div class="breakdown-list">
-          ${sorted.slice(0, 20).map(item => `
-            <div class="breakdown-row">
-              <div>
-                <div class="breakdown-row-title">${item.icon} ${esc(item.title)}</div>
-                <div class="breakdown-row-sub">${esc(String(item.sub || '').slice(0, 160))}${String(item.sub || '').length > 160 ? '…' : ''}</div>
-              </div>
-              <div class="breakdown-pill">${item.date ? item.date.toLocaleDateString() : 'No date'} · ${item.type}</div>
-            </div>
-          `).join('')}
-        </div>` : `
-        <div class="empty-state" style="padding:24px 12px;">
-          <div class="icon">📊</div>
-          <h3>No ${catLabel} for ${label}</h3>
-          <p>Select a different category or time period to review other project activity.</p>
-        </div>`}
-    `;
   }
 
   function openDailyReportForm() {
@@ -2323,8 +2091,6 @@
       const snap = await getDocs(q);
       const rows = [];
       snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
-      currentProjectReports = rows;
-      renderProjectBreakdown();
       document.getElementById('summary-reports').textContent = rows.length;
       renderDailyReportDashboard(rows);
       if (currentProject) {
@@ -3755,6 +3521,195 @@
   }
 
 
+
+
+  // NEW_HIRE_PRESITE_INTAKE_PHASE1_2026_05_12
+  // Phase 1: manual pre-site intake request dashboard. No automatic SMS/email yet.
+  function intakeStatusLabel(status) {
+    const value = status || 'Pending';
+    const map = {
+      'Pending': 'pending',
+      'Ready for Review': 'blue',
+      'Good To Work': 'active',
+      'Missing Info': 'warn'
+    };
+    return `<span class="pill ${map[value] || 'neutral'}">${escapeHtml(value)}</span>`;
+  }
+
+  function buildNewHireIntakeMessage(intake) {
+    const base = window.location.origin + window.location.pathname.replace(/projects\.html$/, 'index.html');
+    const link = `${base}?newHireIntake=${encodeURIComponent(intake.id || '')}`;
+    const projectLine = intake.projectName ? `Project: ${intake.projectName}\n` : '';
+    const startLine = intake.startDate ? `Start date: ${intake.startDate}\n` : '';
+    const requiredLine = intake.requiredCerts ? `Required items: ${intake.requiredCerts}\n` : '';
+    return `PAL New Hire / Pre-Site Intake\n\nHi ${intake.name || ''}, please complete your employee information and upload photos of your required certifications before arriving onsite.\n\n${projectLine}${startLine}${requiredLine}\nIntake link:\n${link}\n\nIf you have trouble opening the link, contact your foreman or the office.`;
+  }
+
+  function refreshNewHireProjectOptions() {
+    const sel = document.getElementById('nhi-project');
+    if (!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">No project selected</option>';
+    allProjects.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = `${p.name || 'Unnamed Project'}${p.jobNumber ? ' — ' + p.jobNumber : ''}`;
+      sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
+  }
+
+  function openNewHireIntakeModal() {
+    refreshNewHireProjectOptions();
+    ['nhi-name','nhi-phone','nhi-email','nhi-trade','nhi-foreman','nhi-start-date','nhi-required','nhi-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const projectSel = document.getElementById('nhi-project');
+    if (projectSel) projectSel.value = '';
+    const btn = document.getElementById('save-new-hire-intake-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Create Intake'; }
+    document.getElementById('modal-new-hire-intake').classList.add('open');
+  }
+
+  async function saveNewHireIntake() {
+    if (!currentUser) { toast('Sign in required.'); return; }
+    const btn = document.getElementById('save-new-hire-intake-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
+    try {
+      const projectId = document.getElementById('nhi-project')?.value || '';
+      const project = allProjects.find(p => p.id === projectId);
+      const intake = {
+        name: (document.getElementById('nhi-name')?.value || '').trim(),
+        phone: (document.getElementById('nhi-phone')?.value || '').trim(),
+        email: (document.getElementById('nhi-email')?.value || '').trim(),
+        trade: (document.getElementById('nhi-trade')?.value || '').trim(),
+        projectId,
+        projectName: project?.name || '',
+        jobNumber: project?.jobNumber || '',
+        foreman: (document.getElementById('nhi-foreman')?.value || '').trim(),
+        startDate: document.getElementById('nhi-start-date')?.value || '',
+        requiredCerts: (document.getElementById('nhi-required')?.value || '').trim(),
+        notes: (document.getElementById('nhi-notes')?.value || '').trim(),
+        status: 'Pending',
+        createdBy: currentUser.email || '',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      if (!intake.name || !intake.phone) {
+        toast('Employee name and phone are required.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Create Intake'; }
+        return;
+      }
+      const refDoc = await addDoc(collection(db, 'newHireIntakes'), intake);
+      const saved = { ...intake, id: refDoc.id };
+      closeModal('modal-new-hire-intake');
+      await loadNewHireIntakes();
+      try {
+        await navigator.clipboard.writeText(buildNewHireIntakeMessage(saved));
+        toast('Intake created. Text message copied.');
+      } catch (_) {
+        toast('Intake created. Open details to copy text message.');
+      }
+    } catch (err) {
+      console.error('saveNewHireIntake failed', err);
+      toast('Could not create intake. Check connection/Firebase rules.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Create Intake'; }
+    }
+  }
+
+  async function loadNewHireIntakes() {
+    if (!currentUser) return;
+    const list = document.getElementById('new-hire-intake-list');
+    if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading intake requests...</p>';
+    try {
+      const snap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
+      allNewHireIntakes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderNewHireIntakes();
+    } catch (err) {
+      console.error('loadNewHireIntakes failed', err);
+      if (list) list.innerHTML = '<p style="color:var(--red);font-size:14px;">Could not load intake requests. Check Firebase permissions.</p>';
+    }
+  }
+
+  function renderNewHireIntakes() {
+    const counts = { 'Pending':0, 'Ready for Review':0, 'Good To Work':0, 'Missing Info':0 };
+    allNewHireIntakes.forEach(i => { counts[i.status || 'Pending'] = (counts[i.status || 'Pending'] || 0) + 1; });
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    set('nhi-pending', counts['Pending'] || 0);
+    set('nhi-review', counts['Ready for Review'] || 0);
+    set('nhi-approved', counts['Good To Work'] || 0);
+    set('nhi-missing', counts['Missing Info'] || 0);
+
+    const list = document.getElementById('new-hire-intake-list');
+    if (!list) return;
+    if (!allNewHireIntakes.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><h3>No new-hire intake requests yet</h3><p>Create the first intake request and text the link to the employee.</p></div>';
+      return;
+    }
+    list.innerHTML = allNewHireIntakes.map(i => `
+      <div class="employee-card" onclick="openNewHireIntakeDetail('${i.id}')">
+        <div class="employee-card-header">
+          <div>
+            <h4>${escapeHtml(i.name || 'Unnamed Employee')} ${intakeStatusLabel(i.status)}</h4>
+            <div class="employee-meta">
+              <span>📞 ${escapeHtml(i.phone || 'No phone')}</span>
+              <span>👷 ${escapeHtml(i.trade || 'No trade')}</span>
+              <span>🏗️ ${escapeHtml(i.projectName || 'No project selected')}</span>
+              ${i.startDate ? `<span>📅 Start ${escapeHtml(i.startDate)}</span>` : ''}
+            </div>
+          </div>
+          <div class="employee-actions"><button class="btn-sm" onclick="event.stopPropagation(); openNewHireIntakeDetail('${i.id}')">Open</button></div>
+        </div>
+        <div class="mini-note">Required: ${escapeHtml(i.requiredCerts || 'Not specified')}</div>
+      </div>
+    `).join('');
+  }
+
+  function openNewHireIntakeDetail(id) {
+    selectedNewHireIntake = allNewHireIntakes.find(i => i.id === id) || null;
+    if (!selectedNewHireIntake) return;
+    const body = document.getElementById('new-hire-intake-detail-body');
+    const message = buildNewHireIntakeMessage(selectedNewHireIntake);
+    body.innerHTML = `
+      <div class="report-grid">
+        <div class="report-field"><span class="k">Employee</span><span class="v">${escapeHtml(selectedNewHireIntake.name || '—')}</span></div>
+        <div class="report-field"><span class="k">Status</span><span class="v">${intakeStatusLabel(selectedNewHireIntake.status)}</span></div>
+        <div class="report-field"><span class="k">Phone</span><span class="v">${escapeHtml(selectedNewHireIntake.phone || '—')}</span></div>
+        <div class="report-field"><span class="k">Email</span><span class="v">${escapeHtml(selectedNewHireIntake.email || '—')}</span></div>
+        <div class="report-field"><span class="k">Project</span><span class="v">${escapeHtml(selectedNewHireIntake.projectName || '—')}</span></div>
+        <div class="report-field"><span class="k">Foreman</span><span class="v">${escapeHtml(selectedNewHireIntake.foreman || '—')}</span></div>
+        <div class="report-field span-2"><span class="k">Required Certs / Documents</span><span class="v">${escapeHtml(selectedNewHireIntake.requiredCerts || '—')}</span></div>
+        <div class="report-field span-2"><span class="k">Manual Text Message</span><span class="v">${escapeHtml(message)}</span></div>
+      </div>
+    `;
+    document.getElementById('modal-new-hire-intake-detail').classList.add('open');
+  }
+
+  async function copySelectedNewHireIntakeMessage() {
+    if (!selectedNewHireIntake) return;
+    try {
+      await navigator.clipboard.writeText(buildNewHireIntakeMessage(selectedNewHireIntake));
+      toast('Text message copied.');
+    } catch (_) {
+      toast('Could not copy automatically. Highlight and copy the message.');
+    }
+  }
+
+  async function markSelectedNewHireGoodToWork() {
+    if (!selectedNewHireIntake) return;
+    try {
+      await updateDoc(doc(db, 'newHireIntakes', selectedNewHireIntake.id), { status: 'Good To Work', updatedAt: serverTimestamp() });
+      closeModal('modal-new-hire-intake-detail');
+      await loadNewHireIntakes();
+      toast('Marked Good To Work.');
+    } catch (err) {
+      console.error('markSelectedNewHireGoodToWork failed', err);
+      toast('Could not update intake status.');
+    }
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -3762,6 +3717,7 @@
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (tabId === 'main-employees') loadEmployees(true);
+    if (tabId === 'main-new-hires') loadNewHireIntakes();
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
   }
 
