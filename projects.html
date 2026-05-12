@@ -684,6 +684,20 @@
       cursor:pointer;
     }
     .breakdown-btn.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+
+    /* PROJECT_BREAKDOWN_TIME_CATEGORY_TWO_ROW_FIX_2026_05_11 */
+    .breakdown-filter-card {
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      margin:12px 0 14px;
+    }
+    .breakdown-time-row {
+      margin:4px 0 12px;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--line);
+    }
     .breakdown-grid {
       display:grid;
       grid-template-columns: repeat(5, minmax(0,1fr));
@@ -997,28 +1011,34 @@
         </div>
       </div>
       <div class="project-breakdown-panel" id="project-breakdown-panel">
-      <div class="breakdown-head">
-        <div>
-          <h3>Project Breakdown</h3>
-          <div class="helper-text">Quick view of project activity by overall, current week, or current month. This uses existing project data only.</div>
+        <div class="breakdown-head">
+          <div>
+            <h3>Project Breakdown</h3>
+            <div class="helper-text">Pick a time period first, then pick the job section you want to review. This keeps the view clean instead of dumping everything at once.</div>
+          </div>
         </div>
-        <div class="breakdown-toggle">
-          <button class="breakdown-btn active" id="breakdown-btn-overall" type="button" onclick="setProjectBreakdownView('overall')">Overall</button>
-          <button class="breakdown-btn" id="breakdown-btn-week" type="button" onclick="setProjectBreakdownView('week')">This Week</button>
-          <button class="breakdown-btn" id="breakdown-btn-month" type="button" onclick="setProjectBreakdownView('month')">This Month</button>
+
+        <!-- PROJECT_BREAKDOWN_TIME_CATEGORY_TWO_ROW_FIX_2026_05_11 -->
+        <div class="breakdown-filter-card">
+          <div class="breakdown-subtitle">1. Choose time period</div>
+          <div class="breakdown-toggle breakdown-time-row">
+            <button class="breakdown-btn active" id="breakdown-btn-overall" type="button" onclick="setProjectBreakdownView('overall')">Overall</button>
+            <button class="breakdown-btn" id="breakdown-btn-week" type="button" onclick="setProjectBreakdownView('week')">This Week</button>
+            <button class="breakdown-btn" id="breakdown-btn-month" type="button" onclick="setProjectBreakdownView('month')">This Month</button>
+          </div>
+
+          <div class="breakdown-subtitle">2. Choose job section</div>
+          <div class="breakdown-category-row">
+            <button class="breakdown-btn active" id="breakdown-cat-Document" type="button" onclick="setProjectBreakdownCategory('Document')">📄 Documents</button>
+            <button class="breakdown-btn" id="breakdown-cat-Photo" type="button" onclick="setProjectBreakdownCategory('Photo')">📸 Photos</button>
+            <button class="breakdown-btn" id="breakdown-cat-DailyReport" type="button" onclick="setProjectBreakdownCategory('Daily Report')">📋 Reports</button>
+            <button class="breakdown-btn" id="breakdown-cat-Ticket" type="button" onclick="setProjectBreakdownCategory('Ticket')">💵 Tickets</button>
+            <button class="breakdown-btn" id="breakdown-cat-Warehouse" type="button" onclick="setProjectBreakdownCategory('Warehouse')">📦 Warehouse</button>
+            <button class="breakdown-btn" id="breakdown-cat-Payroll" type="button" onclick="setProjectBreakdownCategory('Payroll')">⏱️ Payroll</button>
+          </div>
         </div>
+        <div id="project-breakdown-content"></div>
       </div>
-      <div class="breakdown-subtitle">Choose job section</div>
-      <div class="breakdown-category-row">
-        <button class="breakdown-btn active" id="breakdown-cat-Document" type="button" onclick="setProjectBreakdownCategory('Document')">📄 Documents</button>
-        <button class="breakdown-btn" id="breakdown-cat-Photo" type="button" onclick="setProjectBreakdownCategory('Photo')">📸 Photos</button>
-        <button class="breakdown-btn" id="breakdown-cat-DailyReport" type="button" onclick="setProjectBreakdownCategory('Daily Report')">📋 Reports</button>
-        <button class="breakdown-btn" id="breakdown-cat-Ticket" type="button" onclick="setProjectBreakdownCategory('Ticket')">💵 Tickets</button>
-        <button class="breakdown-btn" id="breakdown-cat-Warehouse" type="button" onclick="setProjectBreakdownCategory('Warehouse')">📦 Warehouse</button>
-        <button class="breakdown-btn" id="breakdown-cat-Payroll" type="button" onclick="setProjectBreakdownCategory('Payroll')">⏱️ Payroll</button>
-      </div>
-      <div id="project-breakdown-content"></div>
-    </div>
 
 
     </div>
