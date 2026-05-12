@@ -651,7 +651,7 @@
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
 
 
-    /* PROJECT_BREAKDOWN_WEEK_MONTH_SAFE_PATCH_2026_05_11 */
+    /* PROJECT_BREAKDOWN_CATEGORY_FILTER_PATCH_2026_05_11 */
     .project-breakdown-panel {
       background: white;
       border: 1px solid var(--line);
@@ -670,6 +670,8 @@
     }
     .breakdown-head h3 { margin:0 0 4px; color:var(--navy); font-size:16px; }
     .breakdown-toggle { display:flex; gap:8px; flex-wrap:wrap; }
+    .breakdown-subtitle { margin: 14px 0 8px; font-size:12px; font-weight:900; color:var(--navy); text-transform:uppercase; letter-spacing:.35px; }
+    .breakdown-category-row { display:flex; gap:8px; flex-wrap:wrap; margin: 4px 0 12px; }
     .breakdown-btn {
       background:#fff;
       color:var(--navy);
@@ -974,7 +976,27 @@
       </div>
     </div>
 
-    <div class="project-breakdown-panel" id="project-breakdown-panel">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
+      <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
+      <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
+      <button class="tab" onclick="switchTab('tab-breakdown', this); setProjectBreakdownView('overall'); setProjectBreakdownCategory('Document')">📊 Breakdown</button>
+      <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
+      <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
+      <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
+      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
+    </div>
+
+
+    <!-- PROJECT BREAKDOWN TAB -->
+    <div class="tab-pane" id="tab-breakdown">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Project Breakdown</div>
+          <div class="helper-text">Review project activity overall, this week, or this month.</div>
+        </div>
+      </div>
+      <div class="project-breakdown-panel" id="project-breakdown-panel">
       <div class="breakdown-head">
         <div>
           <h3>Project Breakdown</h3>
@@ -986,17 +1008,19 @@
           <button class="breakdown-btn" id="breakdown-btn-month" type="button" onclick="setProjectBreakdownView('month')">This Month</button>
         </div>
       </div>
+      <div class="breakdown-subtitle">Choose job section</div>
+      <div class="breakdown-category-row">
+        <button class="breakdown-btn active" id="breakdown-cat-Document" type="button" onclick="setProjectBreakdownCategory('Document')">📄 Documents</button>
+        <button class="breakdown-btn" id="breakdown-cat-Photo" type="button" onclick="setProjectBreakdownCategory('Photo')">📸 Photos</button>
+        <button class="breakdown-btn" id="breakdown-cat-DailyReport" type="button" onclick="setProjectBreakdownCategory('Daily Report')">📋 Reports</button>
+        <button class="breakdown-btn" id="breakdown-cat-Ticket" type="button" onclick="setProjectBreakdownCategory('Ticket')">💵 Tickets</button>
+        <button class="breakdown-btn" id="breakdown-cat-Warehouse" type="button" onclick="setProjectBreakdownCategory('Warehouse')">📦 Warehouse</button>
+        <button class="breakdown-btn" id="breakdown-cat-Payroll" type="button" onclick="setProjectBreakdownCategory('Payroll')">⏱️ Payroll</button>
+      </div>
       <div id="project-breakdown-content"></div>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
-      <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
-      <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
-      <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
-      <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
-      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
+
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -1419,6 +1443,7 @@
   let currentProjectDoc = null;
   let currentProjectReports = [];
   let currentBreakdownView = "overall";
+  let currentBreakdownCategory = "Document";
   let currentEmployeeId = null;
   let currentCertificationUploadedAt = null;
   let allEmployees = [];
@@ -1449,6 +1474,7 @@
   window.backToProjects = backToProjects;
   window.switchTab = switchTab;
   window.setProjectBreakdownView = setProjectBreakdownView;
+  window.setProjectBreakdownCategory = setProjectBreakdownCategory;
   window.handleDocUpload = handleDocUpload;
   window.handlePhotoUpload = handlePhotoUpload;
   window.addForeman = addForeman;
@@ -1777,7 +1803,7 @@
   }
 
 
-  // PROJECT_BREAKDOWN_WEEK_MONTH_SAFE_PATCH_2026_05_11
+  // PROJECT_BREAKDOWN_CATEGORY_FILTER_PATCH_2026_05_11
   function parseActivityDate(value) {
     if (!value) return null;
     if (value?.toDate && typeof value.toDate === 'function') return value.toDate();
@@ -1821,6 +1847,20 @@
     ['overall','week','month'].forEach(m => {
       const btn = document.getElementById(`breakdown-btn-${m}`);
       if (btn) btn.classList.toggle('active', m === mode);
+    });
+    renderProjectBreakdown();
+  }
+
+  function breakdownCategoryButtonId(type) {
+    if (type === 'Daily Report') return 'DailyReport';
+    return String(type || '').replace(/[^A-Za-z0-9]/g, '');
+  }
+
+  function setProjectBreakdownCategory(type = 'Document') {
+    currentBreakdownCategory = type;
+    ['Document','Photo','Daily Report','Ticket','Warehouse','Payroll'].forEach(t => {
+      const btn = document.getElementById(`breakdown-cat-${breakdownCategoryButtonId(t)}`);
+      if (btn) btn.classList.toggle('active', t === type);
     });
     renderProjectBreakdown();
   }
@@ -1886,14 +1926,17 @@
     if (!el) return;
 
     const mode = currentBreakdownView || 'overall';
-    const items = getProjectBreakdownItems().filter(item => isInBreakdownWindow(item.date, mode));
-    const counts = items.reduce((acc, item) => {
+    const category = currentBreakdownCategory || 'Document';
+    const allWindowItems = getProjectBreakdownItems().filter(item => isInBreakdownWindow(item.date, mode));
+    const items = allWindowItems.filter(item => item.type === category);
+    const counts = allWindowItems.reduce((acc, item) => {
       acc[item.type] = (acc[item.type] || 0) + 1;
       if (item.type === 'Ticket') acc.ticketTotal += Number(item.amount || 0);
       return acc;
-    }, { Document:0, Photo:0, 'Daily Report':0, Ticket:0, Warehouse:0, ticketTotal:0 });
+    }, { Document:0, Photo:0, 'Daily Report':0, Ticket:0, Warehouse:0, Payroll:0, ticketTotal:0 });
 
     const label = mode === 'week' ? 'This Week' : mode === 'month' ? 'This Month' : 'Overall';
+    const catLabel = category === 'Document' ? 'Documents' : category === 'Photo' ? 'Photos' : category === 'Daily Report' ? 'Daily Reports' : category === 'Ticket' ? 'Extra Work Tickets' : category === 'Warehouse' ? 'Warehouse Items' : 'Payroll';
     const sorted = items.slice().sort((a,b) => {
       const ad = a.date ? a.date.getTime() : 0;
       const bd = b.date ? b.date.getTime() : 0;
@@ -1909,8 +1952,13 @@
         <div class="breakdown-box"><strong>${counts.Ticket || 0}</strong><span>Extra Work Tickets · ${label}</span></div>
         <div class="breakdown-box"><strong>${counts.Warehouse || 0}</strong><span>Warehouse Items · ${label}</span></div>
       </div>
-      <div class="mini-note">Ticket total for this view: <strong>${ticketTotalText}</strong></div>
-      ${sorted.length ? `
+      <div class="mini-note">Showing <strong>${catLabel}</strong> for <strong>${label}</strong>. Ticket total for this view: <strong>${ticketTotalText}</strong></div>
+      ${category === 'Payroll' ? `
+        <div class="empty-state" style="padding:24px 12px;">
+          <div class="icon">⏱️</div>
+          <h3>Payroll section coming next</h3>
+          <p>This tab is reserved so payroll sheets can be tied into weekly/monthly project breakdowns without changing the rest of the dashboard.</p>
+        </div>` : sorted.length ? `
         <div class="breakdown-list">
           ${sorted.slice(0, 20).map(item => `
             <div class="breakdown-row">
@@ -1924,8 +1972,8 @@
         </div>` : `
         <div class="empty-state" style="padding:24px 12px;">
           <div class="icon">📊</div>
-          <h3>No activity for ${label}</h3>
-          <p>Documents, photos, reports, tickets, and warehouse items will show here once they are added.</p>
+          <h3>No ${catLabel} for ${label}</h3>
+          <p>Select a different category or time period to review other project activity.</p>
         </div>`}
     `;
   }
