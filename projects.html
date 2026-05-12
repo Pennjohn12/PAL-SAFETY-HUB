@@ -651,6 +651,36 @@
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
 
 
+    /* PROJECT_BREAKDOWN_HARD_VISIBLE_ROWS_REWRITE_2026_05_11 */
+    .breakdown-force-card {
+      background:#fff !important;
+      border:2px solid var(--navy) !important;
+      border-radius:18px !important;
+      padding:16px !important;
+      margin:12px 0 16px !important;
+      display:block !important;
+      box-shadow:0 4px 14px rgba(16,24,40,.08) !important;
+    }
+    .breakdown-force-title {
+      color:var(--navy) !important;
+      font-weight:900 !important;
+      margin:0 0 8px !important;
+      font-size:15px !important;
+    }
+    .breakdown-force-row {
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:8px !important;
+      margin:8px 0 14px !important;
+    }
+    .breakdown-force-row .breakdown-btn {
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      min-height:38px !important;
+    }
+
+
     /* PROJECT_BREAKDOWN_CATEGORY_FILTER_PATCH_2026_05_11 */
     .project-breakdown-panel {
       background: white;
@@ -684,20 +714,6 @@
       cursor:pointer;
     }
     .breakdown-btn.active { background:var(--navy); color:#fff; border-color:var(--navy); }
-
-    /* PROJECT_BREAKDOWN_TIME_CATEGORY_TWO_ROW_FIX_2026_05_11 */
-    .breakdown-filter-card {
-      background:#f8fafc;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      margin:12px 0 14px;
-    }
-    .breakdown-time-row {
-      margin:4px 0 12px;
-      padding-bottom:10px;
-      border-bottom:1px solid var(--line);
-    }
     .breakdown-grid {
       display:grid;
       grid-template-columns: repeat(5, minmax(0,1fr));
@@ -994,7 +1010,7 @@
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
-      <button class="tab" onclick="switchTab('tab-breakdown', this); setProjectBreakdownView('overall'); setProjectBreakdownCategory('Document')">📊 Breakdown</button>
+      <button class="tab" onclick="switchTab('tab-breakdown', this)">📊 Breakdown</button>
       <button class="tab" onclick="switchTab('tab-project-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
       <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
@@ -1010,25 +1026,23 @@
           <div class="helper-text">Review project activity overall, this week, or this month.</div>
         </div>
       </div>
-      <div class="project-breakdown-panel" id="project-breakdown-panel">
-        <div class="breakdown-head">
+      <div class="breakdown-head">
           <div>
             <h3>Project Breakdown</h3>
-            <div class="helper-text">Pick a time period first, then pick the job section you want to review. This keeps the view clean instead of dumping everything at once.</div>
+            <div class="helper-text">Pick a time period, then pick the job section you want to review.</div>
           </div>
         </div>
 
-        <!-- PROJECT_BREAKDOWN_TIME_CATEGORY_TWO_ROW_FIX_2026_05_11 -->
-        <div class="breakdown-filter-card">
-          <div class="breakdown-subtitle">1. Choose time period</div>
-          <div class="breakdown-toggle breakdown-time-row">
+        <!-- PROJECT_BREAKDOWN_HARD_VISIBLE_ROWS_REWRITE_2026_05_11 -->
+        <div class="breakdown-force-card" id="breakdown-force-card">
+          <div class="breakdown-force-title">1. Time Period</div>
+          <div class="breakdown-force-row" id="breakdown-time-filter-row">
             <button class="breakdown-btn active" id="breakdown-btn-overall" type="button" onclick="setProjectBreakdownView('overall')">Overall</button>
             <button class="breakdown-btn" id="breakdown-btn-week" type="button" onclick="setProjectBreakdownView('week')">This Week</button>
             <button class="breakdown-btn" id="breakdown-btn-month" type="button" onclick="setProjectBreakdownView('month')">This Month</button>
           </div>
-
-          <div class="breakdown-subtitle">2. Choose job section</div>
-          <div class="breakdown-category-row">
+          <div class="breakdown-force-title">2. Job Section</div>
+          <div class="breakdown-force-row" id="breakdown-category-filter-row">
             <button class="breakdown-btn active" id="breakdown-cat-Document" type="button" onclick="setProjectBreakdownCategory('Document')">📄 Documents</button>
             <button class="breakdown-btn" id="breakdown-cat-Photo" type="button" onclick="setProjectBreakdownCategory('Photo')">📸 Photos</button>
             <button class="breakdown-btn" id="breakdown-cat-DailyReport" type="button" onclick="setProjectBreakdownCategory('Daily Report')">📋 Reports</button>
@@ -1038,7 +1052,7 @@
           </div>
         </div>
         <div id="project-breakdown-content"></div>
-      </div>
+    </div>
 
 
     </div>
@@ -1862,6 +1876,7 @@
     return true;
   }
 
+  // PROJECT_BREAKDOWN_HARD_VISIBLE_ROWS_REWRITE_2026_05_11
   function setProjectBreakdownView(mode = 'overall') {
     currentBreakdownView = mode;
     ['overall','week','month'].forEach(m => {
@@ -3791,6 +3806,13 @@
     if (tabId === 'tab-employees') loadEmployees(true);
     if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
     if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
+    if (tabId === 'tab-breakdown') {
+      if (!currentBreakdownView) currentBreakdownView = 'overall';
+      if (!currentBreakdownCategory) currentBreakdownCategory = 'Document';
+      setProjectBreakdownView(currentBreakdownView);
+      setProjectBreakdownCategory(currentBreakdownCategory);
+      renderProjectBreakdown();
+    }
   }
 
   function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
