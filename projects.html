@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#1b3a5c" />
   <title>PAL Safety Hub</title>
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
+  <!-- NEW_HIRE_INTAKE_VISIBLE_TAB_FIX_2026_05_12 -->
   <style>
     :root {
       --navy: #1b3a5c;
@@ -513,35 +514,6 @@
     .cert-warning-sub { font-size:12px; color:var(--muted); margin-top:2px; }
     @media(max-width:700px){ .cert-alert-summary { grid-template-columns: 1fr; } .cert-warning-row{align-items:flex-start; flex-direction:column;} }
 
-    /* EMPLOYEE_CERT_ACTION_CENTER_PATCH_2026_05_14 */
-    .cert-action-center {
-      background:#ffffff;
-      border:1px solid var(--line);
-      border-left:5px solid var(--navy);
-      border-radius:16px;
-      padding:16px;
-      margin:12px 0 16px;
-      box-shadow:0 4px 12px rgba(16,24,40,.04);
-    }
-    .cert-action-center h3 { color:var(--navy); margin:0 0 6px; font-size:16px; }
-    .cert-action-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
-    .cert-email-preview {
-      white-space:pre-wrap;
-      background:#f8fafc;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:12px;
-      min-height:120px;
-      max-height:260px;
-      overflow:auto;
-      font-size:13px;
-      line-height:1.45;
-      color:var(--text);
-    }
-    .cert-action-buttons { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-    @media(max-width:700px){ .cert-action-grid { grid-template-columns:1fr; } }
-
-
     .employee-card { cursor:pointer; }
     .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
     .cert-preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:12px; }
@@ -690,41 +662,6 @@
       .sticky-upload { flex-direction: column; }
       .sticky-upload .btn-upload { width:100%; }
     }
-  
-
-    /* NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12 */
-    .newhire-dashboard {
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap:10px;
-      margin:12px 0 16px;
-    }
-    .newhire-box {
-      background:white; border:1px solid var(--line); border-radius:14px;
-      padding:12px; box-shadow:0 4px 12px rgba(0,0,0,.04); border-left:5px solid var(--navy);
-    }
-    .newhire-box strong { display:block; font-size:20px; color:var(--text); margin-bottom:3px; }
-    .newhire-box span { color:var(--muted); font-size:12px; font-weight:800; }
-    .newhire-box.pending { border-left-color:#d97706; }
-    .newhire-box.review { border-left-color:#2563eb; }
-    .newhire-box.good { border-left-color:#16a34a; }
-    .newhire-box.missing { border-left-color:#dc2626; }
-    .newhire-card {
-      background:white; border:1px solid var(--line); border-radius:16px; padding:16px;
-      margin-bottom:12px; box-shadow:0 4px 12px rgba(16,24,40,.04);
-    }
-    .newhire-card-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
-    .newhire-card h4 { color:var(--navy); font-size:16px; margin-bottom:4px; }
-    .newhire-meta { font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
-    .newhire-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-    .newhire-share-box {
-      background:#f8fafc; border:1px solid var(--line); border-radius:14px;
-      padding:12px; margin-top:14px; white-space:pre-line; color:var(--text); font-size:13px; line-height:1.45;
-    }
-    .newhire-upload-list { display:grid; gap:8px; margin-top:10px; }
-    .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
-    @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
-
   </style>
 </head>
 <body>
@@ -861,26 +798,6 @@
       <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
       <div id="cert-alert-summary-main"></div>
       <div id="cert-alert-list-main"></div>
-      <div class="cert-action-center" id="cert-action-center">
-        <h3>📧 Weekly Certification Alert</h3>
-        <div class="helper-text">Create a ready-to-send email with all expired certifications and certifications expiring within 30 days.</div>
-        <div class="cert-action-grid">
-          <div class="field" style="margin-bottom:0;">
-            <label>Email Recipient</label>
-            <input id="cert-alert-email-to" type="email" placeholder="office@palcorp.com" />
-          </div>
-          <div class="field" style="margin-bottom:0;">
-            <label>Email Subject</label>
-            <input id="cert-alert-email-subject" value="PAL Safety Hub - Weekly Certification Alert" />
-          </div>
-        </div>
-        <div class="cert-action-buttons">
-          <button class="btn-outline" type="button" onclick="previewCertAlertEmail()">Preview Alert</button>
-          <button class="btn-save" type="button" onclick="openCertAlertEmailDraft()">Open Email Draft</button>
-          <button class="btn-secondary" type="button" onclick="copyCertAlertEmailText()">Copy Email Text</button>
-        </div>
-        <div id="cert-alert-email-preview" class="cert-email-preview" style="margin-top:12px;">Click Preview Alert to generate the weekly certification email.</div>
-      </div>
       <div class="field" style="max-width:460px;margin-bottom:16px;">
         <label>Search Employees</label>
         <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
@@ -889,27 +806,35 @@
     </div>
 
 
+
+    <!-- NEW HIRE / PRE-SITE INTAKE TAB -->
     <div class="tab-pane" id="main-new-hires">
       <div class="page-header">
         <h2>New Hire / Pre-Site Intake</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
-          <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
+          <button class="btn-outline" onclick="loadNewHireIntakes()">↻ Refresh</button>
+          <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Link</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Create a pre-site onboarding request, copy a text message to send to the employee, upload cert photos when they come back, and mark the worker Good To Work before they arrive.</div>
-      <div id="newhire-dashboard-main"></div>
-      <div class="search-row">
-        <input class="search-input" id="newhire-search" placeholder="Search by employee, project, trade, foreman, status..." oninput="renderNewHireIntakes()" />
-        <select id="newhire-status-filter" class="inline-select" onchange="renderNewHireIntakes()">
-          <option value="all">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="Ready for Review">Ready for Review</option>
-          <option value="Good To Work">Good To Work</option>
-          <option value="Missing Info">Missing Info</option>
-        </select>
+      <div class="helper-text" style="margin-bottom:14px;">
+        Phase 1: create a pre-site intake request, copy the message, and text it to the employee manually. Later we can add automatic SMS/email sending and a public upload form.
       </div>
-      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Click New Hire Intake to load requests.</p></div>
+
+      <div class="project-summary-grid" id="new-hire-intake-summary">
+        <div class="summary-card"><div class="label">Pending</div><div class="value" id="nhi-pending">0</div><div class="sub">Waiting for employee info</div></div>
+        <div class="summary-card"><div class="label">Ready for Review</div><div class="value" id="nhi-review">0</div><div class="sub">Submitted / certs uploaded</div></div>
+        <div class="summary-card"><div class="label">Good To Work</div><div class="value" id="nhi-approved">0</div><div class="sub">Approved by office/foreman</div></div>
+        <div class="summary-card"><div class="label">Missing Info</div><div class="value" id="nhi-missing">0</div><div class="sub">Needs correction</div></div>
+      </div>
+
+      <div class="detail-card" style="margin-bottom:14px;">
+        <h3>How this will work</h3>
+        <p class="helper-text" style="margin-bottom:0;">
+          Office/foreman creates the intake, copies the text message, and sends it to the worker. The employee will eventually use the link to fill out info and upload cert photos before arriving onsite. This tab tracks the request and approval status.
+        </p>
+      </div>
+
+      <div id="new-hire-intake-list"><p style="color:var(--muted);font-size:14px;">Click Refresh or New Hire Intake to load requests.</p></div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -1245,7 +1170,7 @@
     <div class="field"><label>Expiration Date (optional)</label><input type="date" id="cert-exp-date" /></div>
     <div class="field"><label>Certification File</label><input type="file" id="cert-file" accept=".pdf,image/*" /></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('modal-certification','modal-newhire-intake','modal-newhire-review')">Cancel</button>
+      <button class="btn-secondary" onclick="closeModal('modal-certification')">Cancel</button>
       <button class="btn-save" id="save-cert-btn" onclick="saveCertification()">Upload</button>
     </div>
   </div>
@@ -1402,49 +1327,37 @@
 
 
 
-<!-- NEW HIRE INTAKE MODAL - PHASE 2 -->
-<div class="modal-overlay" id="modal-newhire-intake">
-  <div class="modal" style="max-width:760px;">
+<!-- NEW HIRE PRE-SITE INTAKE MODAL -->
+<div class="modal-overlay" id="modal-new-hire-intake">
+  <div class="modal" style="max-width:720px;">
     <h3>🧾 New Hire / Pre-Site Intake</h3>
     <div class="form-grid">
-      <div class="field"><label>Employee Name</label><input id="nh-name" placeholder="New hire full name" /></div>
-      <div class="field"><label>Phone</label><input id="nh-phone" placeholder="Cell phone number" /></div>
-      <div class="field"><label>Email (optional)</label><input id="nh-email" type="email" placeholder="employee@email.com" /></div>
-      <div class="field"><label>Trade / Role</label><input id="nh-trade" placeholder="Fireproofer / Labor / Fire Watch" /></div>
-      <div class="field"><label>Project / Jobsite</label><select id="nh-project-select"><option value="">Select project…</option></select></div>
-      <div class="field"><label>Foreman / Contact</label><input id="nh-foreman" placeholder="Foreman or office contact" /></div>
-      <div class="field"><label>Expected Start Date</label><input id="nh-start-date" type="date" /></div>
-      <div class="field"><label>Status</label><select id="nh-status"><option>Pending</option><option>Ready for Review</option><option>Good To Work</option><option>Missing Info</option></select></div>
-      <div class="field span-2"><label>Required Certs / Documents</label><textarea id="nh-required" rows="3" placeholder="OSHA 30, SST, Scaffold, Fall Protection, G60, ID, etc."></textarea></div>
-      <div class="field span-2"><label>Notes / Instructions</label><textarea id="nh-notes" rows="3" placeholder="Tell the employee what to send before arriving to site..."></textarea></div>
+      <div class="field"><label>Employee Name</label><input id="nhi-name" placeholder="Employee full name" /></div>
+      <div class="field"><label>Phone Number</label><input id="nhi-phone" placeholder="(555) 555-5555" /></div>
+      <div class="field"><label>Email (optional)</label><input id="nhi-email" type="email" placeholder="employee@email.com" /></div>
+      <div class="field"><label>Trade / Role</label><input id="nhi-trade" placeholder="Fireproofer / Laborer / Fire Watch" /></div>
+      <div class="field span-2"><label>Project / Jobsite</label><select id="nhi-project"><option value="">No project selected</option></select></div>
+      <div class="field"><label>Foreman / Supervisor</label><input id="nhi-foreman" placeholder="Foreman name" /></div>
+      <div class="field"><label>Start Date</label><input id="nhi-start-date" type="date" /></div>
+      <div class="field span-2"><label>Required Certs / Documents</label><textarea id="nhi-required" rows="3" placeholder="OSHA 30, SST, Scaffold, Fire Watch, G60, ID, etc."></textarea></div>
+      <div class="field span-2"><label>Notes</label><textarea id="nhi-notes" rows="3" placeholder="Anything office/foreman should know..."></textarea></div>
     </div>
-    <div class="newhire-share-box" id="nh-share-preview">Fill out the request to generate the text message.</div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('modal-newhire-intake')">Cancel</button>
-      <button class="btn-secondary" onclick="copyNewHireIntakeText()">Copy Text Message</button>
-      <button class="btn-save" id="save-newhire-btn" onclick="saveNewHireIntake()">Save Intake Request</button>
+      <button class="btn-secondary" onclick="closeModal('modal-new-hire-intake')">Cancel</button>
+      <button class="btn-save" id="save-new-hire-intake-btn" onclick="saveNewHireIntake()">Create Intake</button>
     </div>
   </div>
 </div>
 
-<!-- NEW HIRE REVIEW / UPLOAD MODAL - PHASE 2 -->
-<div class="modal-overlay" id="modal-newhire-review">
+<!-- NEW HIRE INTAKE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-new-hire-intake-detail">
   <div class="modal" style="max-width:820px;">
-    <h3 id="newhire-review-title">New Hire Intake Review</h3>
-    <div id="newhire-review-body"></div>
-    <div class="detail-card" style="margin-top:14px;">
-      <h3>Upload Cert Photos / Documents</h3>
-      <div class="helper-text" style="margin-bottom:10px;">Use this when the employee texts or sends OSHA/SST/scaffold cards. Upload them here so office and foreman can review before the worker arrives.</div>
-      <input id="newhire-cert-upload" type="file" multiple accept=".pdf,image/*" />
-      <div class="modal-actions" style="justify-content:flex-start;margin-top:12px;">
-        <button class="btn-save" onclick="uploadNewHireCertFiles()">Upload Files</button>
-      </div>
-    </div>
+    <h3>🧾 Intake Details</h3>
+    <div id="new-hire-intake-detail-body"></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
-      <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
-      <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
-      <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
+      <button class="btn-secondary" onclick="closeModal('modal-new-hire-intake-detail')">Close</button>
+      <button class="btn-outline" onclick="copySelectedNewHireIntakeMessage()">Copy Text Message</button>
+      <button class="btn-save" onclick="markSelectedNewHireGoodToWork()">Mark Good To Work</button>
     </div>
   </div>
 </div>
@@ -1485,9 +1398,9 @@
   let allEmployees = [];
   let allProjects = [];
   let allTickets = [];
-  let allNewHireIntakes = [];
-  let currentNewHireReviewId = null;
   let allWarehouseItems = [];
+  let allNewHireIntakes = [];
+  let selectedNewHireIntake = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1533,20 +1446,7 @@
   window.editCertification = editCertification;
   window.deleteCertification = deleteCertification;
   window.saveCertification = saveCertification;
-  window.previewCertAlertEmail = previewCertAlertEmail;
-  window.openCertAlertEmailDraft = openCertAlertEmailDraft;
-  window.copyCertAlertEmailText = copyCertAlertEmailText;
   window.switchMainTab = switchMainTab;
-
-  window.openNewHireIntakeModal = openNewHireIntakeModal;
-  window.saveNewHireIntake = saveNewHireIntake;
-  window.loadNewHireIntakes = loadNewHireIntakes;
-  window.renderNewHireIntakes = renderNewHireIntakes;
-  window.copyNewHireIntakeText = copyNewHireIntakeText;
-  window.copyNewHireIntakeTextById = copyNewHireIntakeTextById;
-  window.openNewHireReview = openNewHireReview;
-  window.uploadNewHireCertFiles = uploadNewHireCertFiles;
-  window.setNewHireStatus = setNewHireStatus;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
   window.saveExtraWorkTicket = saveExtraWorkTicket;
@@ -1566,6 +1466,12 @@
   window.saveWarehouseItem = saveWarehouseItem;
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
+  window.openNewHireIntakeModal = openNewHireIntakeModal;
+  window.saveNewHireIntake = saveNewHireIntake;
+  window.loadNewHireIntakes = loadNewHireIntakes;
+  window.openNewHireIntakeDetail = openNewHireIntakeDetail;
+  window.copySelectedNewHireIntakeMessage = copySelectedNewHireIntakeMessage;
+  window.markSelectedNewHireGoodToWork = markSelectedNewHireGoodToWork;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -2352,71 +2258,6 @@
       valid,
       warnings: [...expired, ...soon].sort((a,b) => (a.days ?? 9999) - (b.days ?? 9999))
     };
-  }
-
-
-  // EMPLOYEE_CERT_ACTION_CENTER_PATCH_2026_05_14
-  function buildCertAlertEmailText() {
-    const data = getCertAlertData();
-    const today = new Date().toLocaleDateString('en-US');
-    const expiredLines = data.expired.length
-      ? data.expired.map(c => `- ${c.employeeName} — ${c.certTitle} — Expired ${c.expirationDate || 'date not listed'}`).join('
-')
-      : '- None';
-    const soonLines = data.soon.length
-      ? data.soon.map(c => `- ${c.employeeName} — ${c.certTitle} — Expires ${c.expirationDate || 'date not listed'} (${c.days} day${c.days === 1 ? '' : 's'} left)`).join('
-')
-      : '- None';
-    return `PAL Safety Hub - Weekly Certification Alert
-Date: ${today}
-
-Expired Certifications:
-${expiredLines}
-
-Expiring Within 30 Days:
-${soonLines}
-
-Summary:
-Expired: ${data.expired.length}
-Expiring within 30 days: ${data.soon.length}
-Valid certs on file: ${data.valid.length}
-
-Please review the Employee Certs tab in PAL Safety Hub for uploaded card images/files and employee details.`;
-  }
-
-  function previewCertAlertEmail() {
-    if (!allEmployees.length) {
-      loadEmployees(true).then(() => {
-        const box = document.getElementById('cert-alert-email-preview');
-        if (box) box.textContent = buildCertAlertEmailText();
-      });
-      return;
-    }
-    const box = document.getElementById('cert-alert-email-preview');
-    if (box) box.textContent = buildCertAlertEmailText();
-  }
-
-  function openCertAlertEmailDraft() {
-    const to = String(document.getElementById('cert-alert-email-to')?.value || '').trim();
-    const subject = String(document.getElementById('cert-alert-email-subject')?.value || 'PAL Safety Hub - Weekly Certification Alert').trim();
-    const body = buildCertAlertEmailText();
-    const box = document.getElementById('cert-alert-email-preview');
-    if (box) box.textContent = body;
-    const href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = href;
-  }
-
-  async function copyCertAlertEmailText() {
-    const body = buildCertAlertEmailText();
-    const box = document.getElementById('cert-alert-email-preview');
-    if (box) box.textContent = body;
-    try {
-      await navigator.clipboard.writeText(body);
-      toast('Certification alert email copied.');
-    } catch (e) {
-      console.error(e);
-      toast('Could not copy automatically. You can select the preview text and copy it.');
-    }
   }
 
   function renderCertAlerts() {
@@ -3684,253 +3525,191 @@ Please review the Employee Certs tab in PAL Safety Hub for uploaded card images/
 
 
 
-  // NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12
-  function newHireStatusClass(status) {
-    const s = String(status || '').toLowerCase();
-    if (s.includes('good')) return 'active';
-    if (s.includes('missing')) return 'expired';
-    if (s.includes('review')) return 'blue';
-    return 'warn';
+  // NEW_HIRE_PRESITE_INTAKE_PHASE1_2026_05_12
+  // Phase 1: manual pre-site intake request dashboard. No automatic SMS/email yet.
+  function intakeStatusLabel(status) {
+    const value = status || 'Pending';
+    const map = {
+      'Pending': 'pending',
+      'Ready for Review': 'blue',
+      'Good To Work': 'active',
+      'Missing Info': 'warn'
+    };
+    return `<span class="pill ${map[value] || 'neutral'}">${escapeHtml(value)}</span>`;
+  }
+
+  function buildNewHireIntakeMessage(intake) {
+    const base = window.location.origin + window.location.pathname.replace(/projects\.html$/, 'index.html');
+    const link = `${base}?newHireIntake=${encodeURIComponent(intake.id || '')}`;
+    const projectLine = intake.projectName ? `Project: ${intake.projectName}\n` : '';
+    const startLine = intake.startDate ? `Start date: ${intake.startDate}\n` : '';
+    const requiredLine = intake.requiredCerts ? `Required items: ${intake.requiredCerts}\n` : '';
+    return `PAL New Hire / Pre-Site Intake\n\nHi ${intake.name || ''}, please complete your employee information and upload photos of your required certifications before arriving onsite.\n\n${projectLine}${startLine}${requiredLine}\nIntake link:\n${link}\n\nIf you have trouble opening the link, contact your foreman or the office.`;
   }
 
   function refreshNewHireProjectOptions() {
-    const select = document.getElementById('nh-project-select');
-    if (!select) return;
-    select.innerHTML = '<option value="">Select project…</option>' + allProjects.map(p => `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' · Job # ' + esc(p.jobNumber) : ''}</option>`).join('');
-  }
-
-  function buildNewHireIntakeText(data) {
-    const projectLine = data.projectName ? `Project: ${data.projectName}${data.projectJobNumber ? ' · Job # ' + data.projectJobNumber : ''}` : 'Project: PAL jobsite';
-    const contactLine = data.foreman ? `Contact: ${data.foreman}` : 'Contact: PAL office / foreman';
-    const certLine = data.required ? data.required : 'Please send photos of all required certs/cards requested by PAL.';
-    const startLine = data.startDate ? `Expected start date: ${data.startDate}` : '';
-    const link = data.intakeLink || 'Intake link will be added after saving the request.';
-    return `PAL New Hire / Pre-Site Intake
-
-${data.name ? 'Hello ' + data.name + ',' : 'Hello,'}
-
-Before arriving on site, please complete your pre-site intake and send/upload clear photos of your required certifications.
-
-${projectLine}
-${startLine}
-${contactLine}
-
-Required certs/documents:
-${certLine}
-
-Open/keep this intake link:
-${link}
-
-Notes:
-${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
-  }
-
-  function getNewHireFormData() {
-    const projectId = document.getElementById('nh-project-select')?.value || '';
-    const p = allProjects.find(x => x.id === projectId) || {};
-    return {
-      name: document.getElementById('nh-name')?.value.trim() || '',
-      phone: document.getElementById('nh-phone')?.value.trim() || '',
-      email: document.getElementById('nh-email')?.value.trim() || '',
-      trade: document.getElementById('nh-trade')?.value.trim() || '',
-      projectId,
-      projectName: p.name || '',
-      projectJobNumber: p.jobNumber || '',
-      foreman: document.getElementById('nh-foreman')?.value.trim() || '',
-      startDate: document.getElementById('nh-start-date')?.value || '',
-      status: document.getElementById('nh-status')?.value || 'Pending',
-      required: document.getElementById('nh-required')?.value.trim() || '',
-      notes: document.getElementById('nh-notes')?.value.trim() || ''
-    };
-  }
-
-  function updateNewHirePreview() {
-    const box = document.getElementById('nh-share-preview');
-    if (!box) return;
-    box.textContent = buildNewHireIntakeText(getNewHireFormData());
+    const sel = document.getElementById('nhi-project');
+    if (!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">No project selected</option>';
+    allProjects.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = `${p.name || 'Unnamed Project'}${p.jobNumber ? ' — ' + p.jobNumber : ''}`;
+      sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
   }
 
   function openNewHireIntakeModal() {
     refreshNewHireProjectOptions();
-    ['nh-name','nh-phone','nh-email','nh-trade','nh-foreman','nh-start-date','nh-required','nh-notes'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-    const status = document.getElementById('nh-status'); if (status) status.value = 'Pending';
-    const project = document.getElementById('nh-project-select'); if (project) project.value = '';
-    const saveBtn = document.getElementById('save-newhire-btn'); if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Intake Request'; }
-    ['nh-name','nh-phone','nh-email','nh-trade','nh-project-select','nh-foreman','nh-start-date','nh-status','nh-required','nh-notes'].forEach(id => { const el=document.getElementById(id); if(el) el.oninput = updateNewHirePreview; if(el) el.onchange = updateNewHirePreview; });
-    updateNewHirePreview();
-    document.getElementById('modal-newhire-intake')?.classList.add('open');
+    ['nhi-name','nhi-phone','nhi-email','nhi-trade','nhi-foreman','nhi-start-date','nhi-required','nhi-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const projectSel = document.getElementById('nhi-project');
+    if (projectSel) projectSel.value = '';
+    const btn = document.getElementById('save-new-hire-intake-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Create Intake'; }
+    document.getElementById('modal-new-hire-intake').classList.add('open');
   }
 
   async function saveNewHireIntake() {
-    if (!currentUser) return toast('Please sign in first.');
-    const btn = document.getElementById('save-newhire-btn');
-    const data = getNewHireFormData();
-    if (!data.name) return toast('Employee name is required.');
+    if (!currentUser) { toast('Sign in required.'); return; }
+    const btn = document.getElementById('save-new-hire-intake-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
-      const docRef = await addDoc(collection(db, 'newHireIntakes'), {
-        ...data,
-        certFiles: [],
-        createdBy: currentUser.uid,
-        createdByName: currentUser.displayName || currentUser.email,
+      const projectId = document.getElementById('nhi-project')?.value || '';
+      const project = allProjects.find(p => p.id === projectId);
+      const intake = {
+        name: (document.getElementById('nhi-name')?.value || '').trim(),
+        phone: (document.getElementById('nhi-phone')?.value || '').trim(),
+        email: (document.getElementById('nhi-email')?.value || '').trim(),
+        trade: (document.getElementById('nhi-trade')?.value || '').trim(),
+        projectId,
+        projectName: project?.name || '',
+        jobNumber: project?.jobNumber || '',
+        foreman: (document.getElementById('nhi-foreman')?.value || '').trim(),
+        startDate: document.getElementById('nhi-start-date')?.value || '',
+        requiredCerts: (document.getElementById('nhi-required')?.value || '').trim(),
+        notes: (document.getElementById('nhi-notes')?.value || '').trim(),
+        status: 'Pending',
+        createdBy: currentUser.email || '',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
-      });
-      const intakeLink = `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`;
-      await updateDoc(doc(db, 'newHireIntakes', docRef.id), { intakeLink });
-      closeModal('modal-newhire-intake');
-      toast('New hire intake request created.');
-      await loadNewHireIntakes(true);
-      copyNewHireIntakeTextById(docRef.id);
-    } catch (e) {
-      console.error(e);
-      toast('Could not save intake request.');
+      };
+      if (!intake.name || !intake.phone) {
+        toast('Employee name and phone are required.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Create Intake'; }
+        return;
+      }
+      const refDoc = await addDoc(collection(db, 'newHireIntakes'), intake);
+      const saved = { ...intake, id: refDoc.id };
+      closeModal('modal-new-hire-intake');
+      await loadNewHireIntakes();
+      try {
+        await navigator.clipboard.writeText(buildNewHireIntakeMessage(saved));
+        toast('Intake created. Text message copied.');
+      } catch (_) {
+        toast('Intake created. Open details to copy text message.');
+      }
+    } catch (err) {
+      console.error('saveNewHireIntake failed', err);
+      toast('Could not create intake. Check connection/Firebase rules.');
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Save Intake Request'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Create Intake'; }
     }
   }
 
-  async function loadNewHireIntakes(force = false) {
+  async function loadNewHireIntakes() {
     if (!currentUser) return;
+    const list = document.getElementById('new-hire-intake-list');
+    if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading intake requests...</p>';
     try {
       const snap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
       allNewHireIntakes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderNewHireIntakes();
-    } catch (e) {
-      console.error(e);
-      const list = document.getElementById('newhire-list-main');
-      if (list) list.innerHTML = '<p style="color:var(--red);font-size:14px;">Could not load new hire intake requests.</p>';
+    } catch (err) {
+      console.error('loadNewHireIntakes failed', err);
+      if (list) list.innerHTML = '<p style="color:var(--red);font-size:14px;">Could not load intake requests. Check Firebase permissions.</p>';
     }
-  }
-
-  function renderNewHireDashboard(items) {
-    const el = document.getElementById('newhire-dashboard-main');
-    if (!el) return;
-    const counts = { total: items.length, pending: 0, review: 0, good: 0, missing: 0 };
-    items.forEach(x => {
-      const s = String(x.status || 'Pending');
-      if (s === 'Good To Work') counts.good++;
-      else if (s === 'Ready for Review') counts.review++;
-      else if (s === 'Missing Info') counts.missing++;
-      else counts.pending++;
-    });
-    el.innerHTML = `<div class="newhire-dashboard">
-      <div class="newhire-box"><strong>${counts.total}</strong><span>Total Intake Requests</span></div>
-      <div class="newhire-box pending"><strong>${counts.pending}</strong><span>Pending</span></div>
-      <div class="newhire-box review"><strong>${counts.review}</strong><span>Ready for Review</span></div>
-      <div class="newhire-box good"><strong>${counts.good}</strong><span>Good To Work</span></div>
-    </div>`;
   }
 
   function renderNewHireIntakes() {
-    const list = document.getElementById('newhire-list-main');
+    const counts = { 'Pending':0, 'Ready for Review':0, 'Good To Work':0, 'Missing Info':0 };
+    allNewHireIntakes.forEach(i => { counts[i.status || 'Pending'] = (counts[i.status || 'Pending'] || 0) + 1; });
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    set('nhi-pending', counts['Pending'] || 0);
+    set('nhi-review', counts['Ready for Review'] || 0);
+    set('nhi-approved', counts['Good To Work'] || 0);
+    set('nhi-missing', counts['Missing Info'] || 0);
+
+    const list = document.getElementById('new-hire-intake-list');
     if (!list) return;
-    const search = (document.getElementById('newhire-search')?.value || '').toLowerCase().trim();
-    const status = document.getElementById('newhire-status-filter')?.value || 'all';
-    let items = allNewHireIntakes.filter(x => {
-      if (status !== 'all' && (x.status || 'Pending') !== status) return false;
-      if (!search) return true;
-      return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status].some(v => String(v || '').toLowerCase().includes(search));
-    });
-    renderNewHireDashboard(allNewHireIntakes);
-    if (!items.length) {
-      list.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><h3>No intake requests found</h3><p>Create a request to start pre-site onboarding.</p></div>';
+    if (!allNewHireIntakes.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><h3>No new-hire intake requests yet</h3><p>Create the first intake request and text the link to the employee.</p></div>';
       return;
     }
-    list.innerHTML = items.map(x => `<div class="newhire-card">
-      <div class="newhire-card-header">
-        <div>
-          <h4>${esc(x.name || 'New Hire')}</h4>
-          <div class="newhire-meta">
-            ${x.trade ? `<span>👷 ${esc(x.trade)}</span>` : ''}
-            ${x.projectName ? `<span>🏗️ ${esc(x.projectName)}</span>` : ''}
-            ${x.projectJobNumber ? `<span>📋 ${esc(x.projectJobNumber)}</span>` : ''}
-            ${x.startDate ? `<span>📅 ${esc(x.startDate)}</span>` : ''}
-            ${x.foreman ? `<span>👤 ${esc(x.foreman)}</span>` : ''}
-            ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} file(s)</span>` : ''}
+    list.innerHTML = allNewHireIntakes.map(i => `
+      <div class="employee-card" onclick="openNewHireIntakeDetail('${i.id}')">
+        <div class="employee-card-header">
+          <div>
+            <h4>${escapeHtml(i.name || 'Unnamed Employee')} ${intakeStatusLabel(i.status)}</h4>
+            <div class="employee-meta">
+              <span>📞 ${escapeHtml(i.phone || 'No phone')}</span>
+              <span>👷 ${escapeHtml(i.trade || 'No trade')}</span>
+              <span>🏗️ ${escapeHtml(i.projectName || 'No project selected')}</span>
+              ${i.startDate ? `<span>📅 Start ${escapeHtml(i.startDate)}</span>` : ''}
+            </div>
           </div>
+          <div class="employee-actions"><button class="btn-sm" onclick="event.stopPropagation(); openNewHireIntakeDetail('${i.id}')">Open</button></div>
         </div>
-        <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
+        <div class="mini-note">Required: ${escapeHtml(i.requiredCerts || 'Not specified')}</div>
       </div>
-      <div class="newhire-actions">
-        <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
-        <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
-        <button class="btn-sm" onclick="setNewHireStatus('${esc(x.id)}','Good To Work')">Good To Work</button>
-        <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
+    `).join('');
+  }
+
+  function openNewHireIntakeDetail(id) {
+    selectedNewHireIntake = allNewHireIntakes.find(i => i.id === id) || null;
+    if (!selectedNewHireIntake) return;
+    const body = document.getElementById('new-hire-intake-detail-body');
+    const message = buildNewHireIntakeMessage(selectedNewHireIntake);
+    body.innerHTML = `
+      <div class="report-grid">
+        <div class="report-field"><span class="k">Employee</span><span class="v">${escapeHtml(selectedNewHireIntake.name || '—')}</span></div>
+        <div class="report-field"><span class="k">Status</span><span class="v">${intakeStatusLabel(selectedNewHireIntake.status)}</span></div>
+        <div class="report-field"><span class="k">Phone</span><span class="v">${escapeHtml(selectedNewHireIntake.phone || '—')}</span></div>
+        <div class="report-field"><span class="k">Email</span><span class="v">${escapeHtml(selectedNewHireIntake.email || '—')}</span></div>
+        <div class="report-field"><span class="k">Project</span><span class="v">${escapeHtml(selectedNewHireIntake.projectName || '—')}</span></div>
+        <div class="report-field"><span class="k">Foreman</span><span class="v">${escapeHtml(selectedNewHireIntake.foreman || '—')}</span></div>
+        <div class="report-field span-2"><span class="k">Required Certs / Documents</span><span class="v">${escapeHtml(selectedNewHireIntake.requiredCerts || '—')}</span></div>
+        <div class="report-field span-2"><span class="k">Manual Text Message</span><span class="v">${escapeHtml(message)}</span></div>
       </div>
-    </div>`).join('');
+    `;
+    document.getElementById('modal-new-hire-intake-detail').classList.add('open');
   }
 
-  function copyNewHireIntakeText() {
-    const text = buildNewHireIntakeText(getNewHireFormData());
-    navigator.clipboard?.writeText(text).then(() => toast('Text message copied.')).catch(() => toast('Could not copy text.'));
-  }
-
-  function copyNewHireIntakeTextById(id) {
-    const x = allNewHireIntakes.find(i => i.id === id);
-    if (!x) return toast('Intake request not found.');
-    const text = buildNewHireIntakeText(x);
-    navigator.clipboard?.writeText(text).then(() => toast('Text message copied.')).catch(() => toast('Could not copy text.'));
-  }
-
-  function openNewHireReview(id) {
-    const x = allNewHireIntakes.find(i => i.id === id);
-    if (!x) return toast('Intake request not found.');
-    currentNewHireReviewId = id;
-    const title = document.getElementById('newhire-review-title');
-    if (title) title.textContent = `New Hire Review — ${x.name || 'New Hire'}`;
-    const body = document.getElementById('newhire-review-body');
-    if (body) body.innerHTML = `<div class="report-grid">
-      <div class="report-field"><span class="k">Employee</span><div class="v">${esc(x.name)}</div></div>
-      <div class="report-field"><span class="k">Status</span><div class="v"><span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span></div></div>
-      <div class="report-field"><span class="k">Phone</span><div class="v">${esc(x.phone)}</div></div>
-      <div class="report-field"><span class="k">Email</span><div class="v">${esc(x.email)}</div></div>
-      <div class="report-field"><span class="k">Trade / Role</span><div class="v">${esc(x.trade)}</div></div>
-      <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName)} ${x.projectJobNumber ? '· Job # ' + esc(x.projectJobNumber) : ''}</div></div>
-      <div class="report-field"><span class="k">Foreman / Contact</span><div class="v">${esc(x.foreman)}</div></div>
-      <div class="report-field"><span class="k">Start Date</span><div class="v">${esc(x.startDate)}</div></div>
-      <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required)}</div></div>
-      <div class="report-field span-2"><span class="k">Notes</span><div class="v">${esc(x.notes)}</div></div>
-    </div>
-    <div class="newhire-upload-list">
-      <strong>Uploaded Cert Files</strong>
-      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No files uploaded yet.</div>'}
-    </div>`;
-    const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
-    document.getElementById('modal-newhire-review')?.classList.add('open');
-  }
-
-  async function uploadNewHireCertFiles() {
-    if (!currentNewHireReviewId) return toast('Open an intake request first.');
-    const input = document.getElementById('newhire-cert-upload');
-    const files = Array.from(input?.files || []);
-    if (!files.length) return toast('Choose cert files/photos first.');
+  async function copySelectedNewHireIntakeMessage() {
+    if (!selectedNewHireIntake) return;
     try {
-      const uploaded = [];
-      for (const file of files) {
-        const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${currentNewHireReviewId}/certs/${safeName}`;
-        const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString() });
-      }
-      const existing = allNewHireIntakes.find(x => x.id === currentNewHireReviewId)?.certFiles || [];
-      await updateDoc(doc(db, 'newHireIntakes', currentNewHireReviewId), { certFiles: [...existing, ...uploaded], status: 'Ready for Review', updatedAt: serverTimestamp() });
-      toast('Cert files uploaded.');
-      await loadNewHireIntakes(true);
-      openNewHireReview(currentNewHireReviewId);
-    } catch (e) { console.error(e); toast('Could not upload cert files.'); }
+      await navigator.clipboard.writeText(buildNewHireIntakeMessage(selectedNewHireIntake));
+      toast('Text message copied.');
+    } catch (_) {
+      toast('Could not copy automatically. Highlight and copy the message.');
+    }
   }
 
-  async function setNewHireStatus(id, status) {
-    if (!id) return;
+  async function markSelectedNewHireGoodToWork() {
+    if (!selectedNewHireIntake) return;
     try {
-      await updateDoc(doc(db, 'newHireIntakes', id), { status, updatedAt: serverTimestamp() });
-      toast(`Status updated: ${status}`);
-      await loadNewHireIntakes(true);
-      if (document.getElementById('modal-newhire-review')?.classList.contains('open')) openNewHireReview(id);
-    } catch (e) { console.error(e); toast('Could not update status.'); }
+      await updateDoc(doc(db, 'newHireIntakes', selectedNewHireIntake.id), { status: 'Good To Work', updatedAt: serverTimestamp() });
+      closeModal('modal-new-hire-intake-detail');
+      await loadNewHireIntakes();
+      toast('Marked Good To Work.');
+    } catch (err) {
+      console.error('markSelectedNewHireGoodToWork failed', err);
+      toast('Could not update intake status.');
+    }
   }
 
   function switchMainTab(tabId, btn) {
@@ -3940,7 +3719,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (tabId === 'main-employees') loadEmployees(true);
-    if (tabId === 'main-new-hires') loadNewHireIntakes(true);
+    if (tabId === 'main-new-hires') loadNewHireIntakes();
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
   }
 
