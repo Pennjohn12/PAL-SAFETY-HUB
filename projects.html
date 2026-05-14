@@ -8,6 +8,7 @@
   <title>PAL Safety Hub</title>
   <!-- LOGIN_RESTORE_NEWHIRE_PHASE2_STABLE_ROLLBACK_2026_05_14 -->
   <!-- LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14 -->
+  <!-- PUBLIC_NEWHIRE_INTAKE_NO_LOGIN_PATCH_2026_05_14 -->
 
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <style>
@@ -779,6 +780,62 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
+     PUBLIC NEW HIRE INTAKE VIEW - NO LOGIN REQUIRED
+══════════════════════════════════════════════ -->
+<div class="view" id="view-public-newhire-intake">
+  <div class="header">
+    <a class="brand" href="index.html">
+      <div class="pal-badge">PAL</div>
+      <div class="brand-text">
+        <h1>PAL Safety Hub</h1>
+        <p>New Hire / Cert Intake</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="page-wrap">
+    <div class="project-header-card">
+      <h2>🧾 New Hire / Pre-Site Certification Intake</h2>
+      <div class="meta">This page is for employees only. No login is required.</div>
+      <div class="meta">Foreman / office review stays protected behind the PAL login.</div>
+    </div>
+
+    <div class="detail-card" id="public-intake-status-card">
+      <h3>Loading Intake Request…</h3>
+      <p class="helper-text">Please wait while PAL Safety Hub loads your pre-site intake request.</p>
+    </div>
+
+    <div class="detail-card" id="public-intake-form-card" style="display:none;">
+      <h3>Employee Information</h3>
+      <div class="report-grid">
+        <div class="field"><label>Full Name</label><input id="pub-nh-name" placeholder="Your full name" /></div>
+        <div class="field"><label>Phone Number</label><input id="pub-nh-phone" placeholder="Your phone number" /></div>
+        <div class="field"><label>Email</label><input id="pub-nh-email" type="email" placeholder="Your email" /></div>
+        <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Laborer, Fire Watch, Sprayer, etc." /></div>
+        <div class="field"><label>Emergency Contact Name</label><input id="pub-nh-emergency-name" placeholder="Emergency contact" /></div>
+        <div class="field"><label>Emergency Contact Phone</label><input id="pub-nh-emergency-phone" placeholder="Emergency contact phone" /></div>
+        <div class="field span-2"><label>Notes / Missing Information</label><textarea id="pub-nh-notes" rows="3" placeholder="Anything PAL should know before you arrive on site..."></textarea></div>
+        <div class="field span-2">
+          <label>Upload Certification Photos / Documents</label>
+          <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" />
+          <div class="helper-text">Upload clear photos or PDFs of OSHA, SST, scaffold, G60, fire watch, or any certs requested by PAL.</div>
+        </div>
+      </div>
+
+      <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
+        <h3 style="margin-bottom:6px;">Before You Submit</h3>
+        <div class="helper-text">Make sure all certification photos are clear, readable, and not cut off. PAL office/foreman will review and mark your status.</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" type="button" onclick="window.location.href='index.html'">Back to Safety Hub</button>
+        <button class="btn-save" id="pub-submit-intake-btn" type="button" onclick="submitPublicNewHireIntake()">Submit Intake to PAL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
      PROJECT LIST VIEW
 ══════════════════════════════════════════════ -->
 <div class="view" id="view-projects">
@@ -1451,6 +1508,8 @@
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
+  let publicNewHireIntakeId = new URLSearchParams(window.location.search).get('intake');
+  let publicNewHireIntakeLoaded = false;
   document.title = 'PAL Safety Hub';
 
   // ── Expose functions to global scope ──
@@ -1517,9 +1576,16 @@
   window.saveWarehouseItem = saveWarehouseItem;
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
+  window.submitPublicNewHireIntake = submitPublicNewHireIntake;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
+    if (publicNewHireIntakeId) {
+      currentUser = user || null;
+      showView('view-public-newhire-intake');
+      if (!publicNewHireIntakeLoaded) loadPublicNewHireIntake();
+      return;
+    }
     if (user) {
       currentUser = user;
       updateUserUI(user);
@@ -3611,6 +3677,87 @@
 
 
 
+
+
+  // PUBLIC_NEWHIRE_INTAKE_NO_LOGIN_PATCH_2026_05_14
+  async function loadPublicNewHireIntake() {
+    if (!publicNewHireIntakeId) return;
+    publicNewHireIntakeLoaded = true;
+    const statusCard = document.getElementById('public-intake-status-card');
+    const formCard = document.getElementById('public-intake-form-card');
+    try {
+      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
+      if (!snap.exists()) {
+        if (statusCard) statusCard.innerHTML = `<h3>Intake Request Not Found</h3><p class="helper-text">This PAL intake link may be expired or incorrect. Please contact your foreman or the PAL office.</p>`;
+        return;
+      }
+      const x = { id: snap.id, ...snap.data() };
+      if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Request Loaded</h3>
+        <div class="report-grid" style="margin-top:10px;">
+          <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName || 'PAL jobsite')} ${x.projectJobNumber ? '· Job # ' + esc(x.projectJobNumber) : ''}</div></div>
+          <div class="report-field"><span class="k">Foreman / Contact</span><div class="v">${esc(x.foreman || 'PAL office / foreman')}</div></div>
+          <div class="report-field"><span class="k">Expected Start Date</span><div class="v">${esc(x.startDate || '—')}</div></div>
+          <div class="report-field"><span class="k">Current Status</span><div class="v"><span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span></div></div>
+          <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required || 'Upload all certs requested by PAL.')}</div></div>
+          <div class="report-field span-2"><span class="k">PAL Notes</span><div class="v">${esc(x.notes || 'Please upload clear certification photos before arriving on site.')}</div></div>
+        </div>`;
+      if (formCard) formCard.style.display = 'block';
+      const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+      set('pub-nh-name', x.name || '');
+      set('pub-nh-phone', x.phone || '');
+      set('pub-nh-email', x.email || '');
+      set('pub-nh-trade', x.trade || '');
+    } catch (e) {
+      console.error('Public intake load failed', e);
+      if (statusCard) statusCard.innerHTML = `<h3>Could Not Load Intake</h3><p class="helper-text">Please check your connection or contact PAL office. If this keeps happening, the intake link may need to be resent.</p>`;
+    }
+  }
+
+  async function submitPublicNewHireIntake() {
+    if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    const btn = document.getElementById('pub-submit-intake-btn');
+    const input = document.getElementById('pub-nh-files');
+    const files = Array.from(input?.files || []);
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      const uploaded = [];
+      for (const file of files) {
+        const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+        const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${safeName}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake' });
+      }
+      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
+      const existing = snap.exists() ? (snap.data().certFiles || []) : [];
+      await updateDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
+        name: document.getElementById('pub-nh-name')?.value.trim() || '',
+        phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
+        email: document.getElementById('pub-nh-email')?.value.trim() || '',
+        trade: document.getElementById('pub-nh-trade')?.value.trim() || '',
+        emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
+        emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
+        employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
+        certFiles: [...existing, ...uploaded],
+        status: 'Ready for Review',
+        employeeSubmittedAt: new Date().toISOString(),
+        updatedAt: serverTimestamp()
+      });
+      const statusCard = document.getElementById('public-intake-status-card');
+      const formCard = document.getElementById('public-intake-form-card');
+      if (statusCard) statusCard.innerHTML = `<h3>✅ Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
+      if (formCard) formCard.style.display = 'none';
+      toast('Intake submitted to PAL.');
+    } catch (e) {
+      console.error('Public intake submit failed', e);
+      toast('Could not submit intake. PAL may need to enable public intake upload permissions.');
+      const statusCard = document.getElementById('public-intake-status-card');
+      if (statusCard) statusCard.innerHTML += `<p style="color:var(--red);font-weight:800;margin-top:10px;">Submission failed. Please contact PAL office or your foreman.</p>`;
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Intake to PAL'; }
+    }
+  }
 
   // NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12
   function newHireStatusClass(status) {
