@@ -712,6 +712,16 @@
     .nh-check-list label { display:block; padding:8px 0; font-size:14px; }
     .nh-status-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 
+
+    /* FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14 */
+    .nh-doc-paper { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; margin:12px 0; }
+    .nh-doc-paper h5 { margin:0 0 8px; color:var(--navy); font-size:16px; }
+    .nh-doc-paper p, .nh-doc-paper li { font-size:14px; line-height:1.55; color:var(--text); }
+    .nh-doc-paper ul { margin:8px 0 0 20px; }
+    .nh-doc-banner { background:#eef4fa; border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px; padding:12px; margin:10px 0; color:var(--navy); font-weight:800; }
+    .nh-doc-section-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    @media(max-width:700px){ .nh-doc-section-grid { grid-template-columns:1fr; } }
+
   </style>
 </head>
 <body>
@@ -3680,6 +3690,7 @@
 
 
   // FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE
+  // FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14
   const PUBLIC_NH_FORMS = [
     { key:'orientation', title:'Orientation Form', icon:'📋', desc:'Company orientation, PPE, site rules, and safety acknowledgement.' },
     { key:'drugConsent', title:'Drug & Alcohol Consent', icon:'🧪', desc:'Drug/alcohol testing consent and employee acknowledgement.' },
@@ -3726,37 +3737,118 @@
   }
 
   function openPublicNewHireForm(key) {
+    // FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14
     const def = PUBLIC_NH_FORMS.find(f => f.key === key);
     const win = document.getElementById('pub-nh-form-window');
     if (!def || !win) return;
     const existing = publicNewHirePacket.forms?.[key] || {};
+    const today = new Date().toISOString().slice(0,10);
     let body = '';
-    if (key === 'certs') {
-      body = `<div class="daily-report-form-grid">
+
+    if (key === 'orientation') {
+      body = `<div class="nh-doc-banner">PAL Environmental Services — Company / Site Orientation Form</div>
+      <div class="nh-doc-paper">
+        <h5>Orientation Review</h5>
+        <p>This orientation confirms that the employee has reviewed PAL jobsite expectations before reporting to work. The employee must understand that all site rules, PAL policies, and foreman/supervisor directions must be followed at all times.</p>
+        <ul>
+          <li>Report to the assigned foreman/supervisor before starting work.</li>
+          <li>Wear required PPE including hard hat, safety glasses, vest/shirt, gloves, work boots, and any task-specific PPE.</li>
+          <li>Attend required daily safety meetings and toolbox talks.</li>
+          <li>Report unsafe conditions, injuries, near misses, and incidents immediately.</li>
+          <li>Do not operate equipment unless authorized and trained.</li>
+          <li>Maintain housekeeping and keep access/egress clear.</li>
+        </ul>
+      </div>
+      <div class="nh-check-list">
+        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I have read and understand PAL's orientation requirements.</label>
+        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I understand I must follow site safety rules and directions from supervision.</label>
+        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I understand I must report incidents, injuries, unsafe conditions, and near misses immediately.</label>
+      </div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
+        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
+        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else if (key === 'drugConsent') {
+      body = `<div class="nh-doc-banner">Drug & Alcohol Testing Consent</div>
+      <div class="nh-doc-paper">
+        <h5>Consent Statement</h5>
+        <p>I understand that PAL and/or the jobsite may require drug and alcohol testing as part of employment, site access, post-incident review, reasonable suspicion, random testing, or other company/jobsite requirements.</p>
+        <p>I consent to testing as required and understand that refusal to test, failure to cooperate, or violation of jobsite/company policy may affect my ability to work.</p>
+      </div>
+      <div class="nh-check-list">
+        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I consent to required drug and alcohol testing.</label>
+        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I understand site access may depend on compliance with testing requirements.</label>
+        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I understand false or missing information may delay clearance.</label>
+      </div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
+        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
+        <div class="field span-2"><label>Upload Related Document, if any</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
+        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else if (key === 'safetyAgreement') {
+      body = `<div class="nh-doc-banner">Scaffold / Fall Protection / Ladder Safety Agreement</div>
+      <div class="nh-doc-paper">
+        <h5>Safety Agreement</h5>
+        <p>The employee acknowledges that they must follow PAL and jobsite safety requirements for elevated work, scaffolds, ladders, lifts, PPE, and fall protection.</p>
+        <ul>
+          <li>Use fall protection when required by PAL, OSHA, or jobsite rules.</li>
+          <li>Do not alter or use unsafe scaffolds, ladders, lifts, or guardrails.</li>
+          <li>Inspect equipment before use and report defects immediately.</li>
+          <li>Maintain three points of contact on ladders and use the proper ladder for the task.</li>
+          <li>Only use equipment you are trained/authorized to use.</li>
+          <li>Stop work and notify supervision if conditions are unsafe.</li>
+        </ul>
+      </div>
+      <div class="nh-check-list">
+        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I understand scaffold, fall protection, ladder, and equipment safety requirements.</label>
+        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I will not use unsafe equipment or perform work I am not trained/authorized to perform.</label>
+        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I will stop and report unsafe conditions immediately.</label>
+      </div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
+        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
+        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else if (key === 'w4Payroll') {
+      body = `<div class="nh-doc-banner">W-4 / Payroll Document Upload</div>
+      <div class="nh-doc-paper">
+        <h5>Payroll Setup</h5>
+        <p>Upload a completed W-4/payroll document or any payroll document requested by the office. This area is intended for office review and should be treated as private employee information.</p>
+      </div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Upload Completed W-4 / Payroll Documents</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
+        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
+        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
+        <div class="field span-2"><label>Notes for Office</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else if (key === 'idI9') {
+      body = `<div class="nh-doc-banner">I-9 / ID Supporting Document Upload</div>
+      <div class="nh-doc-paper">
+        <h5>ID / Work Authorization Support</h5>
+        <p>Upload clear photos or PDFs of the identification/supporting documents requested by the office. Make sure documents are readable and not cut off.</p>
+      </div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Upload ID / I-9 Supporting Documents</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
+        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
+        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
+        <div class="field span-2"><label>Notes for Office</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else if (key === 'certs') {
+      body = `<div class="nh-doc-banner">Certification Uploads</div>
+      <div class="nh-doc-paper">
+        <h5>Required Certifications</h5>
+        <p>Upload clear photos or PDFs of all certifications/cards requested for the jobsite. Examples include OSHA, SST, Scaffold, G60, Fire Watch, lift cards, or other task-specific certs.</p>
+      </div>
+      <div class="daily-report-form-grid">
         <div class="field"><label>Certification Type</label><select id="nh-form-cert-type"><option>OSHA 30</option><option>OSHA 10</option><option>SST</option><option>Scaffold</option><option>Lift Cert</option><option>G60</option><option>Fire Watch</option><option>Other</option></select></div>
         <div class="field"><label>Expiration Date</label><input id="nh-form-cert-exp" type="date" value="${esc(existing.certExp || '')}"></div>
         <div class="field span-2"><label>Upload Cert Photos / PDFs</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
         <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
       </div>`;
-    } else if (key === 'w4Payroll' || key === 'idI9') {
-      body = `<div class="helper-text" style="margin-bottom:10px;">Upload completed documents/photos. These will link to your employee file for office review.</div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Upload Files</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
-        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    } else {
-      body = `<div class="helper-text" style="margin-bottom:10px;">Read each acknowledgement, check the boxes, type your name as your signature, and save this form.</div>
-      <div class="nh-check-list">
-        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I have read and understand this form.</label>
-        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I agree to follow PAL safety and jobsite requirements.</label>
-        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I understand missing or false information may delay my clearance to work.</label>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
-        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || new Date().toISOString().slice(0,10))}"></div>
-        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
     }
+
     win.style.display = 'block';
     win.innerHTML = `<h4>${def.icon} ${esc(def.title)}</h4>${body}<div class="nh-status-row"><button class="btn-save" onclick="savePublicNewHireForm('${esc(key)}')">Save This Form</button><button class="btn-outline" onclick="document.getElementById('pub-nh-form-window').style.display='none'">Close</button></div>`;
     win.scrollIntoView({ behavior:'smooth', block:'start' });
