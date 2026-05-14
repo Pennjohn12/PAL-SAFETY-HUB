@@ -8,10 +8,6 @@
   <title>PAL Safety Hub</title>
   <!-- LOGIN_RESTORE_NEWHIRE_PHASE2_STABLE_ROLLBACK_2026_05_14 -->
   <!-- LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14 -->
-  <!-- PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14 -->
-  <!-- PUBLIC_NEWHIRE_INTAKE_NO_LOGIN_PATCH_2026_05_14 -->
-  <!-- PUBLIC_NEWHIRE_TO_EMPLOYEE_CERT_SYNC_PHASE3_2026_05_14 -->
-  <!-- PUBLIC_NEWHIRE_PACKET_FORMS_PHASE4_2026_05_14 -->
 
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <style>
@@ -703,96 +699,65 @@
     .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
     @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
 
+  
 
-    /* PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14 */
-    .public-packet-shell {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
-      margin-top: 12px;
-    }
-    .public-packet-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    .public-packet-header h4 { margin: 0; color: var(--navy); font-size: 16px; }
-    .public-packet-header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
-    .public-packet-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      margin: 12px 0 14px;
-    }
-    .public-packet-tab {
-      border: 1.5px solid var(--line);
-      background: #fff;
-      color: var(--navy);
-      border-radius: 12px;
-      padding: 11px 10px;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 900;
-      cursor: pointer;
-      text-align: left;
-      box-shadow: 0 3px 10px rgba(16,24,40,.04);
-    }
-    .public-packet-tab.active {
-      background: var(--navy);
-      color: white;
-      border-color: var(--navy);
-    }
-    .public-packet-tab small {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      opacity: .72;
-      margin-top: 2px;
-    }
-    .public-packet-window {
-      border: 1px solid var(--line) !important;
-      border-radius: 18px !important;
-      padding: 0 !important;
-      margin-bottom: 0 !important;
-      background: white !important;
-      box-shadow: 0 8px 24px rgba(16,24,40,.07);
-      overflow: hidden;
-    }
-    .public-packet-window summary {
-      list-style: none;
-      cursor: default !important;
-      background: linear-gradient(135deg, var(--navy), var(--navy-light));
-      color: white !important;
-      padding: 14px 16px;
-      font-size: 15px;
-    }
-    .public-packet-window summary::-webkit-details-marker { display: none; }
-    .public-packet-window > *:not(summary) { margin-left: 16px; margin-right: 16px; }
-    .public-packet-window .report-grid { margin-bottom: 16px; }
-    .public-packet-window[hidden] { display: none !important; }
-    .public-packet-note {
-      background:#eef4fa;
-      border:1px solid var(--line);
-      border-left:5px solid var(--green);
-      border-radius:14px;
-      padding:10px 12px;
-      color:var(--navy);
-      font-size:13px;
-      font-weight:800;
-      margin: 10px 0 12px;
-    }
-    @media(max-width:760px){
-      .public-packet-tabs { grid-template-columns: 1fr; }
-      .public-packet-window > *:not(summary) { margin-left: 12px; margin-right: 12px; }
-    }
+    /* FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE */
+    .nh-launch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:14px 0; }
+    .nh-launch-card { background:white; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 4px 12px rgba(16,24,40,.04); border-left:5px solid var(--navy); }
+    .nh-launch-card.done { border-left-color:#16a34a; }
+    .nh-launch-card h4 { color:var(--navy); margin:0 0 6px; }
+    .nh-launch-card p { color:var(--muted); font-size:13px; line-height:1.45; margin:0 0 12px; }
+    .nh-public-shell { max-width:900px; margin:0 auto; padding:24px 16px 80px; }
+    .nh-form-window { background:white; border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:0 6px 18px rgba(16,24,40,.05); margin-top:16px; }
+    .nh-check-list label { display:block; padding:8px 0; font-size:14px; }
+    .nh-status-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 
   </style>
 </head>
 <body>
+
+
+<!-- FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE -->
+<div class="view" id="view-public-newhire-packet">
+  <div class="header">
+    <a class="brand" href="index.html">
+      <div class="pal-badge">PAL</div>
+      <div class="brand-text"><h1>PAL Safety Hub</h1><p>New Hire Packet</p></div>
+    </a>
+  </div>
+  <div class="nh-public-shell">
+    <div class="project-header-card">
+      <h2>New Hire Packet</h2>
+      <div class="meta">Complete each form below before reporting to the jobsite.</div>
+    </div>
+    <div class="detail-card">
+      <h3>Employee Information</h3>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Full Name</label><input id="pub-nh-name" placeholder="Employee full name" /></div>
+        <div class="field"><label>Phone</label><input id="pub-nh-phone" placeholder="Cell phone" /></div>
+        <div class="field"><label>Email</label><input id="pub-nh-email" placeholder="Email address" /></div>
+        <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Trade / role" /></div>
+        <div class="field"><label>Start Date</label><input id="pub-nh-start-date" type="date" /></div>
+        <div class="field span-2"><label>Address</label><input id="pub-nh-address" placeholder="Home address" /></div>
+        <div class="field"><label>Emergency Contact</label><input id="pub-nh-emergency-name" placeholder="Name" /></div>
+        <div class="field"><label>Emergency Phone</label><input id="pub-nh-emergency-phone" placeholder="Phone" /></div>
+      </div>
+      <div class="helper-text" id="pub-nh-intake-label" style="margin-top:10px;">Public packet loading...</div>
+    </div>
+    <div class="detail-card">
+      <h3>Required Forms</h3>
+      <div class="helper-text">Open each form separately. Completed forms link back to your employee file for office review.</div>
+      <div id="pub-nh-form-launcher" class="nh-launch-grid"></div>
+    </div>
+    <div id="pub-nh-form-window" class="nh-form-window" style="display:none;"></div>
+    <div class="detail-card">
+      <h3>Submit Packet</h3>
+      <div class="helper-text" style="margin-bottom:10px;">Submit when all required forms and uploads are complete.</div>
+      <button class="btn-save" id="pub-nh-submit-btn" onclick="submitPublicNewHirePacket()">Submit New Hire Packet</button>
+      <div id="pub-nh-submit-status" class="helper-text" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════════════
      LOGIN VIEW
@@ -864,233 +829,6 @@
       <button class="btn-primary" id="reg-btn" onclick="doRegister()">Create Account</button>
       <div class="login-footer">
         Already have an account? <button class="link-btn" onclick="showLogin()">Sign in</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PUBLIC NEW HIRE INTAKE VIEW - NO LOGIN REQUIRED
-══════════════════════════════════════════════ -->
-<div class="view" id="view-public-newhire-intake">
-  <div class="header">
-    <a class="brand" href="index.html">
-      <div class="pal-badge">PAL</div>
-      <div class="brand-text">
-        <h1>PAL Safety Hub</h1>
-        <p>New Hire / Cert Intake</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="page-wrap">
-    <div class="project-header-card">
-      <h2>🧾 New Hire / Pre-Site Certification Intake</h2>
-      <div class="meta">This page is for employees only. No login is required.</div>
-      <div class="meta">Foreman / office review stays protected behind the PAL login.</div>
-    </div>
-
-    <div class="detail-card" id="public-intake-status-card">
-      <h3>Loading Intake Request…</h3>
-      <p class="helper-text">Please wait while PAL Safety Hub loads your pre-site intake request.</p>
-    </div>
-
-    <div class="detail-card" id="public-intake-form-card" style="display:none;">
-      <!-- PUBLIC_NEWHIRE_PACKET_FORMS_PHASE4_2026_05_14 -->
-      <h3>Employee Information Packet</h3>
-      <div class="helper-text" style="margin-bottom:12px;">Complete the pre-site paperwork below and upload clear photos/PDFs of all requested certifications and documents. This page does not require an employee login.</div>
-      <div class="report-grid">
-        <div class="field"><label>Full Name</label><input id="pub-nh-name" placeholder="Your full name" /></div>
-        <div class="field"><label>Phone Number</label><input id="pub-nh-phone" placeholder="Your phone number" /></div>
-        <div class="field"><label>Email</label><input id="pub-nh-email" type="email" placeholder="Your email" /></div>
-        <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Laborer, Fire Watch, Sprayer, etc." /></div>
-        <div class="field"><label>Home Address</label><input id="pub-nh-address" placeholder="Street, City, State, ZIP" /></div>
-        <div class="field"><label>Date of Birth</label><input id="pub-nh-dob" type="date" /></div>
-        <div class="field"><label>Emergency Contact Name</label><input id="pub-nh-emergency-name" placeholder="Emergency contact" /></div>
-        <div class="field"><label>Emergency Contact Phone</label><input id="pub-nh-emergency-phone" placeholder="Emergency contact phone" /></div>
-        <div class="field"><label>Local Union / Card # (optional)</label><input id="pub-nh-union" placeholder="Local / card number if applicable" /></div>
-        <div class="field"><label>Last 4 of SSN (office only)</label><input id="pub-nh-ssn-last4" maxlength="4" inputmode="numeric" placeholder="Last 4 only" /></div>
-        <div class="field span-2"><label>Notes / Missing Information</label><textarea id="pub-nh-notes" rows="3" placeholder="Anything PAL should know before you arrive on site..."></textarea></div>
-      </div>
-
-      <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
-        <h3 style="margin-bottom:8px;">Required Certification Uploads</h3>
-        <div class="report-grid">
-          <div class="field">
-            <label>Primary Cert Type for Uploads</label>
-            <select id="pub-nh-cert-type">
-              <option value="New Hire Certification Upload">New Hire Certification Upload</option>
-              <option value="OSHA 30">OSHA 30</option>
-              <option value="OSHA 10">OSHA 10</option>
-              <option value="SST">SST</option>
-              <option value="Scaffold Builder">Scaffold Builder</option>
-              <option value="Fire Watch">Fire Watch</option>
-              <option value="G60">G60</option>
-              <option value="Fall Protection">Fall Protection</option>
-              <option value="Silica">Silica</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="field"><label>Certification Notes</label><input id="pub-nh-cert-notes" placeholder="Example: OSHA 30 and SST card uploaded" /></div>
-          <div class="field span-2">
-            <label>Upload Certification Photos / Documents</label>
-            <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" />
-            <div class="helper-text">Upload clear photos or PDFs of OSHA, SST, scaffold, G60, fire watch, or any certs requested by PAL. These uploads will also create/update the Employee Cert record for office review.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail-card" style="margin-top:14px;background:#fff;" id="pub-newhire-actual-forms">
-        <!-- PUBLIC_NEWHIRE_ACTUAL_FILLABLE_FORMS_PHASE5_2026_05_14 -->
-        <h3 style="margin-bottom:8px;">Fillable New Hire Forms</h3>
-        <div class="helper-text" style="margin-bottom:12px;">Complete each packet section before submitting. Use the tabs below like separate form windows so the employee only sees one form at a time.</div>
-
-        <div class="public-packet-shell" id="public-newhire-packet-tabs">
-          <!-- PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14 -->
-          <div class="public-packet-header">
-            <div>
-              <h4>New Hire Packet</h4>
-              <p>Select one form window, complete it, then move to the next. Upload signed/supporting documents where requested.</p>
-            </div>
-            <span class="pill blue">Employee Intake</span>
-          </div>
-          <div class="public-packet-tabs" role="tablist" aria-label="New hire packet forms">
-            <button type="button" class="public-packet-tab active" data-packet-target="orientation" onclick="showPublicPacketForm('orientation')">📋 Orientation<small>Company / jobsite information</small></button>
-            <button type="button" class="public-packet-tab" data-packet-target="drug" onclick="showPublicPacketForm('drug')">🧪 Drug Consent<small>Testing acknowledgement</small></button>
-            <button type="button" class="public-packet-tab" data-packet-target="safety" onclick="showPublicPacketForm('safety')">🏗️ Safety Agreement<small>Scaffold / fall / ladder</small></button>
-            <button type="button" class="public-packet-tab" data-packet-target="w4" onclick="showPublicPacketForm('w4')">📄 W-4 / Payroll<small>Office-only review</small></button>
-            <button type="button" class="public-packet-tab" data-packet-target="id" onclick="showPublicPacketForm('id')">🪪 ID / I-9 Docs<small>Upload identity documents</small></button>
-            <button type="button" class="public-packet-tab" data-packet-target="uploads" onclick="showPublicPacketForm('uploads')">📎 Extra Uploads<small>Other required forms</small></button>
-          </div>
-          <div class="public-packet-note">This packet is for pre-site intake. PAL office must review and approve before the employee is marked Good To Work.</div>
-        </div>
-
-        <details class="public-packet-window" data-packet-section="orientation" open style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
-          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">📋 Company Orientation Form</summary>
-          <div class="report-grid" style="margin-top:12px;">
-            <div class="field"><label>Employee Name</label><input id="pub-ori-emp-name" placeholder="Employee name" /></div>
-            <div class="field"><label>Date</label><input id="pub-ori-date" type="date" /></div>
-            <div class="field"><label>Job / Project Name</label><input id="pub-ori-project" placeholder="Project name" /></div>
-            <div class="field"><label>Job Number</label><input id="pub-ori-job-number" placeholder="Job #" /></div>
-            <div class="field"><label>Supervisor / Foreman</label><input id="pub-ori-supervisor" placeholder="Supervisor / foreman" /></div>
-            <div class="field"><label>Phone Number</label><input id="pub-ori-phone" type="tel" placeholder="Phone" /></div>
-            <div class="field span-2"><label>Emergency Contact Name & Number</label><input id="pub-ori-emergency-contact" placeholder="Name and phone" /></div>
-          </div>
-          <h4 style="margin:14px 0 8px;color:var(--navy);">Orientation Topics Covered</h4>
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-eap"> Emergency Action Plan (E.A.P.)</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-firstaid"> First Aid / CPR Procedures</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-incident"> Incident & Accident Reporting</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-rtw"> Return-to-Work / Light Duty Policy</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-drug"> Drug & Alcohol Policy</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-harassment"> Anti-Harassment Policy</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-hazcom"> Hazard Communication (HazCom / SDS)</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-ppe"> Personal Protective Equipment (PPE)</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-fall"> Fall Protection Requirements</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-electrical"> Electrical Safety</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-ladder"> Ladder Safety</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-tools"> Hand & Power Tool Safety</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-loto"> Lockout / Tagout (LOTO)</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-fire"> Fire Safety</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-confined"> Confined Space Entry</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-asbestos"> Asbestos & Lead Awareness</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-silica"> Respirable Crystalline Silica</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-housekeeping"> Housekeeping Standards</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-scaffold"> Scaffold Safety</label>
-            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-site-rules"> Site-Specific Rules & Procedures</label>
-          </div>
-          <p style="font-size:13px;margin-top:12px;">I confirm that I have received and understood the above orientation topics. I agree to comply with all PAL Environmental Services safety policies and procedures.</p>
-          <div class="report-grid">
-            <div class="field"><label>Employee Printed Name</label><input id="pub-ori-employee-print" /></div>
-            <div class="field"><label>Date</label><input id="pub-ori-employee-date" type="date" /></div>
-            <div class="field"><label>Employee Signature (type full name)</label><input id="pub-ori-employee-signature" /></div>
-            <div class="field"><label>Supervisor Printed Name</label><input id="pub-ori-supervisor-print" /></div>
-          </div>
-        </details>
-
-        <details class="public-packet-window" data-packet-section="drug" hidden style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff8e1;">
-          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🧪 Drug & Alcohol Test Consent</summary>
-          <p style="font-size:13px;line-height:1.55;margin-top:12px;">I voluntarily consent to submit to a drug and/or alcohol test as directed by PAL Environmental Services or the applicable jobsite requirements. I understand that a positive result or refusal to submit to required testing may result in disciplinary action, up to and including termination or removal from the jobsite. I authorize the release of results to PAL Environmental Services for employment/jobsite eligibility purposes.</p>
-          <div class="report-grid">
-            <div class="field"><label>Employee Printed Name</label><input id="pub-drug-employee-name" /></div>
-            <div class="field"><label>Last 4 of SSN</label><input id="pub-drug-ssn4" maxlength="4" inputmode="numeric" /></div>
-            <div class="field"><label>Date</label><input id="pub-drug-form-date" type="date" /></div>
-            <div class="field"><label>Employee Signature (type full name)</label><input id="pub-drug-form-signature" /></div>
-            <div class="field span-2"><label><input type="checkbox" id="pub-drug-form-consent" /> I consent to the drug/alcohol testing requirements described above.</label></div>
-          </div>
-        </details>
-
-        <details class="public-packet-window" data-packet-section="safety" hidden style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
-          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🏗️ Scaffold / Fall / Ladder Safety Agreement</summary>
-          <div style="font-size:13px;line-height:1.55;margin-top:12px;">
-            <p><strong>Scaffolding:</strong> I acknowledge PAL scaffold safety requirements, including inspections before use, load capacity limits, safe access, guardrails, and prohibited unsafe activities.</p>
-            <p><strong>Fall Protection:</strong> I acknowledge fall protection requirements, including proper harness/lanyard use, inspection before use, proper tie-off, and fall protection when exposed to applicable fall hazards.</p>
-            <p><strong>Ladder Safety:</strong> I acknowledge ladder safety requirements, including pre-use inspection, correct setup, 4:1 ratio for extension ladders, maintaining three points of contact, and not exceeding the ladder duty rating.</p>
-          </div>
-          <div class="report-grid">
-            <div class="field"><label>Employee Printed Name</label><input id="pub-sfl-employee-name" /></div>
-            <div class="field"><label>Date</label><input id="pub-sfl-date" type="date" /></div>
-            <div class="field"><label>Last 4 of SSN</label><input id="pub-sfl-ssn4" maxlength="4" inputmode="numeric" /></div>
-            <div class="field"><label>Supervisor</label><input id="pub-sfl-supervisor" /></div>
-            <div class="field span-2"><label>Employee Signature (type full name)</label><input id="pub-sfl-signature" /></div>
-            <div class="field span-2"><label><input type="checkbox" id="pub-sfl-ack" /> I acknowledge and agree to follow scaffold, fall protection, and ladder safety requirements.</label></div>
-          </div>
-        </details>
-
-        <details class="public-packet-window" data-packet-section="w4" hidden style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff;">
-          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">📄 W-4 Information / Upload</summary>
-          <div class="helper-text" style="margin-top:10px;">This section captures W-4 style information for office review. The office should verify official payroll/tax paperwork before processing.</div>
-          <div class="report-grid" style="margin-top:12px;">
-            <div class="field"><label>First Name & Middle Initial</label><input id="pub-w4-first-name" /></div>
-            <div class="field"><label>Last Name</label><input id="pub-w4-last-name" /></div>
-            <div class="field span-2"><label>Address</label><input id="pub-w4-address" /></div>
-            <div class="field"><label>City or Town</label><input id="pub-w4-city" /></div>
-            <div class="field"><label>State</label><input id="pub-w4-state" /></div>
-            <div class="field"><label>ZIP Code</label><input id="pub-w4-zip" /></div>
-            <div class="field"><label>Social Security Number</label><input id="pub-w4-ssn" placeholder="XXX-XX-XXXX" /></div>
-            <div class="field span-2"><label>Filing Status</label><select id="pub-w4-filing-status"><option value="">Select…</option><option>Single or Married filing separately</option><option>Married filing jointly / Qualifying surviving spouse</option><option>Head of household</option></select></div>
-            <div class="field span-2"><label><input type="checkbox" id="pub-w4-multiple-jobs" /> Step 2: Multiple jobs or spouse works</label></div>
-            <div class="field"><label>Step 3: Qualifying Children Credit</label><input id="pub-w4-child-credit" type="number" step="1" min="0" /></div>
-            <div class="field"><label>Step 3: Other Dependents Credit</label><input id="pub-w4-other-credit" type="number" step="1" min="0" /></div>
-            <div class="field"><label>Step 4(a): Other Income</label><input id="pub-w4-other-income" type="number" step="1" min="0" /></div>
-            <div class="field"><label>Step 4(b): Deductions</label><input id="pub-w4-deductions" type="number" step="1" min="0" /></div>
-            <div class="field"><label>Step 4(c): Extra Withholding</label><input id="pub-w4-extra-withholding" type="number" step="1" min="0" /></div>
-            <div class="field"><label>Signature (type full name)</label><input id="pub-w4-signature" /></div>
-            <div class="field"><label>Date</label><input id="pub-w4-date" type="date" /></div>
-            <div class="field"><label>Employer Name / Address</label><input id="pub-w4-employer" value="PAL Environmental Services" /></div>
-            <div class="field"><label>First Date of Employment</label><input id="pub-w4-start-date" type="date" /></div>
-          </div>
-        </details>
-
-        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
-          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🪪 ID / I-9 Supporting Documents</summary>
-          <div class="helper-text" style="margin-top:10px;">Upload clear copies/photos of ID or I-9 supporting documents if requested by PAL office.</div>
-          <div class="report-grid" style="margin-top:12px;">
-            <div class="field"><label>ID Type</label><input id="pub-i9-id-type" placeholder="Driver license, passport, etc." /></div>
-            <div class="field"><label>ID Expiration Date</label><input id="pub-i9-id-exp" type="date" /></div>
-            <div class="field span-2"><label>Additional Notes</label><textarea id="pub-i9-notes" rows="2"></textarea></div>
-          </div>
-        </details>
-
-        <div class="detail-card" style="margin-top:12px;background:#fff;">
-          <h3 style="margin-bottom:8px;">Upload Copies / Supporting Documents</h3>
-          <div class="report-grid">
-            <div class="field span-2"><label>Upload Drug Test / Consent Form (if available)</label><input id="pub-nh-drug-files" type="file" multiple accept=".pdf,image/*" /></div>
-            <div class="field span-2"><label>Upload Completed W-4 / Tax Form (office only)</label><input id="pub-nh-w4-files" type="file" multiple accept=".pdf,image/*" /><div class="helper-text">Sensitive payroll/tax documents should be reviewed by office only.</div></div>
-            <div class="field span-2"><label>Upload I-9 / ID Documents (office only, if requested)</label><input id="pub-nh-i9-files" type="file" multiple accept=".pdf,image/*" /></div>
-            <div class="field span-2"><label>Upload Other New Hire Forms</label><input id="pub-nh-other-form-files" type="file" multiple accept=".pdf,image/*" /></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
-        <h3 style="margin-bottom:6px;">Before You Submit</h3>
-        <div class="helper-text">Make sure all certification photos are clear, readable, and not cut off. PAL office/foreman will review and mark your status.</div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-secondary" type="button" onclick="window.location.href='index.html'">Back to Safety Hub</button>
-        <button class="btn-save" id="pub-submit-intake-btn" type="button" onclick="submitPublicNewHireIntake()">Submit Intake to PAL</button>
       </div>
     </div>
   </div>
@@ -1759,6 +1497,8 @@
   let allTickets = [];
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
+  let publicNewHireId = new URLSearchParams(window.location.search).get('newhire') || new URLSearchParams(window.location.search).get('intake') || "";
+  let publicNewHirePacket = { forms: {} };
   let allWarehouseItems = [];
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
@@ -1769,8 +1509,6 @@
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
-  let publicNewHireIntakeId = new URLSearchParams(window.location.search).get('intake');
-  let publicNewHireIntakeLoaded = false;
   document.title = 'PAL Safety Hub';
 
   // ── Expose functions to global scope ──
@@ -1818,6 +1556,9 @@
   window.openNewHireReview = openNewHireReview;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
+  window.openPublicNewHireForm = openPublicNewHireForm;
+  window.savePublicNewHireForm = savePublicNewHireForm;
+  window.submitPublicNewHirePacket = submitPublicNewHirePacket;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
   window.saveExtraWorkTicket = saveExtraWorkTicket;
@@ -1837,16 +1578,9 @@
   window.saveWarehouseItem = saveWarehouseItem;
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
-  window.submitPublicNewHireIntake = submitPublicNewHireIntake;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
-    if (publicNewHireIntakeId) {
-      currentUser = user || null;
-      showView('view-public-newhire-intake');
-      if (!publicNewHireIntakeLoaded) loadPublicNewHireIntake();
-      return;
-    }
     if (user) {
       currentUser = user;
       updateUserUI(user);
@@ -1871,7 +1605,12 @@
       if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; }
       const regBtn = document.getElementById('reg-btn');
       if (regBtn) { regBtn.disabled = false; regBtn.textContent = 'Create Account'; }
-      showView('view-login');
+      if (publicNewHireId) {
+        initPublicNewHirePacket(publicNewHireId);
+        showView('view-public-newhire-packet');
+      } else {
+        showView('view-login');
+      }
     }
   });
 
@@ -3940,254 +3679,150 @@
 
 
 
-  // PUBLIC_NEWHIRE_INTAKE_NO_LOGIN_PATCH_2026_05_14
-  async function loadPublicNewHireIntake() {
-    if (!publicNewHireIntakeId) return;
-    publicNewHireIntakeLoaded = true;
-    const statusCard = document.getElementById('public-intake-status-card');
-    const formCard = document.getElementById('public-intake-form-card');
-    try {
-      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-      if (!snap.exists()) {
-        if (statusCard) statusCard.innerHTML = `<h3>Intake Request Not Found</h3><p class="helper-text">This PAL intake link may be expired or incorrect. Please contact your foreman or the PAL office.</p>`;
-        return;
-      }
-      const x = { id: snap.id, ...snap.data() };
-      if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Request Loaded</h3>
-        <div class="report-grid" style="margin-top:10px;">
-          <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName || 'PAL jobsite')} ${x.projectJobNumber ? '· Job # ' + esc(x.projectJobNumber) : ''}</div></div>
-          <div class="report-field"><span class="k">Foreman / Contact</span><div class="v">${esc(x.foreman || 'PAL office / foreman')}</div></div>
-          <div class="report-field"><span class="k">Expected Start Date</span><div class="v">${esc(x.startDate || '—')}</div></div>
-          <div class="report-field"><span class="k">Current Status</span><div class="v"><span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span></div></div>
-          <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required || 'Upload all certs requested by PAL.')}</div></div>
-          <div class="report-field span-2"><span class="k">PAL Notes</span><div class="v">${esc(x.notes || 'Please upload clear certification photos before arriving on site.')}</div></div>
-        </div>`;
-      if (formCard) formCard.style.display = 'block';
-      const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
-      set('pub-nh-name', x.name || '');
-      set('pub-nh-phone', x.phone || '');
-      set('pub-nh-email', x.email || '');
-      set('pub-nh-trade', x.trade || '');
-      set('pub-nh-address', x.address || '');
-      set('pub-nh-dob', x.dateOfBirth || '');
-      set('pub-nh-cert-notes', x.certNotes || '');
-      set('pub-nh-union', x.unionOrCardNumber || '');
-      set('pub-nh-ssn-last4', x.ssnLast4 || '');
-      set('pub-nh-orientation-date', new Date().toISOString().slice(0,10));
-      set('pub-nh-drug-date', new Date().toISOString().slice(0,10));
-    } catch (e) {
-      console.error('Public intake load failed', e);
-      if (statusCard) statusCard.innerHTML = `<h3>Could Not Load Intake</h3><p class="helper-text">Please check your connection or contact PAL office. If this keeps happening, the intake link may need to be resent.</p>`;
-    }
-  }
+  // FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE
+  const PUBLIC_NH_FORMS = [
+    { key:'orientation', title:'Orientation Form', icon:'📋', desc:'Company orientation, PPE, site rules, and safety acknowledgement.' },
+    { key:'drugConsent', title:'Drug & Alcohol Consent', icon:'🧪', desc:'Drug/alcohol testing consent and employee acknowledgement.' },
+    { key:'safetyAgreement', title:'Safety Agreement', icon:'🦺', desc:'Scaffold, fall protection, ladder, PPE, and jobsite safety agreement.' },
+    { key:'w4Payroll', title:'W-4 / Payroll Upload', icon:'💵', desc:'Upload completed W-4/payroll documents for office review.' },
+    { key:'idI9', title:'I-9 / ID Documents', icon:'🪪', desc:'Upload ID/I-9 supporting documents for office review.' },
+    { key:'certs', title:'Certification Uploads', icon:'🎓', desc:'Upload OSHA, SST, scaffold, lift, G60, fire watch, and other certifications.' }
+  ];
 
-  // PUBLIC_NEWHIRE_TO_EMPLOYEE_CERT_SYNC_PHASE3_2026_05_14
-  function buildEmployeeCertsFromPublicUploads(uploaded, certType, certNotes) {
-    return (uploaded || []).map(file => ({
-      type: certType || 'New Hire Certification Upload',
-      title: certType || 'New Hire Certification Upload',
-      issueDate: '',
-      expirationDate: '',
-      fileName: file.name || 'Certification File',
-      mimeType: file.mimeType || '',
-      url: file.url,
-      path: file.path || '',
-      uploadedAt: file.uploadedAt || new Date().toISOString(),
-      uploadedBy: 'Public New Hire Intake',
-      source: 'new-hire-public-intake',
-      notes: certNotes || ''
-    }));
-  }
-
-  // PUBLIC_NEWHIRE_PACKET_FORMS_PHASE4_2026_05_14
-  async function uploadPublicNewHireFiles(inputId, intakeId, folderName, sourceLabel) {
-    const input = document.getElementById(inputId);
-    const files = Array.from(input?.files || []);
-    const uploaded = [];
-    for (const file of files) {
-      const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-      const path = `newHireIntakes/${intakeId}/${folderName}/${safeName}`;
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      uploaded.push({
-        name: file.name,
-        fileName: file.name,
-        url,
-        path,
-        mimeType: file.type || '',
-        uploadedAt: new Date().toISOString(),
-        source: sourceLabel || folderName
-      });
-    }
-    return uploaded;
-  }
-
-
-  // PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14
-  window.showPublicPacketForm = function(sectionName) {
-    document.querySelectorAll('.public-packet-tab').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.packetTarget === sectionName);
-    });
-    document.querySelectorAll('.public-packet-window[data-packet-section]').forEach(win => {
-      const active = win.dataset.packetSection === sectionName;
-      win.hidden = !active;
-      if (active) win.open = true;
-    });
-  };
-
-  function initPublicPacketTabs() {
-    const first = document.querySelector('.public-packet-tab.active')?.dataset.packetTarget || 'orientation';
-    if (document.querySelector('.public-packet-window[data-packet-section]')) {
-      window.showPublicPacketForm(first);
-    }
-  }
-  document.addEventListener('DOMContentLoaded', initPublicPacketTabs);
-
-  // PUBLIC_NEWHIRE_ACTUAL_FILLABLE_FORMS_PHASE5_2026_05_14
-  function collectPublicNewHireActualForms() {
-    const data = {};
-    document.querySelectorAll('#pub-newhire-actual-forms input, #pub-newhire-actual-forms textarea, #pub-newhire-actual-forms select').forEach(el => {
-      if (!el.id || el.type === 'file') return;
-      data[el.id] = el.type === 'checkbox' ? !!el.checked : (el.value || '').trim();
-    });
-    return data;
-  }
-
-  function getPublicNewHirePacketData() {
-    const actualForms = collectPublicNewHireActualForms();
-    return {
-      unionOrCardNumber: document.getElementById('pub-nh-union')?.value.trim() || '',
-      ssnLast4: document.getElementById('pub-nh-ssn-last4')?.value.trim() || '',
-      actualForms,
-      orientationNotes: actualForms['pub-ori-employee-signature'] ? 'Completed fillable Company Orientation Form.' : '',
-      orientationAcknowledged: !!actualForms['pub-ori-employee-signature'],
-      orientationSignature: actualForms['pub-ori-employee-signature'] || '',
-      orientationDate: actualForms['pub-ori-employee-date'] || actualForms['pub-ori-date'] || '',
-      drugNotes: actualForms['pub-drug-form-consent'] ? 'Completed fillable Drug & Alcohol Consent form.' : '',
-      drugAcknowledged: !!actualForms['pub-drug-form-consent'],
-      drugSignature: actualForms['pub-drug-form-signature'] || '',
-      drugDate: actualForms['pub-drug-form-date'] || ''
-    };
-  }
-
-  async function syncPublicIntakeToEmployeeCertRecord(intakeId, intakeData, uploadedCertFiles, onboardingFormFiles, packetData) {
-    const certType = document.getElementById('pub-nh-cert-type')?.value || 'New Hire Certification Upload';
-    const certNotes = document.getElementById('pub-nh-cert-notes')?.value.trim() || '';
-    const newCerts = buildEmployeeCertsFromPublicUploads(uploadedCertFiles, certType, certNotes);
-    const assignedProjectIds = intakeData.projectId ? [intakeData.projectId] : [];
-    const employeePayload = {
-      name: document.getElementById('pub-nh-name')?.value.trim() || intakeData.name || '',
-      phone: document.getElementById('pub-nh-phone')?.value.trim() || intakeData.phone || '',
-      email: document.getElementById('pub-nh-email')?.value.trim() || intakeData.email || '',
-      trade: document.getElementById('pub-nh-trade')?.value.trim() || intakeData.trade || '',
-      address: document.getElementById('pub-nh-address')?.value.trim() || intakeData.address || '',
-      dateOfBirth: document.getElementById('pub-nh-dob')?.value || intakeData.dateOfBirth || '',
-      unionOrCardNumber: packetData?.unionOrCardNumber || intakeData.unionOrCardNumber || '',
-      ssnLast4: packetData?.ssnLast4 || intakeData.ssnLast4 || '',
-      onboardingPacket: packetData || {},
-      onboardingForms: onboardingFormFiles || [],
-      emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
-      emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
-      notes: [
-        'Created/updated from public New Hire Pre-Site Intake.',
-        intakeData.projectName ? `Project: ${intakeData.projectName}${intakeData.projectJobNumber ? ' · Job # ' + intakeData.projectJobNumber : ''}` : '',
-        document.getElementById('pub-nh-notes')?.value.trim() || ''
-      ].filter(Boolean).join('\n'),
-      assignedProjectIds,
-      sourceIntakeId: intakeId,
-      source: 'public-new-hire-intake',
-      intakeStatus: 'Ready for Review',
-      updatedAt: serverTimestamp()
-    };
-
-    if (intakeData.employeeId) {
-      const employeeRef = doc(db, 'employees', intakeData.employeeId);
-      const currentSnap = await getDoc(employeeRef);
-      const currentCerts = currentSnap.exists() ? (currentSnap.data().certifications || []) : [];
-      const currentForms = currentSnap.exists() ? (currentSnap.data().onboardingForms || []) : [];
-      await updateDoc(employeeRef, {
-        ...employeePayload,
-        onboardingForms: [...currentForms, ...(onboardingFormFiles || [])],
-        certifications: [...currentCerts, ...newCerts]
-      });
-      return intakeData.employeeId;
-    }
-
-    const employeeRef = await addDoc(collection(db, 'employees'), {
-      ...employeePayload,
-      certifications: newCerts,
-      createdByName: 'Public New Hire Intake',
-      createdAt: serverTimestamp()
-    });
-    return employeeRef.id;
-  }
-
-  async function submitPublicNewHireIntake() {
-    if (!publicNewHireIntakeId) return toast('Missing intake link.');
-    const btn = document.getElementById('pub-submit-intake-btn');
-    const input = document.getElementById('pub-nh-files');
-    const files = Array.from(input?.files || []);
-    try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
-      const uploaded = await uploadPublicNewHireFiles('pub-nh-files', publicNewHireIntakeId, 'certUploads', 'public-intake-cert');
-      const drugFiles = await uploadPublicNewHireFiles('pub-nh-drug-files', publicNewHireIntakeId, 'drugConsentUploads', 'drug-alcohol-consent');
-      const w4Files = await uploadPublicNewHireFiles('pub-nh-w4-files', publicNewHireIntakeId, 'w4Uploads', 'w4-tax-form');
-      const i9Files = await uploadPublicNewHireFiles('pub-nh-i9-files', publicNewHireIntakeId, 'i9Uploads', 'i9-id-documents');
-      const otherFormFiles = await uploadPublicNewHireFiles('pub-nh-other-form-files', publicNewHireIntakeId, 'otherNewHireForms', 'other-new-hire-form');
-      const onboardingFormFiles = [
-        ...drugFiles.map(f => ({ ...f, type: 'Drug & Alcohol Consent' })),
-        ...w4Files.map(f => ({ ...f, type: 'W-4 / Tax Form', officeOnly: true })),
-        ...i9Files.map(f => ({ ...f, type: 'I-9 / ID Documents', officeOnly: true })),
-        ...otherFormFiles.map(f => ({ ...f, type: 'Other New Hire Form' }))
-      ];
-      const packetData = getPublicNewHirePacketData();
-      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-      const intakeData = snap.exists() ? { id: snap.id, ...snap.data() } : {};
-      const existing = intakeData.certFiles || [];
-      let syncedEmployeeId = '';
+  async function initPublicNewHirePacket(id) {
+    publicNewHireId = id || publicNewHireId;
+    publicNewHirePacket = { id: publicNewHireId, forms: {} };
+    const label = document.getElementById('pub-nh-intake-label');
+    if (label) label.textContent = `Packet ID: ${publicNewHireId || 'Manual Entry'}`;
+    if (publicNewHireId) {
       try {
-        syncedEmployeeId = await syncPublicIntakeToEmployeeCertRecord(publicNewHireIntakeId, intakeData, uploaded, onboardingFormFiles, packetData);
-      } catch (syncErr) {
-        console.error('Employee Cert sync failed', syncErr);
-        // Keep the intake submission alive even if Employee Cert sync needs Firebase rule adjustment.
+        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireId));
+        if (snap.exists()) {
+          publicNewHirePacket = { id: snap.id, ...snap.data(), forms: snap.data().forms || {} };
+          setPublicValue('pub-nh-name', publicNewHirePacket.name);
+          setPublicValue('pub-nh-phone', publicNewHirePacket.phone);
+          setPublicValue('pub-nh-email', publicNewHirePacket.email);
+          setPublicValue('pub-nh-trade', publicNewHirePacket.trade);
+          setPublicValue('pub-nh-start-date', publicNewHirePacket.startDate);
+        }
+      } catch (e) { console.warn('Could not load public new hire packet', e); }
+    }
+    renderPublicNewHireLauncher();
+  }
+
+  function setPublicValue(id, value) { const el = document.getElementById(id); if (el && value) el.value = value; }
+
+  function renderPublicNewHireLauncher() {
+    const launcher = document.getElementById('pub-nh-form-launcher');
+    if (!launcher) return;
+    launcher.innerHTML = PUBLIC_NH_FORMS.map(f => {
+      const done = publicNewHirePacket.forms?.[f.key]?.status === 'Completed';
+      return `<div class="nh-launch-card ${done ? 'done' : ''}">
+        <h4>${f.icon} ${esc(f.title)} ${done ? '<span class="pill active">Complete</span>' : '<span class="pill pending">Pending</span>'}</h4>
+        <p>${esc(f.desc)}</p>
+        <button class="btn-save" onclick="openPublicNewHireForm('${esc(f.key)}')">Open Form</button>
+      </div>`;
+    }).join('');
+  }
+
+  function openPublicNewHireForm(key) {
+    const def = PUBLIC_NH_FORMS.find(f => f.key === key);
+    const win = document.getElementById('pub-nh-form-window');
+    if (!def || !win) return;
+    const existing = publicNewHirePacket.forms?.[key] || {};
+    let body = '';
+    if (key === 'certs') {
+      body = `<div class="daily-report-form-grid">
+        <div class="field"><label>Certification Type</label><select id="nh-form-cert-type"><option>OSHA 30</option><option>OSHA 10</option><option>SST</option><option>Scaffold</option><option>Lift Cert</option><option>G60</option><option>Fire Watch</option><option>Other</option></select></div>
+        <div class="field"><label>Expiration Date</label><input id="nh-form-cert-exp" type="date" value="${esc(existing.certExp || '')}"></div>
+        <div class="field span-2"><label>Upload Cert Photos / PDFs</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
+        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else if (key === 'w4Payroll' || key === 'idI9') {
+      body = `<div class="helper-text" style="margin-bottom:10px;">Upload completed documents/photos. These will link to your employee file for office review.</div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Upload Files</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
+        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    } else {
+      body = `<div class="helper-text" style="margin-bottom:10px;">Read each acknowledgement, check the boxes, type your name as your signature, and save this form.</div>
+      <div class="nh-check-list">
+        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I have read and understand this form.</label>
+        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I agree to follow PAL safety and jobsite requirements.</label>
+        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I understand missing or false information may delay my clearance to work.</label>
+      </div>
+      <div class="daily-report-form-grid">
+        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
+        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || new Date().toISOString().slice(0,10))}"></div>
+        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
+      </div>`;
+    }
+    win.style.display = 'block';
+    win.innerHTML = `<h4>${def.icon} ${esc(def.title)}</h4>${body}<div class="nh-status-row"><button class="btn-save" onclick="savePublicNewHireForm('${esc(key)}')">Save This Form</button><button class="btn-outline" onclick="document.getElementById('pub-nh-form-window').style.display='none'">Close</button></div>`;
+    win.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  async function savePublicNewHireForm(key) {
+    try {
+      const filesEl = document.getElementById('nh-form-files');
+      const files = filesEl?.files ? Array.from(filesEl.files) : [];
+      const uploaded = [];
+      for (const file of files) {
+        const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+        const path = `newHireIntakes/${publicNewHireId || 'manual'}/${key}/${safeName}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, file);
+        uploaded.push({ name:file.name, type:file.type, url: await getDownloadURL(storageRef), path, uploadedAt: new Date().toISOString() });
       }
-      await updateDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        name: document.getElementById('pub-nh-name')?.value.trim() || '',
+      const data = {
+        status:'Completed', completedAt:new Date().toISOString(),
+        notes: document.getElementById('nh-form-notes')?.value || '',
+        signature: document.getElementById('nh-form-signature')?.value || '',
+        date: document.getElementById('nh-form-date')?.value || '',
+        ack1: !!document.getElementById('nh-form-ack1')?.checked,
+        ack2: !!document.getElementById('nh-form-ack2')?.checked,
+        ack3: !!document.getElementById('nh-form-ack3')?.checked,
+        certType: document.getElementById('nh-form-cert-type')?.value || '',
+        certExp: document.getElementById('nh-form-cert-exp')?.value || '',
+        files: [ ...(publicNewHirePacket.forms?.[key]?.files || []), ...uploaded ]
+      };
+      publicNewHirePacket.forms = { ...(publicNewHirePacket.forms || {}), [key]: data };
+      if (publicNewHireId) await updateDoc(doc(db, 'newHireIntakes', publicNewHireId), { [`forms.${key}`]: data, status:'Ready for Review', updatedAt:serverTimestamp() });
+      renderPublicNewHireLauncher();
+      document.getElementById('pub-nh-form-window').style.display='none';
+      toast('Form saved to packet.');
+    } catch (e) { console.error(e); toast('Could not save form. Firebase rules may need public intake access.'); }
+  }
+
+  async function submitPublicNewHirePacket() {
+    const btn = document.getElementById('pub-nh-submit-btn');
+    const status = document.getElementById('pub-nh-submit-status');
+    if (btn) { btn.disabled=true; btn.textContent='Submitting...'; }
+    try {
+      const employee = {
+        name: document.getElementById('pub-nh-name')?.value.trim() || publicNewHirePacket.name || '',
         phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
         email: document.getElementById('pub-nh-email')?.value.trim() || '',
         trade: document.getElementById('pub-nh-trade')?.value.trim() || '',
         address: document.getElementById('pub-nh-address')?.value.trim() || '',
-        dateOfBirth: document.getElementById('pub-nh-dob')?.value || '',
-        emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
-        emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
-        employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
-        certNotes: document.getElementById('pub-nh-cert-notes')?.value.trim() || '',
-        certFiles: [...existing, ...uploaded],
-        onboardingPacket: packetData,
-        onboardingForms: [...(intakeData.onboardingForms || []), ...onboardingFormFiles],
-        unionOrCardNumber: packetData.unionOrCardNumber || '',
-        ssnLast4: packetData.ssnLast4 || '',
-        employeeId: syncedEmployeeId || intakeData.employeeId || '',
-        employeeCertSyncStatus: syncedEmployeeId ? 'Synced to Employee Certs' : 'Needs Office Review / Sync',
-        status: 'Ready for Review',
-        employeeSubmittedAt: new Date().toISOString(),
-        updatedAt: serverTimestamp()
-      });
-      const statusCard = document.getElementById('public-intake-status-card');
-      const formCard = document.getElementById('public-intake-form-card');
-      if (statusCard) statusCard.innerHTML = `<h3>✅ Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information, certification files, and new-hire forms were submitted. PAL office/foreman will review and confirm your status before you enter the site. If Firebase permissions allow it, your Employee Cert record was also created/updated automatically.</p>`;
-      if (formCard) formCard.style.display = 'none';
-      toast('Intake submitted to PAL.');
-    } catch (e) {
-      console.error('Public intake submit failed', e);
-      toast('Could not submit intake. PAL may need to enable public intake upload permissions.');
-      const statusCard = document.getElementById('public-intake-status-card');
-      if (statusCard) statusCard.innerHTML += `<p style="color:var(--red);font-weight:800;margin-top:10px;">Submission failed. Please contact PAL office or your foreman.</p>`;
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Submit Intake to PAL'; }
-    }
+        emergencyName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
+        emergencyPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
+        intakeId: publicNewHireId || '', projectId: publicNewHirePacket.projectId || '', projectName: publicNewHirePacket.projectName || '',
+        status:'Ready for Review', newHireForms: publicNewHirePacket.forms || {}, notes:'Created from public new hire packet.', createdAt:serverTimestamp(), updatedAt:serverTimestamp()
+      };
+      if (!employee.name) { toast('Enter your full name first.'); return; }
+      const empRef = await addDoc(collection(db, 'employees'), employee);
+      const certForm = publicNewHirePacket.forms?.certs;
+      if (certForm?.files?.length) {
+        await updateDoc(empRef, { certifications: certForm.files.map(f => ({ title:certForm.certType || 'Certification', type:certForm.certType || 'Certification', expDate:certForm.certExp || '', fileName:f.name, fileUrl:f.url, uploadedAt:new Date().toISOString(), source:'New Hire Intake' })) });
+      }
+      if (publicNewHireId) await updateDoc(doc(db, 'newHireIntakes', publicNewHireId), { employeeId:empRef.id, status:'Ready for Review', submittedAt:serverTimestamp(), updatedAt:serverTimestamp() });
+      if (status) status.textContent = 'Submitted. PAL office will review your packet.';
+      toast('New hire packet submitted.');
+    } catch (e) { console.error(e); if (status) status.textContent='Could not submit. Please contact PAL office.'; toast('Could not submit packet.'); }
+    finally { if (btn) { btn.disabled=false; btn.textContent='Submit New Hire Packet'; } }
   }
+
 
   // NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12
   function newHireStatusClass(status) {
@@ -4281,7 +3916,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
-      const intakeLink = `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`;
+      const intakeLink = `${window.location.origin}${window.location.pathname}?newhire=${docRef.id}`;
       await updateDoc(doc(db, 'newHireIntakes', docRef.id), { intakeLink });
       closeModal('modal-newhire-intake');
       toast('New hire intake request created.');
