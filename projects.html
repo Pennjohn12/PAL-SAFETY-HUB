@@ -708,7 +708,33 @@
     .nh-launch-card h4 { color:var(--navy); margin:0 0 6px; }
     .nh-launch-card p { color:var(--muted); font-size:13px; line-height:1.45; margin:0 0 12px; }
     .nh-public-shell { max-width:900px; margin:0 auto; padding:24px 16px 80px; }
-    .nh-form-window { background:white; border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:0 6px 18px rgba(16,24,40,.05); margin-top:16px; }
+    /* FORM_LAUNCHER_DOCUMENT_WINDOW_PHASE3_2026_05_14 */
+    .nh-form-window {
+      position: fixed; inset: 0; z-index: 5000;
+      background: rgba(15,23,42,.55);
+      padding: 18px; overflow-y: auto;
+      display: none;
+    }
+    .nh-form-document {
+      max-width: 920px; margin: 0 auto 40px; background: #fff;
+      border: 1px solid var(--line); border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.28); overflow: hidden;
+    }
+    .nh-form-document-head {
+      background: var(--navy); color: white; padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .nh-form-document-head h4 { margin: 0; color: white; font-size: 18px; }
+    .nh-form-document-head p { margin: 3px 0 0; color: rgba(255,255,255,.75); font-size: 12px; }
+    .nh-form-document-body { padding: 18px; }
+    .nh-form-document-actions {
+      position: sticky; bottom: 0; background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line); padding: 12px 18px;
+      display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+    }
+    .nh-doc-important { background:#fff7ed; border:1px solid #fed7aa; border-left:5px solid #d97706; border-radius:14px; padding:12px; margin:10px 0; }
+    .nh-doc-confirm-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:12px; margin:10px 0; }
+    @media(max-width:700px){ .nh-form-window{padding:0;} .nh-form-document{border-radius:0; min-height:100vh;} .nh-form-document-head{align-items:flex-start; flex-direction:column;} }
     .nh-check-list label { display:block; padding:8px 0; font-size:14px; }
     .nh-status-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 
@@ -3691,6 +3717,7 @@
 
   // FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE
   // FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14
+  // FORM_LAUNCHER_DOCUMENT_WINDOW_PHASE3_2026_05_14
   const PUBLIC_NH_FORMS = [
     { key:'orientation', title:'Orientation Form', icon:'📋', desc:'Company orientation, PPE, site rules, and safety acknowledgement.' },
     { key:'drugConsent', title:'Drug & Alcohol Consent', icon:'🧪', desc:'Drug/alcohol testing consent and employee acknowledgement.' },
@@ -3749,10 +3776,11 @@
       body = `<div class="nh-doc-banner">PAL Environmental Services — Company / Site Orientation Form</div>
       <div class="nh-doc-paper">
         <h5>Orientation Review</h5>
-        <p>This orientation confirms that the employee has reviewed PAL jobsite expectations before reporting to work. The employee must understand that all site rules, PAL policies, and foreman/supervisor directions must be followed at all times.</p>
+        <p>This orientation form is part of the employee pre-site onboarding packet. The employee must review the rules below before reporting to the jobsite. These items do not replace site-specific instructions from the foreman, superintendent, GC, or PAL office.</p>
+        <div class="nh-doc-important"><strong>Important:</strong> Do not begin work until PAL has confirmed that your required paperwork and certifications are accepted for the jobsite.</div>
         <ul>
-          <li>Report to the assigned foreman/supervisor before starting work.</li>
-          <li>Wear required PPE including hard hat, safety glasses, vest/shirt, gloves, work boots, and any task-specific PPE.</li>
+          <li>Report to the assigned PAL foreman/supervisor before starting work and before moving to a new work area.</li>
+          <li>Wear required PPE at all times: hard hat, safety glasses, high-visibility vest/shirt, gloves, work boots, long pants, and task-specific PPE such as respirator, harness, face shield, or hearing protection when required.</li>
           <li>Attend required daily safety meetings and toolbox talks.</li>
           <li>Report unsafe conditions, injuries, near misses, and incidents immediately.</li>
           <li>Do not operate equipment unless authorized and trained.</li>
@@ -3773,7 +3801,7 @@
       body = `<div class="nh-doc-banner">Drug & Alcohol Testing Consent</div>
       <div class="nh-doc-paper">
         <h5>Consent Statement</h5>
-        <p>I understand that PAL and/or the jobsite may require drug and alcohol testing as part of employment, site access, post-incident review, reasonable suspicion, random testing, or other company/jobsite requirements.</p>
+        <p>This consent form explains that PAL and/or the jobsite may require drug and alcohol testing as part of employment, site access, post-incident review, reasonable suspicion, random testing, or other company/jobsite requirements.</p><div class="nh-doc-important"><strong>Employee Notice:</strong> Do not sign unless you understand that testing requirements may affect jobsite access and clearance.</div>
         <p>I consent to testing as required and understand that refusal to test, failure to cooperate, or violation of jobsite/company policy may affect my ability to work.</p>
       </div>
       <div class="nh-check-list">
@@ -3791,7 +3819,7 @@
       body = `<div class="nh-doc-banner">Scaffold / Fall Protection / Ladder Safety Agreement</div>
       <div class="nh-doc-paper">
         <h5>Safety Agreement</h5>
-        <p>The employee acknowledges that they must follow PAL and jobsite safety requirements for elevated work, scaffolds, ladders, lifts, PPE, and fall protection.</p>
+        <p>The employee acknowledges that they must follow PAL and jobsite safety requirements for elevated work, scaffolds, ladders, lifts, PPE, and fall protection. This agreement is intended to be reviewed before the employee performs any jobsite task involving elevated work or equipment.</p><div class="nh-doc-important"><strong>Stop Work Rule:</strong> If you are unsure whether conditions are safe, stop and contact your foreman before continuing.</div>
         <ul>
           <li>Use fall protection when required by PAL, OSHA, or jobsite rules.</li>
           <li>Do not alter or use unsafe scaffolds, ladders, lifts, or guardrails.</li>
@@ -3850,8 +3878,18 @@
     }
 
     win.style.display = 'block';
-    win.innerHTML = `<h4>${def.icon} ${esc(def.title)}</h4>${body}<div class="nh-status-row"><button class="btn-save" onclick="savePublicNewHireForm('${esc(key)}')">Save This Form</button><button class="btn-outline" onclick="document.getElementById('pub-nh-form-window').style.display='none'">Close</button></div>`;
-    win.scrollIntoView({ behavior:'smooth', block:'start' });
+    win.innerHTML = `<div class="nh-form-document">
+      <div class="nh-form-document-head">
+        <div><h4>${def.icon} ${esc(def.title)}</h4><p>Employee onboarding form · Linked to this new hire packet / employee file</p></div>
+        <button class="btn-secondary" onclick="document.getElementById('pub-nh-form-window').style.display='none'">← Back to Packet</button>
+      </div>
+      <div class="nh-form-document-body">${body}</div>
+      <div class="nh-form-document-actions">
+        <button class="btn-save" onclick="savePublicNewHireForm('${esc(key)}')">Save This Form to Employee File</button>
+        <button class="btn-outline" onclick="document.getElementById('pub-nh-form-window').style.display='none'">Close Without Saving</button>
+      </div>
+    </div>`;
+    win.scrollTo({ top: 0, behavior:'smooth' });
   }
 
   async function savePublicNewHireForm(key) {
