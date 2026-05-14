@@ -852,29 +852,126 @@
         </div>
       </div>
 
-      <div class="detail-card" style="margin-top:14px;background:#fff;">
-        <h3 style="margin-bottom:8px;">New Hire Forms / Acknowledgements</h3>
-        <div class="report-grid">
-          <div class="field span-2">
-            <label>Site Orientation / Safety Acknowledgement</label>
-            <textarea id="pub-nh-orientation-notes" rows="3" placeholder="Employee confirms orientation items reviewed, PPE requirements, site rules, emergency procedures, and reporting requirements."></textarea>
-            <label style="margin-top:8px;"><input type="checkbox" id="pub-nh-orientation-ack" /> I acknowledge PAL site orientation and safety rules will be reviewed and followed.</label>
-          </div>
-          <div class="field"><label>Orientation Signature (type full name)</label><input id="pub-nh-orientation-signature" placeholder="Type full name" /></div>
-          <div class="field"><label>Orientation Date</label><input id="pub-nh-orientation-date" type="date" /></div>
+      <div class="detail-card" style="margin-top:14px;background:#fff;" id="pub-newhire-actual-forms">
+        <!-- PUBLIC_NEWHIRE_ACTUAL_FILLABLE_FORMS_PHASE5_2026_05_14 -->
+        <h3 style="margin-bottom:8px;">Fillable New Hire Forms</h3>
+        <div class="helper-text" style="margin-bottom:12px;">Complete the forms below before submitting. Uploaded PDF/photo copies can still be attached at the bottom for office records.</div>
 
-          <div class="field span-2">
-            <label>Drug & Alcohol Consent / Acknowledgement</label>
-            <textarea id="pub-nh-drug-notes" rows="3" placeholder="Employee acknowledges PAL/jobsite drug and alcohol requirements and consents to required screening where applicable."></textarea>
-            <label style="margin-top:8px;"><input type="checkbox" id="pub-nh-drug-ack" /> I acknowledge the drug and alcohol policy/consent requirements.</label>
+        <details open style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
+          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">📋 Company Orientation Form</summary>
+          <div class="report-grid" style="margin-top:12px;">
+            <div class="field"><label>Employee Name</label><input id="pub-ori-emp-name" placeholder="Employee name" /></div>
+            <div class="field"><label>Date</label><input id="pub-ori-date" type="date" /></div>
+            <div class="field"><label>Job / Project Name</label><input id="pub-ori-project" placeholder="Project name" /></div>
+            <div class="field"><label>Job Number</label><input id="pub-ori-job-number" placeholder="Job #" /></div>
+            <div class="field"><label>Supervisor / Foreman</label><input id="pub-ori-supervisor" placeholder="Supervisor / foreman" /></div>
+            <div class="field"><label>Phone Number</label><input id="pub-ori-phone" type="tel" placeholder="Phone" /></div>
+            <div class="field span-2"><label>Emergency Contact Name & Number</label><input id="pub-ori-emergency-contact" placeholder="Name and phone" /></div>
           </div>
-          <div class="field"><label>Drug/Alcohol Signature (type full name)</label><input id="pub-nh-drug-signature" placeholder="Type full name" /></div>
-          <div class="field"><label>Drug/Alcohol Date</label><input id="pub-nh-drug-date" type="date" /></div>
-          <div class="field span-2"><label>Upload Drug Test / Consent Form (if available)</label><input id="pub-nh-drug-files" type="file" multiple accept=".pdf,image/*" /></div>
+          <h4 style="margin:14px 0 8px;color:var(--navy);">Orientation Topics Covered</h4>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-eap"> Emergency Action Plan (E.A.P.)</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-firstaid"> First Aid / CPR Procedures</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-incident"> Incident & Accident Reporting</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-rtw"> Return-to-Work / Light Duty Policy</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-drug"> Drug & Alcohol Policy</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-harassment"> Anti-Harassment Policy</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-hazcom"> Hazard Communication (HazCom / SDS)</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-ppe"> Personal Protective Equipment (PPE)</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-fall"> Fall Protection Requirements</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-electrical"> Electrical Safety</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-ladder"> Ladder Safety</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-tools"> Hand & Power Tool Safety</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-loto"> Lockout / Tagout (LOTO)</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-fire"> Fire Safety</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-confined"> Confined Space Entry</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-asbestos"> Asbestos & Lead Awareness</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-silica"> Respirable Crystalline Silica</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-housekeeping"> Housekeeping Standards</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-scaffold"> Scaffold Safety</label>
+            <label class="ori-topic"><input type="checkbox" id="pub-ori-topic-site-rules"> Site-Specific Rules & Procedures</label>
+          </div>
+          <p style="font-size:13px;margin-top:12px;">I confirm that I have received and understood the above orientation topics. I agree to comply with all PAL Environmental Services safety policies and procedures.</p>
+          <div class="report-grid">
+            <div class="field"><label>Employee Printed Name</label><input id="pub-ori-employee-print" /></div>
+            <div class="field"><label>Date</label><input id="pub-ori-employee-date" type="date" /></div>
+            <div class="field"><label>Employee Signature (type full name)</label><input id="pub-ori-employee-signature" /></div>
+            <div class="field"><label>Supervisor Printed Name</label><input id="pub-ori-supervisor-print" /></div>
+          </div>
+        </details>
 
-          <div class="field span-2"><label>Upload Completed W-4 / Tax Form (office only)</label><input id="pub-nh-w4-files" type="file" multiple accept=".pdf,image/*" /><div class="helper-text">Sensitive payroll/tax documents should be reviewed by office only.</div></div>
-          <div class="field span-2"><label>Upload I-9 / ID Documents (office only, if requested)</label><input id="pub-nh-i9-files" type="file" multiple accept=".pdf,image/*" /></div>
-          <div class="field span-2"><label>Upload Other New Hire Forms</label><input id="pub-nh-other-form-files" type="file" multiple accept=".pdf,image/*" /></div>
+        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff8e1;">
+          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🧪 Drug & Alcohol Test Consent</summary>
+          <p style="font-size:13px;line-height:1.55;margin-top:12px;">I voluntarily consent to submit to a drug and/or alcohol test as directed by PAL Environmental Services or the applicable jobsite requirements. I understand that a positive result or refusal to submit to required testing may result in disciplinary action, up to and including termination or removal from the jobsite. I authorize the release of results to PAL Environmental Services for employment/jobsite eligibility purposes.</p>
+          <div class="report-grid">
+            <div class="field"><label>Employee Printed Name</label><input id="pub-drug-employee-name" /></div>
+            <div class="field"><label>Last 4 of SSN</label><input id="pub-drug-ssn4" maxlength="4" inputmode="numeric" /></div>
+            <div class="field"><label>Date</label><input id="pub-drug-form-date" type="date" /></div>
+            <div class="field"><label>Employee Signature (type full name)</label><input id="pub-drug-form-signature" /></div>
+            <div class="field span-2"><label><input type="checkbox" id="pub-drug-form-consent" /> I consent to the drug/alcohol testing requirements described above.</label></div>
+          </div>
+        </details>
+
+        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
+          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🏗️ Scaffold / Fall / Ladder Safety Agreement</summary>
+          <div style="font-size:13px;line-height:1.55;margin-top:12px;">
+            <p><strong>Scaffolding:</strong> I acknowledge PAL scaffold safety requirements, including inspections before use, load capacity limits, safe access, guardrails, and prohibited unsafe activities.</p>
+            <p><strong>Fall Protection:</strong> I acknowledge fall protection requirements, including proper harness/lanyard use, inspection before use, proper tie-off, and fall protection when exposed to applicable fall hazards.</p>
+            <p><strong>Ladder Safety:</strong> I acknowledge ladder safety requirements, including pre-use inspection, correct setup, 4:1 ratio for extension ladders, maintaining three points of contact, and not exceeding the ladder duty rating.</p>
+          </div>
+          <div class="report-grid">
+            <div class="field"><label>Employee Printed Name</label><input id="pub-sfl-employee-name" /></div>
+            <div class="field"><label>Date</label><input id="pub-sfl-date" type="date" /></div>
+            <div class="field"><label>Last 4 of SSN</label><input id="pub-sfl-ssn4" maxlength="4" inputmode="numeric" /></div>
+            <div class="field"><label>Supervisor</label><input id="pub-sfl-supervisor" /></div>
+            <div class="field span-2"><label>Employee Signature (type full name)</label><input id="pub-sfl-signature" /></div>
+            <div class="field span-2"><label><input type="checkbox" id="pub-sfl-ack" /> I acknowledge and agree to follow scaffold, fall protection, and ladder safety requirements.</label></div>
+          </div>
+        </details>
+
+        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff;">
+          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">📄 W-4 Information / Upload</summary>
+          <div class="helper-text" style="margin-top:10px;">This section captures W-4 style information for office review. The office should verify official payroll/tax paperwork before processing.</div>
+          <div class="report-grid" style="margin-top:12px;">
+            <div class="field"><label>First Name & Middle Initial</label><input id="pub-w4-first-name" /></div>
+            <div class="field"><label>Last Name</label><input id="pub-w4-last-name" /></div>
+            <div class="field span-2"><label>Address</label><input id="pub-w4-address" /></div>
+            <div class="field"><label>City or Town</label><input id="pub-w4-city" /></div>
+            <div class="field"><label>State</label><input id="pub-w4-state" /></div>
+            <div class="field"><label>ZIP Code</label><input id="pub-w4-zip" /></div>
+            <div class="field"><label>Social Security Number</label><input id="pub-w4-ssn" placeholder="XXX-XX-XXXX" /></div>
+            <div class="field span-2"><label>Filing Status</label><select id="pub-w4-filing-status"><option value="">Select…</option><option>Single or Married filing separately</option><option>Married filing jointly / Qualifying surviving spouse</option><option>Head of household</option></select></div>
+            <div class="field span-2"><label><input type="checkbox" id="pub-w4-multiple-jobs" /> Step 2: Multiple jobs or spouse works</label></div>
+            <div class="field"><label>Step 3: Qualifying Children Credit</label><input id="pub-w4-child-credit" type="number" step="1" min="0" /></div>
+            <div class="field"><label>Step 3: Other Dependents Credit</label><input id="pub-w4-other-credit" type="number" step="1" min="0" /></div>
+            <div class="field"><label>Step 4(a): Other Income</label><input id="pub-w4-other-income" type="number" step="1" min="0" /></div>
+            <div class="field"><label>Step 4(b): Deductions</label><input id="pub-w4-deductions" type="number" step="1" min="0" /></div>
+            <div class="field"><label>Step 4(c): Extra Withholding</label><input id="pub-w4-extra-withholding" type="number" step="1" min="0" /></div>
+            <div class="field"><label>Signature (type full name)</label><input id="pub-w4-signature" /></div>
+            <div class="field"><label>Date</label><input id="pub-w4-date" type="date" /></div>
+            <div class="field"><label>Employer Name / Address</label><input id="pub-w4-employer" value="PAL Environmental Services" /></div>
+            <div class="field"><label>First Date of Employment</label><input id="pub-w4-start-date" type="date" /></div>
+          </div>
+        </details>
+
+        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
+          <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🪪 ID / I-9 Supporting Documents</summary>
+          <div class="helper-text" style="margin-top:10px;">Upload clear copies/photos of ID or I-9 supporting documents if requested by PAL office.</div>
+          <div class="report-grid" style="margin-top:12px;">
+            <div class="field"><label>ID Type</label><input id="pub-i9-id-type" placeholder="Driver license, passport, etc." /></div>
+            <div class="field"><label>ID Expiration Date</label><input id="pub-i9-id-exp" type="date" /></div>
+            <div class="field span-2"><label>Additional Notes</label><textarea id="pub-i9-notes" rows="2"></textarea></div>
+          </div>
+        </details>
+
+        <div class="detail-card" style="margin-top:12px;background:#fff;">
+          <h3 style="margin-bottom:8px;">Upload Copies / Supporting Documents</h3>
+          <div class="report-grid">
+            <div class="field span-2"><label>Upload Drug Test / Consent Form (if available)</label><input id="pub-nh-drug-files" type="file" multiple accept=".pdf,image/*" /></div>
+            <div class="field span-2"><label>Upload Completed W-4 / Tax Form (office only)</label><input id="pub-nh-w4-files" type="file" multiple accept=".pdf,image/*" /><div class="helper-text">Sensitive payroll/tax documents should be reviewed by office only.</div></div>
+            <div class="field span-2"><label>Upload I-9 / ID Documents (office only, if requested)</label><input id="pub-nh-i9-files" type="file" multiple accept=".pdf,image/*" /></div>
+            <div class="field span-2"><label>Upload Other New Hire Forms</label><input id="pub-nh-other-form-files" type="file" multiple accept=".pdf,image/*" /></div>
+          </div>
         </div>
       </div>
 
@@ -3818,18 +3915,30 @@
     return uploaded;
   }
 
+  // PUBLIC_NEWHIRE_ACTUAL_FILLABLE_FORMS_PHASE5_2026_05_14
+  function collectPublicNewHireActualForms() {
+    const data = {};
+    document.querySelectorAll('#pub-newhire-actual-forms input, #pub-newhire-actual-forms textarea, #pub-newhire-actual-forms select').forEach(el => {
+      if (!el.id || el.type === 'file') return;
+      data[el.id] = el.type === 'checkbox' ? !!el.checked : (el.value || '').trim();
+    });
+    return data;
+  }
+
   function getPublicNewHirePacketData() {
+    const actualForms = collectPublicNewHireActualForms();
     return {
       unionOrCardNumber: document.getElementById('pub-nh-union')?.value.trim() || '',
       ssnLast4: document.getElementById('pub-nh-ssn-last4')?.value.trim() || '',
-      orientationNotes: document.getElementById('pub-nh-orientation-notes')?.value.trim() || '',
-      orientationAcknowledged: !!document.getElementById('pub-nh-orientation-ack')?.checked,
-      orientationSignature: document.getElementById('pub-nh-orientation-signature')?.value.trim() || '',
-      orientationDate: document.getElementById('pub-nh-orientation-date')?.value || '',
-      drugNotes: document.getElementById('pub-nh-drug-notes')?.value.trim() || '',
-      drugAcknowledged: !!document.getElementById('pub-nh-drug-ack')?.checked,
-      drugSignature: document.getElementById('pub-nh-drug-signature')?.value.trim() || '',
-      drugDate: document.getElementById('pub-nh-drug-date')?.value || ''
+      actualForms,
+      orientationNotes: actualForms['pub-ori-employee-signature'] ? 'Completed fillable Company Orientation Form.' : '',
+      orientationAcknowledged: !!actualForms['pub-ori-employee-signature'],
+      orientationSignature: actualForms['pub-ori-employee-signature'] || '',
+      orientationDate: actualForms['pub-ori-employee-date'] || actualForms['pub-ori-date'] || '',
+      drugNotes: actualForms['pub-drug-form-consent'] ? 'Completed fillable Drug & Alcohol Consent form.' : '',
+      drugAcknowledged: !!actualForms['pub-drug-form-consent'],
+      drugSignature: actualForms['pub-drug-form-signature'] || '',
+      drugDate: actualForms['pub-drug-form-date'] || ''
     };
   }
 
