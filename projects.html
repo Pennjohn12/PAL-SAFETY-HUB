@@ -9,6 +9,7 @@
   <!-- LOGIN_RESTORE_NEWHIRE_PHASE2_STABLE_ROLLBACK_2026_05_14 -->
   <!-- LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_INTAKE_NO_LOGIN_PATCH_2026_05_14 -->
+  <!-- PUBLIC_NEWHIRE_TO_EMPLOYEE_CERT_SYNC_PHASE3_2026_05_14 -->
 
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <style>
@@ -812,13 +813,31 @@
         <div class="field"><label>Phone Number</label><input id="pub-nh-phone" placeholder="Your phone number" /></div>
         <div class="field"><label>Email</label><input id="pub-nh-email" type="email" placeholder="Your email" /></div>
         <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Laborer, Fire Watch, Sprayer, etc." /></div>
+        <div class="field"><label>Home Address</label><input id="pub-nh-address" placeholder="Street, City, State, ZIP" /></div>
+        <div class="field"><label>Date of Birth (optional)</label><input id="pub-nh-dob" type="date" /></div>
         <div class="field"><label>Emergency Contact Name</label><input id="pub-nh-emergency-name" placeholder="Emergency contact" /></div>
         <div class="field"><label>Emergency Contact Phone</label><input id="pub-nh-emergency-phone" placeholder="Emergency contact phone" /></div>
         <div class="field span-2"><label>Notes / Missing Information</label><textarea id="pub-nh-notes" rows="3" placeholder="Anything PAL should know before you arrive on site..."></textarea></div>
+        <div class="field">
+          <label>Primary Cert Type for Uploads</label>
+          <select id="pub-nh-cert-type">
+            <option value="New Hire Certification Upload">New Hire Certification Upload</option>
+            <option value="OSHA 30">OSHA 30</option>
+            <option value="OSHA 10">OSHA 10</option>
+            <option value="SST">SST</option>
+            <option value="Scaffold Builder">Scaffold Builder</option>
+            <option value="Fire Watch">Fire Watch</option>
+            <option value="G60">G60</option>
+            <option value="Fall Protection">Fall Protection</option>
+            <option value="Silica">Silica</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Certification Notes</label><input id="pub-nh-cert-notes" placeholder="Example: OSHA 30 and SST card uploaded" /></div>
         <div class="field span-2">
           <label>Upload Certification Photos / Documents</label>
           <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" />
-          <div class="helper-text">Upload clear photos or PDFs of OSHA, SST, scaffold, G60, fire watch, or any certs requested by PAL.</div>
+          <div class="helper-text">Upload clear photos or PDFs of OSHA, SST, scaffold, G60, fire watch, or any certs requested by PAL. These uploads will also create/update the Employee Cert record for office review.</div>
         </div>
       </div>
 
@@ -3707,10 +3726,77 @@
       set('pub-nh-phone', x.phone || '');
       set('pub-nh-email', x.email || '');
       set('pub-nh-trade', x.trade || '');
+      set('pub-nh-address', x.address || '');
+      set('pub-nh-dob', x.dateOfBirth || '');
+      set('pub-nh-cert-notes', x.certNotes || '');
     } catch (e) {
       console.error('Public intake load failed', e);
       if (statusCard) statusCard.innerHTML = `<h3>Could Not Load Intake</h3><p class="helper-text">Please check your connection or contact PAL office. If this keeps happening, the intake link may need to be resent.</p>`;
     }
+  }
+
+  // PUBLIC_NEWHIRE_TO_EMPLOYEE_CERT_SYNC_PHASE3_2026_05_14
+  function buildEmployeeCertsFromPublicUploads(uploaded, certType, certNotes) {
+    return (uploaded || []).map(file => ({
+      type: certType || 'New Hire Certification Upload',
+      title: certType || 'New Hire Certification Upload',
+      issueDate: '',
+      expirationDate: '',
+      fileName: file.name || 'Certification File',
+      mimeType: file.mimeType || '',
+      url: file.url,
+      path: file.path || '',
+      uploadedAt: file.uploadedAt || new Date().toISOString(),
+      uploadedBy: 'Public New Hire Intake',
+      source: 'new-hire-public-intake',
+      notes: certNotes || ''
+    }));
+  }
+
+  async function syncPublicIntakeToEmployeeCertRecord(intakeId, intakeData, uploadedCertFiles) {
+    const certType = document.getElementById('pub-nh-cert-type')?.value || 'New Hire Certification Upload';
+    const certNotes = document.getElementById('pub-nh-cert-notes')?.value.trim() || '';
+    const newCerts = buildEmployeeCertsFromPublicUploads(uploadedCertFiles, certType, certNotes);
+    const assignedProjectIds = intakeData.projectId ? [intakeData.projectId] : [];
+    const employeePayload = {
+      name: document.getElementById('pub-nh-name')?.value.trim() || intakeData.name || '',
+      phone: document.getElementById('pub-nh-phone')?.value.trim() || intakeData.phone || '',
+      email: document.getElementById('pub-nh-email')?.value.trim() || intakeData.email || '',
+      trade: document.getElementById('pub-nh-trade')?.value.trim() || intakeData.trade || '',
+      address: document.getElementById('pub-nh-address')?.value.trim() || intakeData.address || '',
+      dateOfBirth: document.getElementById('pub-nh-dob')?.value || intakeData.dateOfBirth || '',
+      emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
+      emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
+      notes: [
+        'Created/updated from public New Hire Pre-Site Intake.',
+        intakeData.projectName ? `Project: ${intakeData.projectName}${intakeData.projectJobNumber ? ' · Job # ' + intakeData.projectJobNumber : ''}` : '',
+        document.getElementById('pub-nh-notes')?.value.trim() || ''
+      ].filter(Boolean).join('\n'),
+      assignedProjectIds,
+      sourceIntakeId: intakeId,
+      source: 'public-new-hire-intake',
+      intakeStatus: 'Ready for Review',
+      updatedAt: serverTimestamp()
+    };
+
+    if (intakeData.employeeId) {
+      const employeeRef = doc(db, 'employees', intakeData.employeeId);
+      const currentSnap = await getDoc(employeeRef);
+      const currentCerts = currentSnap.exists() ? (currentSnap.data().certifications || []) : [];
+      await updateDoc(employeeRef, {
+        ...employeePayload,
+        certifications: [...currentCerts, ...newCerts]
+      });
+      return intakeData.employeeId;
+    }
+
+    const employeeRef = await addDoc(collection(db, 'employees'), {
+      ...employeePayload,
+      certifications: newCerts,
+      createdByName: 'Public New Hire Intake',
+      createdAt: serverTimestamp()
+    });
+    return employeeRef.id;
   }
 
   async function submitPublicNewHireIntake() {
@@ -3727,26 +3813,39 @@
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake' });
+        uploaded.push({ name: file.name, url, path, mimeType: file.type || '', uploadedAt: new Date().toISOString(), source: 'public-intake' });
       }
       const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-      const existing = snap.exists() ? (snap.data().certFiles || []) : [];
+      const intakeData = snap.exists() ? { id: snap.id, ...snap.data() } : {};
+      const existing = intakeData.certFiles || [];
+      let syncedEmployeeId = '';
+      try {
+        syncedEmployeeId = await syncPublicIntakeToEmployeeCertRecord(publicNewHireIntakeId, intakeData, uploaded);
+      } catch (syncErr) {
+        console.error('Employee Cert sync failed', syncErr);
+        // Keep the intake submission alive even if Employee Cert sync needs Firebase rule adjustment.
+      }
       await updateDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         name: document.getElementById('pub-nh-name')?.value.trim() || '',
         phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
         email: document.getElementById('pub-nh-email')?.value.trim() || '',
         trade: document.getElementById('pub-nh-trade')?.value.trim() || '',
+        address: document.getElementById('pub-nh-address')?.value.trim() || '',
+        dateOfBirth: document.getElementById('pub-nh-dob')?.value || '',
         emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
         emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
         employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
+        certNotes: document.getElementById('pub-nh-cert-notes')?.value.trim() || '',
         certFiles: [...existing, ...uploaded],
+        employeeId: syncedEmployeeId || intakeData.employeeId || '',
+        employeeCertSyncStatus: syncedEmployeeId ? 'Synced to Employee Certs' : 'Needs Office Review / Sync',
         status: 'Ready for Review',
         employeeSubmittedAt: new Date().toISOString(),
         updatedAt: serverTimestamp()
       });
       const statusCard = document.getElementById('public-intake-status-card');
       const formCard = document.getElementById('public-intake-form-card');
-      if (statusCard) statusCard.innerHTML = `<h3>✅ Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
+      if (statusCard) statusCard.innerHTML = `<h3>✅ Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site. If Firebase permissions allow it, your Employee Cert record was also created/updated automatically.</p>`;
       if (formCard) formCard.style.display = 'none';
       toast('Intake submitted to PAL.');
     } catch (e) {
