@@ -513,6 +513,35 @@
     .cert-warning-sub { font-size:12px; color:var(--muted); margin-top:2px; }
     @media(max-width:700px){ .cert-alert-summary { grid-template-columns: 1fr; } .cert-warning-row{align-items:flex-start; flex-direction:column;} }
 
+    /* EMPLOYEE_CERT_ACTION_CENTER_PATCH_2026_05_14 */
+    .cert-action-center {
+      background:#ffffff;
+      border:1px solid var(--line);
+      border-left:5px solid var(--navy);
+      border-radius:16px;
+      padding:16px;
+      margin:12px 0 16px;
+      box-shadow:0 4px 12px rgba(16,24,40,.04);
+    }
+    .cert-action-center h3 { color:var(--navy); margin:0 0 6px; font-size:16px; }
+    .cert-action-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+    .cert-email-preview {
+      white-space:pre-wrap;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      min-height:120px;
+      max-height:260px;
+      overflow:auto;
+      font-size:13px;
+      line-height:1.45;
+      color:var(--text);
+    }
+    .cert-action-buttons { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    @media(max-width:700px){ .cert-action-grid { grid-template-columns:1fr; } }
+
+
     .employee-card { cursor:pointer; }
     .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
     .cert-preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:12px; }
@@ -832,6 +861,26 @@
       <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
       <div id="cert-alert-summary-main"></div>
       <div id="cert-alert-list-main"></div>
+      <div class="cert-action-center" id="cert-action-center">
+        <h3>📧 Weekly Certification Alert</h3>
+        <div class="helper-text">Create a ready-to-send email with all expired certifications and certifications expiring within 30 days.</div>
+        <div class="cert-action-grid">
+          <div class="field" style="margin-bottom:0;">
+            <label>Email Recipient</label>
+            <input id="cert-alert-email-to" type="email" placeholder="office@palcorp.com" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Email Subject</label>
+            <input id="cert-alert-email-subject" value="PAL Safety Hub - Weekly Certification Alert" />
+          </div>
+        </div>
+        <div class="cert-action-buttons">
+          <button class="btn-outline" type="button" onclick="previewCertAlertEmail()">Preview Alert</button>
+          <button class="btn-save" type="button" onclick="openCertAlertEmailDraft()">Open Email Draft</button>
+          <button class="btn-secondary" type="button" onclick="copyCertAlertEmailText()">Copy Email Text</button>
+        </div>
+        <div id="cert-alert-email-preview" class="cert-email-preview" style="margin-top:12px;">Click Preview Alert to generate the weekly certification email.</div>
+      </div>
       <div class="field" style="max-width:460px;margin-bottom:16px;">
         <label>Search Employees</label>
         <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
@@ -1484,6 +1533,9 @@
   window.editCertification = editCertification;
   window.deleteCertification = deleteCertification;
   window.saveCertification = saveCertification;
+  window.previewCertAlertEmail = previewCertAlertEmail;
+  window.openCertAlertEmailDraft = openCertAlertEmailDraft;
+  window.copyCertAlertEmailText = copyCertAlertEmailText;
   window.switchMainTab = switchMainTab;
 
   window.openNewHireIntakeModal = openNewHireIntakeModal;
@@ -2300,6 +2352,71 @@
       valid,
       warnings: [...expired, ...soon].sort((a,b) => (a.days ?? 9999) - (b.days ?? 9999))
     };
+  }
+
+
+  // EMPLOYEE_CERT_ACTION_CENTER_PATCH_2026_05_14
+  function buildCertAlertEmailText() {
+    const data = getCertAlertData();
+    const today = new Date().toLocaleDateString('en-US');
+    const expiredLines = data.expired.length
+      ? data.expired.map(c => `- ${c.employeeName} — ${c.certTitle} — Expired ${c.expirationDate || 'date not listed'}`).join('
+')
+      : '- None';
+    const soonLines = data.soon.length
+      ? data.soon.map(c => `- ${c.employeeName} — ${c.certTitle} — Expires ${c.expirationDate || 'date not listed'} (${c.days} day${c.days === 1 ? '' : 's'} left)`).join('
+')
+      : '- None';
+    return `PAL Safety Hub - Weekly Certification Alert
+Date: ${today}
+
+Expired Certifications:
+${expiredLines}
+
+Expiring Within 30 Days:
+${soonLines}
+
+Summary:
+Expired: ${data.expired.length}
+Expiring within 30 days: ${data.soon.length}
+Valid certs on file: ${data.valid.length}
+
+Please review the Employee Certs tab in PAL Safety Hub for uploaded card images/files and employee details.`;
+  }
+
+  function previewCertAlertEmail() {
+    if (!allEmployees.length) {
+      loadEmployees(true).then(() => {
+        const box = document.getElementById('cert-alert-email-preview');
+        if (box) box.textContent = buildCertAlertEmailText();
+      });
+      return;
+    }
+    const box = document.getElementById('cert-alert-email-preview');
+    if (box) box.textContent = buildCertAlertEmailText();
+  }
+
+  function openCertAlertEmailDraft() {
+    const to = String(document.getElementById('cert-alert-email-to')?.value || '').trim();
+    const subject = String(document.getElementById('cert-alert-email-subject')?.value || 'PAL Safety Hub - Weekly Certification Alert').trim();
+    const body = buildCertAlertEmailText();
+    const box = document.getElementById('cert-alert-email-preview');
+    if (box) box.textContent = body;
+    const href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = href;
+  }
+
+  async function copyCertAlertEmailText() {
+    const body = buildCertAlertEmailText();
+    const box = document.getElementById('cert-alert-email-preview');
+    if (box) box.textContent = body;
+    try {
+      await navigator.clipboard.writeText(body);
+      toast('Certification alert email copied.');
+    } catch (e) {
+      console.error(e);
+      toast('Could not copy automatically. You can select the preview text and copy it.');
+    }
   }
 
   function renderCertAlerts() {
