@@ -8,6 +8,7 @@
   <title>PAL Safety Hub</title>
   <!-- LOGIN_RESTORE_NEWHIRE_PHASE2_STABLE_ROLLBACK_2026_05_14 -->
   <!-- LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14 -->
+  <!-- PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_INTAKE_NO_LOGIN_PATCH_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_TO_EMPLOYEE_CERT_SYNC_PHASE3_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_PACKET_FORMS_PHASE4_2026_05_14 -->
@@ -702,6 +703,93 @@
     .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
     @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
 
+
+    /* PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14 */
+    .public-packet-shell {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .public-packet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .public-packet-header h4 { margin: 0; color: var(--navy); font-size: 16px; }
+    .public-packet-header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .public-packet-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0 14px;
+    }
+    .public-packet-tab {
+      border: 1.5px solid var(--line);
+      background: #fff;
+      color: var(--navy);
+      border-radius: 12px;
+      padding: 11px 10px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 3px 10px rgba(16,24,40,.04);
+    }
+    .public-packet-tab.active {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+    }
+    .public-packet-tab small {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      opacity: .72;
+      margin-top: 2px;
+    }
+    .public-packet-window {
+      border: 1px solid var(--line) !important;
+      border-radius: 18px !important;
+      padding: 0 !important;
+      margin-bottom: 0 !important;
+      background: white !important;
+      box-shadow: 0 8px 24px rgba(16,24,40,.07);
+      overflow: hidden;
+    }
+    .public-packet-window summary {
+      list-style: none;
+      cursor: default !important;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: white !important;
+      padding: 14px 16px;
+      font-size: 15px;
+    }
+    .public-packet-window summary::-webkit-details-marker { display: none; }
+    .public-packet-window > *:not(summary) { margin-left: 16px; margin-right: 16px; }
+    .public-packet-window .report-grid { margin-bottom: 16px; }
+    .public-packet-window[hidden] { display: none !important; }
+    .public-packet-note {
+      background:#eef4fa;
+      border:1px solid var(--line);
+      border-left:5px solid var(--green);
+      border-radius:14px;
+      padding:10px 12px;
+      color:var(--navy);
+      font-size:13px;
+      font-weight:800;
+      margin: 10px 0 12px;
+    }
+    @media(max-width:760px){
+      .public-packet-tabs { grid-template-columns: 1fr; }
+      .public-packet-window > *:not(summary) { margin-left: 12px; margin-right: 12px; }
+    }
+
   </style>
 </head>
 <body>
@@ -855,9 +943,29 @@
       <div class="detail-card" style="margin-top:14px;background:#fff;" id="pub-newhire-actual-forms">
         <!-- PUBLIC_NEWHIRE_ACTUAL_FILLABLE_FORMS_PHASE5_2026_05_14 -->
         <h3 style="margin-bottom:8px;">Fillable New Hire Forms</h3>
-        <div class="helper-text" style="margin-bottom:12px;">Complete the forms below before submitting. Uploaded PDF/photo copies can still be attached at the bottom for office records.</div>
+        <div class="helper-text" style="margin-bottom:12px;">Complete each packet section before submitting. Use the tabs below like separate form windows so the employee only sees one form at a time.</div>
 
-        <details open style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
+        <div class="public-packet-shell" id="public-newhire-packet-tabs">
+          <!-- PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14 -->
+          <div class="public-packet-header">
+            <div>
+              <h4>New Hire Packet</h4>
+              <p>Select one form window, complete it, then move to the next. Upload signed/supporting documents where requested.</p>
+            </div>
+            <span class="pill blue">Employee Intake</span>
+          </div>
+          <div class="public-packet-tabs" role="tablist" aria-label="New hire packet forms">
+            <button type="button" class="public-packet-tab active" data-packet-target="orientation" onclick="showPublicPacketForm('orientation')">📋 Orientation<small>Company / jobsite information</small></button>
+            <button type="button" class="public-packet-tab" data-packet-target="drug" onclick="showPublicPacketForm('drug')">🧪 Drug Consent<small>Testing acknowledgement</small></button>
+            <button type="button" class="public-packet-tab" data-packet-target="safety" onclick="showPublicPacketForm('safety')">🏗️ Safety Agreement<small>Scaffold / fall / ladder</small></button>
+            <button type="button" class="public-packet-tab" data-packet-target="w4" onclick="showPublicPacketForm('w4')">📄 W-4 / Payroll<small>Office-only review</small></button>
+            <button type="button" class="public-packet-tab" data-packet-target="id" onclick="showPublicPacketForm('id')">🪪 ID / I-9 Docs<small>Upload identity documents</small></button>
+            <button type="button" class="public-packet-tab" data-packet-target="uploads" onclick="showPublicPacketForm('uploads')">📎 Extra Uploads<small>Other required forms</small></button>
+          </div>
+          <div class="public-packet-note">This packet is for pre-site intake. PAL office must review and approve before the employee is marked Good To Work.</div>
+        </div>
+
+        <details class="public-packet-window" data-packet-section="orientation" open style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
           <summary style="font-weight:900;color:var(--navy);cursor:pointer;">📋 Company Orientation Form</summary>
           <div class="report-grid" style="margin-top:12px;">
             <div class="field"><label>Employee Name</label><input id="pub-ori-emp-name" placeholder="Employee name" /></div>
@@ -900,7 +1008,7 @@
           </div>
         </details>
 
-        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff8e1;">
+        <details class="public-packet-window" data-packet-section="drug" hidden style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff8e1;">
           <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🧪 Drug & Alcohol Test Consent</summary>
           <p style="font-size:13px;line-height:1.55;margin-top:12px;">I voluntarily consent to submit to a drug and/or alcohol test as directed by PAL Environmental Services or the applicable jobsite requirements. I understand that a positive result or refusal to submit to required testing may result in disciplinary action, up to and including termination or removal from the jobsite. I authorize the release of results to PAL Environmental Services for employment/jobsite eligibility purposes.</p>
           <div class="report-grid">
@@ -912,7 +1020,7 @@
           </div>
         </details>
 
-        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
+        <details class="public-packet-window" data-packet-section="safety" hidden style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#f8fafc;">
           <summary style="font-weight:900;color:var(--navy);cursor:pointer;">🏗️ Scaffold / Fall / Ladder Safety Agreement</summary>
           <div style="font-size:13px;line-height:1.55;margin-top:12px;">
             <p><strong>Scaffolding:</strong> I acknowledge PAL scaffold safety requirements, including inspections before use, load capacity limits, safe access, guardrails, and prohibited unsafe activities.</p>
@@ -929,7 +1037,7 @@
           </div>
         </details>
 
-        <details style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff;">
+        <details class="public-packet-window" data-packet-section="w4" hidden style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:#fff;">
           <summary style="font-weight:900;color:var(--navy);cursor:pointer;">📄 W-4 Information / Upload</summary>
           <div class="helper-text" style="margin-top:10px;">This section captures W-4 style information for office review. The office should verify official payroll/tax paperwork before processing.</div>
           <div class="report-grid" style="margin-top:12px;">
@@ -3914,6 +4022,27 @@
     }
     return uploaded;
   }
+
+
+  // PUBLIC_NEWHIRE_PACKET_PROFESSIONAL_TABS_PHASE6_2026_05_14
+  window.showPublicPacketForm = function(sectionName) {
+    document.querySelectorAll('.public-packet-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.packetTarget === sectionName);
+    });
+    document.querySelectorAll('.public-packet-window[data-packet-section]').forEach(win => {
+      const active = win.dataset.packetSection === sectionName;
+      win.hidden = !active;
+      if (active) win.open = true;
+    });
+  };
+
+  function initPublicPacketTabs() {
+    const first = document.querySelector('.public-packet-tab.active')?.dataset.packetTarget || 'orientation';
+    if (document.querySelector('.public-packet-window[data-packet-section]')) {
+      window.showPublicPacketForm(first);
+    }
+  }
+  document.addEventListener('DOMContentLoaded', initPublicPacketTabs);
 
   // PUBLIC_NEWHIRE_ACTUAL_FILLABLE_FORMS_PHASE5_2026_05_14
   function collectPublicNewHireActualForms() {
