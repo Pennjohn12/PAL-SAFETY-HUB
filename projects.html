@@ -738,27 +738,6 @@
     .nh-check-list label { display:block; padding:8px 0; font-size:14px; }
     .nh-status-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 
-    /* FORM_LAUNCHER_REVIEW_LINK_PHASE4_2026_05_14 */
-    .nh-progress-panel { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; margin:14px 0; box-shadow:0 4px 12px rgba(16,24,40,.04); }
-    .nh-progress-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
-    .nh-progress-head h3 { margin:0; color:var(--navy); font-size:16px; }
-    .nh-progress-bar { height:12px; background:#e5e7eb; border-radius:999px; overflow:hidden; margin:8px 0 10px; }
-    .nh-progress-fill { height:100%; background:var(--green); width:0%; transition:width .25s ease; }
-    .nh-progress-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; }
-    .nh-progress-item { border:1px solid var(--line); border-radius:12px; padding:9px 10px; background:#f8fafc; display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; font-weight:800; color:var(--navy); }
-    .nh-progress-item.done { background:#ecfdf3; border-color:#bbf7d0; color:#166534; }
-    .nh-summary-window { position:fixed; inset:0; z-index:5100; background:rgba(15,23,42,.55); padding:18px; overflow:auto; display:none; }
-    .nh-summary-doc { max-width:900px; margin:0 auto 40px; background:white; border:1px solid var(--line); border-radius:20px; box-shadow:0 24px 70px rgba(0,0,0,.28); overflow:hidden; }
-    .nh-summary-head { background:var(--navy); color:white; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .nh-summary-head h3 { margin:0; color:white; }
-    .nh-summary-body { padding:18px; }
-    .nh-summary-row { border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px; background:#f8fafc; }
-    .nh-summary-row.done { background:#ecfdf3; border-color:#bbf7d0; }
-    .nh-file-list { margin-top:8px; display:grid; gap:6px; }
-    .nh-file-chip { border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-size:12px; background:white; color:var(--navy); font-weight:800; display:inline-flex; width:max-content; max-width:100%; }
-    @media(max-width:700px){ .nh-summary-window{padding:0;} .nh-summary-doc{border-radius:0; min-height:100vh;} }
-
-
 
     /* FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14 */
     .nh-doc-paper { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; margin:12px 0; }
@@ -806,16 +785,11 @@
       <div class="helper-text">Open each form separately. Completed forms link back to your employee file for office review.</div>
       <div id="pub-nh-form-launcher" class="nh-launch-grid"></div>
     </div>
-    <div id="pub-nh-progress-panel" class="nh-progress-panel"></div>
     <div id="pub-nh-form-window" class="nh-form-window" style="display:none;"></div>
-    <div id="pub-nh-summary-window" class="nh-summary-window" style="display:none;"></div>
     <div class="detail-card">
       <h3>Submit Packet</h3>
-      <div class="helper-text" style="margin-bottom:10px;">Submit when all required forms and uploads are complete. Each saved form links back to this person’s new-hire packet and employee file for office review.</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn-outline" onclick="openPublicNewHirePacketSummary()">Review Packet Summary</button>
-        <button class="btn-save" id="pub-nh-submit-btn" onclick="submitPublicNewHirePacket()">Submit New Hire Packet</button>
-      </div>
+      <div class="helper-text" style="margin-bottom:10px;">Submit when all required forms and uploads are complete.</div>
+      <button class="btn-save" id="pub-nh-submit-btn" onclick="submitPublicNewHirePacket()">Submit New Hire Packet</button>
       <div id="pub-nh-submit-status" class="helper-text" style="margin-top:10px;"></div>
     </div>
   </div>
@@ -3781,43 +3755,12 @@
     if (!launcher) return;
     launcher.innerHTML = PUBLIC_NH_FORMS.map(f => {
       const done = publicNewHirePacket.forms?.[f.key]?.status === 'Completed';
-      const saved = publicNewHirePacket.forms?.[f.key];
       return `<div class="nh-launch-card ${done ? 'done' : ''}">
         <h4>${f.icon} ${esc(f.title)} ${done ? '<span class="pill active">Complete</span>' : '<span class="pill pending">Pending</span>'}</h4>
         <p>${esc(f.desc)}</p>
-        ${saved?.completedAt ? `<div class="mini-note">Saved: ${esc(formatDate(saved.completedAt))}</div>` : ''}
-        <button class="btn-save" onclick="openPublicNewHireForm('${esc(f.key)}')">${done ? 'Open / Update Form' : 'Open Form'}</button>
+        <button class="btn-save" onclick="openPublicNewHireForm('${esc(f.key)}')">Open Form</button>
       </div>`;
     }).join('');
-    renderPublicNewHireProgress();
-  }
-
-  // FORM_LAUNCHER_REVIEW_LINK_PHASE4_2026_05_14
-  function renderPublicNewHireProgress() {
-    const panel = document.getElementById('pub-nh-progress-panel');
-    if (!panel) return;
-    const forms = publicNewHirePacket.forms || {};
-    const complete = PUBLIC_NH_FORMS.filter(f => forms[f.key]?.status === 'Completed').length;
-    const total = PUBLIC_NH_FORMS.length;
-    const pct = total ? Math.round((complete / total) * 100) : 0;
-    panel.innerHTML = `<div class="nh-progress-head">
-      <div><h3>Packet Progress</h3><div class="helper-text">${complete} of ${total} forms completed · linked to this employee packet</div></div>
-      <button class="btn-outline" onclick="openPublicNewHirePacketSummary()">Review Summary</button>
-    </div>
-    <div class="nh-progress-bar"><div class="nh-progress-fill" style="width:${pct}%"></div></div>
-    <div class="nh-progress-grid">${PUBLIC_NH_FORMS.map(f => {
-      const done = forms[f.key]?.status === 'Completed';
-      return `<div class="nh-progress-item ${done ? 'done' : ''}"><span>${f.icon} ${esc(f.title)}</span><span>${done ? '✓' : 'Pending'}</span></div>`;
-    }).join('')}</div>`;
-  }
-
-  function formatDate(value) {
-    if (!value) return '';
-    try {
-      const d = value.toDate ? value.toDate() : new Date(value);
-      if (Number.isNaN(d.getTime())) return String(value);
-      return d.toLocaleDateString();
-    } catch { return String(value); }
   }
 
   function openPublicNewHireForm(key) {
@@ -3937,7 +3880,7 @@
     win.style.display = 'block';
     win.innerHTML = `<div class="nh-form-document">
       <div class="nh-form-document-head">
-        <div><h4>${def.icon} ${esc(def.title)}</h4><p>Employee onboarding form · Opens as separate document · Saves back to this person’s employee file</p></div>
+        <div><h4>${def.icon} ${esc(def.title)}</h4><p>Employee onboarding form · Linked to this new hire packet / employee file</p></div>
         <button class="btn-secondary" onclick="document.getElementById('pub-nh-form-window').style.display='none'">← Back to Packet</button>
       </div>
       <div class="nh-form-document-body">${body}</div>
@@ -3961,10 +3904,8 @@
         await uploadBytes(storageRef, file);
         uploaded.push({ name:file.name, type:file.type, url: await getDownloadURL(storageRef), path, uploadedAt: new Date().toISOString() });
       }
-      const def = PUBLIC_NH_FORMS.find(f => f.key === key) || { title:key };
       const data = {
         status:'Completed', completedAt:new Date().toISOString(),
-        formKey:key, formTitle:def.title || key, linkedToEmployeeFile:true,
         notes: document.getElementById('nh-form-notes')?.value || '',
         signature: document.getElementById('nh-form-signature')?.value || '',
         date: document.getElementById('nh-form-date')?.value || '',
@@ -3976,52 +3917,11 @@
         files: [ ...(publicNewHirePacket.forms?.[key]?.files || []), ...uploaded ]
       };
       publicNewHirePacket.forms = { ...(publicNewHirePacket.forms || {}), [key]: data };
-      if (publicNewHireId) await updateDoc(doc(db, 'newHireIntakes', publicNewHireId), { [`forms.${key}`]: data, status:'Ready for Review', updatedAt:serverTimestamp(), lastCompletedForm:data.formTitle });
+      if (publicNewHireId) await updateDoc(doc(db, 'newHireIntakes', publicNewHireId), { [`forms.${key}`]: data, status:'Ready for Review', updatedAt:serverTimestamp() });
       renderPublicNewHireLauncher();
       document.getElementById('pub-nh-form-window').style.display='none';
       toast('Form saved to packet.');
     } catch (e) { console.error(e); toast('Could not save form. Firebase rules may need public intake access.'); }
-  }
-
-  // FORM_LAUNCHER_REVIEW_LINK_PHASE4_2026_05_14
-  function openPublicNewHirePacketSummary() {
-    const win = document.getElementById('pub-nh-summary-window');
-    if (!win) return;
-    const forms = publicNewHirePacket.forms || {};
-    const employeeName = document.getElementById('pub-nh-name')?.value || publicNewHirePacket.name || 'New Hire';
-    const complete = PUBLIC_NH_FORMS.filter(f => forms[f.key]?.status === 'Completed').length;
-    win.style.display = 'block';
-    win.innerHTML = `<div class="nh-summary-doc">
-      <div class="nh-summary-head">
-        <div><h3>New Hire Packet Summary</h3><div style="font-size:12px;color:rgba(255,255,255,.75);">${esc(employeeName)} · ${complete} of ${PUBLIC_NH_FORMS.length} forms complete</div></div>
-        <button class="btn-secondary" onclick="document.getElementById('pub-nh-summary-window').style.display='none'">Close</button>
-      </div>
-      <div class="nh-summary-body">
-        <div class="detail-card" style="margin-bottom:12px;">
-          <h3 style="margin-bottom:8px;">Employee / Packet Link</h3>
-          <div class="detail-list">
-            <div class="row"><span>Name</span><strong>${esc(employeeName)}</strong></div>
-            <div class="row"><span>Phone</span><strong>${esc(document.getElementById('pub-nh-phone')?.value || publicNewHirePacket.phone || '—')}</strong></div>
-            <div class="row"><span>Email</span><strong>${esc(document.getElementById('pub-nh-email')?.value || publicNewHirePacket.email || '—')}</strong></div>
-            <div class="row"><span>Packet ID</span><strong>${esc(publicNewHireId || 'Manual Entry')}</strong></div>
-          </div>
-        </div>
-        ${PUBLIC_NH_FORMS.map(f => {
-          const rec = forms[f.key] || {};
-          const done = rec.status === 'Completed';
-          const fileList = (rec.files || []).map(file => `<span class="nh-file-chip">📎 ${esc(file.name || 'Uploaded file')}</span>`).join('');
-          return `<div class="nh-summary-row ${done ? 'done' : ''}">
-            <h4 style="margin:0 0 6px;color:var(--navy);">${f.icon} ${esc(f.title)} ${done ? '<span class="pill active">Complete</span>' : '<span class="pill pending">Pending</span>'}</h4>
-            <div class="helper-text">${done ? 'Saved to this new hire packet / employee file.' : 'Not completed yet.'}</div>
-            ${rec.signature ? `<div class="mini-note"><strong>Signed:</strong> ${esc(rec.signature)} ${rec.date ? '· ' + esc(rec.date) : ''}</div>` : ''}
-            ${rec.notes ? `<div class="mini-note"><strong>Notes:</strong> ${esc(rec.notes)}</div>` : ''}
-            ${fileList ? `<div class="nh-file-list">${fileList}</div>` : ''}
-            <div style="margin-top:8px;"><button class="btn-sm" onclick="document.getElementById('pub-nh-summary-window').style.display='none'; openPublicNewHireForm('${esc(f.key)}')">Open / Update</button></div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
-    win.scrollTo({ top:0, behavior:'smooth' });
   }
 
   async function submitPublicNewHirePacket() {
