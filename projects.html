@@ -10,6 +10,8 @@
   <!-- LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14 -->
 
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
+  <!-- STABLE_LOGIN_RESCUE_RESTORE_USE_THIS_2026_05_14 -->
+  <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
   <style>
     :root {
       --navy: #1b3a5c;
@@ -699,101 +701,28 @@
     .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
     @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
 
-  
+    /* FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 */
+    .packet-form-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:12px; }
+    .packet-form-row { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:10px 0; border-top:1px solid var(--line); }
+    .packet-form-row:first-child { border-top:0; }
+    .packet-form-title { font-weight:900; color:var(--navy); }
+    .packet-form-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+    .newhire-doc-window { max-width:880px !important; }
+    .newhire-doc-paper { background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+    .newhire-doc-head { background:var(--navy); color:#fff; padding:16px 18px; }
+    .newhire-doc-head h3 { color:#fff; margin:0 0 4px; }
+    .newhire-doc-head p { margin:0; color:rgba(255,255,255,.78); font-size:13px; }
+    .newhire-doc-body { padding:18px; }
+    .doc-review-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; }
+    .doc-review-box h4 { color:var(--navy); margin-bottom:8px; }
+    .doc-review-box ul { margin-left:20px; line-height:1.6; color:var(--text); }
+    .doc-sig-line { display:grid; grid-template-columns:1fr 180px; gap:12px; }
+    @media(max-width:700px){ .doc-sig-line { grid-template-columns:1fr; } }
 
-    /* FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE */
-    .nh-launch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:14px 0; }
-    .nh-launch-card { background:white; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 4px 12px rgba(16,24,40,.04); border-left:5px solid var(--navy); }
-    .nh-launch-card.done { border-left-color:#16a34a; }
-    .nh-launch-card h4 { color:var(--navy); margin:0 0 6px; }
-    .nh-launch-card p { color:var(--muted); font-size:13px; line-height:1.45; margin:0 0 12px; }
-    .nh-public-shell { max-width:900px; margin:0 auto; padding:24px 16px 80px; }
-    /* FORM_LAUNCHER_DOCUMENT_WINDOW_PHASE3_2026_05_14 */
-    .nh-form-window {
-      position: fixed; inset: 0; z-index: 5000;
-      background: rgba(15,23,42,.55);
-      padding: 18px; overflow-y: auto;
-      display: none;
-    }
-    .nh-form-document {
-      max-width: 920px; margin: 0 auto 40px; background: #fff;
-      border: 1px solid var(--line); border-radius: 20px;
-      box-shadow: 0 24px 70px rgba(0,0,0,.28); overflow: hidden;
-    }
-    .nh-form-document-head {
-      background: var(--navy); color: white; padding: 16px 18px;
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    }
-    .nh-form-document-head h4 { margin: 0; color: white; font-size: 18px; }
-    .nh-form-document-head p { margin: 3px 0 0; color: rgba(255,255,255,.75); font-size: 12px; }
-    .nh-form-document-body { padding: 18px; }
-    .nh-form-document-actions {
-      position: sticky; bottom: 0; background: rgba(255,255,255,.96);
-      border-top: 1px solid var(--line); padding: 12px 18px;
-      display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
-    }
-    .nh-doc-important { background:#fff7ed; border:1px solid #fed7aa; border-left:5px solid #d97706; border-radius:14px; padding:12px; margin:10px 0; }
-    .nh-doc-confirm-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:12px; margin:10px 0; }
-    @media(max-width:700px){ .nh-form-window{padding:0;} .nh-form-document{border-radius:0; min-height:100vh;} .nh-form-document-head{align-items:flex-start; flex-direction:column;} }
-    .nh-check-list label { display:block; padding:8px 0; font-size:14px; }
-    .nh-status-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-
-
-    /* FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14 */
-    .nh-doc-paper { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; margin:12px 0; }
-    .nh-doc-paper h5 { margin:0 0 8px; color:var(--navy); font-size:16px; }
-    .nh-doc-paper p, .nh-doc-paper li { font-size:14px; line-height:1.55; color:var(--text); }
-    .nh-doc-paper ul { margin:8px 0 0 20px; }
-    .nh-doc-banner { background:#eef4fa; border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px; padding:12px; margin:10px 0; color:var(--navy); font-weight:800; }
-    .nh-doc-section-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-    @media(max-width:700px){ .nh-doc-section-grid { grid-template-columns:1fr; } }
 
   </style>
 </head>
 <body>
-
-
-<!-- FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE -->
-<div class="view" id="view-public-newhire-packet">
-  <div class="header">
-    <a class="brand" href="index.html">
-      <div class="pal-badge">PAL</div>
-      <div class="brand-text"><h1>PAL Safety Hub</h1><p>New Hire Packet</p></div>
-    </a>
-  </div>
-  <div class="nh-public-shell">
-    <div class="project-header-card">
-      <h2>New Hire Packet</h2>
-      <div class="meta">Complete each form below before reporting to the jobsite.</div>
-    </div>
-    <div class="detail-card">
-      <h3>Employee Information</h3>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Full Name</label><input id="pub-nh-name" placeholder="Employee full name" /></div>
-        <div class="field"><label>Phone</label><input id="pub-nh-phone" placeholder="Cell phone" /></div>
-        <div class="field"><label>Email</label><input id="pub-nh-email" placeholder="Email address" /></div>
-        <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Trade / role" /></div>
-        <div class="field"><label>Start Date</label><input id="pub-nh-start-date" type="date" /></div>
-        <div class="field span-2"><label>Address</label><input id="pub-nh-address" placeholder="Home address" /></div>
-        <div class="field"><label>Emergency Contact</label><input id="pub-nh-emergency-name" placeholder="Name" /></div>
-        <div class="field"><label>Emergency Phone</label><input id="pub-nh-emergency-phone" placeholder="Phone" /></div>
-      </div>
-      <div class="helper-text" id="pub-nh-intake-label" style="margin-top:10px;">Public packet loading...</div>
-    </div>
-    <div class="detail-card">
-      <h3>Required Forms</h3>
-      <div class="helper-text">Open each form separately. Completed forms link back to your employee file for office review.</div>
-      <div id="pub-nh-form-launcher" class="nh-launch-grid"></div>
-    </div>
-    <div id="pub-nh-form-window" class="nh-form-window" style="display:none;"></div>
-    <div class="detail-card">
-      <h3>Submit Packet</h3>
-      <div class="helper-text" style="margin-bottom:10px;">Submit when all required forms and uploads are complete.</div>
-      <button class="btn-save" id="pub-nh-submit-btn" onclick="submitPublicNewHirePacket()">Submit New Hire Packet</button>
-      <div id="pub-nh-submit-status" class="helper-text" style="margin-top:10px;"></div>
-    </div>
-  </div>
-</div>
 
 <!-- ══════════════════════════════════════════════
      LOGIN VIEW
@@ -1495,6 +1424,49 @@
   </div>
 </div>
 
+
+<!-- NEW HIRE ORIENTATION DOCUMENT WINDOW - FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
+<div class="modal-overlay" id="modal-newhire-orientation-form">
+  <div class="modal newhire-doc-window">
+    <div class="newhire-doc-paper">
+      <div class="newhire-doc-head">
+        <h3>PAL New Hire Orientation Form</h3>
+        <p>This form is linked to the selected employee intake packet and saves back to the employee file workflow.</p>
+      </div>
+      <div class="newhire-doc-body">
+        <div class="doc-review-box">
+          <h4>Employee Review</h4>
+          <p class="helper-text" style="margin-bottom:8px;">Please read and acknowledge the basic PAL orientation items below before signing.</p>
+          <ul>
+            <li>I understand that I must follow PAL Environmental Services safety policies and site-specific rules at all times.</li>
+            <li>I understand that required PPE must be worn as directed, including hard hat, safety glasses, work boots, gloves, and high-visibility clothing/vest when required.</li>
+            <li>I understand that I must attend required safety meetings, toolbox talks, and site orientation before performing work.</li>
+            <li>I understand that I must report hazards, incidents, near misses, injuries, damaged equipment, and unsafe conditions immediately to my foreman/supervisor.</li>
+            <li>I understand that I may not operate equipment, work from lifts, perform scaffold work, or perform specialized work unless properly trained/authorized.</li>
+            <li>I understand that certifications and required documents must be clear, readable, current, and provided to PAL before I am cleared to work.</li>
+          </ul>
+        </div>
+
+        <div class="report-grid">
+          <div class="field"><label>Employee Name</label><input id="nh-orient-employee-name" placeholder="Employee full name" /></div>
+          <div class="field"><label>Date</label><input id="nh-orient-date" type="date" /></div>
+          <div class="field span-2"><label>Project / Jobsite</label><input id="nh-orient-project" placeholder="Project / jobsite" /></div>
+          <div class="field span-2"><label>Employee Notes / Questions</label><textarea id="nh-orient-notes" rows="3" placeholder="Optional notes or questions..."></textarea></div>
+        </div>
+
+        <div class="doc-sig-line" style="margin-top:14px;">
+          <div class="field"><label>Employee Signature / Typed Name</label><input id="nh-orient-signature" placeholder="Type full name as signature" /></div>
+          <div class="field"><label>Date Signed</label><input id="nh-orient-date-signed" type="date" /></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-newhire-orientation-form')">Cancel</button>
+      <button class="btn-save" id="save-newhire-orientation-btn" onclick="saveNewHireOrientationForm()">Save Orientation Form</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1533,9 +1505,8 @@
   let allTickets = [];
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
-  let publicNewHireId = new URLSearchParams(window.location.search).get('newhire') || new URLSearchParams(window.location.search).get('intake') || "";
-  let publicNewHirePacket = { forms: {} };
   let allWarehouseItems = [];
+  let currentNewHireOrientationId = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1592,9 +1563,8 @@
   window.openNewHireReview = openNewHireReview;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
-  window.openPublicNewHireForm = openPublicNewHireForm;
-  window.savePublicNewHireForm = savePublicNewHireForm;
-  window.submitPublicNewHirePacket = submitPublicNewHirePacket;
+  window.openNewHireOrientationForm = openNewHireOrientationForm;
+  window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
   window.saveExtraWorkTicket = saveExtraWorkTicket;
@@ -1641,12 +1611,7 @@
       if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; }
       const regBtn = document.getElementById('reg-btn');
       if (regBtn) { regBtn.disabled = false; regBtn.textContent = 'Create Account'; }
-      if (publicNewHireId) {
-        initPublicNewHirePacket(publicNewHireId);
-        showView('view-public-newhire-packet');
-      } else {
-        showView('view-login');
-      }
+      showView('view-login');
     }
   });
 
@@ -3714,246 +3679,6 @@
 
 
 
-
-  // FORM_LAUNCHER_EMPLOYEE_FILE_LINK_PHASE1_2026_05_14_SAFE
-  // FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14
-  // FORM_LAUNCHER_DOCUMENT_WINDOW_PHASE3_2026_05_14
-  const PUBLIC_NH_FORMS = [
-    { key:'orientation', title:'Orientation Form', icon:'📋', desc:'Company orientation, PPE, site rules, and safety acknowledgement.' },
-    { key:'drugConsent', title:'Drug & Alcohol Consent', icon:'🧪', desc:'Drug/alcohol testing consent and employee acknowledgement.' },
-    { key:'safetyAgreement', title:'Safety Agreement', icon:'🦺', desc:'Scaffold, fall protection, ladder, PPE, and jobsite safety agreement.' },
-    { key:'w4Payroll', title:'W-4 / Payroll Upload', icon:'💵', desc:'Upload completed W-4/payroll documents for office review.' },
-    { key:'idI9', title:'I-9 / ID Documents', icon:'🪪', desc:'Upload ID/I-9 supporting documents for office review.' },
-    { key:'certs', title:'Certification Uploads', icon:'🎓', desc:'Upload OSHA, SST, scaffold, lift, G60, fire watch, and other certifications.' }
-  ];
-
-  async function initPublicNewHirePacket(id) {
-    publicNewHireId = id || publicNewHireId;
-    publicNewHirePacket = { id: publicNewHireId, forms: {} };
-    const label = document.getElementById('pub-nh-intake-label');
-    if (label) label.textContent = `Packet ID: ${publicNewHireId || 'Manual Entry'}`;
-    if (publicNewHireId) {
-      try {
-        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireId));
-        if (snap.exists()) {
-          publicNewHirePacket = { id: snap.id, ...snap.data(), forms: snap.data().forms || {} };
-          setPublicValue('pub-nh-name', publicNewHirePacket.name);
-          setPublicValue('pub-nh-phone', publicNewHirePacket.phone);
-          setPublicValue('pub-nh-email', publicNewHirePacket.email);
-          setPublicValue('pub-nh-trade', publicNewHirePacket.trade);
-          setPublicValue('pub-nh-start-date', publicNewHirePacket.startDate);
-        }
-      } catch (e) { console.warn('Could not load public new hire packet', e); }
-    }
-    renderPublicNewHireLauncher();
-  }
-
-  function setPublicValue(id, value) { const el = document.getElementById(id); if (el && value) el.value = value; }
-
-  function renderPublicNewHireLauncher() {
-    const launcher = document.getElementById('pub-nh-form-launcher');
-    if (!launcher) return;
-    launcher.innerHTML = PUBLIC_NH_FORMS.map(f => {
-      const done = publicNewHirePacket.forms?.[f.key]?.status === 'Completed';
-      return `<div class="nh-launch-card ${done ? 'done' : ''}">
-        <h4>${f.icon} ${esc(f.title)} ${done ? '<span class="pill active">Complete</span>' : '<span class="pill pending">Pending</span>'}</h4>
-        <p>${esc(f.desc)}</p>
-        <button class="btn-save" onclick="openPublicNewHireForm('${esc(f.key)}')">Open Form</button>
-      </div>`;
-    }).join('');
-  }
-
-  function openPublicNewHireForm(key) {
-    // FORM_LAUNCHER_ACTUAL_DOCUMENTS_PHASE2_2026_05_14
-    const def = PUBLIC_NH_FORMS.find(f => f.key === key);
-    const win = document.getElementById('pub-nh-form-window');
-    if (!def || !win) return;
-    const existing = publicNewHirePacket.forms?.[key] || {};
-    const today = new Date().toISOString().slice(0,10);
-    let body = '';
-
-    if (key === 'orientation') {
-      body = `<div class="nh-doc-banner">PAL Environmental Services — Company / Site Orientation Form</div>
-      <div class="nh-doc-paper">
-        <h5>Orientation Review</h5>
-        <p>This orientation form is part of the employee pre-site onboarding packet. The employee must review the rules below before reporting to the jobsite. These items do not replace site-specific instructions from the foreman, superintendent, GC, or PAL office.</p>
-        <div class="nh-doc-important"><strong>Important:</strong> Do not begin work until PAL has confirmed that your required paperwork and certifications are accepted for the jobsite.</div>
-        <ul>
-          <li>Report to the assigned PAL foreman/supervisor before starting work and before moving to a new work area.</li>
-          <li>Wear required PPE at all times: hard hat, safety glasses, high-visibility vest/shirt, gloves, work boots, long pants, and task-specific PPE such as respirator, harness, face shield, or hearing protection when required.</li>
-          <li>Attend required daily safety meetings and toolbox talks.</li>
-          <li>Report unsafe conditions, injuries, near misses, and incidents immediately.</li>
-          <li>Do not operate equipment unless authorized and trained.</li>
-          <li>Maintain housekeeping and keep access/egress clear.</li>
-        </ul>
-      </div>
-      <div class="nh-check-list">
-        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I have read and understand PAL's orientation requirements.</label>
-        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I understand I must follow site safety rules and directions from supervision.</label>
-        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I understand I must report incidents, injuries, unsafe conditions, and near misses immediately.</label>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
-        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
-        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    } else if (key === 'drugConsent') {
-      body = `<div class="nh-doc-banner">Drug & Alcohol Testing Consent</div>
-      <div class="nh-doc-paper">
-        <h5>Consent Statement</h5>
-        <p>This consent form explains that PAL and/or the jobsite may require drug and alcohol testing as part of employment, site access, post-incident review, reasonable suspicion, random testing, or other company/jobsite requirements.</p><div class="nh-doc-important"><strong>Employee Notice:</strong> Do not sign unless you understand that testing requirements may affect jobsite access and clearance.</div>
-        <p>I consent to testing as required and understand that refusal to test, failure to cooperate, or violation of jobsite/company policy may affect my ability to work.</p>
-      </div>
-      <div class="nh-check-list">
-        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I consent to required drug and alcohol testing.</label>
-        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I understand site access may depend on compliance with testing requirements.</label>
-        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I understand false or missing information may delay clearance.</label>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
-        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
-        <div class="field span-2"><label>Upload Related Document, if any</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
-        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    } else if (key === 'safetyAgreement') {
-      body = `<div class="nh-doc-banner">Scaffold / Fall Protection / Ladder Safety Agreement</div>
-      <div class="nh-doc-paper">
-        <h5>Safety Agreement</h5>
-        <p>The employee acknowledges that they must follow PAL and jobsite safety requirements for elevated work, scaffolds, ladders, lifts, PPE, and fall protection. This agreement is intended to be reviewed before the employee performs any jobsite task involving elevated work or equipment.</p><div class="nh-doc-important"><strong>Stop Work Rule:</strong> If you are unsure whether conditions are safe, stop and contact your foreman before continuing.</div>
-        <ul>
-          <li>Use fall protection when required by PAL, OSHA, or jobsite rules.</li>
-          <li>Do not alter or use unsafe scaffolds, ladders, lifts, or guardrails.</li>
-          <li>Inspect equipment before use and report defects immediately.</li>
-          <li>Maintain three points of contact on ladders and use the proper ladder for the task.</li>
-          <li>Only use equipment you are trained/authorized to use.</li>
-          <li>Stop work and notify supervision if conditions are unsafe.</li>
-        </ul>
-      </div>
-      <div class="nh-check-list">
-        <label><input type="checkbox" id="nh-form-ack1" ${existing.ack1 ? 'checked' : ''}> I understand scaffold, fall protection, ladder, and equipment safety requirements.</label>
-        <label><input type="checkbox" id="nh-form-ack2" ${existing.ack2 ? 'checked' : ''}> I will not use unsafe equipment or perform work I am not trained/authorized to perform.</label>
-        <label><input type="checkbox" id="nh-form-ack3" ${existing.ack3 ? 'checked' : ''}> I will stop and report unsafe conditions immediately.</label>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
-        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
-        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    } else if (key === 'w4Payroll') {
-      body = `<div class="nh-doc-banner">W-4 / Payroll Document Upload</div>
-      <div class="nh-doc-paper">
-        <h5>Payroll Setup</h5>
-        <p>Upload a completed W-4/payroll document or any payroll document requested by the office. This area is intended for office review and should be treated as private employee information.</p>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Upload Completed W-4 / Payroll Documents</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
-        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
-        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
-        <div class="field span-2"><label>Notes for Office</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    } else if (key === 'idI9') {
-      body = `<div class="nh-doc-banner">I-9 / ID Supporting Document Upload</div>
-      <div class="nh-doc-paper">
-        <h5>ID / Work Authorization Support</h5>
-        <p>Upload clear photos or PDFs of the identification/supporting documents requested by the office. Make sure documents are readable and not cut off.</p>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field span-2"><label>Upload ID / I-9 Supporting Documents</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
-        <div class="field span-2"><label>Employee Signature / Typed Name</label><input id="nh-form-signature" value="${esc(existing.signature || '')}" placeholder="Type your full name"></div>
-        <div class="field"><label>Date</label><input id="nh-form-date" type="date" value="${esc(existing.date || today)}"></div>
-        <div class="field span-2"><label>Notes for Office</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    } else if (key === 'certs') {
-      body = `<div class="nh-doc-banner">Certification Uploads</div>
-      <div class="nh-doc-paper">
-        <h5>Required Certifications</h5>
-        <p>Upload clear photos or PDFs of all certifications/cards requested for the jobsite. Examples include OSHA, SST, Scaffold, G60, Fire Watch, lift cards, or other task-specific certs.</p>
-      </div>
-      <div class="daily-report-form-grid">
-        <div class="field"><label>Certification Type</label><select id="nh-form-cert-type"><option>OSHA 30</option><option>OSHA 10</option><option>SST</option><option>Scaffold</option><option>Lift Cert</option><option>G60</option><option>Fire Watch</option><option>Other</option></select></div>
-        <div class="field"><label>Expiration Date</label><input id="nh-form-cert-exp" type="date" value="${esc(existing.certExp || '')}"></div>
-        <div class="field span-2"><label>Upload Cert Photos / PDFs</label><input id="nh-form-files" type="file" multiple accept=".pdf,image/*"></div>
-        <div class="field span-2"><label>Notes</label><textarea id="nh-form-notes" rows="3">${esc(existing.notes || '')}</textarea></div>
-      </div>`;
-    }
-
-    win.style.display = 'block';
-    win.innerHTML = `<div class="nh-form-document">
-      <div class="nh-form-document-head">
-        <div><h4>${def.icon} ${esc(def.title)}</h4><p>Employee onboarding form · Linked to this new hire packet / employee file</p></div>
-        <button class="btn-secondary" onclick="document.getElementById('pub-nh-form-window').style.display='none'">← Back to Packet</button>
-      </div>
-      <div class="nh-form-document-body">${body}</div>
-      <div class="nh-form-document-actions">
-        <button class="btn-save" onclick="savePublicNewHireForm('${esc(key)}')">Save This Form to Employee File</button>
-        <button class="btn-outline" onclick="document.getElementById('pub-nh-form-window').style.display='none'">Close Without Saving</button>
-      </div>
-    </div>`;
-    win.scrollTo({ top: 0, behavior:'smooth' });
-  }
-
-  async function savePublicNewHireForm(key) {
-    try {
-      const filesEl = document.getElementById('nh-form-files');
-      const files = filesEl?.files ? Array.from(filesEl.files) : [];
-      const uploaded = [];
-      for (const file of files) {
-        const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireId || 'manual'}/${key}/${safeName}`;
-        const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
-        uploaded.push({ name:file.name, type:file.type, url: await getDownloadURL(storageRef), path, uploadedAt: new Date().toISOString() });
-      }
-      const data = {
-        status:'Completed', completedAt:new Date().toISOString(),
-        notes: document.getElementById('nh-form-notes')?.value || '',
-        signature: document.getElementById('nh-form-signature')?.value || '',
-        date: document.getElementById('nh-form-date')?.value || '',
-        ack1: !!document.getElementById('nh-form-ack1')?.checked,
-        ack2: !!document.getElementById('nh-form-ack2')?.checked,
-        ack3: !!document.getElementById('nh-form-ack3')?.checked,
-        certType: document.getElementById('nh-form-cert-type')?.value || '',
-        certExp: document.getElementById('nh-form-cert-exp')?.value || '',
-        files: [ ...(publicNewHirePacket.forms?.[key]?.files || []), ...uploaded ]
-      };
-      publicNewHirePacket.forms = { ...(publicNewHirePacket.forms || {}), [key]: data };
-      if (publicNewHireId) await updateDoc(doc(db, 'newHireIntakes', publicNewHireId), { [`forms.${key}`]: data, status:'Ready for Review', updatedAt:serverTimestamp() });
-      renderPublicNewHireLauncher();
-      document.getElementById('pub-nh-form-window').style.display='none';
-      toast('Form saved to packet.');
-    } catch (e) { console.error(e); toast('Could not save form. Firebase rules may need public intake access.'); }
-  }
-
-  async function submitPublicNewHirePacket() {
-    const btn = document.getElementById('pub-nh-submit-btn');
-    const status = document.getElementById('pub-nh-submit-status');
-    if (btn) { btn.disabled=true; btn.textContent='Submitting...'; }
-    try {
-      const employee = {
-        name: document.getElementById('pub-nh-name')?.value.trim() || publicNewHirePacket.name || '',
-        phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
-        email: document.getElementById('pub-nh-email')?.value.trim() || '',
-        trade: document.getElementById('pub-nh-trade')?.value.trim() || '',
-        address: document.getElementById('pub-nh-address')?.value.trim() || '',
-        emergencyName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
-        emergencyPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
-        intakeId: publicNewHireId || '', projectId: publicNewHirePacket.projectId || '', projectName: publicNewHirePacket.projectName || '',
-        status:'Ready for Review', newHireForms: publicNewHirePacket.forms || {}, notes:'Created from public new hire packet.', createdAt:serverTimestamp(), updatedAt:serverTimestamp()
-      };
-      if (!employee.name) { toast('Enter your full name first.'); return; }
-      const empRef = await addDoc(collection(db, 'employees'), employee);
-      const certForm = publicNewHirePacket.forms?.certs;
-      if (certForm?.files?.length) {
-        await updateDoc(empRef, { certifications: certForm.files.map(f => ({ title:certForm.certType || 'Certification', type:certForm.certType || 'Certification', expDate:certForm.certExp || '', fileName:f.name, fileUrl:f.url, uploadedAt:new Date().toISOString(), source:'New Hire Intake' })) });
-      }
-      if (publicNewHireId) await updateDoc(doc(db, 'newHireIntakes', publicNewHireId), { employeeId:empRef.id, status:'Ready for Review', submittedAt:serverTimestamp(), updatedAt:serverTimestamp() });
-      if (status) status.textContent = 'Submitted. PAL office will review your packet.';
-      toast('New hire packet submitted.');
-    } catch (e) { console.error(e); if (status) status.textContent='Could not submit. Please contact PAL office.'; toast('Could not submit packet.'); }
-    finally { if (btn) { btn.disabled=false; btn.textContent='Submit New Hire Packet'; } }
-  }
-
-
   // NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12
   function newHireStatusClass(status) {
     const s = String(status || '').toLowerCase();
@@ -4046,7 +3771,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
-      const intakeLink = `${window.location.origin}${window.location.pathname}?newhire=${docRef.id}`;
+      const intakeLink = `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`;
       await updateDoc(doc(db, 'newHireIntakes', docRef.id), { intakeLink });
       closeModal('modal-newhire-intake');
       toast('New hire intake request created.');
@@ -4162,6 +3887,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required)}</div></div>
       <div class="report-field span-2"><span class="k">Notes</span><div class="v">${esc(x.notes)}</div></div>
     </div>
+    <div class="packet-form-card">
+      <div class="packet-form-row">
+        <div>
+          <div class="packet-form-title">Orientation Form</div>
+          <div class="packet-form-sub">Opens as a separate document window and saves back to this employee intake packet.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span class="pill ${x.orientationForm?.completed ? 'active' : 'pending'}">${x.orientationForm?.completed ? 'Completed' : 'Pending'}</span>
+          <button class="btn-sm" onclick="openNewHireOrientationForm('${esc(x.id)}')">Open Orientation Form</button>
+        </div>
+      </div>
+    </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
       ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No files uploaded yet.</div>'}
@@ -4191,6 +3928,66 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       await loadNewHireIntakes(true);
       openNewHireReview(currentNewHireReviewId);
     } catch (e) { console.error(e); toast('Could not upload cert files.'); }
+  }
+
+
+
+  // FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15
+  function todayISO() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function openNewHireOrientationForm(id) {
+    const x = allNewHireIntakes.find(i => i.id === id);
+    if (!x) return toast('Intake request not found.');
+    currentNewHireOrientationId = id;
+    const form = x.orientationForm || {};
+    const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
+    set('nh-orient-employee-name', form.employeeName || x.name || '');
+    set('nh-orient-date', form.date || todayISO());
+    set('nh-orient-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' · '));
+    set('nh-orient-notes', form.notes || '');
+    set('nh-orient-signature', form.signature || x.name || '');
+    set('nh-orient-date-signed', form.dateSigned || todayISO());
+    const btn = document.getElementById('save-newhire-orientation-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Orientation Form'; }
+    document.getElementById('modal-newhire-orientation-form')?.classList.add('open');
+  }
+
+  async function saveNewHireOrientationForm() {
+    if (!currentUser) return toast('Please sign in first.');
+    if (!currentNewHireOrientationId) return toast('Open an intake request first.');
+    const btn = document.getElementById('save-newhire-orientation-btn');
+    const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
+    const signature = val('nh-orient-signature');
+    if (!signature) return toast('Employee signature / typed name is required.');
+    const orientationForm = {
+      completed: true,
+      employeeName: val('nh-orient-employee-name'),
+      date: val('nh-orient-date'),
+      project: val('nh-orient-project'),
+      notes: val('nh-orient-notes'),
+      signature,
+      dateSigned: val('nh-orient-date-signed'),
+      savedAt: new Date().toISOString(),
+      savedBy: currentUser.email || currentUser.uid || ''
+    };
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      await updateDoc(doc(db, 'newHireIntakes', currentNewHireOrientationId), {
+        orientationForm,
+        updatedAt: serverTimestamp()
+      });
+      toast('Orientation form saved to intake packet.');
+      closeModal('modal-newhire-orientation-form');
+      await loadNewHireIntakes(true);
+      openNewHireReview(currentNewHireOrientationId);
+    } catch (e) {
+      console.error(e);
+      toast('Could not save orientation form.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Orientation Form'; }
+    }
   }
 
   async function setNewHireStatus(id, status) {
