@@ -12,7 +12,7 @@
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <!-- STABLE_LOGIN_RESCUE_RESTORE_USE_THIS_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15 -->
-  <!-- PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15 -->
+  <!-- PUBLIC_INTAKE_NOT_FOUND_STILL_OPEN_PACKET_FIX_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
   <style>
     :root {
@@ -3765,7 +3765,20 @@
     try {
       const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
       if (!snap.exists()) {
-        if (statusCard) statusCard.innerHTML = `<h3>Intake Request Not Found</h3><p class="helper-text">This PAL intake link may be expired or incorrect. Please contact your foreman or the PAL office.</p>`;
+        // PUBLIC_INTAKE_NOT_FOUND_STILL_OPEN_PACKET_FIX_2026_05_15
+        // Do NOT block the employee if the intake document cannot be found.
+        // Keep the public packet open so the employee can still submit information tied to the intake code.
+        currentPublicNewHireIntake = {
+          id: publicNewHireIntakeId,
+          status: 'Pending',
+          notes: 'Intake record was not preloaded. Employee can still complete the PAL pre-site packet.'
+        };
+        if (statusCard) statusCard.innerHTML = `<h3>PAL New Hire Packet</h3>
+          <p class="helper-text">Your intake link opened correctly. The office request could not be preloaded, but you can still complete your PAL pre-site packet below.</p>
+          <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '—')}</div></div>`;
+        if (formCard) formCard.style.display = 'block';
+        const os = document.getElementById('public-orientation-status');
+        if (os) os.textContent = 'Orientation Form: Pending';
         return;
       }
       currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
