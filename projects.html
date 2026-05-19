@@ -14,6 +14,7 @@
   <!-- PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15 -->
   <!-- PUBLIC_INTAKE_NOT_FOUND_STILL_OPEN_PACKET_FIX_2026_05_15 -->
   <!-- DRUG_CONSENT_SAFE_PHASE2_2026_05_15 -->
+  <!-- SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
   <style>
     :root {
@@ -846,9 +847,11 @@
         <div class="newhire-actions">
           <button class="btn-save" type="button" onclick="openPublicNewHireOrientationForm()">Open Orientation Form</button>
           <button class="btn-secondary" type="button" onclick="openPublicNewHireDrugConsentForm()">Open Drug & Alcohol Consent</button>
+          <button class="btn-secondary" type="button" onclick="openPublicNewHireSafetyAgreementForm()">Open Safety Agreement</button>
         </div>
         <div class="mini-note" id="public-orientation-status" style="margin-top:8px;">Orientation Form: Pending</div>
         <div class="mini-note" id="public-drug-status" style="margin-top:4px;">Drug & Alcohol Consent: Pending</div>
+        <div class="mini-note" id="public-safety-status" style="margin-top:4px;">Safety Agreement: Pending</div>
       </div>
 
       <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
@@ -1578,6 +1581,50 @@
   </div>
 </div>
 
+
+
+<!-- NEW HIRE SAFETY AGREEMENT DOCUMENT WINDOW - SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
+<div class="modal-overlay" id="modal-newhire-safety-form">
+  <div class="modal newhire-doc-window">
+    <div class="newhire-doc-paper">
+      <div class="newhire-doc-head">
+        <h3>PAL Scaffold / Fall / Ladder Safety Agreement</h3>
+        <p>This form opens separately and saves back to the employee intake packet.</p>
+      </div>
+      <div class="newhire-doc-body">
+        <div class="doc-review-box">
+          <h4>Employee Review</h4>
+          <p class="helper-text" style="margin-bottom:8px;">Please read and acknowledge the safety agreement items below before signing.</p>
+          <ul>
+            <li>I understand that fall protection must be used whenever required by PAL policy, site policy, OSHA rules, or the foreman/supervisor.</li>
+            <li>I understand that I may not remove, alter, or bypass guardrails, hole covers, barricades, warning lines, or other fall protection systems unless authorized.</li>
+            <li>I understand that ladders must be inspected before use, used properly, and secured/positioned correctly. Damaged ladders must be removed from service.</li>
+            <li>I understand that scaffolds must be erected, modified, inspected, and used only according to PAL/site safety requirements and competent-person direction.</li>
+            <li>I understand that I must not use lifts, scaffolds, ladders, harnesses, or related equipment unless I am trained, authorized, and following site requirements.</li>
+            <li>I understand that unsafe conditions, missing guardrails, damaged equipment, fall hazards, or improper access must be reported immediately before work continues.</li>
+          </ul>
+        </div>
+        <div class="report-grid">
+          <div class="field"><label>Employee Name</label><input id="nh-safety-employee-name" placeholder="Employee full name" /></div>
+          <div class="field"><label>Date</label><input id="nh-safety-date" type="date" /></div>
+          <div class="field span-2"><label>Project / Jobsite</label><input id="nh-safety-project" placeholder="Project / jobsite" /></div>
+          <div class="field"><label>Fall Protection Acknowledgement</label><select id="nh-safety-fall"><option value="Acknowledged">Acknowledged</option><option value="I have questions before signing">I have questions before signing</option></select></div>
+          <div class="field"><label>Ladder / Scaffold Acknowledgement</label><select id="nh-safety-scaffold"><option value="Acknowledged">Acknowledged</option><option value="I have questions before signing">I have questions before signing</option></select></div>
+          <div class="field span-2"><label>Employee Notes / Questions</label><textarea id="nh-safety-notes" rows="3" placeholder="Optional notes or questions..."></textarea></div>
+        </div>
+        <div class="doc-sig-line" style="margin-top:14px;">
+          <div class="field"><label>Employee Signature / Typed Name</label><input id="nh-safety-signature" placeholder="Type full name as signature" /></div>
+          <div class="field"><label>Date Signed</label><input id="nh-safety-date-signed" type="date" /></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-newhire-safety-form')">Cancel</button>
+      <button class="btn-save" id="save-newhire-safety-btn" onclick="saveNewHireSafetyAgreementForm()">Save Safety Agreement</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1619,6 +1666,7 @@
   let allWarehouseItems = [];
   let currentNewHireOrientationId = null;
   let currentNewHireDrugConsentId = null;
+  let currentNewHireSafetyAgreementId = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1684,6 +1732,9 @@
   window.openNewHireDrugConsentForm = openNewHireDrugConsentForm;
   window.saveNewHireDrugConsentForm = saveNewHireDrugConsentForm;
   window.openPublicNewHireDrugConsentForm = openPublicNewHireDrugConsentForm;
+  window.openNewHireSafetyAgreementForm = openNewHireSafetyAgreementForm;
+  window.saveNewHireSafetyAgreementForm = saveNewHireSafetyAgreementForm;
+  window.openPublicNewHireSafetyAgreementForm = openPublicNewHireSafetyAgreementForm;
   window.submitPublicNewHireIntake = submitPublicNewHireIntake;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
@@ -3853,6 +3904,8 @@
       if (os) os.textContent = `Orientation Form: ${x.orientationForm?.completed ? 'Completed' : 'Pending'}`;
       const ds = document.getElementById('public-drug-status');
       if (ds) ds.textContent = `Drug & Alcohol Consent: ${x.drugConsentForm?.completed ? 'Completed' : 'Pending'}`;
+      const ss = document.getElementById('public-safety-status');
+      if (ss) ss.textContent = `Safety Agreement: ${x.safetyAgreementForm?.completed ? 'Completed' : 'Pending'}`;
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
       // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
@@ -3869,6 +3922,8 @@
       if (formCard) formCard.style.display = 'block';
       const os = document.getElementById('public-orientation-status');
       if (os) os.textContent = 'Orientation Form: Pending';
+      const ds = document.getElementById('public-drug-status'); if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
+      const ss = document.getElementById('public-safety-status'); if (ss) ss.textContent = 'Safety Agreement: Pending';
     }
   }
 
@@ -3886,6 +3941,14 @@
       allNewHireIntakes.push(currentPublicNewHireIntake);
     }
     openNewHireDrugConsentForm(publicNewHireIntakeId);
+  }
+
+  function openPublicNewHireSafetyAgreementForm() {
+    if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    if (currentPublicNewHireIntake && !allNewHireIntakes.some(x => x.id === currentPublicNewHireIntake.id)) {
+      allNewHireIntakes.push(currentPublicNewHireIntake);
+    }
+    openNewHireSafetyAgreementForm(publicNewHireIntakeId);
   }
 
   async function submitPublicNewHireIntake() {
@@ -4177,6 +4240,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         </div>
       </div>
     </div>
+    <div class="packet-form-card">
+      <div class="packet-form-row">
+        <div>
+          <div class="packet-form-title">Scaffold / Fall / Ladder Safety Agreement</div>
+          <div class="packet-form-sub">Opens as a separate document window and saves back to this employee intake packet.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span class="pill ${x.safetyAgreementForm?.completed ? 'active' : 'pending'}">${x.safetyAgreementForm?.completed ? 'Completed' : 'Pending'}</span>
+          <button class="btn-sm" onclick="openNewHireSafetyAgreementForm('${esc(x.id)}')">Open Safety Agreement</button>
+        </div>
+      </div>
+    </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
       ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No files uploaded yet.</div>'}
@@ -4330,6 +4405,69 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (btn) { btn.disabled = false; btn.textContent = 'Save Drug Consent'; }
     }
   }
+
+  // SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15
+  function openNewHireSafetyAgreementForm(id) {
+    const x = allNewHireIntakes.find(i => i.id === id) || (currentPublicNewHireIntake?.id === id ? currentPublicNewHireIntake : null);
+    if (!x) return toast('Intake request not found.');
+    currentNewHireSafetyAgreementId = id;
+    const form = x.safetyAgreementForm || {};
+    const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
+    set('nh-safety-employee-name', form.employeeName || x.name || '');
+    set('nh-safety-date', form.date || todayISO());
+    set('nh-safety-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' · '));
+    set('nh-safety-fall', form.fallAcknowledgement || 'Acknowledged');
+    set('nh-safety-scaffold', form.scaffoldAcknowledgement || 'Acknowledged');
+    set('nh-safety-notes', form.notes || '');
+    set('nh-safety-signature', form.signature || x.name || '');
+    set('nh-safety-date-signed', form.dateSigned || todayISO());
+    const btn = document.getElementById('save-newhire-safety-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Safety Agreement'; }
+    document.getElementById('modal-newhire-safety-form')?.classList.add('open');
+  }
+
+  async function saveNewHireSafetyAgreementForm() {
+    if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
+    if (!currentNewHireSafetyAgreementId) return toast('Open an intake request first.');
+    const btn = document.getElementById('save-newhire-safety-btn');
+    const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
+    const signature = val('nh-safety-signature');
+    if (!signature) return toast('Employee signature / typed name is required.');
+    const safetyAgreementForm = {
+      completed: true,
+      employeeName: val('nh-safety-employee-name'),
+      date: val('nh-safety-date'),
+      project: val('nh-safety-project'),
+      fallAcknowledgement: val('nh-safety-fall'),
+      scaffoldAcknowledgement: val('nh-safety-scaffold'),
+      notes: val('nh-safety-notes'),
+      signature,
+      dateSigned: val('nh-safety-date-signed'),
+      savedAt: new Date().toISOString(),
+      savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
+    };
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      await updateDoc(doc(db, 'newHireIntakes', currentNewHireSafetyAgreementId), {
+        safetyAgreementForm,
+        updatedAt: serverTimestamp()
+      });
+      toast('Safety Agreement saved to intake packet.');
+      closeModal('modal-newhire-safety-form');
+      if (publicNewHireIntakeId) {
+        await loadPublicNewHireIntake();
+      } else {
+        await loadNewHireIntakes(true);
+        openNewHireReview(currentNewHireSafetyAgreementId);
+      }
+    } catch (e) {
+      console.error(e);
+      toast('Could not save Safety Agreement.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Safety Agreement'; }
+    }
+  }
+
 
   async function setNewHireStatus(id, status) {
     if (!id) return;
