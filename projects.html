@@ -15,6 +15,7 @@
   <!-- PUBLIC_INTAKE_NOT_FOUND_STILL_OPEN_PACKET_FIX_2026_05_15 -->
   <!-- DRUG_CONSENT_SAFE_PHASE2_2026_05_15 -->
   <!-- SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
+  <!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
   <style>
     :root {
@@ -848,18 +849,33 @@
           <button class="btn-save" type="button" onclick="openPublicNewHireOrientationForm()">Open Orientation Form</button>
           <button class="btn-secondary" type="button" onclick="openPublicNewHireDrugConsentForm()">Open Drug & Alcohol Consent</button>
           <button class="btn-secondary" type="button" onclick="openPublicNewHireSafetyAgreementForm()">Open Safety Agreement</button>
+          <button class="btn-secondary" type="button" onclick="openPublicNewHireCertUploadForm()">Open Certification Uploads</button>
+          <button class="btn-secondary" type="button" onclick="openPublicNewHirePayrollIdUploadForm()">Open Payroll / ID Uploads</button>
         </div>
         <div class="mini-note" id="public-orientation-status" style="margin-top:8px;">Orientation Form: Pending</div>
         <div class="mini-note" id="public-drug-status" style="margin-top:4px;">Drug & Alcohol Consent: Pending</div>
         <div class="mini-note" id="public-safety-status" style="margin-top:4px;">Safety Agreement: Pending</div>
+        <div class="mini-note" id="public-cert-upload-status" style="margin-top:4px;">Certification Uploads: Pending</div>
+        <div class="mini-note" id="public-payroll-id-status" style="margin-top:4px;">Payroll / ID Uploads: Pending</div>
       </div>
 
       <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
-        <h3 style="margin-bottom:8px;">Certification Uploads</h3>
+        <h3 style="margin-bottom:8px;">Certification Uploads / Payroll ID</h3>
+        <div class="helper-text" style="margin-bottom:10px;">Preferred method: use the separate form buttons above so each upload saves back to this employee packet. These quick upload fields remain as a backup.</div>
         <div class="field span-2">
           <label>Upload Certification Photos / Documents</label>
           <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" />
           <div class="helper-text">Upload clear photos or PDFs of OSHA, SST, scaffold, G60, fire watch, or any certs requested by PAL.</div>
+        </div>
+        <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px;">
+          <h4 style="color:var(--navy);margin:0 0 6px;">Payroll / ID Uploads</h4>
+          <div class="helper-text" style="margin-bottom:10px;">These documents are for payroll/onboarding review. Treat them as office-sensitive documents.</div>
+          <div class="report-grid">
+            <div class="field"><label>Driver License / Photo ID</label><input id="pub-nh-driver-id" type="file" accept=".pdf,image/*" /></div>
+            <div class="field"><label>Union Book / Union Card</label><input id="pub-nh-union-book" type="file" accept=".pdf,image/*" /></div>
+            <div class="field"><label>Social Security Card</label><input id="pub-nh-ss-card" type="file" accept=".pdf,image/*" /></div>
+            <div class="field"><label>Additional Payroll / ID Document</label><input id="pub-nh-payroll-extra" type="file" accept=".pdf,image/*" /></div>
+          </div>
         </div>
       </div>
 
@@ -1294,6 +1310,61 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-certification','modal-newhire-intake','modal-newhire-review')">Cancel</button>
       <button class="btn-save" id="save-cert-btn" onclick="saveCertification()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYROLL_CERT_UPLOAD_VISIBLE_FORM_BUTTONS_PHASE6_2026_05_15 -->
+<!-- NEW HIRE CERTIFICATION UPLOAD FORM MODAL -->
+<div class="modal-overlay" id="modal-newhire-cert-upload-form">
+  <div class="modal" style="max-width:760px;">
+    <h3>🪪 Certification Uploads</h3>
+    <div class="mini-note" id="newhire-cert-upload-label" style="margin-bottom:14px;">Upload employee certification cards/photos.</div>
+    <div class="detail-card" style="background:#f8fafc;margin-bottom:12px;">
+      <h3 style="margin-bottom:6px;">Required Certification Files</h3>
+      <div class="helper-text">Upload clear photos or PDFs. These save back to the new hire packet and can be reviewed from Employee Certs / New Hire Intake.</div>
+    </div>
+    <div class="report-grid">
+      <div class="field"><label>OSHA 30 / OSHA 10</label><input id="newhire-cert-osha" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>OSHA Expiration Date</label><input id="newhire-cert-osha-exp" type="date" /></div>
+      <div class="field"><label>SST Card</label><input id="newhire-cert-sst" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>SST Expiration Date</label><input id="newhire-cert-sst-exp" type="date" /></div>
+      <div class="field"><label>Scaffold Certification</label><input id="newhire-cert-scaffold" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Scaffold Expiration Date</label><input id="newhire-cert-scaffold-exp" type="date" /></div>
+      <div class="field"><label>Lift Certification</label><input id="newhire-cert-lift" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Lift Expiration Date</label><input id="newhire-cert-lift-exp" type="date" /></div>
+      <div class="field"><label>Fire Watch / G60</label><input id="newhire-cert-firewatch" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Fire Watch / G60 Expiration</label><input id="newhire-cert-firewatch-exp" type="date" /></div>
+      <div class="field span-2"><label>Other Certification</label><input id="newhire-cert-other" type="file" accept=".pdf,image/*" /></div>
+      <div class="field span-2"><label>Certification Notes</label><textarea id="newhire-cert-notes" rows="3" placeholder="List any cert names, card numbers, missing items, or notes for PAL office."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-newhire-cert-upload-form')">Cancel</button>
+      <button class="btn-save" id="save-newhire-cert-upload-btn" onclick="saveNewHireCertUploads()">Save Certification Uploads</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW HIRE PAYROLL / ID UPLOAD FORM MODAL -->
+<div class="modal-overlay" id="modal-newhire-payroll-id-form">
+  <div class="modal" style="max-width:760px;">
+    <h3>🔒 Payroll / ID Uploads</h3>
+    <div class="mini-note" id="newhire-payroll-id-label" style="margin-bottom:14px;">Office-sensitive payroll/onboarding documents.</div>
+    <div class="detail-card" style="background:#fff7ed;margin-bottom:12px;">
+      <h3 style="margin-bottom:6px;">Private Payroll / Identity Documents</h3>
+      <div class="helper-text">Upload clear photos or PDFs. These should be treated as office-sensitive documents and reviewed only by authorized PAL office staff.</div>
+    </div>
+    <div class="report-grid">
+      <div class="field"><label>Driver License / Photo ID</label><input id="newhire-payroll-driver-id" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Union Book / Union Card</label><input id="newhire-payroll-union-book" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Social Security Card</label><input id="newhire-payroll-ss-card" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>W-4 / Payroll Form Upload</label><input id="newhire-payroll-w4" type="file" accept=".pdf,image/*" /></div>
+      <div class="field span-2"><label>Additional Payroll / ID Document</label><input id="newhire-payroll-extra" type="file" accept=".pdf,image/*" /></div>
+      <div class="field span-2"><label>Payroll / ID Notes</label><textarea id="newhire-payroll-notes" rows="3" placeholder="Any notes for payroll or office review."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-newhire-payroll-id-form')">Cancel</button>
+      <button class="btn-save" id="save-newhire-payroll-id-btn" onclick="saveNewHirePayrollIdUploads()">Save Payroll / ID Uploads</button>
     </div>
   </div>
 </div>
@@ -1735,6 +1806,10 @@
   window.openNewHireSafetyAgreementForm = openNewHireSafetyAgreementForm;
   window.saveNewHireSafetyAgreementForm = saveNewHireSafetyAgreementForm;
   window.openPublicNewHireSafetyAgreementForm = openPublicNewHireSafetyAgreementForm;
+  window.openPublicNewHireCertUploadForm = openPublicNewHireCertUploadForm;
+  window.openPublicNewHirePayrollIdUploadForm = openPublicNewHirePayrollIdUploadForm;
+  window.saveNewHireCertUploads = saveNewHireCertUploads;
+  window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
   window.submitPublicNewHireIntake = submitPublicNewHireIntake;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
@@ -3906,6 +3981,10 @@
       if (ds) ds.textContent = `Drug & Alcohol Consent: ${x.drugConsentForm?.completed ? 'Completed' : 'Pending'}`;
       const ss = document.getElementById('public-safety-status');
       if (ss) ss.textContent = `Safety Agreement: ${x.safetyAgreementForm?.completed ? 'Completed' : 'Pending'}`;
+      const cs = document.getElementById('public-cert-upload-status');
+      if (cs) cs.textContent = `Certification Uploads: ${(x.certFiles || []).length ? (x.certFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
+      const ps = document.getElementById('public-payroll-id-status');
+      if (ps) ps.textContent = `Payroll / ID Uploads: ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
       // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
@@ -3951,6 +4030,130 @@
     openNewHireSafetyAgreementForm(publicNewHireIntakeId);
   }
 
+  function ensurePublicIntakeForUpload() {
+    if (!publicNewHireIntakeId) { toast('Missing intake link.'); return false; }
+    if (currentPublicNewHireIntake && !allNewHireIntakes.some(x => x.id === currentPublicNewHireIntake.id)) {
+      allNewHireIntakes.push(currentPublicNewHireIntake);
+    }
+    return true;
+  }
+
+  function openPublicNewHireCertUploadForm() {
+    if (!ensurePublicIntakeForUpload()) return;
+    const label = document.getElementById('newhire-cert-upload-label');
+    if (label) label.textContent = `Linked to intake/person packet: ${publicNewHireIntakeId}`;
+    document.getElementById('modal-newhire-cert-upload-form')?.classList.add('open');
+  }
+
+  function openPublicNewHirePayrollIdUploadForm() {
+    if (!ensurePublicIntakeForUpload()) return;
+    const label = document.getElementById('newhire-payroll-id-label');
+    if (label) label.textContent = `Linked to intake/person packet: ${publicNewHireIntakeId}`;
+    document.getElementById('modal-newhire-payroll-id-form')?.classList.add('open');
+  }
+
+  async function uploadNewHireFormFile(inputId, label, folder) {
+    const file = document.getElementById(inputId)?.files?.[0];
+    if (!file) return null;
+    const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+    const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    return { type: label, name: file.name, url, path, uploadedAt: new Date().toISOString(), source: folder };
+  }
+
+  async function saveNewHireCertUploads() {
+    if (!ensurePublicIntakeForUpload()) return;
+    const btn = document.getElementById('save-newhire-cert-upload-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      const uploads = [];
+      const certInputs = [
+        ['newhire-cert-osha', 'OSHA 30 / OSHA 10', 'newhire-cert-osha-exp'],
+        ['newhire-cert-sst', 'SST Card', 'newhire-cert-sst-exp'],
+        ['newhire-cert-scaffold', 'Scaffold Certification', 'newhire-cert-scaffold-exp'],
+        ['newhire-cert-lift', 'Lift Certification', 'newhire-cert-lift-exp'],
+        ['newhire-cert-firewatch', 'Fire Watch / G60', 'newhire-cert-firewatch-exp'],
+        ['newhire-cert-other', 'Other Certification', '']
+      ];
+      for (const [inputId, label, expId] of certInputs) {
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads');
+        if (uploaded) {
+          uploaded.expirationDate = expId ? (document.getElementById(expId)?.value || '') : '';
+          uploads.push(uploaded);
+        }
+      }
+      if (!uploads.length) return toast('Choose at least one certification file first.');
+      const notes = document.getElementById('newhire-cert-notes')?.value.trim() || '';
+      let existing = [];
+      try {
+        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
+        if (snap.exists()) existing = snap.data().certFiles || [];
+      } catch (e) { console.warn('Could not read existing cert files before merge', e); }
+      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
+        certFiles: [...existing, ...uploads],
+        certUploadNotes: notes,
+        certUploadsCompleted: true,
+        updatedAt: serverTimestamp(),
+        status: 'Ready for Review'
+      }, { merge: true });
+      const st = document.getElementById('public-cert-upload-status');
+      if (st) st.textContent = `Certification Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      closeModal('modal-newhire-cert-upload-form');
+      toast('Certification uploads saved to intake packet.');
+    } catch (e) {
+      console.error('Cert upload save failed', e);
+      toast('Could not save certification uploads. Check Firebase public upload permissions.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Certification Uploads'; }
+    }
+  }
+
+  async function saveNewHirePayrollIdUploads() {
+    if (!ensurePublicIntakeForUpload()) return;
+    const btn = document.getElementById('save-newhire-payroll-id-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      const uploads = [];
+      const inputs = [
+        ['newhire-payroll-driver-id', 'Driver License / Photo ID'],
+        ['newhire-payroll-union-book', 'Union Book / Union Card'],
+        ['newhire-payroll-ss-card', 'Social Security Card'],
+        ['newhire-payroll-w4', 'W-4 / Payroll Form'],
+        ['newhire-payroll-extra', 'Additional Payroll / ID Document']
+      ];
+      for (const [inputId, label] of inputs) {
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads');
+        if (uploaded) uploads.push(uploaded);
+      }
+      if (!uploads.length) return toast('Choose at least one payroll / ID file first.');
+      const notes = document.getElementById('newhire-payroll-notes')?.value.trim() || '';
+      let existing = [];
+      try {
+        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
+        if (snap.exists()) existing = snap.data().payrollIdFiles || [];
+      } catch (e) { console.warn('Could not read existing payroll files before merge', e); }
+      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
+        payrollIdFiles: [...existing, ...uploads],
+        payrollIdNotes: notes,
+        payrollIdUploadsCompleted: true,
+        payrollIdUploadCount: existing.length + uploads.length,
+        updatedAt: serverTimestamp(),
+        status: 'Ready for Review'
+      }, { merge: true });
+      const st = document.getElementById('public-payroll-id-status');
+      if (st) st.textContent = `Payroll / ID Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      closeModal('modal-newhire-payroll-id-form');
+      toast('Payroll / ID uploads saved to intake packet.');
+    } catch (e) {
+      console.error('Payroll / ID upload save failed', e);
+      toast('Could not save payroll / ID uploads. Check Firebase public upload permissions.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll / ID Uploads'; }
+    }
+  }
+
   async function submitPublicNewHireIntake() {
     if (!publicNewHireIntakeId) return toast('Missing intake link.');
     const btn = document.getElementById('pub-submit-intake-btn');
@@ -3965,12 +4168,33 @@
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake' });
+        uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake-cert' });
+      }
+      const payrollUploads = [];
+      const payrollInputs = [
+        ['pub-nh-driver-id', 'Driver License / Photo ID'],
+        ['pub-nh-union-book', 'Union Book / Union Card'],
+        ['pub-nh-ss-card', 'Social Security Card'],
+        ['pub-nh-payroll-extra', 'Additional Payroll / ID Document']
+      ];
+      for (const [inputId, label] of payrollInputs) {
+        const payrollFile = document.getElementById(inputId)?.files?.[0];
+        if (!payrollFile) continue;
+        const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${payrollFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+        const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${safeName}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, payrollFile);
+        const url = await getDownloadURL(storageRef);
+        payrollUploads.push({ type: label, name: payrollFile.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake-payroll-id' });
       }
       let existing = [];
+      let existingPayrollIdFiles = [];
       try {
         const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-        existing = snap.exists() ? (snap.data().certFiles || []) : [];
+        if (snap.exists()) {
+          existing = snap.data().certFiles || [];
+          existingPayrollIdFiles = snap.data().payrollIdFiles || [];
+        }
       } catch (readErr) {
         // Public rules may block read; continue with submission attempt.
         console.warn('Public intake submit could not pre-read existing files', readErr);
@@ -3984,6 +4208,8 @@
         emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
         employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
         certFiles: [...existing, ...uploaded],
+        payrollIdFiles: [...existingPayrollIdFiles, ...payrollUploads],
+        payrollIdUploadCount: (existingPayrollIdFiles.length + payrollUploads.length),
         status: 'Ready for Review',
         employeeSubmittedAt: new Date().toISOString(),
         updatedAt: serverTimestamp(),
@@ -4171,7 +4397,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
             ${x.projectJobNumber ? `<span>📋 ${esc(x.projectJobNumber)}</span>` : ''}
             ${x.startDate ? `<span>📅 ${esc(x.startDate)}</span>` : ''}
             ${x.foreman ? `<span>👤 ${esc(x.foreman)}</span>` : ''}
-            ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} file(s)</span>` : ''}
+            ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} cert file(s)</span>` : ''}${(x.payrollIdFiles || []).length ? `<span>🔒 ${(x.payrollIdFiles || []).length} payroll/ID file(s)</span>` : ''}
           </div>
         </div>
         <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
@@ -4254,7 +4480,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
-      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No files uploaded yet.</div>'}
+      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
+    </div>
+    <div class="newhire-upload-list" style="margin-top:12px;">
+      <strong>Payroll / ID Uploads</strong>
+      <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
+      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">🔒 ${esc(f.type || 'Payroll / ID Document')}: <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded Document')}</a></div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
     document.getElementById('modal-newhire-review')?.classList.add('open');
@@ -4565,3 +4796,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 </script>
 </body>
 </html>
+
+<!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
+
+<!-- PAYROLL_CERT_UPLOAD_VISIBLE_FORM_BUTTONS_PHASE6_2026_05_15 -->
