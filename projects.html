@@ -17,7 +17,7 @@
   <!-- SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
   <!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
-  <!-- PHASE5_EXECUTIVE_COMPLIANCE_DASHBOARD_2026_05_19 -->
+  <!-- PHASE5B_EXECUTIVE_COMPLIANCE_COMMAND_CENTER_2026_05_19 -->
   <!-- SMART_WORKFORCE_SYNC_ENGINE_PHASE4_2026_05_19 -->
   <!-- PHASE3_GOOD_WORKER_DEMO_CORRECTED_JOHN_SMITH_2026_05_19 -->
   <style>
@@ -730,7 +730,52 @@
 
 
 
-    /* PHASE5_EXECUTIVE_COMPLIANCE_DASHBOARD_2026_05_19 */
+    /* PHASE5B_EXECUTIVE_COMPLIANCE_COMMAND_CENTER_2026_05_19 */
+    .exec-command-hero {
+      background: linear-gradient(135deg, #122943, var(--navy) 55%, #254d78);
+      color:#fff;
+      border-radius:24px;
+      padding:22px;
+      box-shadow:0 16px 38px rgba(27,58,92,.22);
+      margin:0 0 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .exec-command-hero:after {
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-80px;
+      width:240px;
+      height:240px;
+      border-radius:999px;
+      background:rgba(120,194,64,.16);
+    }
+    .exec-command-hero h3 { margin:0 0 6px; font-size:22px; position:relative; z-index:1; }
+    .exec-command-hero p { margin:0; color:rgba(255,255,255,.78); font-size:13px; line-height:1.5; max-width:720px; position:relative; z-index:1; }
+    .exec-command-strip { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; position:relative; z-index:1; }
+    .exec-command-chip { background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:999px; padding:8px 11px; font-size:12px; font-weight:900; }
+    .exec-risk-band {
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin:14px 0 18px;
+      align-items:stretch;
+    }
+    .exec-risk-card {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      box-shadow:0 8px 24px rgba(16,24,40,.07);
+      border-left:8px solid var(--navy);
+    }
+    .exec-risk-card.good { border-left-color:#16a34a; }
+    .exec-risk-card.warn { border-left-color:#d97706; }
+    .exec-risk-card.hold { border-left-color:#dc2626; }
+    .exec-risk-card h3 { margin:0 0 8px; color:var(--navy); font-size:17px; }
+    .exec-risk-card .risk-score { font-size:44px; font-weight:950; color:var(--navy); line-height:1; margin:6px 0; }
+    .exec-risk-card p { color:var(--muted); font-size:13px; line-height:1.45; margin:0; }
     .exec-dashboard-grid {
       display:grid;
       grid-template-columns: repeat(5, minmax(0,1fr));
@@ -740,32 +785,43 @@
     .exec-kpi-card {
       background:#fff;
       border:1px solid var(--line);
-      border-radius:18px;
+      border-radius:20px;
       padding:16px;
-      box-shadow:0 4px 14px rgba(16,24,40,.05);
-      border-top:6px solid var(--navy);
+      box-shadow:0 6px 18px rgba(16,24,40,.06);
+      border-top:7px solid var(--navy);
+      min-height:116px;
     }
-    .exec-kpi-card.good { border-top-color:#16a34a; }
-    .exec-kpi-card.review { border-top-color:#2563eb; }
-    .exec-kpi-card.warn { border-top-color:#d97706; }
-    .exec-kpi-card.hold { border-top-color:#dc2626; }
+    .exec-kpi-card.good { border-top-color:#16a34a; background:linear-gradient(180deg,#fff,#f0fdf4); }
+    .exec-kpi-card.review { border-top-color:#2563eb; background:linear-gradient(180deg,#fff,#eff6ff); }
+    .exec-kpi-card.warn { border-top-color:#d97706; background:linear-gradient(180deg,#fff,#fffbeb); }
+    .exec-kpi-card.hold { border-top-color:#dc2626; background:linear-gradient(180deg,#fff,#fef2f2); }
     .exec-kpi-card.total { border-top-color:#1b3a5c; }
-    .exec-kpi-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
-    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.25px; }
+    .exec-kpi-card strong { display:block; font-size:34px; color:var(--navy); line-height:1; margin-bottom:7px; }
+    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:950; text-transform:uppercase; letter-spacing:.25px; }
+    .exec-kpi-card small { display:block; color:var(--muted); font-size:11px; line-height:1.35; margin-top:6px; }
     .exec-board-grid { display:grid; grid-template-columns: 1fr 1fr; gap:14px; align-items:start; }
-    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:0 4px 14px rgba(16,24,40,.04); }
-    .exec-panel h3 { color:var(--navy); font-size:16px; margin:0 0 10px; }
+    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 6px 18px rgba(16,24,40,.05); }
+    .exec-panel.priority { border-top:6px solid #dc2626; }
+    .exec-panel.warn { border-top:6px solid #d97706; }
+    .exec-panel.good { border-top:6px solid #16a34a; }
+    .exec-panel h3 { color:var(--navy); font-size:16px; margin:0 0 10px; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+    .exec-panel-count { background:#eef2f7; color:var(--navy); border-radius:999px; padding:4px 8px; font-size:11px; font-weight:950; }
     .exec-table { width:100%; border-collapse:collapse; font-size:13px; }
     .exec-table th { background:#f8fafc; color:var(--navy); text-align:left; padding:9px; border-bottom:1px solid var(--line); }
     .exec-table td { padding:9px; border-bottom:1px solid var(--line); vertical-align:top; }
-    .exec-chip { display:inline-flex; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:900; }
+    .exec-chip { display:inline-flex; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:950; }
     .exec-chip.good { background:#dcfce7; color:#166534; }
     .exec-chip.review { background:#dbeafe; color:#1d4ed8; }
     .exec-chip.warn { background:#fef3c7; color:#92400e; }
     .exec-chip.hold { background:#fee2e2; color:#991b1b; }
     .exec-actions { display:flex; gap:8px; flex-wrap:wrap; }
     .exec-note { background:#f8fafc; border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px; padding:12px; color:var(--text); font-size:13px; line-height:1.45; margin:10px 0 14px; }
-    @media(max-width:950px){ .exec-dashboard-grid { grid-template-columns:1fr; } .exec-board-grid { grid-template-columns:1fr; } }
+    .exec-issue-list { display:grid; gap:10px; }
+    .exec-issue-item { border:1px solid var(--line); background:#f8fafc; border-radius:14px; padding:12px; display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .exec-issue-item strong { color:var(--text); display:block; margin-bottom:3px; }
+    .exec-issue-item p { margin:0; color:var(--muted); font-size:12px; line-height:1.35; }
+    @media(max-width:1050px){ .exec-dashboard-grid { grid-template-columns:repeat(2,1fr); } .exec-risk-band { grid-template-columns:1fr; } .exec-board-grid { grid-template-columns:1fr; } }
+    @media(max-width:650px){ .exec-dashboard-grid { grid-template-columns:1fr; } .exec-command-hero { padding:18px; } }
 
 
     /* GOOD_TO_WORK_DASHBOARD_VISIBLE_REPATCH_2026_05_15 */
@@ -1110,8 +1166,16 @@
           <button class="btn-add" onclick="printExecutiveComplianceDashboard()">🖨️ Print / Save PDF</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Executive office view: company-wide onboarding, Good To Work, expiring certifications, missing payroll/ID items, and compliance holds.</div>
-      <div class="exec-note">This screen is built for the office meeting: it gives management a quick read of workforce readiness without opening every employee file one by one.</div>
+      <div class="exec-command-hero">
+        <h3>PAL Compliance Command Center</h3>
+        <p>Executive-level view for the office: workforce readiness, blocked workers, expiring certifications, missing payroll/ID documents, and onboarding packets that need attention.</p>
+        <div class="exec-command-strip">
+          <span class="exec-command-chip">Live workforce overview</span>
+          <span class="exec-command-chip">Risk-first layout</span>
+          <span class="exec-command-chip">Print / PDF ready</span>
+          <span class="exec-command-chip">Office meeting view</span>
+        </div>
+      </div>
       <div id="exec-compliance-summary">
         <div class="empty-state"><div class="icon">📊</div><h3>Compliance dashboard ready</h3><p>Click Refresh or open this tab to load the executive view.</p></div>
       </div>
@@ -5939,20 +6003,42 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const board = document.getElementById('exec-compliance-board');
     if (!summary || !board) return;
     const data = getExecutiveComplianceData();
-    summary.innerHTML = `<div class="exec-dashboard-grid">
-      <div class="exec-kpi-card total"><strong>${data.totals.totalWorkers}</strong><span>Total Records</span></div>
-      <div class="exec-kpi-card good"><strong>${data.totals.good}</strong><span>Good To Work</span></div>
-      <div class="exec-kpi-card review"><strong>${data.totals.review}</strong><span>Needs Review</span></div>
-      <div class="exec-kpi-card warn"><strong>${data.totals.expiringSoon}</strong><span>Expiring Soon</span></div>
-      <div class="exec-kpi-card hold"><strong>${data.totals.hold}</strong><span>Compliance Hold</span></div>
+    const riskCount = data.totals.hold + data.totals.expiringSoon + data.missingPayroll.length + data.missingCerts.length;
+    const readinessRate = data.totals.totalWorkers ? Math.round((data.totals.good / data.totals.totalWorkers) * 100) : 0;
+    const riskLevel = data.totals.hold ? 'hold' : (riskCount ? 'warn' : 'good');
+    const riskLabel = data.totals.hold ? 'High Attention Needed' : (riskCount ? 'Watch List Active' : 'Clean / Stable');
+    const topIssues = [];
+    if (data.totals.hold) topIssues.push({ label:'Workers on Compliance Hold', value:data.totals.hold, detail:'Do not send to site until corrected.' });
+    if (data.missingPayroll.length) topIssues.push({ label:'Missing Payroll / ID', value:data.missingPayroll.length, detail:'Office-sensitive documents still missing.' });
+    if (data.totals.expiringSoon) topIssues.push({ label:'Certs Expiring Soon', value:data.totals.expiringSoon, detail:'Renew before they become jobsite blockers.' });
+    if (data.activePackets.length) topIssues.push({ label:'Active Onboarding Packets', value:data.activePackets.length, detail:'Packets still moving through review.' });
+    if (!topIssues.length) topIssues.push({ label:'No Major Issues', value:'✓', detail:'No immediate compliance blockers found.' });
+
+    summary.innerHTML = `<div class="exec-risk-band">
+      <div class="exec-risk-card ${riskLevel}">
+        <h3>Executive Readiness Score</h3>
+        <div class="risk-score">${readinessRate}%</div>
+        <p><strong>${esc(riskLabel)}</strong><br>${data.totals.good} of ${data.totals.totalWorkers} workforce records are currently clear / Good To Work. This view is designed for a fast office read before assigning workers to site.</p>
+      </div>
+      <div class="exec-risk-card ${riskLevel}">
+        <h3>Top Compliance Issues</h3>
+        <div class="exec-issue-list">${topIssues.slice(0,4).map(x => `<div class="exec-issue-item"><div><strong>${esc(x.label)}</strong><p>${esc(x.detail)}</p></div><span class="exec-chip ${riskLevel}">${esc(String(x.value))}</span></div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="exec-dashboard-grid">
+      <div class="exec-kpi-card total"><strong>${data.totals.totalWorkers}</strong><span>Total Records</span><small>Employees + active intake packets</small></div>
+      <div class="exec-kpi-card good"><strong>${data.totals.good}</strong><span>Good To Work</span><small>Ready for jobsite assignment</small></div>
+      <div class="exec-kpi-card review"><strong>${data.totals.review}</strong><span>Needs Review</span><small>Office should inspect before approval</small></div>
+      <div class="exec-kpi-card warn"><strong>${data.totals.expiringSoon}</strong><span>Expiring Soon</span><small>Renewal window / warning list</small></div>
+      <div class="exec-kpi-card hold"><strong>${data.totals.hold}</strong><span>Compliance Hold</span><small>Blocked until corrected</small></div>
     </div>`;
     board.innerHTML = `<div class="exec-board-grid">
-      <div class="exec-panel"><h3>🔴 Compliance Holds / Expired</h3>${renderExecRows(data.hold.slice(0,10), 'No compliance holds right now.')}</div>
-      <div class="exec-panel"><h3>🟡 Missing Payroll / ID</h3>${renderExecRows(data.missingPayroll.slice(0,10), 'No missing payroll/ID items found.')}</div>
-      <div class="exec-panel"><h3>⏰ Certifications Expiring Soon</h3>${renderExecRows(data.expiringSoon.slice(0,10), 'No certifications expiring soon.')}</div>
-      <div class="exec-panel"><h3>🧾 Active Onboarding Packets</h3>${renderExecRows(data.activePackets.slice(0,10), 'No active onboarding packets waiting.')}</div>
-      <div class="exec-panel"><h3>✅ Good To Work Snapshot</h3>${renderExecRows(data.good.slice(0,10), 'No Good To Work workers yet.')}</div>
-      <div class="exec-panel"><h3>📌 Missing Certification Files</h3>${renderExecRows(data.missingCerts.slice(0,10), 'No missing certification files found.')}</div>
+      <div class="exec-panel priority"><h3>🔴 Workers Blocked From Site <span class="exec-panel-count">${data.hold.length}</span></h3>${renderExecRows(data.hold.slice(0,12), 'No compliance holds right now.')}</div>
+      <div class="exec-panel warn"><h3>🟡 Missing Payroll / ID <span class="exec-panel-count">${data.missingPayroll.length}</span></h3>${renderExecRows(data.missingPayroll.slice(0,12), 'No missing payroll/ID items found.')}</div>
+      <div class="exec-panel warn"><h3>⏰ Certifications Expiring Soon <span class="exec-panel-count">${data.expiringSoon.length}</span></h3>${renderExecRows(data.expiringSoon.slice(0,12), 'No certifications expiring soon.')}</div>
+      <div class="exec-panel warn"><h3>🧾 Packets Ready / Active Review <span class="exec-panel-count">${data.activePackets.length}</span></h3>${renderExecRows(data.activePackets.slice(0,12), 'No active onboarding packets waiting.')}</div>
+      <div class="exec-panel good"><h3>✅ Good To Work Snapshot <span class="exec-panel-count">${data.good.length}</span></h3>${renderExecRows(data.good.slice(0,12), 'No Good To Work workers yet.')}</div>
+      <div class="exec-panel warn"><h3>📌 Missing Certification Files <span class="exec-panel-count">${data.missingCerts.length}</span></h3>${renderExecRows(data.missingCerts.slice(0,12), 'No missing certification files found.')}</div>
     </div>`;
   }
 
