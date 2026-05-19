@@ -388,20 +388,6 @@
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
     #cover .home-menu button:hover { background: var(--green-accent); color: var(--navy); }
-    /* LOGIN_MEETING_RESCUE_2026_05_19: hard-link login access */
-    #pal-meeting-login-rescue {
-      background:#fff7ed; border-bottom:2px solid #f59e0b; padding:10px 14px;
-      text-align:center; font-size:14px; color:#7c2d12; font-weight:800;
-    }
-    #pal-meeting-login-rescue a { color:#1b3a5c; font-weight:900; text-decoration:underline; }
-    #cover .home-menu a.home-login-link {
-      width: 100%; text-align: left; border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.1); color: white; border-radius: 14px; padding: 13px 14px;
-      font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; text-decoration:none;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    }
-    #cover .home-menu a.home-login-link:hover { background: var(--green-accent); color: var(--navy); }
-
     #cover .home-menu .arrow { opacity: .75; font-size: 18px; }
     #cover .home-visual {
       border-radius: 22px; overflow: hidden; min-height: 460px; background: #dbe7ef;
@@ -686,8 +672,6 @@
   </style>
 </head>
 <body>
-  <!-- LOGIN_MEETING_RESCUE_2026_05_19: direct access if homepage scripts/cache fail -->
-  <div id="pal-meeting-login-rescue">Office meeting access: <a href="projects.html?v=meeting-login-rescue-20260519" target="_self" rel="noopener">Open Foreman / Supervisor / Office Login</a></div>
 
   <div class="pal-modal-overlay" id="pal-modal-overlay" role="dialog" aria-modal="true">
     <div class="pal-modal-box">
@@ -758,7 +742,7 @@
               <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
-              <a class="home-login-link" href="projects.html?v=meeting-login-rescue-20260519" target="_self" rel="noopener"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></a>
+              <button onclick="window.location.href='projects.html'"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></button>
             </div>
           </div>
           <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
@@ -3773,21 +3757,12 @@ function syncJobNumber(value) {
 </script>
 
   <script>
-    // LOGIN_MEETING_RESCUE_2026_05_19
-    // During the office demo, do not let an old PWA/service-worker cache serve a broken index/projects file.
-    // This safely clears old PAL Safety Hub caches; the web app still works normally online.
+    // Register service worker for offline support + PWA installability on Android
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map(reg => reg.unregister()));
-          if (window.caches) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map(key => caches.delete(key)));
-          }
-        } catch (e) {
-          console.warn('PAL cache cleanup skipped:', e);
-        }
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {
+          // Service worker not available (e.g. file:// protocol) — app still works normally
+        });
       });
     }
 
