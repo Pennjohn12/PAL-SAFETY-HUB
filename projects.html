@@ -1025,8 +1025,7 @@
         <div class="header-actions">
           <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
           <button class="btn-outline" onclick="runComplianceAudit()">🛡️ Run Compliance Audit</button>
-          <button class="btn-outline" onclick="createDemoComplianceEmployee()">👷 Demo Expired Cert</button>
-          <button class="btn-outline" onclick="createDemoJohnSmithGoodToWorkEmployee()">✅ Demo John Smith — Good To Work</button>
+          <button class="btn-outline" onclick="resetDemoComplianceWorkers()">🧹 Reset Demo Workers</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
         </div>
       </div>
@@ -1646,9 +1645,11 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
+      <button class="btn-secondary" onclick="syncNewHireToEmployeeCerts(currentNewHireReviewId)">Sync to Employee Certs</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
       <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
+      <button class="btn-secondary" style="color:var(--red);" onclick="deleteNewHireIntake(currentNewHireReviewId)">Delete Intake</button>
     </div>
   </div>
 </div>
@@ -1884,6 +1885,8 @@
   window.openEmployeePacketPDF = openEmployeePacketPDF;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
+  window.deleteNewHireIntake = deleteNewHireIntake;
+  window.syncNewHireToEmployeeCerts = syncNewHireToEmployeeCerts;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.openPublicNewHireOrientationForm = openPublicNewHireOrientationForm;
@@ -4599,8 +4602,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
         <button class="btn-sm" onclick="openEmployeePacketPDF('${esc(x.id)}')">Employee PDF Packet</button>
         <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
+        <button class="btn-sm" onclick="syncNewHireToEmployeeCerts('${esc(x.id)}')">Sync to Employee Certs</button>
         <button class="btn-sm" onclick="setNewHireStatus('${esc(x.id)}','Good To Work')">Good To Work</button>
         <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
+        <button class="btn-sm danger" onclick="deleteNewHireIntake('${esc(x.id)}')">Delete Intake</button>
       </div>
     </div>`;
     }).join('');
@@ -4712,37 +4717,43 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   // DEMO_WORKER_RESET_CLEANUP_PATCH_2026_05_19
   async function deleteDemoWorkersByNames(namesToDelete = []) {
-    const targetNames = new Set(namesToDelete.map(n => String(n || '').trim().toLowerCase()));
-    const demoEmails = new Set(['demo.joe.blow@example.com', 'demo.john.smith@example.com']);
-    const snap = await getDocs(query(collection(db, 'newHireIntakes'), where('demoRecord', '==', true), limit(100)));
+    // Strong cleanup: older demo patches may have created demo records without demoRecord=true.
+    // This scans New Hire Intake and removes anything clearly marked as Joe Blow / John Smith demo data.
+    const targetText = namesToDelete.map(n => String(n || '').toLowerCase()).join(' ');
+    const shouldCleanJoe = !targetText || targetText.includes('joe');
+    const shouldCleanJohn = !targetText || targetText.includes('john');
+    const snap = await getDocs(query(collection(db, 'newHireIntakes'), limit(500)));
     const deletes = [];
     snap.forEach(d => {
       const data = d.data() || {};
-      const name = String(data.name || '').trim().toLowerCase();
-      const email = String(data.email || '').trim().toLowerCase();
-      const isTargetName = targetNames.has(name) || (targetNames.has('joe blow — demo') && name.includes('joe blow')) || (targetNames.has('john smith — demo') && name.includes('john smith'));
-      const isTargetEmail = demoEmails.has(email) && (namesToDelete.length === 0 || (email.includes('joe.blow') && Array.from(targetNames).some(n => n.includes('joe'))) || (email.includes('john.smith') && Array.from(targetNames).some(n => n.includes('john'))));
-      if (isTargetName || isTargetEmail) deletes.push(deleteDoc(doc(db, 'newHireIntakes', d.id)));
+      const name = String(data.name || '').toLowerCase();
+      const email = String(data.email || '').toLowerCase();
+      const notes = String(data.notes || '').toLowerCase();
+      const isDemoFlag = data.demoRecord === true || notes.includes('demo record only') || email.includes('demo.');
+      const isJoeDemo = shouldCleanJoe && (name.includes('joe blow') || email.includes('joe.blow')) && isDemoFlag;
+      const isJohnDemo = shouldCleanJohn && (name.includes('john smith') || email.includes('john.smith')) && isDemoFlag;
+      if (isJoeDemo || isJohnDemo) deletes.push(deleteDoc(doc(db, 'newHireIntakes', d.id)));
     });
     await Promise.all(deletes);
     return deletes.length;
   }
 
   async function resetDemoComplianceWorkers() {
+    if (!currentUser) return toast('Please sign in first.');
     try {
-      await deleteDemoWorkersByNames(['Joe Blow — DEMO', 'Joe Blow - DEMO', 'John Smith — DEMO', 'John Smith - DEMO']);
+      const removed = await deleteDemoWorkersByNames(['Joe Blow', 'John Smith']);
       await createDemoComplianceEmployee({ skipCleanup: true, silent: true });
       await createDemoJohnSmithGoodToWorkEmployee({ skipCleanup: true, silent: true });
       if (typeof loadNewHireIntakes === 'function') await loadNewHireIntakes(true);
       if (typeof loadWorkforceStatusDashboard === 'function') await loadWorkforceStatusDashboard(true);
-      toast('Demo workers reset: 1 Joe Blow Hold + 1 John Smith Good To Work.');
+      toast(`Demo workers reset. Removed ${removed} old demo record(s). Now showing 1 Joe Blow + 1 John Smith.`);
     } catch (err) {
       console.error('Reset demo workers error:', err);
       toast('Could not reset demo workers.');
     }
   }
 
-  async function createDemoComplianceEmployee() {
+  async function createDemoComplianceEmployee(options = {}) {
     if (!currentUser) return toast('Please sign in first.');
     try {
       const demo = {
@@ -4793,7 +4804,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
 
-  async function createDemoJohnSmithGoodToWorkEmployee() {
+  async function createDemoJohnSmithGoodToWorkEmployee(options = {}) {
     if (!currentUser) return toast('Please sign in first.');
     try {
       const demo = {
@@ -5384,6 +5395,107 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }
   }
 
+
+  async function deleteNewHireIntake(id) {
+    if (!id) return;
+    const x = allNewHireIntakes.find(i => i.id === id);
+    const ok = confirm(`Delete new hire intake for ${x?.name || 'this worker'}? This removes the onboarding packet from New Hire Intake.`);
+    if (!ok) return;
+    try {
+      await deleteDoc(doc(db, 'newHireIntakes', id));
+      if (currentNewHireReviewId === id) {
+        currentNewHireReviewId = null;
+        closeModal('modal-newhire-review');
+      }
+      await loadNewHireIntakes(true);
+      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
+      toast('New hire intake deleted.');
+    } catch (e) {
+      console.error(e);
+      toast('Could not delete intake.');
+    }
+  }
+
+  function mapNewHireCertFilesToEmployeeCerts(x) {
+    const files = Array.isArray(x?.certFiles) ? x.certFiles : [];
+    return files.map(f => ({
+      type: f.type || f.title || 'Other',
+      title: f.type || f.title || f.name || 'Certification',
+      issueDate: f.issueDate || '',
+      expirationDate: safeDateOnly(f.expirationDate || f.expDate || ''),
+      fileName: f.fileName || f.name || 'New Hire Cert File',
+      mimeType: f.mimeType || '',
+      url: f.url || '#',
+      uploadedAt: f.uploadedAt || new Date().toISOString(),
+      uploadedBy: f.uploadedBy || currentUser?.displayName || currentUser?.email || 'New Hire Intake',
+      source: 'New Hire Intake',
+      sourceNewHireIntakeId: x.id,
+      demoFile: !!f.demoFile
+    }));
+  }
+
+  async function syncNewHireToEmployeeCerts(id) {
+    if (!currentUser) return toast('Please sign in first.');
+    const x = allNewHireIntakes.find(i => i.id === id);
+    if (!x) return toast('Intake request not found.');
+    try {
+      if (!allEmployees || !allEmployees.length) await loadEmployees(true);
+      const email = String(x.email || '').trim().toLowerCase();
+      const name = String(x.name || '').trim().toLowerCase();
+      let existing = allEmployees.find(e => String(e.sourceNewHireIntakeId || '') === id)
+        || (email ? allEmployees.find(e => String(e.email || '').trim().toLowerCase() === email) : null)
+        || (name ? allEmployees.find(e => String(e.name || '').trim().toLowerCase() === name) : null);
+      const incomingCerts = mapNewHireCertFilesToEmployeeCerts(x);
+      if (existing) {
+        const currentCerts = Array.isArray(existing.certifications) ? existing.certifications : [];
+        const merged = [...currentCerts];
+        incomingCerts.forEach(c => {
+          const key = `${c.title}|${c.expirationDate}|${c.fileName}`.toLowerCase();
+          const already = merged.some(m => `${m.title || m.type}|${m.expirationDate || ''}|${m.fileName || m.name || ''}`.toLowerCase() === key);
+          if (!already) merged.push(c);
+        });
+        await updateDoc(doc(db, 'employees', existing.id), {
+          name: x.name || existing.name || '',
+          email: x.email || existing.email || '',
+          phone: x.phone || existing.phone || '',
+          trade: x.trade || existing.trade || '',
+          notes: `${existing.notes || ''}${existing.notes ? '\n' : ''}Synced from New Hire Intake: ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
+          certifications: merged,
+          sourceNewHireIntakeId: id,
+          onboardingStatus: x.status || '',
+          updatedAt: new Date().toISOString(),
+          updatedBy: currentUser.displayName || currentUser.email
+        });
+      } else {
+        const docRef = await addDoc(collection(db, 'employees'), {
+          name: x.name || 'New Hire',
+          email: x.email || '',
+          phone: x.phone || '',
+          trade: x.trade || '',
+          notes: `Created from New Hire Intake. ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
+          certifications: incomingCerts,
+          assignedProjectIds: [],
+          sourceNewHireIntakeId: id,
+          onboardingStatus: x.status || '',
+          createdBy: currentUser.uid,
+          createdByName: currentUser.displayName || currentUser.email,
+          createdAt: serverTimestamp()
+        });
+        existing = { id: docRef.id };
+      }
+      await updateDoc(doc(db, 'newHireIntakes', id), {
+        employeeCertLinked: true,
+        employeeCertLinkedAt: new Date().toISOString(),
+        updatedAt: serverTimestamp()
+      });
+      await loadEmployees(true);
+      await loadNewHireIntakes(true);
+      toast('New hire synced to Employee Certs.');
+    } catch (e) {
+      console.error(e);
+      toast('Could not sync to Employee Certs.');
+    }
+  }
 
   async function setNewHireStatus(id, status) {
     if (!id) return;
