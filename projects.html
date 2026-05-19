@@ -1025,6 +1025,7 @@
           <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
           <button class="btn-outline" onclick="runComplianceAudit()">🛡️ Run Compliance Audit</button>
           <button class="btn-outline" onclick="createDemoComplianceEmployee()">👷 Demo Expired Cert</button>
+          <button class="btn-outline" onclick="createDemoGoodToWorkEmployee()">✅ Demo Good To Work</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
         </div>
       </div>
@@ -1919,6 +1920,7 @@
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
   window.runComplianceAudit = runComplianceAudit;
   window.createDemoComplianceEmployee = createDemoComplianceEmployee;
+  window.createDemoGoodToWorkEmployee = createDemoGoodToWorkEmployee;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -4751,6 +4753,69 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     } catch (e) {
       console.error(e);
       toast('Could not create demo employee.');
+    }
+  }
+
+
+  async function createDemoGoodToWorkEmployee() {
+    if (!currentUser) return toast('Please sign in first.');
+    try {
+      const demo = {
+        name: 'John Smith — DEMO',
+        phone: '(555) 010-3030',
+        email: 'demo.john.smith@example.com',
+        trade: 'Fireproofer / Scaffold Qualified Worker',
+        projectName: 'Demo Project',
+        projectJobNumber: 'DEMO-002',
+        foreman: currentUser.displayName || currentUser.email || 'PAL Office',
+        startDate: todayISO(),
+        required: 'All onboarding forms, OSHA, SST, scaffold/fall protection, payroll and ID documents',
+        notes: 'Demo record only. Shows a fully completed, valid employee packet that is approved Good To Work.',
+        status: 'Good To Work',
+        demoRecord: true,
+        orientationForm: { completed: true, signature: 'John Smith', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
+        drugConsentForm: { completed: true, signature: 'John Smith', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
+        safetyAgreementForm: { completed: true, signature: 'John Smith', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
+        certUploadsCompleted: true,
+        payrollIdUploadsCompleted: true,
+        certFiles: [
+          { type: 'OSHA 30', name: 'DEMO OSHA 30 - valid.pdf', url: '#', expirationDate: '2029-05-19', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'SST Card', name: 'DEMO SST Card - valid.pdf', url: '#', expirationDate: '2028-12-31', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'Scaffold Builder', name: 'DEMO Scaffold Builder - valid.pdf', url: '#', expirationDate: '2027-10-01', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'Fall Protection', name: 'DEMO Fall Protection - valid.pdf', url: '#', expirationDate: '2027-05-19', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'Silica', name: 'DEMO Silica Awareness - valid.pdf', url: '#', expirationDate: '2027-05-19', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'Fire Watch / G60', name: 'DEMO G60 Fire Watch - valid.pdf', url: '#', expirationDate: '2028-06-30', uploadedAt: new Date().toISOString(), demoFile: true }
+        ],
+        payrollIdFiles: [
+          { type: 'Driver License / Photo ID', name: 'DEMO Driver License.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'Union Book / Union Card', name: 'DEMO Union Card.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'Social Security Card', name: 'DEMO SS Card.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'W-4 / Payroll Form', name: 'DEMO W-4.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true }
+        ],
+        packetSubmitted: true,
+        packetSubmittedAt: new Date().toISOString(),
+        approvedAt: new Date().toISOString(),
+        approvedBy: currentUser.displayName || currentUser.email || 'PAL Office',
+        createdBy: currentUser.uid,
+        createdByName: currentUser.displayName || currentUser.email,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        complianceStatus: 'Good To Work',
+        complianceLevel: 'good',
+        complianceIssues: [],
+        complianceWarnings: [],
+        complianceCheckedAt: new Date().toISOString()
+      };
+      const docRef = await addDoc(collection(db, 'newHireIntakes'), demo);
+      await updateDoc(doc(db, 'newHireIntakes', docRef.id), {
+        intakeLink: `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`
+      });
+      toast('Demo employee created: John Smith — Good To Work.');
+      await loadNewHireIntakes(true);
+      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
+    } catch (e) {
+      console.error(e);
+      toast('Could not create Good To Work demo employee.');
     }
   }
 
