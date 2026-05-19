@@ -17,6 +17,7 @@
   <!-- SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
   <!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
+  <!-- PHASE5_EXECUTIVE_COMPLIANCE_DASHBOARD_2026_05_19 -->
   <!-- SMART_WORKFORCE_SYNC_ENGINE_PHASE4_2026_05_19 -->
   <!-- PHASE3_GOOD_WORKER_DEMO_CORRECTED_JOHN_SMITH_2026_05_19 -->
   <style>
@@ -729,6 +730,44 @@
 
 
 
+    /* PHASE5_EXECUTIVE_COMPLIANCE_DASHBOARD_2026_05_19 */
+    .exec-dashboard-grid {
+      display:grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap:12px;
+      margin:14px 0 18px;
+    }
+    .exec-kpi-card {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 4px 14px rgba(16,24,40,.05);
+      border-top:6px solid var(--navy);
+    }
+    .exec-kpi-card.good { border-top-color:#16a34a; }
+    .exec-kpi-card.review { border-top-color:#2563eb; }
+    .exec-kpi-card.warn { border-top-color:#d97706; }
+    .exec-kpi-card.hold { border-top-color:#dc2626; }
+    .exec-kpi-card.total { border-top-color:#1b3a5c; }
+    .exec-kpi-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.25px; }
+    .exec-board-grid { display:grid; grid-template-columns: 1fr 1fr; gap:14px; align-items:start; }
+    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:0 4px 14px rgba(16,24,40,.04); }
+    .exec-panel h3 { color:var(--navy); font-size:16px; margin:0 0 10px; }
+    .exec-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .exec-table th { background:#f8fafc; color:var(--navy); text-align:left; padding:9px; border-bottom:1px solid var(--line); }
+    .exec-table td { padding:9px; border-bottom:1px solid var(--line); vertical-align:top; }
+    .exec-chip { display:inline-flex; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:900; }
+    .exec-chip.good { background:#dcfce7; color:#166534; }
+    .exec-chip.review { background:#dbeafe; color:#1d4ed8; }
+    .exec-chip.warn { background:#fef3c7; color:#92400e; }
+    .exec-chip.hold { background:#fee2e2; color:#991b1b; }
+    .exec-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .exec-note { background:#f8fafc; border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px; padding:12px; color:var(--text); font-size:13px; line-height:1.45; margin:10px 0 14px; }
+    @media(max-width:950px){ .exec-dashboard-grid { grid-template-columns:1fr; } .exec-board-grid { grid-template-columns:1fr; } }
+
+
     /* GOOD_TO_WORK_DASHBOARD_VISIBLE_REPATCH_2026_05_15 */
     .workforce-status-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; margin:14px 0 18px; }
     .workforce-status-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:0 4px 14px rgba(16,24,40,.05); }
@@ -981,6 +1020,7 @@
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-new-hires', this)">🧾 New Hire Intake</button>
       <button class="tab" onclick="switchMainTab('main-workforce-status', this)">✅ Good To Work</button>
+      <button class="tab" onclick="switchMainTab('main-exec-compliance', this)">📊 Compliance Dashboard</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
@@ -1060,6 +1100,22 @@
         <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
       </div>
       <div id="workforce-status-board"></div>
+    </div>
+
+    <div class="tab-pane" id="main-exec-compliance">
+      <div class="page-header">
+        <h2>📊 Compliance Dashboard</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadExecutiveComplianceDashboard(true)">↻ Refresh</button>
+          <button class="btn-add" onclick="printExecutiveComplianceDashboard()">🖨️ Print / Save PDF</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Executive office view: company-wide onboarding, Good To Work, expiring certifications, missing payroll/ID items, and compliance holds.</div>
+      <div class="exec-note">This screen is built for the office meeting: it gives management a quick read of workforce readiness without opening every employee file one by one.</div>
+      <div id="exec-compliance-summary">
+        <div class="empty-state"><div class="icon">📊</div><h3>Compliance dashboard ready</h3><p>Click Refresh or open this tab to load the executive view.</p></div>
+      </div>
+      <div id="exec-compliance-board"></div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -1926,6 +1982,8 @@
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
+  window.loadExecutiveComplianceDashboard = loadExecutiveComplianceDashboard;
+  window.printExecutiveComplianceDashboard = printExecutiveComplianceDashboard;
   window.runComplianceAudit = runComplianceAudit;
   window.resetDemoComplianceWorkers = resetDemoComplianceWorkers;
   window.createDemoComplianceEmployee = createDemoComplianceEmployee;
@@ -5542,7 +5600,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           trade: x.trade || existing.trade || '',
           emergencyContactName: x.emergencyName || existing.emergencyContactName || '',
           emergencyContactPhone: x.emergencyPhone || existing.emergencyContactPhone || '',
-          notes: `${existing.notes || ''}${existing.notes ? '\n' : ''}Synced from New Hire Intake: ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
+          notes: `${existing.notes || ''}${existing.notes ? '
+' : ''}Synced from New Hire Intake: ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
           certifications: merged,
           payrollIdFiles: payrollFiles,
           orientationForm: x.orientationForm || {},
@@ -5773,6 +5832,161 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>`;
   }
 
+
+  // PHASE5_EXECUTIVE_COMPLIANCE_DASHBOARD_2026_05_19
+  async function loadExecutiveComplianceDashboard(force = false) {
+    const summary = document.getElementById('exec-compliance-summary');
+    const board = document.getElementById('exec-compliance-board');
+    if (summary) summary.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading executive compliance dashboard…</p>';
+    if (board) board.innerHTML = '';
+    try {
+      if (force || !allNewHireIntakes || !allNewHireIntakes.length) {
+        const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
+        allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }
+      if (force || !allEmployees || !allEmployees.length) {
+        const empSnap = await getDocs(collection(db, 'employees'));
+        allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }
+      renderExecutiveComplianceDashboard();
+    } catch (e) {
+      console.error('Executive compliance dashboard failed', e);
+      if (summary) summary.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Could not load compliance dashboard</h3><p>Check connection and refresh.</p></div>';
+    }
+  }
+
+  function getExecutiveComplianceData() {
+    const today = new Date();
+    const good = [];
+    const review = [];
+    const hold = [];
+    const expiringSoon = [];
+    const missingPayroll = [];
+    const missingCerts = [];
+    const activePackets = [];
+    const employeeMap = new Map();
+
+    (allEmployees || []).forEach(emp => {
+      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const expired = certs.filter(c => getCertStatusKey(c.expirationDate) === 'expired');
+      const soon = certs.filter(c => getCertStatusKey(c.expirationDate) === 'warn');
+      const row = {
+        source: 'Employee Certs',
+        id: emp.id,
+        name: emp.name || 'Employee',
+        trade: emp.trade || '',
+        status: expired.length ? 'Compliance Hold' : (soon.length || !certs.length ? 'Needs Review' : 'Good To Work'),
+        detail: expired.length ? `${expired.length} expired cert(s)` : soon.length ? `${soon.length} cert(s) expiring soon` : (!certs.length ? 'No certs uploaded' : `${certs.length} valid cert(s)`),
+        action: `openEmployeeDetail('${esc(emp.id)}')`
+      };
+      employeeMap.set((emp.name || '').trim().toLowerCase(), row);
+      if (expired.length) hold.push(row);
+      else if (soon.length || !certs.length) review.push(row);
+      else good.push(row);
+      soon.forEach(c => expiringSoon.push({ name: emp.name || 'Employee', trade: emp.trade || '', cert: c.title || c.type || 'Certification', exp: c.expirationDate || '', source: 'Employee Certs', action: row.action }));
+      if (!certs.length) missingCerts.push(row);
+    });
+
+    (allNewHireIntakes || []).forEach(x => {
+      const result = getNewHireComplianceResult(x);
+      const status = String(x.status || 'Pending');
+      const certCount = (x.certFiles || []).length;
+      const payrollCount = (x.payrollIdFiles || []).length;
+      const row = {
+        source: 'New Hire Intake',
+        id: x.id,
+        name: x.name || 'New Hire',
+        trade: x.trade || '',
+        project: x.projectName || '',
+        status: result.label || status,
+        detail: `${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
+        issues: [...(result.issues || []), ...(result.warnings || [])],
+        action: `openNewHireReview('${esc(x.id)}')`
+      };
+      if (status !== 'Good To Work') activePackets.push(row);
+      if (result.level === 'hold') hold.push(row);
+      else if (status === 'Good To Work' && result.level === 'good') good.push(row);
+      else review.push(row);
+      if (!payrollCount) missingPayroll.push(row);
+      if (!certCount) missingCerts.push(row);
+    });
+
+    const uniqueGood = good.length;
+    return {
+      totals: {
+        totalWorkers: (allEmployees || []).length + (allNewHireIntakes || []).length,
+        good: uniqueGood,
+        review: review.length,
+        hold: hold.length,
+        expiringSoon: expiringSoon.length
+      },
+      good, review, hold, expiringSoon, missingPayroll, missingCerts, activePackets
+    };
+  }
+
+  function renderExecRows(items, emptyText, type = 'standard') {
+    if (!items.length) return `<p style="color:var(--muted);font-size:13px;">${emptyText}</p>`;
+    return `<table class="exec-table"><thead><tr><th>Worker</th><th>Status / Issue</th><th>Action</th></tr></thead><tbody>${items.map(x => {
+      const status = x.status || (x.cert ? `${esc(x.cert)} expires ${esc(x.exp || 'soon')}` : 'Review');
+      const detail = x.detail || x.source || '';
+      const chipClass = /hold|expired/i.test(status) ? 'hold' : /good/i.test(status) ? 'good' : /soon|missing|review|pending/i.test(status) ? 'warn' : 'review';
+      return `<tr><td><strong>${esc(x.name || 'Worker')}</strong><br><span style="color:var(--muted);font-size:12px;">${x.trade ? esc(x.trade) : esc(x.source || '')}${x.project ? ' • ' + esc(x.project) : ''}</span></td><td><span class="exec-chip ${chipClass}">${esc(status)}</span><br><span style="color:var(--muted);font-size:12px;">${esc(detail)}${Array.isArray(x.issues) && x.issues.length ? '<br>' + esc(x.issues.slice(0,2).join(' | ')) : ''}</span></td><td><button class="btn-sm" onclick="${x.action || ''}">Open</button></td></tr>`;
+    }).join('')}</tbody></table>`;
+  }
+
+  function renderExecutiveComplianceDashboard() {
+    const summary = document.getElementById('exec-compliance-summary');
+    const board = document.getElementById('exec-compliance-board');
+    if (!summary || !board) return;
+    const data = getExecutiveComplianceData();
+    summary.innerHTML = `<div class="exec-dashboard-grid">
+      <div class="exec-kpi-card total"><strong>${data.totals.totalWorkers}</strong><span>Total Records</span></div>
+      <div class="exec-kpi-card good"><strong>${data.totals.good}</strong><span>Good To Work</span></div>
+      <div class="exec-kpi-card review"><strong>${data.totals.review}</strong><span>Needs Review</span></div>
+      <div class="exec-kpi-card warn"><strong>${data.totals.expiringSoon}</strong><span>Expiring Soon</span></div>
+      <div class="exec-kpi-card hold"><strong>${data.totals.hold}</strong><span>Compliance Hold</span></div>
+    </div>`;
+    board.innerHTML = `<div class="exec-board-grid">
+      <div class="exec-panel"><h3>🔴 Compliance Holds / Expired</h3>${renderExecRows(data.hold.slice(0,10), 'No compliance holds right now.')}</div>
+      <div class="exec-panel"><h3>🟡 Missing Payroll / ID</h3>${renderExecRows(data.missingPayroll.slice(0,10), 'No missing payroll/ID items found.')}</div>
+      <div class="exec-panel"><h3>⏰ Certifications Expiring Soon</h3>${renderExecRows(data.expiringSoon.slice(0,10), 'No certifications expiring soon.')}</div>
+      <div class="exec-panel"><h3>🧾 Active Onboarding Packets</h3>${renderExecRows(data.activePackets.slice(0,10), 'No active onboarding packets waiting.')}</div>
+      <div class="exec-panel"><h3>✅ Good To Work Snapshot</h3>${renderExecRows(data.good.slice(0,10), 'No Good To Work workers yet.')}</div>
+      <div class="exec-panel"><h3>📌 Missing Certification Files</h3>${renderExecRows(data.missingCerts.slice(0,10), 'No missing certification files found.')}</div>
+    </div>`;
+  }
+
+  function printExecutiveComplianceDashboard() {
+    const data = getExecutiveComplianceData();
+    const now = new Date().toLocaleString();
+    const html = `<!DOCTYPE html><html><head><title>PAL Compliance Dashboard</title><style>
+      body{font-family:Arial,sans-serif;color:#1f2937;margin:24px;}
+      .head{background:#1b3a5c;color:white;padding:18px;border-radius:14px;margin-bottom:16px;}
+      .head h1{margin:0 0 4px;font-size:24px;} .head p{margin:0;color:rgba(255,255,255,.78);}
+      .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0;}
+      .box{border:1px solid #dde3ea;border-radius:12px;padding:12px;} .box strong{font-size:26px;display:block;color:#1b3a5c;} .box span{font-size:11px;font-weight:800;color:#6b7280;text-transform:uppercase;}
+      h2{font-size:16px;color:#1b3a5c;margin-top:20px;} table{width:100%;border-collapse:collapse;font-size:12px;} th,td{border-bottom:1px solid #dde3ea;padding:8px;text-align:left;vertical-align:top;} th{background:#f8fafc;color:#1b3a5c;}
+      @media print{body{margin:0.35in}.no-print{display:none}}
+    </style></head><body><div class="head"><h1>PAL Safety Hub — Compliance Dashboard</h1><p>Printed: ${esc(now)}</p></div>
+      <div class="grid"><div class="box"><strong>${data.totals.totalWorkers}</strong><span>Total Records</span></div><div class="box"><strong>${data.totals.good}</strong><span>Good To Work</span></div><div class="box"><strong>${data.totals.review}</strong><span>Needs Review</span></div><div class="box"><strong>${data.totals.expiringSoon}</strong><span>Expiring Soon</span></div><div class="box"><strong>${data.totals.hold}</strong><span>Compliance Hold</span></div></div>
+      ${printExecSection('Compliance Holds / Expired', data.hold)}
+      ${printExecSection('Missing Payroll / ID', data.missingPayroll)}
+      ${printExecSection('Certifications Expiring Soon', data.expiringSoon)}
+      ${printExecSection('Active Onboarding Packets', data.activePackets)}
+      ${printExecSection('Good To Work Snapshot', data.good)}
+      <button class="no-print" onclick="window.print()" style="margin-top:18px;padding:10px 16px;border:0;border-radius:10px;background:#1b3a5c;color:white;font-weight:800;">Print / Save PDF</button>
+    </body></html>`;
+    const w = window.open('', '_blank');
+    if (!w) return toast('Popup blocked. Allow popups to print dashboard.');
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+  }
+
+  function printExecSection(title, items) {
+    return `<h2>${esc(title)}</h2>${items && items.length ? `<table><thead><tr><th>Worker</th><th>Trade/Project</th><th>Status / Detail</th></tr></thead><tbody>${items.slice(0,25).map(x => `<tr><td><strong>${esc(x.name || 'Worker')}</strong><br>${esc(x.source || '')}</td><td>${esc(x.trade || '')}${x.project ? '<br>' + esc(x.project) : ''}</td><td>${esc(x.status || (x.cert ? `${x.cert} expires ${x.exp || 'soon'}` : 'Review'))}<br>${esc(x.detail || '')}${Array.isArray(x.issues) && x.issues.length ? '<br>' + esc(x.issues.slice(0,3).join(' | ')) : ''}</td></tr>`).join('')}</tbody></table>` : '<p style="color:#6b7280;font-size:13px;">None found.</p>'}`;
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -5782,6 +5996,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-new-hires') loadNewHireIntakes(true);
     if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
+    if (tabId === 'main-exec-compliance') loadExecutiveComplianceDashboard(true);
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
   }
 
