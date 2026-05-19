@@ -1886,6 +1886,7 @@
   window.copyNewHireIntakeTextById = copyNewHireIntakeTextById;
   window.openNewHireReview = openNewHireReview;
   window.openEmployeePacketPDF = openEmployeePacketPDF;
+  window.openEmployeeRecordPacketPDF = openEmployeeRecordPacketPDF;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
   window.deleteNewHireIntake = deleteNewHireIntake;
@@ -2869,6 +2870,7 @@
         <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
           ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
           <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
+          <button class="btn-sm" onclick="openEmployeeRecordPacketPDF('${emp.id}')">Employee PDF Packet</button>
           <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
           <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Delete Employee</button>
           <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
@@ -2958,6 +2960,7 @@
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
         <div class="employee-actions" style="margin-top:12px;">
           <button class="btn-sm" onclick="editEmployee('${employeeId}')">Detail Edit Employee</button>
+          <button class="btn-sm" onclick="openEmployeeRecordPacketPDF('${employeeId}')">Employee PDF Packet</button>
           <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Delete Employee</button>
         </div>
       </div>
@@ -5191,6 +5194,72 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }, 500);
   }
 
+
+  // EMPLOYEE_CERT_PACKET_ACCESS_PHASE4B_2026_05_19
+  // Lets the permanent Employee Certs record generate the same professional employee packet.
+  // If the employee was synced from New Hire Intake, the packet uses the original intake data.
+  // If not, it builds a clean employee-file packet from the permanent employee record.
+  function employeeRecordToPacketObject(emp) {
+    const certFiles = Array.isArray(emp.certFiles) ? emp.certFiles : (Array.isArray(emp.certifications) ? emp.certifications.map(c => ({
+      name: c.fileName || c.name || c.title || c.type || 'Certification File',
+      fileName: c.fileName || c.name || c.title || c.type || 'Certification File',
+      url: c.url || '',
+      type: c.title || c.type || 'Certification',
+      title: c.title || c.type || 'Certification',
+      expirationDate: c.expirationDate || '',
+      issueDate: c.issueDate || ''
+    })) : []);
+    return {
+      id: emp.sourceNewHireIntakeId || emp.id || '',
+      name: emp.name || 'Employee',
+      phone: emp.phone || '',
+      email: emp.email || '',
+      trade: emp.trade || '',
+      emergencyName: emp.emergencyContactName || '',
+      emergencyPhone: emp.emergencyContactPhone || '',
+      projectName: emp.projectName || emp.lastProjectName || '',
+      projectJobNumber: emp.projectJobNumber || emp.lastProjectJobNumber || '',
+      foremanName: emp.foremanName || '',
+      status: emp.workforceStatus || emp.onboardingStatus || emp.complianceStatus || 'Employee Record',
+      notes: emp.notes || '',
+      packetSubmitted: emp.onboardingStatus === 'Good To Work' || emp.workforceStatus === 'Good To Work',
+      orientationForm: emp.orientationForm || emp.orientation || {},
+      drugConsentForm: emp.drugConsentForm || emp.drugConsent || {},
+      safetyAgreementForm: emp.safetyAgreementForm || emp.safetyAgreement || {},
+      certFiles,
+      payrollIdFiles: Array.isArray(emp.payrollIdFiles) ? emp.payrollIdFiles : [],
+      complianceStatus: emp.complianceStatus || '',
+      complianceLevel: emp.complianceLevel || '',
+      complianceIssues: Array.isArray(emp.complianceIssues) ? emp.complianceIssues : [],
+      complianceWarnings: Array.isArray(emp.complianceWarnings) ? emp.complianceWarnings : [],
+      employeeCertId: emp.id || '',
+      generatedFromEmployeeRecord: true
+    };
+  }
+
+  async function openEmployeeRecordPacketPDF(employeeId) {
+    const emp = (allEmployees || []).find(e => e.id === employeeId);
+    if (!emp) return toast('Employee record not found.');
+    let packetSource = null;
+    const linkedIntakeId = emp.sourceNewHireIntakeId || emp.newHireIntakeId || '';
+    if (linkedIntakeId) {
+      if (!allNewHireIntakes || !allNewHireIntakes.length) {
+        try { await loadNewHireIntakes(true); } catch (e) { console.warn('Could not load linked intake for packet.', e); }
+      }
+      packetSource = (allNewHireIntakes || []).find(x => x.id === linkedIntakeId) || null;
+    }
+    const packetData = packetSource || employeeRecordToPacketObject(emp);
+    const packetWindow = window.open('', '_blank');
+    if (!packetWindow) return toast('Popup blocked. Allow popups to generate the employee packet.');
+    packetWindow.document.open();
+    packetWindow.document.write(buildEmployeePacketHTML(packetData));
+    packetWindow.document.close();
+    packetWindow.focus();
+    setTimeout(() => {
+      try { packetWindow.print(); } catch (e) { console.warn('Employee record packet print warning', e); }
+    }, 500);
+  }
+
   async function uploadNewHireCertFiles() {
     if (!currentNewHireReviewId) return toast('Open an intake request first.');
     const input = document.getElementById('newhire-cert-upload');
@@ -5476,6 +5545,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           notes: `${existing.notes || ''}${existing.notes ? '\n' : ''}Synced from New Hire Intake: ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
           certifications: merged,
           payrollIdFiles: payrollFiles,
+          orientationForm: x.orientationForm || {},
+          drugConsentForm: x.drugConsentForm || {},
+          safetyAgreementForm: x.safetyAgreementForm || {},
           sourceNewHireIntakeId: id,
           onboardingStatus: intakeStatus,
           workforceStatus,
