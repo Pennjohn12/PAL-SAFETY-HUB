@@ -744,6 +744,34 @@
     .workforce-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
 
+
+    /* AUTO_COMPLIANCE_ENGINE_PHASE3_2026_05_19 */
+    .compliance-banner {
+      border:1px solid var(--line);
+      border-left:6px solid var(--navy);
+      border-radius:14px;
+      padding:12px 14px;
+      margin:12px 0;
+      background:#fff;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .compliance-banner.good { border-left-color:#16a34a; background:#f0fdf4; }
+    .compliance-banner.warn { border-left-color:#d97706; background:#fffbeb; }
+    .compliance-banner.hold { border-left-color:#dc2626; background:#fef2f2; }
+    .compliance-banner strong { display:block; color:var(--navy); margin-bottom:4px; }
+    .compliance-issues { margin:6px 0 0 18px; color:var(--text); }
+    .compliance-pill {
+      display:inline-flex; align-items:center; gap:5px;
+      border-radius:999px; padding:4px 9px;
+      font-size:11px; font-weight:900; white-space:nowrap;
+      background:#eef2f7; color:var(--navy); margin-left:6px;
+    }
+    .compliance-pill.good { background:#dcfce7; color:#166534; }
+    .compliance-pill.warn { background:#fef3c7; color:#92400e; }
+    .compliance-pill.hold { background:#fee2e2; color:#991b1b; }
+    .newhire-box.hold { border-left-color:#dc2626; }
+
   </style>
 </head>
 <body>
@@ -995,6 +1023,8 @@
         <h2>New Hire / Pre-Site Intake</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
+          <button class="btn-outline" onclick="runComplianceAudit()">🛡️ Run Compliance Audit</button>
+          <button class="btn-outline" onclick="createDemoComplianceEmployee()">👷 Demo Expired Cert</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
         </div>
       </div>
@@ -1008,6 +1038,7 @@
           <option value="Ready for Review">Ready for Review</option>
           <option value="Good To Work">Good To Work</option>
           <option value="Missing Info">Missing Info</option>
+          <option value="Compliance Hold">Compliance Hold</option>
         </select>
       </div>
       <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Click New Hire Intake to load requests.</p></div>
@@ -1886,6 +1917,8 @@
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
+  window.runComplianceAudit = runComplianceAudit;
+  window.createDemoComplianceEmployee = createDemoComplianceEmployee;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -4384,6 +4417,7 @@
   function newHireStatusClass(status) {
     const s = String(status || '').toLowerCase();
     if (s.includes('good')) return 'active';
+    if (s.includes('hold') || s.includes('expired')) return 'expired';
     if (s.includes('missing')) return 'expired';
     if (s.includes('review')) return 'blue';
     return 'warn';
@@ -4502,19 +4536,22 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function renderNewHireDashboard(items) {
     const el = document.getElementById('newhire-dashboard-main');
     if (!el) return;
-    const counts = { total: items.length, pending: 0, review: 0, good: 0, missing: 0 };
+    const counts = { total: items.length, pending: 0, review: 0, good: 0, missing: 0, hold: 0 };
     items.forEach(x => {
+      const compliance = getNewHireComplianceResult(x);
       const s = String(x.status || 'Pending');
-      if (s === 'Good To Work') counts.good++;
+      if (compliance.level === 'hold' || s === 'Compliance Hold') counts.hold++;
+      else if (s === 'Good To Work') counts.good++;
       else if (s === 'Ready for Review') counts.review++;
-      else if (s === 'Missing Info') counts.missing++;
+      else if (s === 'Missing Info' || compliance.level === 'warn') counts.missing++;
       else counts.pending++;
     });
-    el.innerHTML = `<div class="newhire-dashboard">
-      <div class="newhire-box"><strong>${counts.total}</strong><span>Total Intake Requests</span></div>
+    el.innerHTML = `<div class="newhire-dashboard" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+      <div class="newhire-box"><strong>${counts.total}</strong><span>Total Requests</span></div>
       <div class="newhire-box pending"><strong>${counts.pending}</strong><span>Pending</span></div>
       <div class="newhire-box review"><strong>${counts.review}</strong><span>Ready for Review</span></div>
       <div class="newhire-box good"><strong>${counts.good}</strong><span>Good To Work</span></div>
+      <div class="newhire-box hold"><strong>${counts.hold}</strong><span>Compliance Hold</span></div>
     </div>`;
   }
 
@@ -4524,7 +4561,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const search = (document.getElementById('newhire-search')?.value || '').toLowerCase().trim();
     const status = document.getElementById('newhire-status-filter')?.value || 'all';
     let items = allNewHireIntakes.filter(x => {
-      if (status !== 'all' && (x.status || 'Pending') !== status) return false;
+      const compliance = getNewHireComplianceResult(x);
+      const effectiveStatus = compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending');
+      if (status !== 'all' && effectiveStatus !== status && (x.status || 'Pending') !== status) return false;
       if (!search) return true;
       return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status].some(v => String(v || '').toLowerCase().includes(search));
     });
@@ -4533,7 +4572,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       list.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><h3>No intake requests found</h3><p>Create a request to start pre-site onboarding.</p></div>';
       return;
     }
-    list.innerHTML = items.map(x => `<div class="newhire-card">
+    list.innerHTML = items.map(x => {
+      const compliance = getNewHireComplianceResult(x);
+      return `<div class="newhire-card">
       <div class="newhire-card-header">
         <div>
           <h4>${esc(x.name || 'New Hire')}</h4>
@@ -4546,8 +4587,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
             ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} cert file(s)</span>` : ''}${(x.payrollIdFiles || []).length ? `<span>🔒 ${(x.payrollIdFiles || []).length} payroll/ID file(s)</span>` : ''}
           </div>
         </div>
-        <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
+        <span class="pill ${newHireStatusClass(compliance.level === 'hold' ? 'Compliance Hold' : x.status)}">${esc(compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending'))}</span>
       </div>
+      ${complianceBannerHTML(compliance)}
       <div class="newhire-actions">
         <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
         <button class="btn-sm" onclick="openEmployeePacketPDF('${esc(x.id)}')">Employee PDF Packet</button>
@@ -4555,7 +4597,161 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <button class="btn-sm" onclick="setNewHireStatus('${esc(x.id)}','Good To Work')">Good To Work</button>
         <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
       </div>
-    </div>`).join('');
+    </div>`;
+    }).join('');
+  }
+
+  // AUTO_COMPLIANCE_ENGINE_PHASE3_2026_05_19
+  function safeDateOnly(value) {
+    if (!value) return '';
+    if (typeof value === 'string') return value.slice(0, 10);
+    if (value?.toDate) {
+      try { return value.toDate().toISOString().slice(0, 10); } catch { return ''; }
+    }
+    return String(value || '').slice(0, 10);
+  }
+
+  function getNewHireComplianceResult(x) {
+    const issues = [];
+    const warnings = [];
+    const certFiles = Array.isArray(x?.certFiles) ? x.certFiles : [];
+    const payrollFiles = Array.isArray(x?.payrollIdFiles) ? x.payrollIdFiles : [];
+    const certWithDates = certFiles.filter(f => safeDateOnly(f.expirationDate));
+    const expiredCerts = certWithDates.filter(f => getCertStatusKey(safeDateOnly(f.expirationDate)) === 'expired');
+    const expiringSoonCerts = certWithDates.filter(f => getCertStatusKey(safeDateOnly(f.expirationDate)) === 'warn');
+
+    if (!x?.orientationForm?.completed) issues.push('Orientation form is not completed.');
+    if (!x?.drugConsentForm?.completed) issues.push('Drug & Alcohol Consent is not completed.');
+    if (!x?.safetyAgreementForm?.completed) issues.push('Safety Agreement is not completed.');
+    if (!(x?.certUploadsCompleted || certFiles.length)) issues.push('No certification uploads on file.');
+    if (!(x?.payrollIdUploadsCompleted || payrollFiles.length)) issues.push('No payroll / ID uploads on file.');
+    expiredCerts.forEach(f => issues.push(`${f.type || f.name || 'Certification'} expired on ${safeDateOnly(f.expirationDate)}.`));
+    expiringSoonCerts.forEach(f => warnings.push(`${f.type || f.name || 'Certification'} expires soon on ${safeDateOnly(f.expirationDate)}.`));
+
+    const hasExpired = expiredCerts.length > 0;
+    const missingCount = issues.filter(i => !i.toLowerCase().includes('expired on')).length;
+    let level = 'good';
+    let label = 'Compliant / Ready for Office Approval';
+    let recommendedStatus = 'Ready for Review';
+    if (hasExpired) {
+      level = 'hold';
+      label = 'Compliance Hold';
+      recommendedStatus = 'Compliance Hold';
+    } else if (missingCount > 0) {
+      level = 'warn';
+      label = 'Missing Info';
+      recommendedStatus = 'Missing Info';
+    } else if (warnings.length > 0) {
+      level = 'warn';
+      label = 'Needs Review Soon';
+      recommendedStatus = String(x?.status || '').includes('Good') ? 'Good To Work' : 'Ready for Review';
+    }
+    return { level, label, recommendedStatus, issues, warnings, expiredCerts, expiringSoonCerts, certCount: certFiles.length, payrollCount: payrollFiles.length };
+  }
+
+  function complianceBadgeHTML(result) {
+    const icon = result.level === 'good' ? '✅' : result.level === 'hold' ? '⛔' : '⚠️';
+    return `<span class="compliance-pill ${result.level}">${icon} ${esc(result.label)}</span>`;
+  }
+
+  function complianceBannerHTML(result) {
+    const icon = result.level === 'good' ? '✅' : result.level === 'hold' ? '⛔' : '⚠️';
+    const items = [...result.issues, ...result.warnings];
+    return `<div class="compliance-banner ${result.level}">
+      <strong>${icon} Auto Compliance Check: ${esc(result.label)}</strong>
+      ${items.length ? `<ul class="compliance-issues">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : '<div class="helper-text">No missing packet items or expired cert dates detected.</div>'}
+    </div>`;
+  }
+
+  async function runComplianceAudit() {
+    if (!currentUser) return toast('Please sign in first.');
+    try {
+      if (!allNewHireIntakes || !allNewHireIntakes.length) await loadNewHireIntakes(true);
+      let updates = 0;
+      for (const x of (allNewHireIntakes || [])) {
+        if (!x?.id) continue;
+        const result = getNewHireComplianceResult(x);
+        const current = String(x.status || 'Pending');
+        const target = result.recommendedStatus;
+        if (target && current !== target && current !== 'Good To Work') {
+          await updateDoc(doc(db, 'newHireIntakes', x.id), {
+            status: target,
+            complianceStatus: result.label,
+            complianceLevel: result.level,
+            complianceIssues: result.issues,
+            complianceWarnings: result.warnings,
+            complianceCheckedAt: new Date().toISOString(),
+            updatedAt: serverTimestamp()
+          });
+          updates++;
+        } else {
+          await updateDoc(doc(db, 'newHireIntakes', x.id), {
+            complianceStatus: result.label,
+            complianceLevel: result.level,
+            complianceIssues: result.issues,
+            complianceWarnings: result.warnings,
+            complianceCheckedAt: new Date().toISOString(),
+            updatedAt: serverTimestamp()
+          });
+        }
+      }
+      toast(`Compliance audit complete. ${updates} status update(s).`);
+      await loadNewHireIntakes(true);
+      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
+    } catch (e) {
+      console.error(e);
+      toast('Compliance audit failed. Check connection and try again.');
+    }
+  }
+
+  async function createDemoComplianceEmployee() {
+    if (!currentUser) return toast('Please sign in first.');
+    try {
+      const demo = {
+        name: 'Joe Blow — DEMO',
+        phone: '(555) 010-2026',
+        email: 'demo.joe.blow@example.com',
+        trade: 'Fireproofer / Demo Worker',
+        projectName: 'Demo Project',
+        projectJobNumber: 'DEMO-001',
+        foreman: currentUser.displayName || currentUser.email || 'PAL Office',
+        startDate: todayISO(),
+        required: 'OSHA / SST / Payroll ID documents',
+        notes: 'Demo record only. Shows how an expired certification and missing payroll item appear in the compliance dashboard.',
+        status: 'Compliance Hold',
+        demoRecord: true,
+        orientationForm: { completed: true, signature: 'Joe Blow', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
+        drugConsentForm: { completed: true, signature: 'Joe Blow', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
+        safetyAgreementForm: { completed: true, signature: 'Joe Blow', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
+        certUploadsCompleted: true,
+        payrollIdUploadsCompleted: false,
+        certFiles: [
+          { type: 'OSHA 30', name: 'DEMO OSHA 30 - expired.pdf', url: '#', expirationDate: '2024-01-15', uploadedAt: new Date().toISOString(), demoFile: true },
+          { type: 'SST Card', name: 'DEMO SST Card - valid.pdf', url: '#', expirationDate: '2028-12-31', uploadedAt: new Date().toISOString(), demoFile: true }
+        ],
+        payrollIdFiles: [],
+        packetSubmitted: true,
+        packetSubmittedAt: new Date().toISOString(),
+        createdBy: currentUser.uid,
+        createdByName: currentUser.displayName || currentUser.email,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        complianceStatus: 'Compliance Hold',
+        complianceLevel: 'hold',
+        complianceIssues: ['OSHA 30 expired on 2024-01-15.', 'No payroll / ID uploads on file.'],
+        complianceWarnings: [],
+        complianceCheckedAt: new Date().toISOString()
+      };
+      const docRef = await addDoc(collection(db, 'newHireIntakes'), demo);
+      await updateDoc(doc(db, 'newHireIntakes', docRef.id), {
+        intakeLink: `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`
+      });
+      toast('Demo employee created: Joe Blow — Compliance Hold.');
+      await loadNewHireIntakes(true);
+    } catch (e) {
+      console.error(e);
+      toast('Could not create demo employee.');
+    }
   }
 
   function copyNewHireIntakeText() {
@@ -4577,7 +4773,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const title = document.getElementById('newhire-review-title');
     if (title) title.textContent = `New Hire Review — ${x.name || 'New Hire'}`;
     const body = document.getElementById('newhire-review-body');
-    if (body) body.innerHTML = `<div class="report-grid">
+    const compliance = getNewHireComplianceResult(x);
+    if (body) body.innerHTML = `${complianceBannerHTML(compliance)}<div class="report-grid">
       <div class="report-field"><span class="k">Employee</span><div class="v">${esc(x.name)}</div></div>
       <div class="report-field"><span class="k">Status</span><div class="v"><span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span></div></div>
       <div class="report-field"><span class="k">Phone</span><div class="v">${esc(x.phone)}</div></div>
@@ -4686,6 +4883,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const certCount = (x.certFiles || []).length;
     const payrollCount = (x.payrollIdFiles || []).length;
     const generated = new Date().toLocaleString();
+    const compliance = getNewHireComplianceResult(x);
 
     return `<!DOCTYPE html>
 <html>
@@ -4706,6 +4904,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     .status { display:inline-block; margin-top:6px; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:900; background:#eef2f7; color:var(--navy); }
     .status.good { background:#dcfce7; color:#166534; }
     .status.missing { background:#fee2e2; color:#991b1b; }
+    .status.hold { background:#fee2e2; color:#991b1b; }
+    .compliance-list { margin:0; padding:10px 28px; font-size:13px; line-height:1.45; }
+    .compliance-good { padding:10px 12px; color:#166534; font-weight:800; }
     .section { border:1px solid var(--line); border-radius:12px; margin:12px 0; overflow:hidden; page-break-inside:avoid; }
     .section h2 { margin:0; padding:10px 12px; background:#f8fafc; color:var(--navy); font-size:15px; border-bottom:1px solid var(--line); }
     .grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0; }
@@ -4756,7 +4957,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div class="meta">
         Generated: ${esc(generated)}<br>
         Packet ID: ${esc(x.id || '')}<br>
-        <span class="status ${String(x.status || '').toLowerCase().includes('good') ? 'good' : String(x.status || '').toLowerCase().includes('missing') ? 'missing' : ''}">${esc(x.status || 'Pending')}</span>
+        <span class="status ${compliance.level === 'hold' ? 'hold' : String(x.status || '').toLowerCase().includes('good') ? 'good' : String(x.status || '').toLowerCase().includes('missing') ? 'missing' : ''}">${esc(compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending'))}</span>
       </div>
     </div>
 
@@ -4774,6 +4975,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <div class="field span-2"><span class="label">Required Certs / Documents</span><div class="value">${esc(x.required || '')}</div></div>
         <div class="field span-2"><span class="label">Notes</span><div class="value">${esc(x.notes || '')}</div></div>
       </div>
+    </div>
+
+    <div class="section">
+      <h2>Auto Compliance Summary</h2>
+      ${([...compliance.issues, ...compliance.warnings]).length ? `<ul class="compliance-list">${[...compliance.issues, ...compliance.warnings].map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : '<div class="compliance-good">No missing packet items or expired cert dates detected.</div>'}
     </div>
 
     <div class="section">
@@ -5075,8 +5281,23 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   async function setNewHireStatus(id, status) {
     if (!id) return;
     try {
-      await updateDoc(doc(db, 'newHireIntakes', id), { status, updatedAt: serverTimestamp() });
-      toast(`Status updated: ${status}`);
+      const x = allNewHireIntakes.find(i => i.id === id);
+      let finalStatus = status;
+      const compliance = x ? getNewHireComplianceResult(x) : null;
+      if (status === 'Good To Work' && compliance && compliance.level !== 'good') {
+        finalStatus = compliance.recommendedStatus || 'Missing Info';
+        toast(`Blocked by compliance: ${compliance.label}`);
+      }
+      await updateDoc(doc(db, 'newHireIntakes', id), {
+        status: finalStatus,
+        complianceStatus: compliance?.label || '',
+        complianceLevel: compliance?.level || '',
+        complianceIssues: compliance?.issues || [],
+        complianceWarnings: compliance?.warnings || [],
+        complianceCheckedAt: new Date().toISOString(),
+        updatedAt: serverTimestamp()
+      });
+      toast(`Status updated: ${finalStatus}`);
       await loadNewHireIntakes(true);
       if (document.getElementById('modal-newhire-review')?.classList.contains('open')) openNewHireReview(id);
     } catch (e) { console.error(e); toast('Could not update status.'); }
@@ -5123,19 +5344,21 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
     (allNewHireIntakes || []).forEach(x => {
       const status = String(x.status || 'Pending');
+      const result = getNewHireComplianceResult(x);
       const certCount = (x.certFiles || []).length;
       const payrollCount = (x.payrollIdFiles || []).length;
+      const issueText = [...result.issues, ...result.warnings].slice(0, 2).join(' | ');
       const base = {
         id: x.id,
         type: 'intake',
         name: x.name || 'New Hire',
         project: x.projectName || '',
         trade: x.trade || '',
-        detail: `${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
+        detail: `${result.label} • ${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}${issueText ? ' • ' + issueText : ''}`,
         action: `openNewHireReview('${esc(x.id)}')`
       };
-      if (status === 'Good To Work') good.push(base);
-      else if (status === 'Missing Info') missing.push(base);
+      if (result.level === 'hold') hold.push(base);
+      else if (status === 'Good To Work' && result.level === 'good') good.push(base);
       else missing.push(base);
     });
 
