@@ -17,6 +17,7 @@
   <!-- SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
   <!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
+  <!-- SMART_WORKFORCE_SYNC_ENGINE_PHASE4_2026_05_19 -->
   <!-- PHASE3_GOOD_WORKER_DEMO_CORRECTED_JOHN_SMITH_2026_05_19 -->
   <style>
     :root {
@@ -1025,6 +1026,7 @@
         <div class="header-actions">
           <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
           <button class="btn-outline" onclick="runComplianceAudit()">🛡️ Run Compliance Audit</button>
+          <button class="btn-outline" onclick="syncAllGoodToWorkIntakes()">🔁 Sync Good To Work</button>
           <button class="btn-outline" onclick="resetDemoComplianceWorkers()">🧹 Reset Demo Workers</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
         </div>
@@ -1646,6 +1648,7 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
       <button class="btn-secondary" onclick="syncNewHireToEmployeeCerts(currentNewHireReviewId)">Sync to Employee Certs</button>
+      <button class="btn-secondary" onclick="syncNewHireToEmployeeCerts(currentNewHireReviewId, { openEmployeeAfter: true })">Sync + Open Employee File</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
       <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
@@ -4593,6 +4596,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
             ${x.startDate ? `<span>📅 ${esc(x.startDate)}</span>` : ''}
             ${x.foreman ? `<span>👤 ${esc(x.foreman)}</span>` : ''}
             ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} cert file(s)</span>` : ''}${(x.payrollIdFiles || []).length ? `<span>🔒 ${(x.payrollIdFiles || []).length} payroll/ID file(s)</span>` : ''}
+            ${x.employeeCertLinked ? `<span>🔁 Synced to Employee Certs</span>` : `<span>⚪ Not synced</span>`}
           </div>
         </div>
         <span class="pill ${newHireStatusClass(compliance.level === 'hold' ? 'Compliance Hold' : x.status)}">${esc(compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending'))}</span>
@@ -5434,7 +5438,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }));
   }
 
-  async function syncNewHireToEmployeeCerts(id) {
+  async function syncNewHireToEmployeeCerts(id, options = {}) {
     if (!currentUser) return toast('Please sign in first.');
     const x = allNewHireIntakes.find(i => i.id === id);
     if (!x) return toast('Intake request not found.');
@@ -5443,9 +5447,17 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       const email = String(x.email || '').trim().toLowerCase();
       const name = String(x.name || '').trim().toLowerCase();
       let existing = allEmployees.find(e => String(e.sourceNewHireIntakeId || '') === id)
+        || (x.employeeCertId ? allEmployees.find(e => e.id === x.employeeCertId) : null)
         || (email ? allEmployees.find(e => String(e.email || '').trim().toLowerCase() === email) : null)
         || (name ? allEmployees.find(e => String(e.name || '').trim().toLowerCase() === name) : null);
+
+      const compliance = getNewHireComplianceResult(x);
       const incomingCerts = mapNewHireCertFilesToEmployeeCerts(x);
+      const payrollFiles = Array.isArray(x.payrollIdFiles) ? x.payrollIdFiles : [];
+      const intakeStatus = x.status || '';
+      const workforceStatus = compliance.level === 'good' && intakeStatus === 'Good To Work' ? 'Good To Work' : (compliance.level === 'hold' ? 'Compliance Hold' : intakeStatus || compliance.recommendedStatus || 'Pending');
+      const syncStamp = new Date().toISOString();
+
       if (existing) {
         const currentCerts = Array.isArray(existing.certifications) ? existing.certifications : [];
         const merged = [...currentCerts];
@@ -5459,10 +5471,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           email: x.email || existing.email || '',
           phone: x.phone || existing.phone || '',
           trade: x.trade || existing.trade || '',
+          emergencyContactName: x.emergencyName || existing.emergencyContactName || '',
+          emergencyContactPhone: x.emergencyPhone || existing.emergencyContactPhone || '',
           notes: `${existing.notes || ''}${existing.notes ? '\n' : ''}Synced from New Hire Intake: ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
           certifications: merged,
+          payrollIdFiles: payrollFiles,
           sourceNewHireIntakeId: id,
-          onboardingStatus: x.status || '',
+          onboardingStatus: intakeStatus,
+          workforceStatus,
+          complianceStatus: compliance.label || '',
+          complianceLevel: compliance.level || '',
+          complianceIssues: compliance.issues || [],
+          complianceWarnings: compliance.warnings || [],
+          lastIntakeSyncAt: syncStamp,
           updatedAt: new Date().toISOString(),
           updatedBy: currentUser.displayName || currentUser.email
         });
@@ -5472,11 +5493,20 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           email: x.email || '',
           phone: x.phone || '',
           trade: x.trade || '',
+          emergencyContactName: x.emergencyName || '',
+          emergencyContactPhone: x.emergencyPhone || '',
           notes: `Created from New Hire Intake. ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
           certifications: incomingCerts,
+          payrollIdFiles: payrollFiles,
           assignedProjectIds: [],
           sourceNewHireIntakeId: id,
-          onboardingStatus: x.status || '',
+          onboardingStatus: intakeStatus,
+          workforceStatus,
+          complianceStatus: compliance.label || '',
+          complianceLevel: compliance.level || '',
+          complianceIssues: compliance.issues || [],
+          complianceWarnings: compliance.warnings || [],
+          lastIntakeSyncAt: syncStamp,
           createdBy: currentUser.uid,
           createdByName: currentUser.displayName || currentUser.email,
           createdAt: serverTimestamp()
@@ -5485,15 +5515,45 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       }
       await updateDoc(doc(db, 'newHireIntakes', id), {
         employeeCertLinked: true,
-        employeeCertLinkedAt: new Date().toISOString(),
+        employeeCertId: existing.id,
+        employeeCertLinkedAt: syncStamp,
+        employeeCertSyncStatus: 'Synced',
+        employeeCertSyncStatusAt: syncStamp,
         updatedAt: serverTimestamp()
       });
-      await loadEmployees(true);
-      await loadNewHireIntakes(true);
-      toast('New hire synced to Employee Certs.');
+      if (!options.skipReload) {
+        await loadEmployees(true);
+        await loadNewHireIntakes(true);
+      }
+      if (!options.silent) toast('New hire synced to Employee Certs.');
+      if (options.openEmployeeAfter && existing?.id) openEmployeeDetail(existing.id);
+      return existing.id;
     } catch (e) {
       console.error(e);
       toast('Could not sync to Employee Certs.');
+      return null;
+    }
+  }
+
+  async function syncAllGoodToWorkIntakes() {
+    if (!currentUser) return toast('Please sign in first.');
+    try {
+      if (!allNewHireIntakes || !allNewHireIntakes.length) await loadNewHireIntakes(true);
+      const ready = (allNewHireIntakes || []).filter(x => {
+        const result = getNewHireComplianceResult(x);
+        return String(x.status || '') === 'Good To Work' && result.level === 'good';
+      });
+      if (!ready.length) return toast('No Good To Work intakes ready to sync.');
+      for (const x of ready) {
+        await syncNewHireToEmployeeCerts(x.id, { silent: true, skipReload: true });
+      }
+      await loadEmployees(true);
+      await loadNewHireIntakes(true);
+      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
+      toast(`Synced ${ready.length} Good To Work worker(s) to Employee Certs.`);
+    } catch (e) {
+      console.error(e);
+      toast('Could not sync Good To Work workers.');
     }
   }
 
@@ -5507,16 +5567,31 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         finalStatus = compliance.recommendedStatus || 'Missing Info';
         toast(`Blocked by compliance: ${compliance.label}`);
       }
+      const checkedAt = new Date().toISOString();
       await updateDoc(doc(db, 'newHireIntakes', id), {
         status: finalStatus,
         complianceStatus: compliance?.label || '',
         complianceLevel: compliance?.level || '',
         complianceIssues: compliance?.issues || [],
         complianceWarnings: compliance?.warnings || [],
-        complianceCheckedAt: new Date().toISOString(),
+        complianceCheckedAt: checkedAt,
         updatedAt: serverTimestamp()
       });
-      toast(`Status updated: ${finalStatus}`);
+      const local = allNewHireIntakes.find(i => i.id === id);
+      if (local) {
+        local.status = finalStatus;
+        local.complianceStatus = compliance?.label || '';
+        local.complianceLevel = compliance?.level || '';
+        local.complianceIssues = compliance?.issues || [];
+        local.complianceWarnings = compliance?.warnings || [];
+        local.complianceCheckedAt = checkedAt;
+      }
+      if (finalStatus === 'Good To Work' && compliance?.level === 'good') {
+        await syncNewHireToEmployeeCerts(id, { silent: true, skipReload: true });
+        toast('Status updated: Good To Work — synced to Employee Certs.');
+      } else {
+        toast(`Status updated: ${finalStatus}`);
+      }
       await loadNewHireIntakes(true);
       if (document.getElementById('modal-newhire-review')?.classList.contains('open')) openNewHireReview(id);
     } catch (e) { console.error(e); toast('Could not update status.'); }
