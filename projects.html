@@ -859,6 +859,24 @@
         <div class="mini-note" id="public-payroll-id-status" style="margin-top:4px;">Payroll / ID Uploads: Pending</div>
       </div>
 
+      <!-- PACKET_FINAL_REVIEW_PHASE7_2026_05_15 -->
+      <div class="detail-card" style="margin-top:14px;background:#fff;border-left:5px solid var(--green);">
+        <h3 style="margin-bottom:8px;">Packet Checklist & Final Submit</h3>
+        <div class="helper-text" style="margin-bottom:10px;">Complete each required section, then submit the full packet to PAL office for review.</div>
+        <div id="public-packet-checklist" class="report-grid">
+          <div class="report-field"><span class="k">Orientation</span><div class="v">Pending</div></div>
+          <div class="report-field"><span class="k">Drug Consent</span><div class="v">Pending</div></div>
+          <div class="report-field"><span class="k">Safety Agreement</span><div class="v">Pending</div></div>
+          <div class="report-field"><span class="k">Cert Uploads</span><div class="v">Pending</div></div>
+          <div class="report-field"><span class="k">Payroll / ID Uploads</span><div class="v">Pending</div></div>
+          <div class="report-field"><span class="k">Packet Status</span><div class="v">Not Submitted</div></div>
+        </div>
+        <div class="modal-actions" style="justify-content:flex-start;margin-top:14px;">
+          <button class="btn-save" id="public-final-submit-btn" type="button" onclick="finalSubmitPublicNewHirePacket()">Submit Full Packet to PAL Office</button>
+        </div>
+        <div class="mini-note">After submitting, PAL office/foreman will review the packet and mark it Good To Work or Missing Info.</div>
+      </div>
+
       <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
         <h3 style="margin-bottom:8px;">Certification Uploads / Payroll ID</h3>
         <div class="helper-text" style="margin-bottom:10px;">Preferred method: use the separate form buttons above so each upload saves back to this employee packet. These quick upload fields remain as a backup.</div>
@@ -1811,6 +1829,7 @@
   window.saveNewHireCertUploads = saveNewHireCertUploads;
   window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
   window.submitPublicNewHireIntake = submitPublicNewHireIntake;
+  window.finalSubmitPublicNewHirePacket = finalSubmitPublicNewHirePacket;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
   window.saveExtraWorkTicket = saveExtraWorkTicket;
@@ -3956,6 +3975,7 @@
         if (os) os.textContent = 'Orientation Form: Pending';
         const ds = document.getElementById('public-drug-status');
         if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
+        updatePublicPacketChecklist(currentPublicNewHireIntake);
         return;
       }
       currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
@@ -3985,6 +4005,7 @@
       if (cs) cs.textContent = `Certification Uploads: ${(x.certFiles || []).length ? (x.certFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
       const ps = document.getElementById('public-payroll-id-status');
       if (ps) ps.textContent = `Payroll / ID Uploads: ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
+      updatePublicPacketChecklist(x);
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
       // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
@@ -4003,6 +4024,7 @@
       if (os) os.textContent = 'Orientation Form: Pending';
       const ds = document.getElementById('public-drug-status'); if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
       const ss = document.getElementById('public-safety-status'); if (ss) ss.textContent = 'Safety Agreement: Pending';
+      updatePublicPacketChecklist(currentPublicNewHireIntake);
     }
   }
 
@@ -4100,6 +4122,7 @@
       }, { merge: true });
       const st = document.getElementById('public-cert-upload-status');
       if (st) st.textContent = `Certification Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      await refreshCurrentPublicIntakeQuiet();
       closeModal('modal-newhire-cert-upload-form');
       toast('Certification uploads saved to intake packet.');
     } catch (e) {
@@ -4144,6 +4167,7 @@
       }, { merge: true });
       const st = document.getElementById('public-payroll-id-status');
       if (st) st.textContent = `Payroll / ID Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      await refreshCurrentPublicIntakeQuiet();
       closeModal('modal-newhire-payroll-id-form');
       toast('Payroll / ID uploads saved to intake packet.');
     } catch (e) {
@@ -4151,6 +4175,91 @@
       toast('Could not save payroll / ID uploads. Check Firebase public upload permissions.');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll / ID Uploads'; }
+    }
+  }
+
+
+  // PACKET_FINAL_REVIEW_PHASE7_2026_05_15
+  function getNewHirePacketChecklist(x) {
+    x = x || currentPublicNewHireIntake || {};
+    return {
+      orientation: !!x.orientationForm?.completed,
+      drug: !!x.drugConsentForm?.completed,
+      safety: !!x.safetyAgreementForm?.completed,
+      certs: !!(x.certUploadsCompleted || (x.certFiles || []).length),
+      payroll: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length),
+      submitted: !!x.packetSubmitted
+    };
+  }
+
+  function packetStatusHTML(done, label, detail='') {
+    const pill = done ? '<span class="pill active">Complete</span>' : '<span class="pill pending">Pending</span>';
+    return `<div class="report-field"><span class="k">${label}</span><div class="v">${pill}${detail ? `<div class="mini-note">${esc(detail)}</div>` : ''}</div></div>`;
+  }
+
+  function updatePublicPacketChecklist(x) {
+    const el = document.getElementById('public-packet-checklist');
+    if (!el) return;
+    x = x || currentPublicNewHireIntake || {};
+    const c = getNewHirePacketChecklist(x);
+    const certDetail = (x.certFiles || []).length ? `${(x.certFiles || []).length} file(s)` : '';
+    const payrollDetail = (x.payrollIdFiles || []).length ? `${(x.payrollIdFiles || []).length} file(s)` : '';
+    const completeCount = [c.orientation, c.drug, c.safety, c.certs, c.payroll].filter(Boolean).length;
+    el.innerHTML = [
+      packetStatusHTML(c.orientation, 'Orientation'),
+      packetStatusHTML(c.drug, 'Drug Consent'),
+      packetStatusHTML(c.safety, 'Safety Agreement'),
+      packetStatusHTML(c.certs, 'Cert Uploads', certDetail),
+      packetStatusHTML(c.payroll, 'Payroll / ID Uploads', payrollDetail),
+      `<div class="report-field"><span class="k">Packet Status</span><div class="v"><span class="pill ${c.submitted ? 'active' : 'pending'}">${c.submitted ? 'Submitted to PAL' : 'Not Submitted'}</span><div class="mini-note">${completeCount}/5 sections complete</div></div></div>`
+    ].join('');
+    const btn = document.getElementById('public-final-submit-btn');
+    if (btn) {
+      btn.textContent = c.submitted ? 'Packet Submitted to PAL Office' : 'Submit Full Packet to PAL Office';
+      btn.disabled = c.submitted;
+    }
+  }
+
+  async function refreshCurrentPublicIntakeQuiet() {
+    if (!publicNewHireIntakeId) return currentPublicNewHireIntake;
+    try {
+      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
+      if (snap.exists()) {
+        currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
+      }
+    } catch (e) {
+      console.warn('Could not refresh public intake checklist', e);
+    }
+    updatePublicPacketChecklist(currentPublicNewHireIntake);
+    return currentPublicNewHireIntake;
+  }
+
+  async function finalSubmitPublicNewHirePacket() {
+    if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    const btn = document.getElementById('public-final-submit-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      await refreshCurrentPublicIntakeQuiet();
+      const checklist = getNewHirePacketChecklist(currentPublicNewHireIntake || {});
+      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
+        packetChecklist: checklist,
+        packetSubmitted: true,
+        packetSubmittedAt: new Date().toISOString(),
+        status: 'Ready for Review',
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      toast('Packet submitted to PAL office for review.');
+      await refreshCurrentPublicIntakeQuiet();
+      const statusCard = document.getElementById('public-intake-status-card');
+      if (statusCard && currentPublicNewHireIntake) {
+        statusCard.innerHTML = `<h3>✅ Packet Submitted to PAL</h3>
+          <p class="helper-text">Your new-hire packet has been sent to PAL office/foreman for review. If anything is missing, PAL will contact you.</p>
+          <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId)}</div></div>`;
+      }
+    } catch (e) {
+      console.error('Final packet submit failed', e);
+      toast('Could not submit full packet. PAL may need to enable public intake permissions.');
+      if (btn) btn.disabled = false;
     }
   }
 
@@ -4441,6 +4550,17 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div class="report-field"><span class="k">Start Date</span><div class="v">${esc(x.startDate)}</div></div>
       <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required)}</div></div>
       <div class="report-field span-2"><span class="k">Notes</span><div class="v">${esc(x.notes)}</div></div>
+    </div>
+    <div class="detail-card" style="margin-top:12px;background:#f8fafc;">
+      <h3 style="margin-bottom:8px;">Packet Review Checklist</h3>
+      <div class="report-grid">
+        ${packetStatusHTML(!!x.orientationForm?.completed, 'Orientation')}
+        ${packetStatusHTML(!!x.drugConsentForm?.completed, 'Drug Consent')}
+        ${packetStatusHTML(!!x.safetyAgreementForm?.completed, 'Safety Agreement')}
+        ${packetStatusHTML(!!(x.certUploadsCompleted || (x.certFiles || []).length), 'Cert Uploads', (x.certFiles || []).length ? (x.certFiles || []).length + ' file(s)' : '')}
+        ${packetStatusHTML(!!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length), 'Payroll / ID Uploads', (x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s)' : '')}
+        ${packetStatusHTML(!!x.packetSubmitted, 'Final Submit', x.packetSubmittedAt || '')}
+      </div>
     </div>
     <div class="packet-form-card">
       <div class="packet-form-row">
