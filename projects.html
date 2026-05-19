@@ -775,100 +775,77 @@
     .newhire-box.hold { border-left-color:#dc2626; }
 
 
-
-    /* PHASE5B_SAFE_EXECUTIVE_COMMAND_CENTER_2026_05_19
-       Isolated dashboard layer only. No login/auth/startup code touched. */
-    .exec-command-hero {
-      background: linear-gradient(135deg, #132b46, #1b3a5c 55%, #254d78);
-      color: #fff;
+    /* PHASE5C_VISIBLE_COMMAND_CENTER_REAL_PATCH_2026_05_19 */
+    .command-hero {
+      background: linear-gradient(135deg, #10243a, #1b3a5c 55%, #254d78);
+      color: white;
       border-radius: 24px;
       padding: 22px;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, .22);
-      margin-bottom: 16px;
+      margin: 0 0 18px;
+      box-shadow: 0 16px 38px rgba(16, 36, 58, .22);
       border: 1px solid rgba(255,255,255,.12);
     }
-    .exec-command-hero h2 { margin: 0 0 6px; font-size: 28px; line-height: 1.1; color:#fff; }
-    .exec-command-hero p { margin: 0; color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.5; }
-    .exec-hero-row { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
-    .exec-score-ring {
-      min-width: 148px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 20px;
-      padding: 14px 16px;
+    .command-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap; }
+    .command-hero h2 { margin:0 0 6px; font-size:28px; line-height:1.1; color:white; }
+    .command-hero p { margin:0; color:rgba(255,255,255,.78); font-size:14px; line-height:1.55; max-width:620px; }
+    .command-score {
+      min-width:150px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:20px;
+      padding:14px;
       text-align:center;
     }
-    .exec-score-ring strong { display:block; font-size: 38px; line-height: 1; color:#78c240; }
-    .exec-score-ring span { display:block; font-size: 12px; font-weight:900; color:rgba(255,255,255,.82); margin-top:5px; text-transform:uppercase; letter-spacing:.4px; }
-    .exec-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin: 14px 0 18px; }
-    .exec-kpi-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:15px; box-shadow:0 6px 18px rgba(16,24,40,.06); border-top:6px solid var(--navy); }
-    .exec-kpi-card.good { border-top-color:#16a34a; }
-    .exec-kpi-card.warn { border-top-color:#d97706; }
-    .exec-kpi-card.hold { border-top-color:#dc2626; }
-    .exec-kpi-card.blue { border-top-color:#2563eb; }
-    .exec-kpi-card.purple { border-top-color:#7c3aed; }
-    .exec-kpi-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
-    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.35px; }
-    .exec-risk-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; align-items:start; }
-    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 6px 18px rgba(16,24,40,.05); }
-    .exec-panel h3 { color:var(--navy); font-size:17px; margin:0 0 10px; display:flex; align-items:center; gap:8px; }
-    .exec-issue-row { border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px; background:#f8fafc; display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
-    .exec-issue-row.hold { border-left:6px solid #dc2626; background:#fff7f7; }
-    .exec-issue-row.warn { border-left:6px solid #d97706; background:#fffbeb; }
-    .exec-issue-row.good { border-left:6px solid #16a34a; background:#f0fdf4; }
-    .exec-issue-row.blue { border-left:6px solid #2563eb; background:#eff6ff; }
-    .exec-issue-row h4 { margin:0 0 4px; font-size:14px; color:var(--text); }
-    .exec-issue-row p { margin:0; font-size:12px; color:var(--muted); line-height:1.45; }
-    .exec-issue-count { font-weight:900; font-size:20px; color:var(--navy); white-space:nowrap; }
-    .exec-list { display:grid; gap:10px; }
-    .exec-person { border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff; }
-    .exec-person h4 { margin:0 0 4px; color:var(--text); font-size:14px; }
-    .exec-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
-    .exec-person .exec-actions { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
-    .exec-print-paper { background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px; margin-top:14px; }
-    @media(max-width:900px){ .exec-kpi-grid{grid-template-columns:1fr 1fr;} .exec-risk-grid{grid-template-columns:1fr;} }
-    @media(max-width:560px){ .exec-kpi-grid{grid-template-columns:1fr;} .exec-command-hero h2{font-size:23px;} }
-    @media print { .exec-command-hero, .exec-kpi-card, .exec-panel { box-shadow:none !important; } }
-
-  
-
-    /* PHASE 5C — TRUE EXECUTIVE COMMAND CENTER VISUAL UPGRADE */
-    .pal-command-shell { display:grid; gap:16px; }
-    .pal-command-hero {
-      background: radial-gradient(circle at top left, #3b82f6 0%, #1b3a5c 38%, #0f172a 100%);
-      color:#fff; border-radius:26px; padding:24px; box-shadow:0 18px 45px rgba(15,23,42,.22);
-      border:1px solid rgba(255,255,255,.12); overflow:hidden; position:relative;
+    .command-score strong { display:block; font-size:42px; line-height:1; color:#78c240; }
+    .command-score span { display:block; margin-top:5px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; color:rgba(255,255,255,.78); }
+    .command-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .command-kpi {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 6px 16px rgba(16,24,40,.06);
+      border-top:6px solid var(--kpi-color, var(--navy));
     }
-    .pal-command-hero:after { content:""; position:absolute; right:-70px; top:-70px; width:190px; height:190px; border-radius:999px; background:rgba(120,194,64,.18); }
-    .pal-command-hero h2 { margin:0 0 6px; font-size:31px; letter-spacing:-.4px; }
-    .pal-command-hero p { margin:0; color:rgba(255,255,255,.82); line-height:1.5; font-size:14px; max-width:680px; }
-    .pal-command-hero-row { display:flex; justify-content:space-between; gap:18px; align-items:center; position:relative; z-index:1; }
-    .pal-readiness-gauge { width:136px; height:136px; border-radius:999px; display:grid; place-items:center; background:conic-gradient(#78c240 var(--score-deg,0deg), rgba(255,255,255,.18) 0deg); padding:10px; flex-shrink:0; }
-    .pal-readiness-inner { width:100%; height:100%; border-radius:999px; background:#fff; display:grid; place-items:center; text-align:center; color:var(--navy); }
-    .pal-readiness-inner strong { display:block; font-size:32px; line-height:1; }
-    .pal-readiness-inner span { display:block; font-size:10px; font-weight:900; text-transform:uppercase; color:#64748b; margin-top:4px; }
-    .pal-command-kpis { display:grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap:12px; }
-    .pal-command-kpi { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 8px 24px rgba(16,24,40,.06); position:relative; overflow:hidden; }
-    .pal-command-kpi:before { content:""; position:absolute; left:0; top:0; bottom:0; width:7px; background:var(--kpi-color,#1b3a5c); }
-    .pal-command-kpi strong { display:block; font-size:32px; color:var(--navy); line-height:1; margin-bottom:6px; }
-    .pal-command-kpi span { display:block; font-size:11px; font-weight:950; color:#64748b; text-transform:uppercase; letter-spacing:.4px; }
-    .pal-command-kpi small { display:block; margin-top:8px; color:#94a3b8; font-size:11px; line-height:1.25; }
-    .pal-command-layout { display:grid; grid-template-columns:1.05fr .95fr; gap:16px; align-items:start; }
-    .pal-command-panel { background:#fff; border:1px solid var(--line); border-radius:22px; padding:16px; box-shadow:0 8px 24px rgba(16,24,40,.055); }
-    .pal-command-panel h3 { margin:0 0 12px; color:var(--navy); font-size:17px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .pal-panel-badge { background:#eef2f7; color:var(--navy); border-radius:999px; padding:4px 9px; font-size:11px; font-weight:900; }
-    .pal-risk-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:16px; padding:13px; margin-bottom:10px; background:#f8fafc; border-left:7px solid var(--risk,#1b3a5c); }
-    .pal-risk-row h4 { margin:0 0 3px; color:#111827; font-size:14px; }
-    .pal-risk-row p { margin:0; color:#64748b; font-size:12px; line-height:1.35; }
-    .pal-risk-count { min-width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:20px; font-weight:950; background:#fff; color:var(--navy); border:1px solid var(--line); }
-    .pal-command-person { border:1px solid var(--line); border-radius:16px; padding:12px; margin-bottom:10px; background:#fff; }
-    .pal-command-person h4 { margin:0 0 4px; font-size:14px; color:#111827; }
-    .pal-command-person p { margin:0; color:#64748b; font-size:12px; line-height:1.35; }
-    .pal-command-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .pal-command-two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .pal-empty-soft { color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:16px; padding:14px; font-size:13px; line-height:1.4; }
-    @media(max-width:900px){ .pal-command-kpis{grid-template-columns:1fr 1fr;} .pal-command-layout,.pal-command-two{grid-template-columns:1fr;} .pal-command-hero-row{flex-direction:column; align-items:flex-start;} }
-    @media(max-width:560px){ .pal-command-kpis{grid-template-columns:1fr;} .pal-command-hero h2{font-size:24px;} }
+    .command-kpi strong { display:block; font-size:28px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .command-kpi span { display:block; color:var(--text); font-size:13px; font-weight:900; }
+    .command-kpi small { display:block; margin-top:5px; color:var(--muted); font-size:11px; line-height:1.35; }
+    .command-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin:16px 0 18px; align-items:start; }
+    .command-panel {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:0 6px 16px rgba(16,24,40,.05);
+    }
+    .command-panel h3 { color:var(--navy); margin:0 0 10px; font-size:17px; }
+    .command-action-item {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      border-top:1px solid var(--line);
+      padding:11px 0;
+    }
+    .command-action-item:first-of-type { border-top:0; }
+    .command-action-item strong { display:block; color:var(--text); font-size:14px; margin-bottom:3px; }
+    .command-action-item span { color:var(--muted); font-size:12px; line-height:1.4; }
+    .command-risk-pill {
+      display:inline-flex;
+      white-space:nowrap;
+      border-radius:999px;
+      padding:5px 9px;
+      font-size:11px;
+      font-weight:900;
+    }
+    .command-risk-pill.red { background:#fee2e2; color:#991b1b; }
+    .command-risk-pill.yellow { background:#fef3c7; color:#92400e; }
+    .command-risk-pill.green { background:#dcfce7; color:#166534; }
+    .command-mini-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; margin-bottom:16px; }
+    .command-mini-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:12px; }
+    .command-mini-card strong { display:block; font-size:20px; color:var(--navy); margin-bottom:4px; }
+    .command-mini-card span { color:var(--muted); font-size:12px; font-weight:800; }
+    @media(max-width:900px){ .command-kpi-grid, .command-layout, .command-mini-grid { grid-template-columns:1fr; } .command-score { width:100%; } }
 
   </style>
 </head>
@@ -1074,10 +1051,10 @@
   <div class="page-wrap">
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
       <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
+      <button class="tab" onclick="switchMainTab('main-workforce-status', this)">🚨 Command Center</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-new-hires', this)">🧾 New Hire Intake</button>
       <button class="tab" onclick="switchMainTab('main-workforce-status', this)">✅ Good To Work</button>
-      <button class="tab" onclick="switchMainTab('main-exec-compliance', this)">🚨 Command Center</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
@@ -1147,73 +1124,25 @@
 
     <div class="tab-pane" id="main-workforce-status">
       <div class="page-header">
-        <h2>✅ Workforce Status Dashboard</h2>
+        <h2>🚨 PAL Compliance Command Center</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="loadWorkforceStatusDashboard(true)">↻ Refresh</button>
+          <button class="btn-outline" onclick="printCommandCenterReport()">🖨️ Print Command Report</button>
+          <button class="btn-outline" onclick="loadWorkforceStatusDashboard(true)">↻ Refresh Command Center</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Executive compliance view: readiness score, blocked workers, missing items, expiring certs, and Good To Work status in one office-ready screen.</div>
+      <div id="command-center-top">
+        <div class="command-hero">
+          <div class="command-hero-top">
+            <div><h2>Loading PAL Compliance Command Center…</h2><p>Open this tab or click Refresh Command Center to load live workforce compliance data.</p></div>
+            <div class="command-score"><strong>--</strong><span>Readiness</span></div>
+          </div>
+        </div>
+      </div>
       <div id="workforce-status-summary">
         <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
       </div>
       <div id="workforce-status-board"></div>
-    </div>
-
-
-    <div class="tab-pane" id="main-exec-compliance">
-      <div class="pal-command-shell">
-        <div class="pal-command-hero">
-          <div class="pal-command-hero-row">
-            <div>
-              <h2>🚨 PAL Compliance Command Center</h2>
-              <p>This is the executive view — not a worker board. It gives the office a fast read on site readiness, blocked workers, expiring certifications, missing payroll/ID items, and packets waiting for review.</p>
-            </div>
-            <div class="pal-readiness-gauge" id="pal-readiness-gauge">
-              <div class="pal-readiness-inner"><strong id="exec-readiness-score">—</strong><span>Ready<br>Score</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="page-header" style="margin-bottom:0;">
-          <h2 style="font-size:20px;">Executive Compliance Snapshot</h2>
-          <div class="header-actions">
-            <button class="btn-outline" onclick="loadExecutiveComplianceDashboard(true)">↻ Refresh Command Center</button>
-            <button class="btn-outline" onclick="printExecutiveComplianceDashboard()">🖨️ Print / PDF</button>
-          </div>
-        </div>
-
-        <div id="exec-compliance-kpis"></div>
-
-        <div class="pal-command-layout">
-          <div>
-            <div class="pal-command-panel">
-              <h3>🚨 Office Action Queue <span class="pal-panel-badge">Highest Priority</span></h3>
-              <div id="exec-top-issues"><div class="pal-empty-soft">Open this tab or click Refresh Command Center to load the management summary.</div></div>
-            </div>
-            <div class="pal-command-panel" style="margin-top:14px;">
-              <h3>⛔ Workers Blocked From Site <span class="pal-panel-badge">Do Not Send</span></h3>
-              <div id="exec-blocked-workers"><div class="pal-empty-soft">No blocked worker data loaded yet.</div></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="pal-command-panel">
-              <h3>🟠 Expiring / Missing Items <span class="pal-panel-badge">Needs Follow-Up</span></h3>
-              <div id="exec-expiring-missing"><div class="pal-empty-soft">No expiring or missing item data loaded yet.</div></div>
-            </div>
-            <div class="pal-command-two" style="margin-top:14px;">
-              <div class="pal-command-panel">
-                <h3>🧾 Intake Pipeline</h3>
-                <div id="exec-onboarding-pipeline"><div class="pal-empty-soft">No onboarding pipeline loaded yet.</div></div>
-              </div>
-              <div class="pal-command-panel">
-                <h3>🟢 Ready Workers</h3>
-                <div id="exec-good-workers"><div class="pal-empty-soft">No Good To Work snapshot loaded yet.</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -2178,8 +2107,6 @@
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
-  window.loadExecutiveComplianceDashboard = loadExecutiveComplianceDashboard;
-  window.printExecutiveComplianceDashboard = printExecutiveComplianceDashboard;
   window.runComplianceAudit = runComplianceAudit;
   window.resetDemoComplianceWorkers = resetDemoComplianceWorkers;
   window.createDemoComplianceEmployee = createDemoComplianceEmployee;
@@ -5318,60 +5245,77 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       a { color:#111; text-decoration:none; }
     }
 
-
-    /* PHASE5B_SAFE_EXECUTIVE_COMMAND_CENTER_2026_05_19
-       Isolated dashboard layer only. No login/auth/startup code touched. */
-    .exec-command-hero {
-      background: linear-gradient(135deg, #132b46, #1b3a5c 55%, #254d78);
-      color: #fff;
+    /* PHASE5C_VISIBLE_COMMAND_CENTER_REAL_PATCH_2026_05_19 */
+    .command-hero {
+      background: linear-gradient(135deg, #10243a, #1b3a5c 55%, #254d78);
+      color: white;
       border-radius: 24px;
       padding: 22px;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, .22);
-      margin-bottom: 16px;
+      margin: 0 0 18px;
+      box-shadow: 0 16px 38px rgba(16, 36, 58, .22);
       border: 1px solid rgba(255,255,255,.12);
     }
-    .exec-command-hero h2 { margin: 0 0 6px; font-size: 28px; line-height: 1.1; color:#fff; }
-    .exec-command-hero p { margin: 0; color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.5; }
-    .exec-hero-row { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
-    .exec-score-ring {
-      min-width: 148px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 20px;
-      padding: 14px 16px;
+    .command-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap; }
+    .command-hero h2 { margin:0 0 6px; font-size:28px; line-height:1.1; color:white; }
+    .command-hero p { margin:0; color:rgba(255,255,255,.78); font-size:14px; line-height:1.55; max-width:620px; }
+    .command-score {
+      min-width:150px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:20px;
+      padding:14px;
       text-align:center;
     }
-    .exec-score-ring strong { display:block; font-size: 38px; line-height: 1; color:#78c240; }
-    .exec-score-ring span { display:block; font-size: 12px; font-weight:900; color:rgba(255,255,255,.82); margin-top:5px; text-transform:uppercase; letter-spacing:.4px; }
-    .exec-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin: 14px 0 18px; }
-    .exec-kpi-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:15px; box-shadow:0 6px 18px rgba(16,24,40,.06); border-top:6px solid var(--navy); }
-    .exec-kpi-card.good { border-top-color:#16a34a; }
-    .exec-kpi-card.warn { border-top-color:#d97706; }
-    .exec-kpi-card.hold { border-top-color:#dc2626; }
-    .exec-kpi-card.blue { border-top-color:#2563eb; }
-    .exec-kpi-card.purple { border-top-color:#7c3aed; }
-    .exec-kpi-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
-    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.35px; }
-    .exec-risk-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; align-items:start; }
-    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 6px 18px rgba(16,24,40,.05); }
-    .exec-panel h3 { color:var(--navy); font-size:17px; margin:0 0 10px; display:flex; align-items:center; gap:8px; }
-    .exec-issue-row { border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px; background:#f8fafc; display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
-    .exec-issue-row.hold { border-left:6px solid #dc2626; background:#fff7f7; }
-    .exec-issue-row.warn { border-left:6px solid #d97706; background:#fffbeb; }
-    .exec-issue-row.good { border-left:6px solid #16a34a; background:#f0fdf4; }
-    .exec-issue-row.blue { border-left:6px solid #2563eb; background:#eff6ff; }
-    .exec-issue-row h4 { margin:0 0 4px; font-size:14px; color:var(--text); }
-    .exec-issue-row p { margin:0; font-size:12px; color:var(--muted); line-height:1.45; }
-    .exec-issue-count { font-weight:900; font-size:20px; color:var(--navy); white-space:nowrap; }
-    .exec-list { display:grid; gap:10px; }
-    .exec-person { border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff; }
-    .exec-person h4 { margin:0 0 4px; color:var(--text); font-size:14px; }
-    .exec-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
-    .exec-person .exec-actions { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
-    .exec-print-paper { background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px; margin-top:14px; }
-    @media(max-width:900px){ .exec-kpi-grid{grid-template-columns:1fr 1fr;} .exec-risk-grid{grid-template-columns:1fr;} }
-    @media(max-width:560px){ .exec-kpi-grid{grid-template-columns:1fr;} .exec-command-hero h2{font-size:23px;} }
-    @media print { .exec-command-hero, .exec-kpi-card, .exec-panel { box-shadow:none !important; } }
+    .command-score strong { display:block; font-size:42px; line-height:1; color:#78c240; }
+    .command-score span { display:block; margin-top:5px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; color:rgba(255,255,255,.78); }
+    .command-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .command-kpi {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 6px 16px rgba(16,24,40,.06);
+      border-top:6px solid var(--kpi-color, var(--navy));
+    }
+    .command-kpi strong { display:block; font-size:28px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .command-kpi span { display:block; color:var(--text); font-size:13px; font-weight:900; }
+    .command-kpi small { display:block; margin-top:5px; color:var(--muted); font-size:11px; line-height:1.35; }
+    .command-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin:16px 0 18px; align-items:start; }
+    .command-panel {
+      background:white;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:0 6px 16px rgba(16,24,40,.05);
+    }
+    .command-panel h3 { color:var(--navy); margin:0 0 10px; font-size:17px; }
+    .command-action-item {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      border-top:1px solid var(--line);
+      padding:11px 0;
+    }
+    .command-action-item:first-of-type { border-top:0; }
+    .command-action-item strong { display:block; color:var(--text); font-size:14px; margin-bottom:3px; }
+    .command-action-item span { color:var(--muted); font-size:12px; line-height:1.4; }
+    .command-risk-pill {
+      display:inline-flex;
+      white-space:nowrap;
+      border-radius:999px;
+      padding:5px 9px;
+      font-size:11px;
+      font-weight:900;
+    }
+    .command-risk-pill.red { background:#fee2e2; color:#991b1b; }
+    .command-risk-pill.yellow { background:#fef3c7; color:#92400e; }
+    .command-risk-pill.green { background:#dcfce7; color:#166534; }
+    .command-mini-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; margin-bottom:16px; }
+    .command-mini-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:12px; }
+    .command-mini-card strong { display:block; font-size:20px; color:var(--navy); margin-bottom:4px; }
+    .command-mini-card span { color:var(--muted); font-size:12px; font-weight:800; }
+    @media(max-width:900px){ .command-kpi-grid, .command-layout, .command-mini-grid { grid-template-columns:1fr; } .command-score { width:100%; } }
 
   </style>
 </head>
@@ -6066,11 +6010,94 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       </div>`).join('') : `<p style="color:var(--muted);font-size:13px;">${emptyText}</p>`}</div>`;
   }
 
+
+  // PHASE5C_VISIBLE_COMMAND_CENTER_REAL_PATCH_2026_05_19
+  function renderCommandCenterTop(rows) {
+    const el = document.getElementById('command-center-top');
+    if (!el || !rows) return;
+    const good = rows.good || [];
+    const missing = rows.missing || [];
+    const hold = rows.hold || [];
+    const total = good.length + missing.length + hold.length;
+    const readiness = total ? Math.round((good.length / total) * 100) : 0;
+    const riskClass = hold.length ? 'red' : (missing.length ? 'yellow' : 'green');
+    const issueItems = [];
+    if (hold.length) issueItems.push({ level:'red', title:`${hold.length} worker(s) blocked / on hold`, desc:'Expired certs or compliance hold items need office action before site placement.' });
+    if (missing.length) issueItems.push({ level:'yellow', title:`${missing.length} worker(s) missing info or needing review`, desc:'Packet, payroll/ID, or cert information needs review before final clearance.' });
+    if (!hold.length && !missing.length) issueItems.push({ level:'green', title:'No major compliance issues detected', desc:'Current records loaded into this dashboard show no blocked workers.' });
+
+    const peopleHtml = (items, empty, limit=5) => items.length ? items.slice(0, limit).map(x => `
+      <div class="command-action-item">
+        <div><strong>${esc(x.name || 'Worker')}</strong><span>${esc(x.detail || '')}</span></div>
+        <button class="btn-sm" onclick="${x.action || ''}">Open</button>
+      </div>`).join('') : `<p class="helper-text">${empty}</p>`;
+
+    el.innerHTML = `
+      <div class="command-hero">
+        <div class="command-hero-top">
+          <div>
+            <h2>PAL Compliance Command Center</h2>
+            <p>Executive snapshot for workforce readiness, onboarding risk, expired certifications, missing payroll/ID items, and jobsite clearance.</p>
+          </div>
+          <div class="command-score"><strong>${readiness}%</strong><span>Readiness Score</span></div>
+        </div>
+        <div class="command-kpi-grid">
+          <div class="command-kpi" style="--kpi-color:#1b3a5c"><strong>${total}</strong><span>Total Records</span><small>Employees + active intake packets loaded.</small></div>
+          <div class="command-kpi" style="--kpi-color:#16a34a"><strong>${good.length}</strong><span>Good To Work</span><small>Ready for site based on current records.</small></div>
+          <div class="command-kpi" style="--kpi-color:#d97706"><strong>${missing.length}</strong><span>Needs Review</span><small>Missing info, packet review, or warnings.</small></div>
+          <div class="command-kpi" style="--kpi-color:#dc2626"><strong>${hold.length}</strong><span>Blocked / Hold</span><small>Expired certs or hold conditions.</small></div>
+          <div class="command-kpi" style="--kpi-color:${hold.length ? '#dc2626' : (missing.length ? '#d97706' : '#16a34a')}"><strong>${hold.length ? 'HIGH' : (missing.length ? 'MED' : 'LOW')}</strong><span>Office Risk</span><small>Priority level for compliance follow-up.</small></div>
+        </div>
+      </div>
+
+      <div class="command-layout">
+        <div class="command-panel">
+          <h3>Top Office Action Queue</h3>
+          ${issueItems.map(i => `
+            <div class="command-action-item">
+              <div><strong>${esc(i.title)}</strong><span>${esc(i.desc)}</span></div>
+              <span class="command-risk-pill ${i.level}">${i.level === 'red' ? 'URGENT' : (i.level === 'yellow' ? 'REVIEW' : 'CLEAR')}</span>
+            </div>`).join('')}
+        </div>
+        <div class="command-panel">
+          <h3>Executive Snapshot</h3>
+          <div class="command-mini-grid">
+            <div class="command-mini-card"><strong>${readiness}%</strong><span>Readiness</span></div>
+            <div class="command-mini-card"><strong>${hold.length}</strong><span>Blocked</span></div>
+            <div class="command-mini-card"><strong>${missing.length}</strong><span>Needs Review</span></div>
+          </div>
+          <p class="helper-text">Use this screen in an office meeting to show exactly who is ready, who is missing paperwork, and who should not be sent to site yet.</p>
+        </div>
+      </div>
+
+      <div class="command-layout">
+        <div class="command-panel"><h3>🔴 Workers Blocked From Site</h3>${peopleHtml(hold, 'No blocked workers loaded right now.', 6)}</div>
+        <div class="command-panel"><h3>🟢 Good To Work Snapshot</h3>${peopleHtml(good, 'No Good To Work workers loaded yet.', 6)}</div>
+      </div>
+    `;
+  }
+
+  function printCommandCenterReport() {
+    try {
+      const content = document.getElementById('command-center-top')?.innerHTML || '';
+      const summary = document.getElementById('workforce-status-summary')?.innerHTML || '';
+      const board = document.getElementById('workforce-status-board')?.innerHTML || '';
+      const w = window.open('', '_blank');
+      if (!w) return toast('Popup blocked. Allow popups to print the command report.');
+      w.document.write(`<!doctype html><html><head><title>PAL Compliance Command Report</title><style>
+        body{font-family:Arial,sans-serif;margin:24px;color:#1f2937}.command-hero{background:#1b3a5c;color:white;border-radius:18px;padding:20px;margin-bottom:14px}.command-hero h2{margin:0 0 6px}.command-kpi-grid,.workforce-status-grid,.workforce-board,.command-layout{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.command-kpi,.workforce-status-card,.workforce-column,.command-panel{border:1px solid #dde3ea;border-radius:14px;padding:12px;margin-bottom:10px}.command-score strong,.command-kpi strong,.workforce-status-card strong{font-size:28px;display:block}.btn-sm,.btn-outline{display:none}.helper-text,p,span,small{color:#555;font-size:12px}.workforce-person,.command-action-item{border-top:1px solid #eee;padding:8px 0}@media print{body{margin:12px}.command-kpi-grid,.workforce-status-grid,.workforce-board,.command-layout{grid-template-columns:1fr 1fr 1fr}}
+      </style></head><body><h1>PAL Compliance Command Report</h1>${content}${summary}${board}</body></html>`);
+      w.document.close();
+      setTimeout(() => w.print(), 300);
+    } catch (e) { console.error(e); toast('Could not open command report.'); }
+  }
+
   function renderWorkforceStatusDashboard() {
     const summary = document.getElementById('workforce-status-summary');
     const board = document.getElementById('workforce-status-board');
     if (!summary || !board) return;
     const rows = buildWorkforceRows();
+    renderCommandCenterTop(rows);
     summary.innerHTML = `<div class="workforce-status-grid">
       <div class="workforce-status-card good"><strong>${rows.good.length}</strong><span>Good To Work</span></div>
       <div class="workforce-status-card missing"><strong>${rows.missing.length}</strong><span>Missing / Needs Review</span></div>
@@ -6083,174 +6110,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>`;
   }
 
-
-  // PHASE5B_SAFE_EXECUTIVE_COMMAND_CENTER_2026_05_19
-  // Isolated executive dashboard. Reads existing newHireIntakes + employees only.
-  async function loadExecutiveComplianceDashboard(force = false) {
-    const kpis = document.getElementById('exec-compliance-kpis');
-    if (kpis) kpis.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading executive compliance dashboard…</p>';
-    try {
-      if (!allNewHireIntakes || !allNewHireIntakes.length || force) {
-        try {
-          const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-          allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        } catch (e) { console.warn('Executive dashboard intake load warning', e); }
-      }
-      if (!allEmployees || !allEmployees.length || force) {
-        try {
-          const empSnap = await getDocs(collection(db, 'employees'));
-          allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        } catch (e) { console.warn('Executive dashboard employee load warning', e); }
-      }
-      renderExecutiveComplianceDashboard();
-    } catch (e) {
-      console.error('Executive compliance dashboard failed', e);
-      if (kpis) kpis.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Could not load command center</h3><p>Check connection and refresh.</p></div>';
-    }
-  }
-
-  function employeeCertBuckets(emp) {
-    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
-    const expired = certs.filter(c => getCertStatusKey(c.expirationDate) === 'expired');
-    const soon = certs.filter(c => getCertStatusKey(c.expirationDate) === 'warn');
-    const valid = certs.filter(c => getCertStatusKey(c.expirationDate) === 'valid' || !c.expirationDate);
-    return { certs, expired, soon, valid };
-  }
-
-  function getExecutiveComplianceData() {
-    const intakes = allNewHireIntakes || [];
-    const employees = allEmployees || [];
-    const blocked = [];
-    const missing = [];
-    const expiring = [];
-    const good = [];
-    const readyReview = [];
-    const activePackets = [];
-
-    intakes.forEach(x => {
-      const result = getNewHireComplianceResult(x);
-      const status = String(x.status || 'Pending');
-      const certCount = (x.certFiles || []).length;
-      const payrollCount = (x.payrollIdFiles || []).length;
-      const row = {
-        id: x.id,
-        type: 'intake',
-        name: x.name || 'New Hire',
-        trade: x.trade || '',
-        project: x.projectName || '',
-        status,
-        detail: `${result.label} • ${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
-        issues: result.issues || [],
-        warnings: result.warnings || [],
-        action: `openNewHireReview('${esc(x.id)}')`
-      };
-      if (result.level === 'hold' || status === 'Compliance Hold') blocked.push(row);
-      else if (status === 'Good To Work' && result.level === 'good') good.push(row);
-      else missing.push(row);
-      if (status === 'Ready for Review') readyReview.push(row);
-      if (status !== 'Good To Work') activePackets.push(row);
-      if ((result.warnings || []).length) expiring.push(row);
-    });
-
-    employees.forEach(emp => {
-      const b = employeeCertBuckets(emp);
-      const row = {
-        id: emp.id,
-        type: 'employee',
-        name: emp.name || 'Employee',
-        trade: emp.trade || '',
-        project: '',
-        status: emp.complianceStatus || emp.status || '',
-        detail: `Employee Certs • Total: ${b.certs.length} • Expired: ${b.expired.length} • Expiring soon: ${b.soon.length}`,
-        issues: b.expired.map(c => `${c.title || c.type || 'Certification'} expired`),
-        warnings: b.soon.map(c => `${c.title || c.type || 'Certification'} expiring soon`),
-        action: `openEmployeeDetail('${esc(emp.id)}')`
-      };
-      if (b.expired.length) blocked.push(row);
-      else if (b.soon.length || !b.certs.length) {
-        missing.push(row);
-        if (b.soon.length) expiring.push(row);
-      } else good.push(row);
-    });
-
-    const totalRecords = intakes.length + employees.length;
-    const readinessScore = totalRecords ? Math.round((good.length / totalRecords) * 100) : 0;
-    return { intakes, employees, blocked, missing, expiring, good, readyReview, activePackets, totalRecords, readinessScore };
-  }
-
-  function renderExecPeople(items, emptyText, limit = 8) {
-    if (!items.length) return `<p class="helper-text">${emptyText}</p>`;
-    return `<div class="exec-list">${items.slice(0, limit).map(x => `
-      <div class="exec-person">
-        <h4>${esc(x.name)}</h4>
-        <p>${x.trade ? `Trade: ${esc(x.trade)}<br>` : ''}${x.project ? `Project: ${esc(x.project)}<br>` : ''}${esc(x.detail || '')}</p>
-        <div class="exec-actions"><button class="btn-sm" onclick="${x.action}">Open</button></div>
-      </div>`).join('')}${items.length > limit ? `<p class="helper-text">+ ${items.length - limit} more not shown in preview.</p>` : ''}</div>`;
-  }
-
-  // PHASE 5C: stronger executive command center renderer (isolated UI only; no auth/startup changes)
-  function renderExecutiveComplianceDashboard() {
-    const data = getExecutiveComplianceData();
-    const scoreEl = document.getElementById('exec-readiness-score');
-    const gauge = document.getElementById('pal-readiness-gauge');
-    const kpis = document.getElementById('exec-compliance-kpis');
-    const issues = document.getElementById('exec-top-issues');
-    const blocked = document.getElementById('exec-blocked-workers');
-    const expiringMissing = document.getElementById('exec-expiring-missing');
-    const pipeline = document.getElementById('exec-onboarding-pipeline');
-    const good = document.getElementById('exec-good-workers');
-    const score = data.readinessScore || 0;
-    if (scoreEl) scoreEl.textContent = `${score}%`;
-    if (gauge) gauge.style.setProperty('--score-deg', `${Math.max(0, Math.min(100, score)) * 3.6}deg`);
-
-    const missingPayroll = (data.intakes || []).filter(x => !(x.payrollIdFiles || []).length).length;
-    const missingCerts = (data.intakes || []).filter(x => !(x.certFiles || []).length).length;
-    const needsOffice = data.readyReview.length + data.activePackets.length;
-
-    if (kpis) kpis.innerHTML = `<div class="pal-command-kpis">
-      <div class="pal-command-kpi" style="--kpi-color:#2563eb"><strong>${data.totalRecords}</strong><span>Total Records</span><small>New hire packets + employee cert files.</small></div>
-      <div class="pal-command-kpi" style="--kpi-color:#16a34a"><strong>${data.good.length}</strong><span>Good To Work</span><small>Clean records ready for site.</small></div>
-      <div class="pal-command-kpi" style="--kpi-color:#d97706"><strong>${needsOffice}</strong><span>Office Actions</span><small>Packets or records needing review.</small></div>
-      <div class="pal-command-kpi" style="--kpi-color:#7c3aed"><strong>${data.expiring.length}</strong><span>Cert Warnings</span><small>Expiring soon or missing cert follow-up.</small></div>
-      <div class="pal-command-kpi" style="--kpi-color:#dc2626"><strong>${data.blocked.length}</strong><span>Blocked / Hold</span><small>Do not send until corrected.</small></div>
-    </div>`;
-
-    const riskRows = [
-      { color:'#dc2626', title:'Workers Blocked From Site', desc:'Expired certs or compliance hold status. These workers should not be cleared for the jobsite.', count:data.blocked.length },
-      { color:'#d97706', title:'Missing Payroll / ID', desc:'Packets without required payroll or identity uploads.', count:missingPayroll },
-      { color:'#d97706', title:'Missing Certification Uploads', desc:'Packets without cert files attached for office verification.', count:missingCerts },
-      { color:'#2563eb', title:'Packets Ready For Office Review', desc:'Submitted onboarding packets waiting for office action.', count:data.readyReview.length },
-      { color:'#16a34a', title:'Ready Workforce', desc:'Workers currently showing as Good To Work / valid.', count:data.good.length }
-    ];
-    if (issues) issues.innerHTML = riskRows.map(r => `<div class="pal-risk-row" style="--risk:${r.color}"><div><h4>${esc(r.title)}</h4><p>${esc(r.desc)}</p></div><div class="pal-risk-count">${r.count}</div></div>`).join('');
-
-    const people = (items, emptyText, limit = 6) => {
-      if (!items.length) return `<div class="pal-empty-soft">${esc(emptyText)}</div>`;
-      return items.slice(0, limit).map(x => `<div class="pal-command-person"><h4>${esc(x.name)}</h4><p>${x.trade ? `Trade: ${esc(x.trade)}<br>` : ''}${x.project ? `Project: ${esc(x.project)}<br>` : ''}${esc(x.detail || '')}</p><div class="pal-command-actions"><button class="btn-sm" onclick="${x.action}">Open Record</button></div></div>`).join('') + (items.length > limit ? `<div class="pal-empty-soft">+ ${items.length - limit} more records not shown in this preview.</div>` : '');
-    };
-    if (blocked) blocked.innerHTML = people(data.blocked, 'No workers currently blocked from site.');
-    if (expiringMissing) expiringMissing.innerHTML = people([...data.expiring, ...data.missing], 'No expiring or missing items detected.');
-    if (pipeline) pipeline.innerHTML = people(data.activePackets, 'No active onboarding packets needing action.', 4);
-    if (good) good.innerHTML = people(data.good, 'No Good To Work records loaded yet.', 4);
-  }
-
-  function printExecutiveComplianceDashboard() {
-    const data = getExecutiveComplianceData();
-    const now = new Date().toLocaleString();
-    const html = `<!doctype html><html><head><title>PAL Compliance Command Center</title><style>
-      body{font-family:Arial,sans-serif;color:#111;margin:24px;} h1{color:#1b3a5c;margin:0 0 6px;} .sub{color:#555;margin-bottom:18px;}
-      .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0;} .box{border:1px solid #ccc;border-top:6px solid #1b3a5c;border-radius:12px;padding:12px;} .box strong{display:block;font-size:26px;color:#1b3a5c}.box span{font-size:11px;text-transform:uppercase;font-weight:800;color:#555}.hold{border-top-color:#dc2626}.good{border-top-color:#16a34a}.warn{border-top-color:#d97706}.section{margin-top:18px;border:1px solid #ddd;border-radius:12px;padding:12px;} h2{font-size:16px;color:#1b3a5c;margin:0 0 10px;} .person{border-top:1px solid #eee;padding:8px 0;font-size:13px}.person:first-child{border-top:0}.name{font-weight:800}.muted{color:#555;font-size:12px}@media print{body{margin:18px}.grid{grid-template-columns:repeat(5,1fr)}}
-      </style></head><body><h1>PAL Compliance Command Center</h1><div class="sub">Printed ${esc(now)} · Executive workforce compliance overview</div>
-      <div class="grid"><div class="box"><strong>${data.totalRecords}</strong><span>Total Records</span></div><div class="box good"><strong>${data.good.length}</strong><span>Good To Work</span></div><div class="box warn"><strong>${data.readyReview.length}</strong><span>Ready Review</span></div><div class="box warn"><strong>${data.expiring.length}</strong><span>Warnings</span></div><div class="box hold"><strong>${data.blocked.length}</strong><span>Blocked</span></div></div>
-      <div class="section"><h2>Workers Blocked From Site</h2>${data.blocked.length ? data.blocked.map(x=>`<div class="person"><div class="name">${esc(x.name)}</div><div class="muted">${esc(x.detail || '')}</div></div>`).join('') : '<div class="muted">No blocked workers.</div>'}</div>
-      <div class="section"><h2>Expiring / Missing Items</h2>${[...data.expiring,...data.missing].length ? [...data.expiring,...data.missing].slice(0,20).map(x=>`<div class="person"><div class="name">${esc(x.name)}</div><div class="muted">${esc(x.detail || '')}</div></div>`).join('') : '<div class="muted">No expiring or missing items detected.</div>'}</div>
-      <div class="section"><h2>Good To Work Snapshot</h2>${data.good.length ? data.good.slice(0,20).map(x=>`<div class="person"><div class="name">${esc(x.name)}</div><div class="muted">${esc(x.detail || '')}</div></div>`).join('') : '<div class="muted">No Good To Work records loaded.</div>'}</div>
-      <script>window.print();<\/script></body></html>`;
-    const w = window.open('', '_blank');
-    if (!w) return toast('Popup blocked. Allow popups to print dashboard.');
-    w.document.open(); w.document.write(html); w.document.close();
-  }
-
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -6260,7 +6119,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-new-hires') loadNewHireIntakes(true);
     if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
-    if (tabId === 'main-exec-compliance') loadExecutiveComplianceDashboard(true);
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
   }
 
@@ -6336,7 +6194,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   // Enter key shortcuts
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
-
 </script>
 </body>
 </html>
