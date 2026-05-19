@@ -1920,6 +1920,7 @@
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
   window.runComplianceAudit = runComplianceAudit;
+  window.resetDemoComplianceWorkers = resetDemoComplianceWorkers;
   window.createDemoComplianceEmployee = createDemoComplianceEmployee;
   window.createDemoGoodToWorkEmployee = createDemoGoodToWorkEmployee;
   window.createDemoJohnSmithGoodToWorkEmployee = createDemoJohnSmithGoodToWorkEmployee;
@@ -4708,6 +4709,39 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }
   }
 
+
+  // DEMO_WORKER_RESET_CLEANUP_PATCH_2026_05_19
+  async function deleteDemoWorkersByNames(namesToDelete = []) {
+    const targetNames = new Set(namesToDelete.map(n => String(n || '').trim().toLowerCase()));
+    const demoEmails = new Set(['demo.joe.blow@example.com', 'demo.john.smith@example.com']);
+    const snap = await getDocs(query(collection(db, 'newHireIntakes'), where('demoRecord', '==', true), limit(100)));
+    const deletes = [];
+    snap.forEach(d => {
+      const data = d.data() || {};
+      const name = String(data.name || '').trim().toLowerCase();
+      const email = String(data.email || '').trim().toLowerCase();
+      const isTargetName = targetNames.has(name) || (targetNames.has('joe blow — demo') && name.includes('joe blow')) || (targetNames.has('john smith — demo') && name.includes('john smith'));
+      const isTargetEmail = demoEmails.has(email) && (namesToDelete.length === 0 || (email.includes('joe.blow') && Array.from(targetNames).some(n => n.includes('joe'))) || (email.includes('john.smith') && Array.from(targetNames).some(n => n.includes('john'))));
+      if (isTargetName || isTargetEmail) deletes.push(deleteDoc(doc(db, 'newHireIntakes', d.id)));
+    });
+    await Promise.all(deletes);
+    return deletes.length;
+  }
+
+  async function resetDemoComplianceWorkers() {
+    try {
+      await deleteDemoWorkersByNames(['Joe Blow — DEMO', 'Joe Blow - DEMO', 'John Smith — DEMO', 'John Smith - DEMO']);
+      await createDemoComplianceEmployee({ skipCleanup: true, silent: true });
+      await createDemoJohnSmithGoodToWorkEmployee({ skipCleanup: true, silent: true });
+      if (typeof loadNewHireIntakes === 'function') await loadNewHireIntakes(true);
+      if (typeof loadWorkforceStatusDashboard === 'function') await loadWorkforceStatusDashboard(true);
+      toast('Demo workers reset: 1 Joe Blow Hold + 1 John Smith Good To Work.');
+    } catch (err) {
+      console.error('Reset demo workers error:', err);
+      toast('Could not reset demo workers.');
+    }
+  }
+
   async function createDemoComplianceEmployee() {
     if (!currentUser) return toast('Please sign in first.');
     try {
@@ -4750,7 +4784,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       await updateDoc(doc(db, 'newHireIntakes', docRef.id), {
         intakeLink: `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`
       });
-      toast('Demo employee created: Joe Blow — Compliance Hold.');
+      if (!options.silent) toast('Demo employee created: Joe Blow — Compliance Hold.');
       await loadNewHireIntakes(true);
     } catch (e) {
       console.error(e);
@@ -4812,7 +4846,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       await updateDoc(doc(db, 'newHireIntakes', docRef.id), {
         intakeLink: `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`
       });
-      toast('Demo Good To Work worker created: John Smith — all certs/payroll valid.');
+      if (!options.silent) toast('Demo Good To Work worker created: John Smith — all certs/payroll valid.');
       await loadNewHireIntakes(true);
       if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
     } catch (e) {
@@ -4822,8 +4856,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   // Backward-compatible alias. The button above uses the explicit John Smith function.
-  async function createDemoGoodToWorkEmployee() {
-    return createDemoJohnSmithGoodToWorkEmployee();
+  async function createDemoGoodToWorkEmployee(options = {}) {
+    return createDemoJohnSmithGoodToWorkEmployee(options);
   }
 
 
