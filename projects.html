@@ -802,7 +802,7 @@
         <label>Password</label>
         <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
       </div>
-      <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
+      <button class="btn-primary" id="login-btn" onclick="palLoginRescue()">Sign In</button>
       <div class="login-footer">
         Don't have an account? <button class="link-btn" onclick="showRegister()">Create one</button>
       </div>
@@ -1789,6 +1789,108 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- LOGIN_RESCUE_HARD_PATCH_2026_05_19
+     This rescue script protects sign-in if the main app module is slow, cached,
+     or blocked before window.doLogin is attached. It does not change projects,
+     tickets, onboarding, or Firebase database structure. -->
+<script>
+  window.palLoginRescue = async function palLoginRescue() {
+    const emailEl = document.getElementById('login-email');
+    const passEl = document.getElementById('login-password');
+    const btn = document.getElementById('login-btn');
+    const errEl = document.getElementById('login-error');
+    const email = (emailEl && emailEl.value ? emailEl.value : '').trim();
+    const password = passEl && passEl.value ? passEl.value : '';
+
+    function showLoginError(message) {
+      if (errEl) {
+        errEl.textContent = message || 'Login failed. Please try again.';
+        errEl.classList.add('show');
+        errEl.style.display = 'block';
+      } else {
+        alert(message || 'Login failed. Please try again.');
+      }
+    }
+
+    if (errEl) {
+      errEl.textContent = '';
+      errEl.classList.remove('show');
+      errEl.style.display = 'none';
+    }
+
+    if (!email || !password) {
+      showLoginError('Please enter your email and password.');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Signing in…';
+    }
+
+    try {
+      // Prefer the app's normal login function if it is already loaded and callable.
+      if (typeof window.doLogin === 'function' && window.doLogin !== window.palLoginRescue) {
+        try {
+          await window.doLogin();
+          return;
+        } catch (normalLoginError) {
+          console.warn('Normal login path failed; using hard rescue login.', normalLoginError);
+        }
+      }
+
+      const appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+      const authMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80',
+        authDomain: 'pal-safety-hub.firebaseapp.com',
+        projectId: 'pal-safety-hub',
+        storageBucket: 'pal-safety-hub.firebasestorage.app',
+        messagingSenderId: '461653262208',
+        appId: '1:461653262208:web:fb88dc50ea0a2f68630b65'
+      };
+
+      const app = appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(firebaseConfig);
+      const auth = authMod.getAuth(app);
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Firebase sign-in timed out after 20 seconds.')), 20000);
+      });
+      const cred = await Promise.race([authMod.signInWithEmailAndPassword(auth, email, password), timeoutPromise]);
+
+      // Immediate visual fallback so the user is not stuck at the login screen.
+      const loginView = document.getElementById('view-login');
+      const registerView = document.getElementById('view-register');
+      const projectsView = document.getElementById('view-projects');
+      if (loginView) loginView.classList.remove('active');
+      if (registerView) registerView.classList.remove('active');
+      if (projectsView) projectsView.classList.add('active');
+
+      const name = (cred.user.displayName || cred.user.email || 'User').split('@')[0];
+      const initials = name.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0,2) || '?';
+      ['user-avatar','detail-avatar'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = initials; });
+      ['user-name-display','detail-name-display'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = name; });
+
+      if (typeof window.showView === 'function') window.showView('view-projects');
+      if (typeof window.loadProjects === 'function') window.loadProjects();
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    } catch (error) {
+      console.error('PAL hard login rescue failed:', error);
+      const msg = (error && error.code) ? error.code : (error && error.message) ? error.message : 'Login failed.';
+      showLoginError('Login failed: ' + msg.replace('auth/', '').replaceAll('-', ' '));
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    }
+  };
+</script>
+
 <!-- ══════════════════════════════════════════════
      FIREBASE + APP LOGIC
 ══════════════════════════════════════════════ -->
@@ -1877,6 +1979,8 @@
   window.deleteCertification = deleteCertification;
   window.saveCertification = saveCertification;
   window.switchMainTab = switchMainTab;
+  window.loadProjects = loadProjects;
+  window.showView = showView;
 
   window.openNewHireIntakeModal = openNewHireIntakeModal;
   window.saveNewHireIntake = saveNewHireIntake;
