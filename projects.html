@@ -198,13 +198,6 @@
     .back-page { background: #f0fae8; padding: 16px; border-radius: 14px; border: 1px solid #78c240; margin-top: 16px; }
     .warn-box { background: #fff1f2; border: 1px solid #fecdd3; color: #991b1b; padding: 12px 14px; border-radius: 12px; font-weight: 700; }
     .pass-box { background: #f0fae8; border: 1px solid #78c240; padding: 14px; border-radius: 12px; color: #1f2937; }
-
-
-    /* DYNAMIC_SIGNATURE_ROWS_PATCH_2026_05_19 */
-    .dynamic-sign-controls { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px; }
-    .dynamic-sign-note { font-size:12px; color:var(--muted); margin:6px 0 0; }
-    .dynamic-empty-back { display:none !important; }
-
     .sticky-actions {
       position: sticky; bottom: 0; z-index: 950; display: flex; gap: 10px; justify-content: flex-end; padding: 12px 16px;
       background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-top: 1px solid var(--line);
@@ -676,8 +669,17 @@
       .inspection-grid { gap: 8px !important; }
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
+
+    /* VERIFIED_DYNAMIC_SIGNATURE_ROWS_PATCH_2026_05_19
+       Daily safety / toolbox sign-in sheets start with 3 rows.
+       Additional employee rows are added only when needed. */
+    .pal-row-add-wrap { margin: 10px 0 14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .pal-row-add-wrap .btn { padding: 9px 12px; border-radius: 10px; font-size: 13px; }
+    .pal-row-add-note { font-size:12px; color:var(--muted); font-weight:700; }
+    .pal-dynamic-back-hidden { display:none !important; }
+    @media print { .pal-row-add-wrap { display:none !important; } }
+
   </style>
-  <!-- DYNAMIC_SIGNATURE_ROWS_PATCH_2026_05_19 -->
 </head>
 <body>
 
@@ -1074,15 +1076,14 @@
             <div class="field" style="margin-top:8px;"><label>360° Inspection — Additional Hazards</label><textarea name="inspection_hazards" id="ai-out-inspection" style="min-height:44px;"></textarea></div>
           </form>
 
-          <h3 class="subhead" style="margin-top:14px;">Sign-In &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Starts with 3 rows — add more as needed</small></h3>
+          <h3 class="subhead" style="margin-top:14px;">Sign-In — Page 1 (Front) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 1–11</small></h3>
           <table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead><tr><th style="width:28px;background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">#</th><th style="background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">Print Name</th><th style="background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">Signature</th></tr></thead>
             <tbody id="ai-dsm-front"></tbody>
           </table>
-          <div class="dynamic-sign-controls"><button class="btn secondary" type="button" onclick="addDynamicSignRow('ai-dsm-front')">+ Add Employee Row</button><span class="dynamic-sign-note">Only add rows you actually need before printing.</span></div>
 
           <div class="back-page" style="margin-top:16px;">
-            <h3 class="subhead" style="margin-top:0;">Additional Sign-In Rows &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Use only if needed</small></h3>
+            <h3 class="subhead" style="margin-top:0;">Sign-In — Page 2 (Back) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 12–26</small></h3>
             <table style="width:100%;border-collapse:collapse;font-size:13px;">
               <thead><tr><th style="width:28px;background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">#</th><th style="background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">Print Name</th><th style="background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">Signature</th></tr></thead>
               <tbody id="ai-dsm-back"></tbody>
@@ -1136,7 +1137,7 @@
             <div class="field" style="margin-top:8px;"><label>360° Inspection — Additional Hazards</label><textarea name="inspection_hazards" style="min-height:40px;"></textarea></div>
           </form>
 
-          <h3 class="subhead" style="margin-top:14px;">Sign-In &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Starts with 3 rows — add more as needed</small></h3>
+          <h3 class="subhead" style="margin-top:14px;">Sign-In — Page 1 (Front) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 1–11</small></h3>
           <table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead><tr>
               <th style="width:28px;background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">#</th>
@@ -1145,10 +1146,9 @@
             </tr></thead>
             <tbody id="dsm-front"></tbody>
           </table>
-          <div class="dynamic-sign-controls"><button class="btn secondary" type="button" onclick="addDynamicSignRow('dsm-front')">+ Add Employee Row</button><span class="dynamic-sign-note">Only add rows you actually need before printing.</span></div>
 
           <div class="back-page" style="margin-top:16px;">
-            <h3 class="subhead" style="margin-top:0;">Additional Sign-In Rows &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Use only if needed</small></h3>
+            <h3 class="subhead" style="margin-top:0;">Sign-In — Page 2 (Back) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 12–26</small></h3>
             <table style="width:100%;border-collapse:collapse;font-size:13px;">
               <thead><tr>
                 <th style="width:28px;background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">#</th>
@@ -1201,8 +1201,7 @@
           </form>
           <h3 class="subhead">Attendee Sign-In</h3>
           <table><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="toolbox-signin-rows"></tbody></table>
-          <div class="dynamic-sign-controls"><button class="btn secondary" type="button" onclick="addDynamicSignRow('toolbox-signin-rows')">+ Add Employee Row</button><span class="dynamic-sign-note">Starts with 3 rows. Add more only if needed.</span></div>
-          <p class="save-note">This sheet now starts short to avoid extra blank print/PDF pages.</p>
+          <p class="save-note">Starts with 3 sign-in rows. Use + Add Employee Row if more workers attend.</p>
 
           <div style="margin-top:24px;border-top:2px solid var(--line);padding-top:16px;">
             <div class="form-grid">
@@ -3020,47 +3019,99 @@
       if (activeTab) activeTab.classList.add('active');
     }
 
-    // DYNAMIC_SIGNATURE_ROWS_PATCH_2026_05_19
-    function makeSignRow(rowNumber) {
+    const palDynamicSignSheets = {};
+
+    function createOneSignRow(targetId, rowNumber) {
+      const target = document.getElementById(targetId);
+      if (!target) return;
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td style="width:28px;vertical-align:bottom;padding:0 4px 4px;">${rowNumber}</td>
-        <td style="vertical-align:bottom;padding:0 4px 0;"><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:4px 2px;font:inherit;background:transparent;display:block;" placeholder="Print name"></td>
-        <td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>`;
-      return row;
+          <td style="width:28px;vertical-align:bottom;padding:0 4px 4px;">${rowNumber}</td>
+          <td style="vertical-align:bottom;padding:0 4px 0;"><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:4px 2px;font:inherit;background:transparent;display:block;" placeholder="Print name"></td>
+          <td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>`;
+      target.appendChild(row);
+      row.querySelectorAll('canvas').forEach(initSigPad);
     }
 
     function createSignRows(targetId, start, end) {
+      // Legacy helper kept for older sheets that still call createSignRows directly.
       const target = document.getElementById(targetId);
       if (!target) return;
       target.innerHTML = '';
-      for (let i = start; i <= end; i++) {
-        const row = makeSignRow(i);
-        target.appendChild(row);
+      for (let i = start; i <= end; i++) createOneSignRow(targetId, i);
+    }
+
+    function findBackPageForTbody(tbodyId) {
+      const body = document.getElementById(tbodyId);
+      if (!body) return null;
+      return body.closest('.back-page');
+    }
+
+    function updateDynamicSheetLabels(sheetKey) {
+      const cfg = palDynamicSignSheets[sheetKey];
+      if (!cfg) return;
+      const front = document.getElementById(cfg.frontId);
+      const back = cfg.backId ? document.getElementById(cfg.backId) : null;
+      const frontCount = front ? front.querySelectorAll('tr').length : 0;
+      const backCount = back ? back.querySelectorAll('tr').length : 0;
+      const frontSmall = front?.closest('.form-body')?.querySelector(`small[data-pal-dynamic-label="${cfg.frontId}"]`);
+      const backSmall = back?.closest('.back-page')?.querySelector(`small[data-pal-dynamic-label="${cfg.backId}"]`);
+      if (frontSmall) frontSmall.textContent = frontCount ? `Rows 1–${frontCount}` : 'Rows 1–0';
+      if (backSmall) backSmall.textContent = backCount ? `Rows ${cfg.maxFront + 1}–${cfg.maxFront + backCount}` : 'Additional rows';
+    }
+
+    function installDynamicAddButton(sheetKey) {
+      const cfg = palDynamicSignSheets[sheetKey];
+      const front = document.getElementById(cfg.frontId);
+      if (!front) return;
+      const table = front.closest('table');
+      if (!table || document.getElementById(`add-row-${sheetKey}`)) return;
+      table.insertAdjacentHTML('afterend', `
+        <div class="pal-row-add-wrap">
+          <button id="add-row-${sheetKey}" class="btn secondary" type="button" onclick="addDynamicEmployeeRow('${sheetKey}')">+ Add Employee Row</button>
+          <span class="pal-row-add-note">Starts with 3 rows. Add more only when needed.</span>
+        </div>`);
+    }
+
+    function setupDynamicSignSheet(sheetKey, frontId, backId, initialRows = 3, maxFront = 11) {
+      const front = document.getElementById(frontId);
+      if (!front) return;
+      const back = backId ? document.getElementById(backId) : null;
+      front.innerHTML = '';
+      if (back) back.innerHTML = '';
+      const backPage = backId ? findBackPageForTbody(backId) : null;
+      if (backPage) backPage.classList.add('pal-dynamic-back-hidden');
+
+      // Replace old static row labels with dynamic labels.
+      const frontHeading = front.closest('.form-body')?.querySelector(`h3.subhead`);
+      if (frontHeading) {
+        frontHeading.innerHTML = frontHeading.innerHTML.replace(/<small[\s\S]*?<\/small>/, `<small data-pal-dynamic-label="${frontId}" style="font-weight:400;color:var(--muted);font-size:12px;">Rows 1–3</small>`);
       }
-      target.querySelectorAll('canvas').forEach(initSigPad);
-      updateDynamicBackPageVisibility(targetId);
+      const backHeading = backPage?.querySelector('h3.subhead');
+      if (backHeading && backId) {
+        backHeading.innerHTML = backHeading.innerHTML.replace(/<small[\s\S]*?<\/small>/, `<small data-pal-dynamic-label="${backId}" style="font-weight:400;color:var(--muted);font-size:12px;">Additional rows</small>`);
+      }
+
+      palDynamicSignSheets[sheetKey] = { frontId, backId, nextRow: 1, maxFront };
+      for (let i = 0; i < initialRows; i++) addDynamicEmployeeRow(sheetKey, true);
+      installDynamicAddButton(sheetKey);
+      updateDynamicSheetLabels(sheetKey);
     }
 
-    function addDynamicSignRow(targetId) {
-      const target = document.getElementById(targetId);
-      if (!target) return;
-      const lastNumber = Array.from(target.querySelectorAll('tr td:first-child'))
-        .map(td => parseInt(td.textContent, 10))
-        .filter(n => !Number.isNaN(n))
-        .pop() || 0;
-      const row = makeSignRow(lastNumber + 1);
-      target.appendChild(row);
-      row.querySelectorAll('canvas').forEach(initSigPad);
-      updateDynamicBackPageVisibility(targetId);
-    }
-
-    function updateDynamicBackPageVisibility(targetId) {
-      const backIds = ['dsm-back', 'ai-dsm-back'];
-      if (!backIds.includes(targetId)) return;
-      const target = document.getElementById(targetId);
-      const wrap = target ? target.closest('.back-page') : null;
-      if (wrap) wrap.classList.toggle('dynamic-empty-back', target.children.length === 0);
+    function addDynamicEmployeeRow(sheetKey, silent = false) {
+      const cfg = palDynamicSignSheets[sheetKey];
+      if (!cfg) return;
+      const rowNum = cfg.nextRow || 1;
+      const useBack = cfg.backId && rowNum > cfg.maxFront;
+      const targetId = useBack ? cfg.backId : cfg.frontId;
+      if (useBack) {
+        const backPage = findBackPageForTbody(cfg.backId);
+        if (backPage) backPage.classList.remove('pal-dynamic-back-hidden');
+      }
+      createOneSignRow(targetId, rowNum);
+      cfg.nextRow = rowNum + 1;
+      updateDynamicSheetLabels(sheetKey);
+      if (!silent && typeof toastPalMessage === 'function') toastPalMessage('Employee row added.');
     }
 
     function initSigPad(canvas) {
@@ -3626,7 +3677,7 @@ function syncJobNumber(value) {
               <div class="field"><label>Job / Project</label><input></div>
               <div class="field span-2"><label>Conducted By</label><input></div>
             </div>
-            <table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody>${Array.from({length:3}, (_,i)=>`<tr><td style="width:32px;">${i+1}</td><td><input style="width:100%;border:none;border-bottom:1px solid #aebccc;padding:6px 4px;font:inherit;background:transparent;" placeholder="Print name"></td><td class="signature-cell"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>`).join('')}</tbody></table><div class="dynamic-sign-controls"><button class="btn secondary" type="button" onclick="addDynamicSignRowToTalk(this)">+ Add Employee Row</button><span class="dynamic-sign-note">Starts with 3 rows. Add more only if needed.</span></div>
+            <table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="talk-dynamic-signin-rows"></tbody></table>
             <div style="margin-top:24px;border-top:2px solid #dde3ea;padding-top:16px;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
                 <div class="field"><label>Supervisor / Foreman Printed Name</label><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:6px 2px;font:inherit;background:transparent;"></div>
@@ -3638,7 +3689,8 @@ function syncJobNumber(value) {
         </div>
         <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="shareCurrentPage()">Share File</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>`;
-      container.querySelectorAll('canvas').forEach(initSigPad);
+      setupDynamicSignSheet('talkSignin', 'talk-dynamic-signin-rows', null, 3, 999);
+      container.querySelectorAll('canvas').forEach(c => { if (!c._sigInited) initSigPad(c); });
     }
 
     function closeTalk() {
@@ -3748,25 +3800,11 @@ function syncJobNumber(value) {
       if (typeof toastPalMessage === 'function') toastPalMessage('Copied to manual Daily Safety form.');
     }
 
-
-    function addDynamicSignRowToTalk(btn) {
-      const wrap = btn.closest('#talk-detail-view') || document;
-      const tbody = wrap.querySelector('table tbody');
-      if (!tbody) return;
-      const rowNumber = tbody.children.length + 1;
-      const row = document.createElement('tr');
-      row.innerHTML = `<td style="width:32px;">${rowNumber}</td><td><input style="width:100%;border:none;border-bottom:1px solid #aebccc;padding:6px 4px;font:inherit;background:transparent;" placeholder="Print name"></td><td class="signature-cell"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>`;
-      tbody.appendChild(row);
-      row.querySelectorAll('canvas').forEach(initSigPad);
-    }
-
     function init() {
       buildTabs();
-      createSignRows('dsm-front', 1, 3);
-      createSignRows('dsm-back', 4, 3);
-      createSignRows('ai-dsm-front', 1, 3);
-      createSignRows('ai-dsm-back', 4, 3);
-      createSignRows('toolbox-signin-rows', 1, 3);
+      setupDynamicSignSheet('dailySafety', 'dsm-front', 'dsm-back', 3, 11);
+      setupDynamicSignSheet('aiDailySafety', 'ai-dsm-front', 'ai-dsm-back', 3, 11);
+      setupDynamicSignSheet('toolboxSignin', 'toolbox-signin-rows', null, 3, 999);
       for (let i = 0; i < 3; i++) addWorkerRow();
       for (let i = 0; i < 5; i++) addTimesheetRow();
       for (let i = 0; i < 26; i++) addWeeklyFpRow();
