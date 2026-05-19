@@ -669,6 +669,28 @@
       .inspection-grid { gap: 8px !important; }
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
+
+    /* VERIFIED_DYNAMIC_SIGNATURE_ROWS_PATCH_2026_05_19
+       Daily safety / toolbox sign-in sheets start with 3 rows.
+       Additional employee rows are added only when needed. */
+    .pal-row-add-wrap { margin: 10px 0 14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .pal-row-add-wrap .btn { padding: 9px 12px; border-radius: 10px; font-size: 13px; }
+    .pal-row-add-note { font-size:12px; color:var(--muted); font-weight:700; }
+    .pal-dynamic-back-hidden { display:none !important; }
+    @media print { .pal-row-add-wrap { display:none !important; } }
+
+  
+    /* LOGIN_NAV_RESCUE_2026_05_19: use real links for Projects login so navigation works even if JS has an error */
+    .home-login-link {
+      width: 100%; text-align: left; border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.1); color: white; border-radius: 14px; padding: 13px 14px;
+      font: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      text-decoration: none;
+    }
+    .home-login-link:hover { background: var(--green-accent); color: var(--navy); }
+    .restricted-card-link { text-decoration:none; color:inherit; display:block; }
+
   </style>
 </head>
 <body>
@@ -742,7 +764,7 @@
               <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
-              <button onclick="window.location.href='projects.html'"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></button>
+              <a class="home-login-link" href="projects.html" data-pal-projects-login="1"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></a>
             </div>
           </div>
           <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
@@ -792,7 +814,7 @@
         <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>Safety topics employees can review in the field</p></div>
         <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
         <div class="kit-card" onclick="showPage('quick-reference')"><div class="kit-icon">⚡</div><h4>Quick Reference</h4><p>Important safety numbers and field rules</p></div>
-        <div class="kit-card restricted-card" onclick="window.location.href='projects.html'"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, payroll, employee certs, tickets, and private company tools</p></div>
+        <a class="restricted-card-link" href="projects.html" data-pal-projects-login="1"><div class="kit-card restricted-card"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, payroll, employee certs, tickets, and private company tools</p></div></a>
       </div>
     </section>
 
@@ -1191,7 +1213,7 @@
           </form>
           <h3 class="subhead">Attendee Sign-In</h3>
           <table><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="toolbox-signin-rows"></tbody></table>
-          <p class="save-note">Print front and back (double-sided) for additional sign-in rows.</p>
+          <p class="save-note">Starts with 3 sign-in rows. Use + Add Employee Row if more workers attend.</p>
 
           <div style="margin-top:24px;border-top:2px solid var(--line);padding-top:16px;">
             <div class="form-grid">
@@ -2911,7 +2933,7 @@
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
         if (id === 'projects-link') {
-          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">🔐 Login</button>`;
+          return `<a class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;" href="projects.html" data-pal-projects-login="1">🔐 Login</a>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
@@ -3009,20 +3031,99 @@
       if (activeTab) activeTab.classList.add('active');
     }
 
+    const palDynamicSignSheets = {};
+
+    function createOneSignRow(targetId, rowNumber) {
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      const row = document.createElement('tr');
+      row.innerHTML = `
+          <td style="width:28px;vertical-align:bottom;padding:0 4px 4px;">${rowNumber}</td>
+          <td style="vertical-align:bottom;padding:0 4px 0;"><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:4px 2px;font:inherit;background:transparent;display:block;" placeholder="Print name"></td>
+          <td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>`;
+      target.appendChild(row);
+      row.querySelectorAll('canvas').forEach(initSigPad);
+    }
+
     function createSignRows(targetId, start, end) {
+      // Legacy helper kept for older sheets that still call createSignRows directly.
       const target = document.getElementById(targetId);
       if (!target) return;
       target.innerHTML = '';
-      for (let i = start; i <= end; i++) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td style="width:28px;vertical-align:bottom;padding:0 4px 4px;">${i}</td>
-          <td style="vertical-align:bottom;padding:0 4px 0;"><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:4px 2px;font:inherit;background:transparent;display:block;"></td>
-          <td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>`;
-        target.appendChild(row);
+      for (let i = start; i <= end; i++) createOneSignRow(targetId, i);
+    }
+
+    function findBackPageForTbody(tbodyId) {
+      const body = document.getElementById(tbodyId);
+      if (!body) return null;
+      return body.closest('.back-page');
+    }
+
+    function updateDynamicSheetLabels(sheetKey) {
+      const cfg = palDynamicSignSheets[sheetKey];
+      if (!cfg) return;
+      const front = document.getElementById(cfg.frontId);
+      const back = cfg.backId ? document.getElementById(cfg.backId) : null;
+      const frontCount = front ? front.querySelectorAll('tr').length : 0;
+      const backCount = back ? back.querySelectorAll('tr').length : 0;
+      const frontSmall = front?.closest('.form-body')?.querySelector(`small[data-pal-dynamic-label="${cfg.frontId}"]`);
+      const backSmall = back?.closest('.back-page')?.querySelector(`small[data-pal-dynamic-label="${cfg.backId}"]`);
+      if (frontSmall) frontSmall.textContent = frontCount ? `Rows 1–${frontCount}` : 'Rows 1–0';
+      if (backSmall) backSmall.textContent = backCount ? `Rows ${cfg.maxFront + 1}–${cfg.maxFront + backCount}` : 'Additional rows';
+    }
+
+    function installDynamicAddButton(sheetKey) {
+      const cfg = palDynamicSignSheets[sheetKey];
+      const front = document.getElementById(cfg.frontId);
+      if (!front) return;
+      const table = front.closest('table');
+      if (!table || document.getElementById(`add-row-${sheetKey}`)) return;
+      table.insertAdjacentHTML('afterend', `
+        <div class="pal-row-add-wrap">
+          <button id="add-row-${sheetKey}" class="btn secondary" type="button" onclick="addDynamicEmployeeRow('${sheetKey}')">+ Add Employee Row</button>
+          <span class="pal-row-add-note">Starts with 3 rows. Add more only when needed.</span>
+        </div>`);
+    }
+
+    function setupDynamicSignSheet(sheetKey, frontId, backId, initialRows = 3, maxFront = 11) {
+      const front = document.getElementById(frontId);
+      if (!front) return;
+      const back = backId ? document.getElementById(backId) : null;
+      front.innerHTML = '';
+      if (back) back.innerHTML = '';
+      const backPage = backId ? findBackPageForTbody(backId) : null;
+      if (backPage) backPage.classList.add('pal-dynamic-back-hidden');
+
+      // Replace old static row labels with dynamic labels.
+      const frontHeading = front.closest('.form-body')?.querySelector(`h3.subhead`);
+      if (frontHeading) {
+        frontHeading.innerHTML = frontHeading.innerHTML.replace(/<small[\s\S]*?<\/small>/, `<small data-pal-dynamic-label="${frontId}" style="font-weight:400;color:var(--muted);font-size:12px;">Rows 1–3</small>`);
       }
-      // init canvases in this tbody
-      target.querySelectorAll('canvas').forEach(initSigPad);
+      const backHeading = backPage?.querySelector('h3.subhead');
+      if (backHeading && backId) {
+        backHeading.innerHTML = backHeading.innerHTML.replace(/<small[\s\S]*?<\/small>/, `<small data-pal-dynamic-label="${backId}" style="font-weight:400;color:var(--muted);font-size:12px;">Additional rows</small>`);
+      }
+
+      palDynamicSignSheets[sheetKey] = { frontId, backId, nextRow: 1, maxFront };
+      for (let i = 0; i < initialRows; i++) addDynamicEmployeeRow(sheetKey, true);
+      installDynamicAddButton(sheetKey);
+      updateDynamicSheetLabels(sheetKey);
+    }
+
+    function addDynamicEmployeeRow(sheetKey, silent = false) {
+      const cfg = palDynamicSignSheets[sheetKey];
+      if (!cfg) return;
+      const rowNum = cfg.nextRow || 1;
+      const useBack = cfg.backId && rowNum > cfg.maxFront;
+      const targetId = useBack ? cfg.backId : cfg.frontId;
+      if (useBack) {
+        const backPage = findBackPageForTbody(cfg.backId);
+        if (backPage) backPage.classList.remove('pal-dynamic-back-hidden');
+      }
+      createOneSignRow(targetId, rowNum);
+      cfg.nextRow = rowNum + 1;
+      updateDynamicSheetLabels(sheetKey);
+      if (!silent && typeof toastPalMessage === 'function') toastPalMessage('Employee row added.');
     }
 
     function initSigPad(canvas) {
@@ -3497,6 +3598,17 @@ function returnToApp() {
   }
 }
 <\/script>
+
+<script>
+// LOGIN_NAV_RESCUE_2026_05_19_BACKUP
+(function(){
+  function goProjects(e){
+    var t=e.target && e.target.closest ? e.target.closest('[data-pal-projects-login]') : null;
+    if(t){ e.preventDefault(); window.location.assign('projects.html'); }
+  }
+  document.addEventListener('click', goProjects, true);
+})();
+</script>
 </body>
 </html>`;
     }
@@ -3588,7 +3700,7 @@ function syncJobNumber(value) {
               <div class="field"><label>Job / Project</label><input></div>
               <div class="field span-2"><label>Conducted By</label><input></div>
             </div>
-            <table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody>${Array.from({length:10}, (_,i)=>`<tr><td style="width:32px;">${i+1}</td><td><input style="width:100%;border:none;border-bottom:1px solid #aebccc;padding:6px 4px;font:inherit;background:transparent;" placeholder="Print name"></td><td class="signature-cell"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>`).join('')}</tbody></table>
+            <table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="talk-dynamic-signin-rows"></tbody></table>
             <div style="margin-top:24px;border-top:2px solid #dde3ea;padding-top:16px;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
                 <div class="field"><label>Supervisor / Foreman Printed Name</label><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:6px 2px;font:inherit;background:transparent;"></div>
@@ -3600,7 +3712,8 @@ function syncJobNumber(value) {
         </div>
         <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="shareCurrentPage()">Share File</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
       </div>`;
-      container.querySelectorAll('canvas').forEach(initSigPad);
+      setupDynamicSignSheet('talkSignin', 'talk-dynamic-signin-rows', null, 3, 999);
+      container.querySelectorAll('canvas').forEach(c => { if (!c._sigInited) initSigPad(c); });
     }
 
     function closeTalk() {
@@ -3712,11 +3825,9 @@ function syncJobNumber(value) {
 
     function init() {
       buildTabs();
-      createSignRows('dsm-front', 1, 11);
-      createSignRows('dsm-back', 12, 26);
-      createSignRows('ai-dsm-front', 1, 11);
-      createSignRows('ai-dsm-back', 12, 26);
-      createSignRows('toolbox-signin-rows', 1, 20);
+      setupDynamicSignSheet('dailySafety', 'dsm-front', 'dsm-back', 3, 11);
+      setupDynamicSignSheet('aiDailySafety', 'ai-dsm-front', 'ai-dsm-back', 3, 11);
+      setupDynamicSignSheet('toolboxSignin', 'toolbox-signin-rows', null, 3, 999);
       for (let i = 0; i < 3; i++) addWorkerRow();
       for (let i = 0; i < 5; i++) addTimesheetRow();
       for (let i = 0; i < 26; i++) addWeeklyFpRow();
