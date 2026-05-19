@@ -725,6 +725,25 @@
     @media(max-width:700px){ .doc-sig-line { grid-template-columns:1fr; } }
 
 
+
+
+    /* GOOD_TO_WORK_DASHBOARD_VISIBLE_REPATCH_2026_05_15 */
+    .workforce-status-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; margin:14px 0 18px; }
+    .workforce-status-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:0 4px 14px rgba(16,24,40,.05); }
+    .workforce-status-card.good { border-top:6px solid #16a34a; }
+    .workforce-status-card.missing { border-top:6px solid #d97706; }
+    .workforce-status-card.hold { border-top:6px solid #dc2626; }
+    .workforce-status-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .workforce-status-card span { color:var(--muted); font-size:13px; font-weight:800; }
+    .workforce-board { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; align-items:start; }
+    .workforce-column { background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:0 4px 14px rgba(16,24,40,.04); min-height:160px; }
+    .workforce-column h3 { margin:0 0 10px; color:var(--navy); font-size:16px; }
+    .workforce-person { border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px; background:#f8fafc; }
+    .workforce-person h4 { margin:0 0 4px; color:var(--text); font-size:15px; }
+    .workforce-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
+    .workforce-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
+
   </style>
 </head>
 <body>
@@ -931,6 +950,7 @@
       <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-new-hires', this)">🧾 New Hire Intake</button>
+      <button class="tab" onclick="switchMainTab('main-workforce-status', this)">✅ Good To Work</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
@@ -991,6 +1011,21 @@
         </select>
       </div>
       <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Click New Hire Intake to load requests.</p></div>
+    </div>
+
+
+    <div class="tab-pane" id="main-workforce-status">
+      <div class="page-header">
+        <h2>✅ Workforce Status Dashboard</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadWorkforceStatusDashboard(true)">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
+      <div id="workforce-status-summary">
+        <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
+      </div>
+      <div id="workforce-status-board"></div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -1849,6 +1884,7 @@
   window.saveWarehouseItem = saveWarehouseItem;
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
+  window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -4830,6 +4866,108 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     } catch (e) { console.error(e); toast('Could not update status.'); }
   }
 
+
+  // GOOD_TO_WORK_DASHBOARD_VISIBLE_REPATCH_2026_05_15
+  async function loadWorkforceStatusDashboard(force = false) {
+    const summary = document.getElementById('workforce-status-summary');
+    const board = document.getElementById('workforce-status-board');
+    if (summary) summary.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading workforce status…</p>';
+    if (board) board.innerHTML = '';
+    try {
+      if (!allNewHireIntakes || !allNewHireIntakes.length) {
+        try {
+          const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
+          allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (e) { console.warn('New hire status load warning', e); }
+      }
+      if (!allEmployees || !allEmployees.length) {
+        try {
+          const empSnap = await getDocs(collection(db, 'employees'));
+          allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (e) { console.warn('Employee status load warning', e); }
+      }
+      renderWorkforceStatusDashboard();
+    } catch (e) {
+      console.error('Workforce status dashboard failed', e);
+      if (summary) summary.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Could not load workforce status</h3><p>Check connection and refresh.</p></div>';
+    }
+  }
+
+  function getEmployeeCertProblem(emp) {
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const expired = certs.filter(c => getCertStatusKey(c.expirationDate) === 'expired');
+    const soon = certs.filter(c => getCertStatusKey(c.expirationDate) === 'warn');
+    return { expired, soon, total: certs.length };
+  }
+
+  function buildWorkforceRows() {
+    const good = [];
+    const missing = [];
+    const hold = [];
+
+    (allNewHireIntakes || []).forEach(x => {
+      const status = String(x.status || 'Pending');
+      const certCount = (x.certFiles || []).length;
+      const payrollCount = (x.payrollIdFiles || []).length;
+      const base = {
+        id: x.id,
+        type: 'intake',
+        name: x.name || 'New Hire',
+        project: x.projectName || '',
+        trade: x.trade || '',
+        detail: `${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
+        action: `openNewHireReview('${esc(x.id)}')`
+      };
+      if (status === 'Good To Work') good.push(base);
+      else if (status === 'Missing Info') missing.push(base);
+      else missing.push(base);
+    });
+
+    (allEmployees || []).forEach(emp => {
+      const p = getEmployeeCertProblem(emp);
+      const row = {
+        id: emp.id,
+        type: 'employee',
+        name: emp.name || 'Employee',
+        project: '',
+        trade: emp.trade || '',
+        detail: `Certs: ${p.total} • Expired: ${p.expired.length} • Expiring soon: ${p.soon.length}`,
+        action: `openEmployeeDetail('${esc(emp.id)}')`
+      };
+      if (p.expired.length) hold.push(row);
+      else if (p.soon.length || !p.total) missing.push(row);
+      else good.push(row);
+    });
+
+    return { good, missing, hold };
+  }
+
+  function renderWorkforceColumn(title, items, emptyText) {
+    return `<div class="workforce-column"><h3>${title}</h3>${items.length ? items.map(x => `
+      <div class="workforce-person">
+        <h4>${esc(x.name)}</h4>
+        <p>${x.trade ? `Trade: ${esc(x.trade)}<br>` : ''}${x.project ? `Project: ${esc(x.project)}<br>` : ''}${esc(x.detail || '')}</p>
+        <div class="workforce-actions"><button class="btn-sm" onclick="${x.action}">Open</button></div>
+      </div>`).join('') : `<p style="color:var(--muted);font-size:13px;">${emptyText}</p>`}</div>`;
+  }
+
+  function renderWorkforceStatusDashboard() {
+    const summary = document.getElementById('workforce-status-summary');
+    const board = document.getElementById('workforce-status-board');
+    if (!summary || !board) return;
+    const rows = buildWorkforceRows();
+    summary.innerHTML = `<div class="workforce-status-grid">
+      <div class="workforce-status-card good"><strong>${rows.good.length}</strong><span>Good To Work</span></div>
+      <div class="workforce-status-card missing"><strong>${rows.missing.length}</strong><span>Missing / Needs Review</span></div>
+      <div class="workforce-status-card hold"><strong>${rows.hold.length}</strong><span>Expired / Hold</span></div>
+    </div>`;
+    board.innerHTML = `<div class="workforce-board">
+      ${renderWorkforceColumn('🟢 Good To Work', rows.good, 'No cleared workers yet.')}
+      ${renderWorkforceColumn('🟡 Missing / Needs Review', rows.missing, 'No missing items right now.')}
+      ${renderWorkforceColumn('🔴 Expired / Hold', rows.hold, 'No expired/hold items right now.')}
+    </div>`;
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -4838,6 +4976,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (pane) pane.classList.add('active');
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-new-hires') loadNewHireIntakes(true);
+    if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
   }
 
