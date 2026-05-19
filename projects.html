@@ -13,6 +13,7 @@
   <!-- STABLE_LOGIN_RESCUE_RESTORE_USE_THIS_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15 -->
   <!-- PUBLIC_INTAKE_NOT_FOUND_STILL_OPEN_PACKET_FIX_2026_05_15 -->
+  <!-- DRUG_CONSENT_SAFE_PHASE2_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
   <style>
     :root {
@@ -844,8 +845,10 @@
         <div class="helper-text" style="margin-bottom:10px;">Open each form separately, review it, complete it, and save it back to your intake packet.</div>
         <div class="newhire-actions">
           <button class="btn-save" type="button" onclick="openPublicNewHireOrientationForm()">Open Orientation Form</button>
+          <button class="btn-secondary" type="button" onclick="openPublicNewHireDrugConsentForm()">Open Drug & Alcohol Consent</button>
         </div>
         <div class="mini-note" id="public-orientation-status" style="margin-top:8px;">Orientation Form: Pending</div>
+        <div class="mini-note" id="public-drug-status" style="margin-top:4px;">Drug & Alcohol Consent: Pending</div>
       </div>
 
       <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
@@ -1533,6 +1536,48 @@
   </div>
 </div>
 
+<!-- NEW HIRE DRUG & ALCOHOL CONSENT DOCUMENT WINDOW - DRUG_CONSENT_SAFE_PHASE2_2026_05_15 -->
+<div class="modal-overlay" id="modal-newhire-drug-form">
+  <div class="modal newhire-doc-window">
+    <div class="newhire-doc-paper">
+      <div class="newhire-doc-head">
+        <h3>PAL Drug & Alcohol Consent Form</h3>
+        <p>This form opens separately and saves back to the employee intake packet.</p>
+      </div>
+      <div class="newhire-doc-body">
+        <div class="doc-review-box">
+          <h4>Employee Review</h4>
+          <p class="helper-text" style="margin-bottom:8px;">Please read and acknowledge the PAL drug and alcohol consent items below before signing.</p>
+          <ul>
+            <li>I understand that PAL may require drug and/or alcohol screening as part of pre-site onboarding, jobsite requirements, post-incident requirements, reasonable suspicion, or other company/client requirements.</li>
+            <li>I understand that I must follow PAL and jobsite policies regarding drugs, alcohol, controlled substances, impairment, and fitness for duty.</li>
+            <li>I understand that reporting to work under the influence, possessing prohibited substances, or refusing a required test may affect my ability to work on PAL projects.</li>
+            <li>I authorize PAL and/or its designated testing provider to collect and process testing information as required for employment/jobsite compliance.</li>
+            <li>I understand that any questions about this form should be directed to PAL office/safety before signing.</li>
+          </ul>
+        </div>
+
+        <div class="report-grid">
+          <div class="field"><label>Employee Name</label><input id="nh-drug-employee-name" placeholder="Employee full name" /></div>
+          <div class="field"><label>Date</label><input id="nh-drug-date" type="date" /></div>
+          <div class="field span-2"><label>Project / Jobsite</label><input id="nh-drug-project" placeholder="Project / jobsite" /></div>
+          <div class="field span-2"><label>Consent Acknowledgement</label><select id="nh-drug-consent"><option value="I consent">I consent</option><option value="I have questions before signing">I have questions before signing</option></select></div>
+          <div class="field span-2"><label>Employee Notes / Questions</label><textarea id="nh-drug-notes" rows="3" placeholder="Optional notes or questions..."></textarea></div>
+        </div>
+
+        <div class="doc-sig-line" style="margin-top:14px;">
+          <div class="field"><label>Employee Signature / Typed Name</label><input id="nh-drug-signature" placeholder="Type full name as signature" /></div>
+          <div class="field"><label>Date Signed</label><input id="nh-drug-date-signed" type="date" /></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-newhire-drug-form')">Cancel</button>
+      <button class="btn-save" id="save-newhire-drug-btn" onclick="saveNewHireDrugConsentForm()">Save Drug Consent</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1573,6 +1618,7 @@
   let currentNewHireReviewId = null;
   let allWarehouseItems = [];
   let currentNewHireOrientationId = null;
+  let currentNewHireDrugConsentId = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -1635,6 +1681,9 @@
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.openPublicNewHireOrientationForm = openPublicNewHireOrientationForm;
+  window.openNewHireDrugConsentForm = openNewHireDrugConsentForm;
+  window.saveNewHireDrugConsentForm = saveNewHireDrugConsentForm;
+  window.openPublicNewHireDrugConsentForm = openPublicNewHireDrugConsentForm;
   window.submitPublicNewHireIntake = submitPublicNewHireIntake;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
@@ -3779,6 +3828,8 @@
         if (formCard) formCard.style.display = 'block';
         const os = document.getElementById('public-orientation-status');
         if (os) os.textContent = 'Orientation Form: Pending';
+        const ds = document.getElementById('public-drug-status');
+        if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
         return;
       }
       currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
@@ -3800,6 +3851,8 @@
       set('pub-nh-trade', x.trade || '');
       const os = document.getElementById('public-orientation-status');
       if (os) os.textContent = `Orientation Form: ${x.orientationForm?.completed ? 'Completed' : 'Pending'}`;
+      const ds = document.getElementById('public-drug-status');
+      if (ds) ds.textContent = `Drug & Alcohol Consent: ${x.drugConsentForm?.completed ? 'Completed' : 'Pending'}`;
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
       // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
@@ -3825,6 +3878,14 @@
       allNewHireIntakes.push(currentPublicNewHireIntake);
     }
     openNewHireOrientationForm(publicNewHireIntakeId);
+  }
+
+  function openPublicNewHireDrugConsentForm() {
+    if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    if (currentPublicNewHireIntake && !allNewHireIntakes.some(x => x.id === currentPublicNewHireIntake.id)) {
+      allNewHireIntakes.push(currentPublicNewHireIntake);
+    }
+    openNewHireDrugConsentForm(publicNewHireIntakeId);
   }
 
   async function submitPublicNewHireIntake() {
@@ -4104,6 +4165,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         </div>
       </div>
     </div>
+    <div class="packet-form-card">
+      <div class="packet-form-row">
+        <div>
+          <div class="packet-form-title">Drug & Alcohol Consent</div>
+          <div class="packet-form-sub">Opens as a separate document window and saves back to this employee intake packet.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span class="pill ${x.drugConsentForm?.completed ? 'active' : 'pending'}">${x.drugConsentForm?.completed ? 'Completed' : 'Pending'}</span>
+          <button class="btn-sm" onclick="openNewHireDrugConsentForm('${esc(x.id)}')">Open Drug Consent</button>
+        </div>
+      </div>
+    </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
       ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No files uploaded yet.</div>'}
@@ -4196,6 +4269,65 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       toast('Could not save orientation form.');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Orientation Form'; }
+    }
+  }
+
+  function openNewHireDrugConsentForm(id) {
+    const x = allNewHireIntakes.find(i => i.id === id) || (currentPublicNewHireIntake?.id === id ? currentPublicNewHireIntake : null);
+    if (!x) return toast('Intake request not found.');
+    currentNewHireDrugConsentId = id;
+    const form = x.drugConsentForm || {};
+    const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
+    set('nh-drug-employee-name', form.employeeName || x.name || '');
+    set('nh-drug-date', form.date || todayISO());
+    set('nh-drug-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' · '));
+    set('nh-drug-consent', form.consent || 'I consent');
+    set('nh-drug-notes', form.notes || '');
+    set('nh-drug-signature', form.signature || x.name || '');
+    set('nh-drug-date-signed', form.dateSigned || todayISO());
+    const btn = document.getElementById('save-newhire-drug-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Drug Consent'; }
+    document.getElementById('modal-newhire-drug-form')?.classList.add('open');
+  }
+
+  async function saveNewHireDrugConsentForm() {
+    if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
+    if (!currentNewHireDrugConsentId) return toast('Open an intake request first.');
+    const btn = document.getElementById('save-newhire-drug-btn');
+    const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
+    const signature = val('nh-drug-signature');
+    if (!signature) return toast('Employee signature / typed name is required.');
+    const drugConsentForm = {
+      completed: true,
+      employeeName: val('nh-drug-employee-name'),
+      date: val('nh-drug-date'),
+      project: val('nh-drug-project'),
+      consent: val('nh-drug-consent'),
+      notes: val('nh-drug-notes'),
+      signature,
+      dateSigned: val('nh-drug-date-signed'),
+      savedAt: new Date().toISOString(),
+      savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
+    };
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      await updateDoc(doc(db, 'newHireIntakes', currentNewHireDrugConsentId), {
+        drugConsentForm,
+        updatedAt: serverTimestamp()
+      });
+      toast('Drug & Alcohol Consent saved to intake packet.');
+      closeModal('modal-newhire-drug-form');
+      if (publicNewHireIntakeId) {
+        await loadPublicNewHireIntake();
+      } else {
+        await loadNewHireIntakes(true);
+        openNewHireReview(currentNewHireDrugConsentId);
+      }
+    } catch (e) {
+      console.error(e);
+      toast('Could not save Drug & Alcohol Consent.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Drug Consent'; }
     }
   }
 
