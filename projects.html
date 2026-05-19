@@ -774,6 +774,62 @@
     .compliance-pill.hold { background:#fee2e2; color:#991b1b; }
     .newhire-box.hold { border-left-color:#dc2626; }
 
+
+
+    /* PHASE5B_SAFE_EXECUTIVE_COMMAND_CENTER_2026_05_19
+       Isolated dashboard layer only. No login/auth/startup code touched. */
+    .exec-command-hero {
+      background: linear-gradient(135deg, #132b46, #1b3a5c 55%, #254d78);
+      color: #fff;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, .22);
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .exec-command-hero h2 { margin: 0 0 6px; font-size: 28px; line-height: 1.1; color:#fff; }
+    .exec-command-hero p { margin: 0; color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.5; }
+    .exec-hero-row { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+    .exec-score-ring {
+      min-width: 148px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 20px;
+      padding: 14px 16px;
+      text-align:center;
+    }
+    .exec-score-ring strong { display:block; font-size: 38px; line-height: 1; color:#78c240; }
+    .exec-score-ring span { display:block; font-size: 12px; font-weight:900; color:rgba(255,255,255,.82); margin-top:5px; text-transform:uppercase; letter-spacing:.4px; }
+    .exec-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin: 14px 0 18px; }
+    .exec-kpi-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:15px; box-shadow:0 6px 18px rgba(16,24,40,.06); border-top:6px solid var(--navy); }
+    .exec-kpi-card.good { border-top-color:#16a34a; }
+    .exec-kpi-card.warn { border-top-color:#d97706; }
+    .exec-kpi-card.hold { border-top-color:#dc2626; }
+    .exec-kpi-card.blue { border-top-color:#2563eb; }
+    .exec-kpi-card.purple { border-top-color:#7c3aed; }
+    .exec-kpi-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.35px; }
+    .exec-risk-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; align-items:start; }
+    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 6px 18px rgba(16,24,40,.05); }
+    .exec-panel h3 { color:var(--navy); font-size:17px; margin:0 0 10px; display:flex; align-items:center; gap:8px; }
+    .exec-issue-row { border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px; background:#f8fafc; display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .exec-issue-row.hold { border-left:6px solid #dc2626; background:#fff7f7; }
+    .exec-issue-row.warn { border-left:6px solid #d97706; background:#fffbeb; }
+    .exec-issue-row.good { border-left:6px solid #16a34a; background:#f0fdf4; }
+    .exec-issue-row.blue { border-left:6px solid #2563eb; background:#eff6ff; }
+    .exec-issue-row h4 { margin:0 0 4px; font-size:14px; color:var(--text); }
+    .exec-issue-row p { margin:0; font-size:12px; color:var(--muted); line-height:1.45; }
+    .exec-issue-count { font-weight:900; font-size:20px; color:var(--navy); white-space:nowrap; }
+    .exec-list { display:grid; gap:10px; }
+    .exec-person { border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff; }
+    .exec-person h4 { margin:0 0 4px; color:var(--text); font-size:14px; }
+    .exec-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
+    .exec-person .exec-actions { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
+    .exec-print-paper { background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px; margin-top:14px; }
+    @media(max-width:900px){ .exec-kpi-grid{grid-template-columns:1fr 1fr;} .exec-risk-grid{grid-template-columns:1fr;} }
+    @media(max-width:560px){ .exec-kpi-grid{grid-template-columns:1fr;} .exec-command-hero h2{font-size:23px;} }
+    @media print { .exec-command-hero, .exec-kpi-card, .exec-panel { box-shadow:none !important; } }
+
   </style>
 </head>
 <body>
@@ -981,6 +1037,7 @@
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-new-hires', this)">🧾 New Hire Intake</button>
       <button class="tab" onclick="switchMainTab('main-workforce-status', this)">✅ Good To Work</button>
+      <button class="tab" onclick="switchMainTab('main-exec-compliance', this)">📊 Compliance Command</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
@@ -1060,6 +1117,53 @@
         <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
       </div>
       <div id="workforce-status-board"></div>
+    </div>
+
+
+    <div class="tab-pane" id="main-exec-compliance">
+      <div class="exec-command-hero">
+        <div class="exec-hero-row">
+          <div>
+            <h2>📊 PAL Compliance Command Center</h2>
+            <p>Executive overview for office review: workforce readiness, blocked workers, missing payroll/ID, expiring certs, and onboarding packets needing action.</p>
+          </div>
+          <div class="exec-score-ring"><strong id="exec-readiness-score">—</strong><span>Readiness Score</span></div>
+        </div>
+      </div>
+      <div class="page-header" style="margin-bottom:12px;">
+        <h2 style="font-size:20px;">Executive Compliance Overview</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadExecutiveComplianceDashboard(true)">↻ Refresh</button>
+          <button class="btn-outline" onclick="printExecutiveComplianceDashboard()">🖨️ Print / PDF</button>
+        </div>
+      </div>
+      <div id="exec-compliance-kpis"></div>
+      <div class="exec-risk-grid">
+        <div>
+          <div class="exec-panel">
+            <h3>🚨 Top Compliance Issues</h3>
+            <div id="exec-top-issues"><p class="helper-text">Open this tab or click Refresh to load compliance issues.</p></div>
+          </div>
+          <div class="exec-panel" style="margin-top:14px;">
+            <h3>⛔ Workers Blocked From Site</h3>
+            <div id="exec-blocked-workers"><p class="helper-text">No blocked workers loaded yet.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="exec-panel">
+            <h3>🟠 Expiring / Missing Items</h3>
+            <div id="exec-expiring-missing"><p class="helper-text">No expiring or missing items loaded yet.</p></div>
+          </div>
+          <div class="exec-panel" style="margin-top:14px;">
+            <h3>🧾 Onboarding Pipeline</h3>
+            <div id="exec-onboarding-pipeline"><p class="helper-text">No onboarding data loaded yet.</p></div>
+          </div>
+          <div class="exec-panel" style="margin-top:14px;">
+            <h3>🟢 Good To Work Snapshot</h3>
+            <div id="exec-good-workers"><p class="helper-text">No Good To Work snapshot loaded yet.</p></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -2024,6 +2128,8 @@
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
+  window.loadExecutiveComplianceDashboard = loadExecutiveComplianceDashboard;
+  window.printExecutiveComplianceDashboard = printExecutiveComplianceDashboard;
   window.runComplianceAudit = runComplianceAudit;
   window.resetDemoComplianceWorkers = resetDemoComplianceWorkers;
   window.createDemoComplianceEmployee = createDemoComplianceEmployee;
@@ -5161,6 +5267,62 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       .section { break-inside:avoid; }
       a { color:#111; text-decoration:none; }
     }
+
+
+    /* PHASE5B_SAFE_EXECUTIVE_COMMAND_CENTER_2026_05_19
+       Isolated dashboard layer only. No login/auth/startup code touched. */
+    .exec-command-hero {
+      background: linear-gradient(135deg, #132b46, #1b3a5c 55%, #254d78);
+      color: #fff;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, .22);
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .exec-command-hero h2 { margin: 0 0 6px; font-size: 28px; line-height: 1.1; color:#fff; }
+    .exec-command-hero p { margin: 0; color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.5; }
+    .exec-hero-row { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+    .exec-score-ring {
+      min-width: 148px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 20px;
+      padding: 14px 16px;
+      text-align:center;
+    }
+    .exec-score-ring strong { display:block; font-size: 38px; line-height: 1; color:#78c240; }
+    .exec-score-ring span { display:block; font-size: 12px; font-weight:900; color:rgba(255,255,255,.82); margin-top:5px; text-transform:uppercase; letter-spacing:.4px; }
+    .exec-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin: 14px 0 18px; }
+    .exec-kpi-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:15px; box-shadow:0 6px 18px rgba(16,24,40,.06); border-top:6px solid var(--navy); }
+    .exec-kpi-card.good { border-top-color:#16a34a; }
+    .exec-kpi-card.warn { border-top-color:#d97706; }
+    .exec-kpi-card.hold { border-top-color:#dc2626; }
+    .exec-kpi-card.blue { border-top-color:#2563eb; }
+    .exec-kpi-card.purple { border-top-color:#7c3aed; }
+    .exec-kpi-card strong { display:block; font-size:30px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .exec-kpi-card span { color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.35px; }
+    .exec-risk-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; align-items:start; }
+    .exec-panel { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 6px 18px rgba(16,24,40,.05); }
+    .exec-panel h3 { color:var(--navy); font-size:17px; margin:0 0 10px; display:flex; align-items:center; gap:8px; }
+    .exec-issue-row { border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:10px; background:#f8fafc; display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .exec-issue-row.hold { border-left:6px solid #dc2626; background:#fff7f7; }
+    .exec-issue-row.warn { border-left:6px solid #d97706; background:#fffbeb; }
+    .exec-issue-row.good { border-left:6px solid #16a34a; background:#f0fdf4; }
+    .exec-issue-row.blue { border-left:6px solid #2563eb; background:#eff6ff; }
+    .exec-issue-row h4 { margin:0 0 4px; font-size:14px; color:var(--text); }
+    .exec-issue-row p { margin:0; font-size:12px; color:var(--muted); line-height:1.45; }
+    .exec-issue-count { font-weight:900; font-size:20px; color:var(--navy); white-space:nowrap; }
+    .exec-list { display:grid; gap:10px; }
+    .exec-person { border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff; }
+    .exec-person h4 { margin:0 0 4px; color:var(--text); font-size:14px; }
+    .exec-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
+    .exec-person .exec-actions { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
+    .exec-print-paper { background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px; margin-top:14px; }
+    @media(max-width:900px){ .exec-kpi-grid{grid-template-columns:1fr 1fr;} .exec-risk-grid{grid-template-columns:1fr;} }
+    @media(max-width:560px){ .exec-kpi-grid{grid-template-columns:1fr;} .exec-command-hero h2{font-size:23px;} }
+    @media print { .exec-command-hero, .exec-kpi-card, .exec-panel { box-shadow:none !important; } }
+
   </style>
 </head>
 <body>
@@ -5871,6 +6033,159 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>`;
   }
 
+
+  // PHASE5B_SAFE_EXECUTIVE_COMMAND_CENTER_2026_05_19
+  // Isolated executive dashboard. Reads existing newHireIntakes + employees only.
+  async function loadExecutiveComplianceDashboard(force = false) {
+    const kpis = document.getElementById('exec-compliance-kpis');
+    if (kpis) kpis.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading executive compliance dashboard…</p>';
+    try {
+      if (!allNewHireIntakes || !allNewHireIntakes.length || force) {
+        try {
+          const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
+          allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (e) { console.warn('Executive dashboard intake load warning', e); }
+      }
+      if (!allEmployees || !allEmployees.length || force) {
+        try {
+          const empSnap = await getDocs(collection(db, 'employees'));
+          allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (e) { console.warn('Executive dashboard employee load warning', e); }
+      }
+      renderExecutiveComplianceDashboard();
+    } catch (e) {
+      console.error('Executive compliance dashboard failed', e);
+      if (kpis) kpis.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Could not load command center</h3><p>Check connection and refresh.</p></div>';
+    }
+  }
+
+  function employeeCertBuckets(emp) {
+    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const expired = certs.filter(c => getCertStatusKey(c.expirationDate) === 'expired');
+    const soon = certs.filter(c => getCertStatusKey(c.expirationDate) === 'warn');
+    const valid = certs.filter(c => getCertStatusKey(c.expirationDate) === 'valid' || !c.expirationDate);
+    return { certs, expired, soon, valid };
+  }
+
+  function getExecutiveComplianceData() {
+    const intakes = allNewHireIntakes || [];
+    const employees = allEmployees || [];
+    const blocked = [];
+    const missing = [];
+    const expiring = [];
+    const good = [];
+    const readyReview = [];
+    const activePackets = [];
+
+    intakes.forEach(x => {
+      const result = getNewHireComplianceResult(x);
+      const status = String(x.status || 'Pending');
+      const certCount = (x.certFiles || []).length;
+      const payrollCount = (x.payrollIdFiles || []).length;
+      const row = {
+        id: x.id,
+        type: 'intake',
+        name: x.name || 'New Hire',
+        trade: x.trade || '',
+        project: x.projectName || '',
+        status,
+        detail: `${result.label} • ${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
+        issues: result.issues || [],
+        warnings: result.warnings || [],
+        action: `openNewHireReview('${esc(x.id)}')`
+      };
+      if (result.level === 'hold' || status === 'Compliance Hold') blocked.push(row);
+      else if (status === 'Good To Work' && result.level === 'good') good.push(row);
+      else missing.push(row);
+      if (status === 'Ready for Review') readyReview.push(row);
+      if (status !== 'Good To Work') activePackets.push(row);
+      if ((result.warnings || []).length) expiring.push(row);
+    });
+
+    employees.forEach(emp => {
+      const b = employeeCertBuckets(emp);
+      const row = {
+        id: emp.id,
+        type: 'employee',
+        name: emp.name || 'Employee',
+        trade: emp.trade || '',
+        project: '',
+        status: emp.complianceStatus || emp.status || '',
+        detail: `Employee Certs • Total: ${b.certs.length} • Expired: ${b.expired.length} • Expiring soon: ${b.soon.length}`,
+        issues: b.expired.map(c => `${c.title || c.type || 'Certification'} expired`),
+        warnings: b.soon.map(c => `${c.title || c.type || 'Certification'} expiring soon`),
+        action: `openEmployeeDetail('${esc(emp.id)}')`
+      };
+      if (b.expired.length) blocked.push(row);
+      else if (b.soon.length || !b.certs.length) {
+        missing.push(row);
+        if (b.soon.length) expiring.push(row);
+      } else good.push(row);
+    });
+
+    const totalRecords = intakes.length + employees.length;
+    const readinessScore = totalRecords ? Math.round((good.length / totalRecords) * 100) : 0;
+    return { intakes, employees, blocked, missing, expiring, good, readyReview, activePackets, totalRecords, readinessScore };
+  }
+
+  function renderExecPeople(items, emptyText, limit = 8) {
+    if (!items.length) return `<p class="helper-text">${emptyText}</p>`;
+    return `<div class="exec-list">${items.slice(0, limit).map(x => `
+      <div class="exec-person">
+        <h4>${esc(x.name)}</h4>
+        <p>${x.trade ? `Trade: ${esc(x.trade)}<br>` : ''}${x.project ? `Project: ${esc(x.project)}<br>` : ''}${esc(x.detail || '')}</p>
+        <div class="exec-actions"><button class="btn-sm" onclick="${x.action}">Open</button></div>
+      </div>`).join('')}${items.length > limit ? `<p class="helper-text">+ ${items.length - limit} more not shown in preview.</p>` : ''}</div>`;
+  }
+
+  function renderExecutiveComplianceDashboard() {
+    const data = getExecutiveComplianceData();
+    const scoreEl = document.getElementById('exec-readiness-score');
+    const kpis = document.getElementById('exec-compliance-kpis');
+    const issues = document.getElementById('exec-top-issues');
+    const blocked = document.getElementById('exec-blocked-workers');
+    const expiringMissing = document.getElementById('exec-expiring-missing');
+    const pipeline = document.getElementById('exec-onboarding-pipeline');
+    const good = document.getElementById('exec-good-workers');
+    if (scoreEl) scoreEl.textContent = `${data.readinessScore}%`;
+    if (kpis) kpis.innerHTML = `<div class="exec-kpi-grid">
+      <div class="exec-kpi-card blue"><strong>${data.totalRecords}</strong><span>Total Workforce Records</span></div>
+      <div class="exec-kpi-card good"><strong>${data.good.length}</strong><span>Good To Work</span></div>
+      <div class="exec-kpi-card warn"><strong>${data.readyReview.length}</strong><span>Ready For Review</span></div>
+      <div class="exec-kpi-card purple"><strong>${data.expiring.length}</strong><span>Expiring / Warnings</span></div>
+      <div class="exec-kpi-card hold"><strong>${data.blocked.length}</strong><span>Blocked / Hold</span></div>
+    </div>`;
+
+    const missingPayroll = (data.intakes || []).filter(x => !(x.payrollIdFiles || []).length).length;
+    const missingCerts = (data.intakes || []).filter(x => !(x.certFiles || []).length).length;
+    if (issues) issues.innerHTML = `
+      <div class="exec-issue-row hold"><div><h4>Workers Blocked From Site</h4><p>Expired certs or compliance hold status.</p></div><div class="exec-issue-count">${data.blocked.length}</div></div>
+      <div class="exec-issue-row warn"><div><h4>Missing Payroll / ID</h4><p>Intake packets without uploaded payroll or ID documents.</p></div><div class="exec-issue-count">${missingPayroll}</div></div>
+      <div class="exec-issue-row warn"><div><h4>Missing Certification Uploads</h4><p>Workers or packets without certification files attached.</p></div><div class="exec-issue-count">${missingCerts}</div></div>
+      <div class="exec-issue-row blue"><div><h4>Packets Ready For Office Review</h4><p>Submitted packets waiting for office action.</p></div><div class="exec-issue-count">${data.readyReview.length}</div></div>`;
+    if (blocked) blocked.innerHTML = renderExecPeople(data.blocked, 'No workers currently blocked from site.');
+    if (expiringMissing) expiringMissing.innerHTML = renderExecPeople([...data.expiring, ...data.missing], 'No expiring or missing items detected.');
+    if (pipeline) pipeline.innerHTML = renderExecPeople(data.activePackets, 'No active onboarding packets needing action.');
+    if (good) good.innerHTML = renderExecPeople(data.good, 'No Good To Work records loaded yet.', 6);
+  }
+
+  function printExecutiveComplianceDashboard() {
+    const data = getExecutiveComplianceData();
+    const now = new Date().toLocaleString();
+    const html = `<!doctype html><html><head><title>PAL Compliance Command Center</title><style>
+      body{font-family:Arial,sans-serif;color:#111;margin:24px;} h1{color:#1b3a5c;margin:0 0 6px;} .sub{color:#555;margin-bottom:18px;}
+      .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0;} .box{border:1px solid #ccc;border-top:6px solid #1b3a5c;border-radius:12px;padding:12px;} .box strong{display:block;font-size:26px;color:#1b3a5c}.box span{font-size:11px;text-transform:uppercase;font-weight:800;color:#555}.hold{border-top-color:#dc2626}.good{border-top-color:#16a34a}.warn{border-top-color:#d97706}.section{margin-top:18px;border:1px solid #ddd;border-radius:12px;padding:12px;} h2{font-size:16px;color:#1b3a5c;margin:0 0 10px;} .person{border-top:1px solid #eee;padding:8px 0;font-size:13px}.person:first-child{border-top:0}.name{font-weight:800}.muted{color:#555;font-size:12px}@media print{body{margin:18px}.grid{grid-template-columns:repeat(5,1fr)}}
+      </style></head><body><h1>PAL Compliance Command Center</h1><div class="sub">Printed ${esc(now)} · Executive workforce compliance overview</div>
+      <div class="grid"><div class="box"><strong>${data.totalRecords}</strong><span>Total Records</span></div><div class="box good"><strong>${data.good.length}</strong><span>Good To Work</span></div><div class="box warn"><strong>${data.readyReview.length}</strong><span>Ready Review</span></div><div class="box warn"><strong>${data.expiring.length}</strong><span>Warnings</span></div><div class="box hold"><strong>${data.blocked.length}</strong><span>Blocked</span></div></div>
+      <div class="section"><h2>Workers Blocked From Site</h2>${data.blocked.length ? data.blocked.map(x=>`<div class="person"><div class="name">${esc(x.name)}</div><div class="muted">${esc(x.detail || '')}</div></div>`).join('') : '<div class="muted">No blocked workers.</div>'}</div>
+      <div class="section"><h2>Expiring / Missing Items</h2>${[...data.expiring,...data.missing].length ? [...data.expiring,...data.missing].slice(0,20).map(x=>`<div class="person"><div class="name">${esc(x.name)}</div><div class="muted">${esc(x.detail || '')}</div></div>`).join('') : '<div class="muted">No expiring or missing items detected.</div>'}</div>
+      <div class="section"><h2>Good To Work Snapshot</h2>${data.good.length ? data.good.slice(0,20).map(x=>`<div class="person"><div class="name">${esc(x.name)}</div><div class="muted">${esc(x.detail || '')}</div></div>`).join('') : '<div class="muted">No Good To Work records loaded.</div>'}</div>
+      <script>window.print();<\/script></body></html>`;
+    const w = window.open('', '_blank');
+    if (!w) return toast('Popup blocked. Allow popups to print dashboard.');
+    w.document.open(); w.document.write(html); w.document.close();
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -5880,6 +6195,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-new-hires') loadNewHireIntakes(true);
     if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
+    if (tabId === 'main-exec-compliance') loadExecutiveComplianceDashboard(true);
     if (tabId === 'main-tickets') { refreshTicketProjectOptions(); loadMainTickets(); }
   }
 
