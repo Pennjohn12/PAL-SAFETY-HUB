@@ -12,6 +12,7 @@
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <!-- STABLE_LOGIN_RESCUE_RESTORE_USE_THIS_2026_05_14 -->
   <!-- PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15 -->
+  <!-- PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
   <style>
     :root {
@@ -1541,7 +1542,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
@@ -3787,8 +3788,21 @@
       const os = document.getElementById('public-orientation-status');
       if (os) os.textContent = `Orientation Form: ${x.orientationForm?.completed ? 'Completed' : 'Pending'}`;
     } catch (e) {
+      // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
+      // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
+      // Show a blank/public packet tied to the intake id so the employee can still fill it out.
       console.error('Public intake load failed', e);
-      if (statusCard) statusCard.innerHTML = `<h3>Could Not Load Intake</h3><p class="helper-text">Please check your connection or contact PAL office. If this keeps happening, the intake link may need to be resent.</p>`;
+      currentPublicNewHireIntake = {
+        id: publicNewHireIntakeId,
+        status: 'Pending',
+        notes: 'Public intake opened without office packet preload. Employee can still complete the packet below.'
+      };
+      if (statusCard) statusCard.innerHTML = `<h3>PAL New Hire Packet</h3>
+        <p class="helper-text">We could not preload the office request, but you can still complete your PAL pre-site packet below. Your submission will stay linked to this intake code.</p>
+        <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '—')}</div></div>`;
+      if (formCard) formCard.style.display = 'block';
+      const os = document.getElementById('public-orientation-status');
+      if (os) os.textContent = 'Orientation Form: Pending';
     }
   }
 
@@ -3816,9 +3830,15 @@
         const url = await getDownloadURL(storageRef);
         uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake' });
       }
-      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-      const existing = snap.exists() ? (snap.data().certFiles || []) : [];
-      await updateDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
+      let existing = [];
+      try {
+        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
+        existing = snap.exists() ? (snap.data().certFiles || []) : [];
+      } catch (readErr) {
+        // Public rules may block read; continue with submission attempt.
+        console.warn('Public intake submit could not pre-read existing files', readErr);
+      }
+      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         name: document.getElementById('pub-nh-name')?.value.trim() || '',
         phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
         email: document.getElementById('pub-nh-email')?.value.trim() || '',
@@ -3829,8 +3849,9 @@
         certFiles: [...existing, ...uploaded],
         status: 'Ready for Review',
         employeeSubmittedAt: new Date().toISOString(),
-        updatedAt: serverTimestamp()
-      });
+        updatedAt: serverTimestamp(),
+        source: 'public-intake-fallback-safe'
+      }, { merge: true });
       const statusCard = document.getElementById('public-intake-status-card');
       const formCard = document.getElementById('public-intake-form-card');
       if (statusCard) statusCard.innerHTML = `<h3>✅ Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
