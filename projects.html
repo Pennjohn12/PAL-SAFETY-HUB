@@ -830,6 +830,46 @@
     @media(max-width:560px){ .exec-kpi-grid{grid-template-columns:1fr;} .exec-command-hero h2{font-size:23px;} }
     @media print { .exec-command-hero, .exec-kpi-card, .exec-panel { box-shadow:none !important; } }
 
+  
+
+    /* PHASE 5C — TRUE EXECUTIVE COMMAND CENTER VISUAL UPGRADE */
+    .pal-command-shell { display:grid; gap:16px; }
+    .pal-command-hero {
+      background: radial-gradient(circle at top left, #3b82f6 0%, #1b3a5c 38%, #0f172a 100%);
+      color:#fff; border-radius:26px; padding:24px; box-shadow:0 18px 45px rgba(15,23,42,.22);
+      border:1px solid rgba(255,255,255,.12); overflow:hidden; position:relative;
+    }
+    .pal-command-hero:after { content:""; position:absolute; right:-70px; top:-70px; width:190px; height:190px; border-radius:999px; background:rgba(120,194,64,.18); }
+    .pal-command-hero h2 { margin:0 0 6px; font-size:31px; letter-spacing:-.4px; }
+    .pal-command-hero p { margin:0; color:rgba(255,255,255,.82); line-height:1.5; font-size:14px; max-width:680px; }
+    .pal-command-hero-row { display:flex; justify-content:space-between; gap:18px; align-items:center; position:relative; z-index:1; }
+    .pal-readiness-gauge { width:136px; height:136px; border-radius:999px; display:grid; place-items:center; background:conic-gradient(#78c240 var(--score-deg,0deg), rgba(255,255,255,.18) 0deg); padding:10px; flex-shrink:0; }
+    .pal-readiness-inner { width:100%; height:100%; border-radius:999px; background:#fff; display:grid; place-items:center; text-align:center; color:var(--navy); }
+    .pal-readiness-inner strong { display:block; font-size:32px; line-height:1; }
+    .pal-readiness-inner span { display:block; font-size:10px; font-weight:900; text-transform:uppercase; color:#64748b; margin-top:4px; }
+    .pal-command-kpis { display:grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap:12px; }
+    .pal-command-kpi { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:0 8px 24px rgba(16,24,40,.06); position:relative; overflow:hidden; }
+    .pal-command-kpi:before { content:""; position:absolute; left:0; top:0; bottom:0; width:7px; background:var(--kpi-color,#1b3a5c); }
+    .pal-command-kpi strong { display:block; font-size:32px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .pal-command-kpi span { display:block; font-size:11px; font-weight:950; color:#64748b; text-transform:uppercase; letter-spacing:.4px; }
+    .pal-command-kpi small { display:block; margin-top:8px; color:#94a3b8; font-size:11px; line-height:1.25; }
+    .pal-command-layout { display:grid; grid-template-columns:1.05fr .95fr; gap:16px; align-items:start; }
+    .pal-command-panel { background:#fff; border:1px solid var(--line); border-radius:22px; padding:16px; box-shadow:0 8px 24px rgba(16,24,40,.055); }
+    .pal-command-panel h3 { margin:0 0 12px; color:var(--navy); font-size:17px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .pal-panel-badge { background:#eef2f7; color:var(--navy); border-radius:999px; padding:4px 9px; font-size:11px; font-weight:900; }
+    .pal-risk-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:16px; padding:13px; margin-bottom:10px; background:#f8fafc; border-left:7px solid var(--risk,#1b3a5c); }
+    .pal-risk-row h4 { margin:0 0 3px; color:#111827; font-size:14px; }
+    .pal-risk-row p { margin:0; color:#64748b; font-size:12px; line-height:1.35; }
+    .pal-risk-count { min-width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:20px; font-weight:950; background:#fff; color:var(--navy); border:1px solid var(--line); }
+    .pal-command-person { border:1px solid var(--line); border-radius:16px; padding:12px; margin-bottom:10px; background:#fff; }
+    .pal-command-person h4 { margin:0 0 4px; font-size:14px; color:#111827; }
+    .pal-command-person p { margin:0; color:#64748b; font-size:12px; line-height:1.35; }
+    .pal-command-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .pal-command-two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .pal-empty-soft { color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:16px; padding:14px; font-size:13px; line-height:1.4; }
+    @media(max-width:900px){ .pal-command-kpis{grid-template-columns:1fr 1fr;} .pal-command-layout,.pal-command-two{grid-template-columns:1fr;} .pal-command-hero-row{flex-direction:column; align-items:flex-start;} }
+    @media(max-width:560px){ .pal-command-kpis{grid-template-columns:1fr;} .pal-command-hero h2{font-size:24px;} }
+
   </style>
 </head>
 <body>
@@ -1037,7 +1077,7 @@
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-new-hires', this)">🧾 New Hire Intake</button>
       <button class="tab" onclick="switchMainTab('main-workforce-status', this)">✅ Good To Work</button>
-      <button class="tab" onclick="switchMainTab('main-exec-compliance', this)">📊 Compliance Command</button>
+      <button class="tab" onclick="switchMainTab('main-exec-compliance', this)">🚨 Command Center</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">💵 Extra Work Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
@@ -1121,46 +1161,56 @@
 
 
     <div class="tab-pane" id="main-exec-compliance">
-      <div class="exec-command-hero">
-        <div class="exec-hero-row">
+      <div class="pal-command-shell">
+        <div class="pal-command-hero">
+          <div class="pal-command-hero-row">
+            <div>
+              <h2>🚨 PAL Compliance Command Center</h2>
+              <p>This is the executive view — not a worker board. It gives the office a fast read on site readiness, blocked workers, expiring certifications, missing payroll/ID items, and packets waiting for review.</p>
+            </div>
+            <div class="pal-readiness-gauge" id="pal-readiness-gauge">
+              <div class="pal-readiness-inner"><strong id="exec-readiness-score">—</strong><span>Ready<br>Score</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-header" style="margin-bottom:0;">
+          <h2 style="font-size:20px;">Executive Compliance Snapshot</h2>
+          <div class="header-actions">
+            <button class="btn-outline" onclick="loadExecutiveComplianceDashboard(true)">↻ Refresh Command Center</button>
+            <button class="btn-outline" onclick="printExecutiveComplianceDashboard()">🖨️ Print / PDF</button>
+          </div>
+        </div>
+
+        <div id="exec-compliance-kpis"></div>
+
+        <div class="pal-command-layout">
           <div>
-            <h2>📊 PAL Compliance Command Center</h2>
-            <p>Executive overview for office review: workforce readiness, blocked workers, missing payroll/ID, expiring certs, and onboarding packets needing action.</p>
+            <div class="pal-command-panel">
+              <h3>🚨 Office Action Queue <span class="pal-panel-badge">Highest Priority</span></h3>
+              <div id="exec-top-issues"><div class="pal-empty-soft">Open this tab or click Refresh Command Center to load the management summary.</div></div>
+            </div>
+            <div class="pal-command-panel" style="margin-top:14px;">
+              <h3>⛔ Workers Blocked From Site <span class="pal-panel-badge">Do Not Send</span></h3>
+              <div id="exec-blocked-workers"><div class="pal-empty-soft">No blocked worker data loaded yet.</div></div>
+            </div>
           </div>
-          <div class="exec-score-ring"><strong id="exec-readiness-score">—</strong><span>Readiness Score</span></div>
-        </div>
-      </div>
-      <div class="page-header" style="margin-bottom:12px;">
-        <h2 style="font-size:20px;">Executive Compliance Overview</h2>
-        <div class="header-actions">
-          <button class="btn-outline" onclick="loadExecutiveComplianceDashboard(true)">↻ Refresh</button>
-          <button class="btn-outline" onclick="printExecutiveComplianceDashboard()">🖨️ Print / PDF</button>
-        </div>
-      </div>
-      <div id="exec-compliance-kpis"></div>
-      <div class="exec-risk-grid">
-        <div>
-          <div class="exec-panel">
-            <h3>🚨 Top Compliance Issues</h3>
-            <div id="exec-top-issues"><p class="helper-text">Open this tab or click Refresh to load compliance issues.</p></div>
-          </div>
-          <div class="exec-panel" style="margin-top:14px;">
-            <h3>⛔ Workers Blocked From Site</h3>
-            <div id="exec-blocked-workers"><p class="helper-text">No blocked workers loaded yet.</p></div>
-          </div>
-        </div>
-        <div>
-          <div class="exec-panel">
-            <h3>🟠 Expiring / Missing Items</h3>
-            <div id="exec-expiring-missing"><p class="helper-text">No expiring or missing items loaded yet.</p></div>
-          </div>
-          <div class="exec-panel" style="margin-top:14px;">
-            <h3>🧾 Onboarding Pipeline</h3>
-            <div id="exec-onboarding-pipeline"><p class="helper-text">No onboarding data loaded yet.</p></div>
-          </div>
-          <div class="exec-panel" style="margin-top:14px;">
-            <h3>🟢 Good To Work Snapshot</h3>
-            <div id="exec-good-workers"><p class="helper-text">No Good To Work snapshot loaded yet.</p></div>
+
+          <div>
+            <div class="pal-command-panel">
+              <h3>🟠 Expiring / Missing Items <span class="pal-panel-badge">Needs Follow-Up</span></h3>
+              <div id="exec-expiring-missing"><div class="pal-empty-soft">No expiring or missing item data loaded yet.</div></div>
+            </div>
+            <div class="pal-command-two" style="margin-top:14px;">
+              <div class="pal-command-panel">
+                <h3>🧾 Intake Pipeline</h3>
+                <div id="exec-onboarding-pipeline"><div class="pal-empty-soft">No onboarding pipeline loaded yet.</div></div>
+              </div>
+              <div class="pal-command-panel">
+                <h3>🟢 Ready Workers</h3>
+                <div id="exec-good-workers"><div class="pal-empty-soft">No Good To Work snapshot loaded yet.</div></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -6138,35 +6188,50 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       </div>`).join('')}${items.length > limit ? `<p class="helper-text">+ ${items.length - limit} more not shown in preview.</p>` : ''}</div>`;
   }
 
+  // PHASE 5C: stronger executive command center renderer (isolated UI only; no auth/startup changes)
   function renderExecutiveComplianceDashboard() {
     const data = getExecutiveComplianceData();
     const scoreEl = document.getElementById('exec-readiness-score');
+    const gauge = document.getElementById('pal-readiness-gauge');
     const kpis = document.getElementById('exec-compliance-kpis');
     const issues = document.getElementById('exec-top-issues');
     const blocked = document.getElementById('exec-blocked-workers');
     const expiringMissing = document.getElementById('exec-expiring-missing');
     const pipeline = document.getElementById('exec-onboarding-pipeline');
     const good = document.getElementById('exec-good-workers');
-    if (scoreEl) scoreEl.textContent = `${data.readinessScore}%`;
-    if (kpis) kpis.innerHTML = `<div class="exec-kpi-grid">
-      <div class="exec-kpi-card blue"><strong>${data.totalRecords}</strong><span>Total Workforce Records</span></div>
-      <div class="exec-kpi-card good"><strong>${data.good.length}</strong><span>Good To Work</span></div>
-      <div class="exec-kpi-card warn"><strong>${data.readyReview.length}</strong><span>Ready For Review</span></div>
-      <div class="exec-kpi-card purple"><strong>${data.expiring.length}</strong><span>Expiring / Warnings</span></div>
-      <div class="exec-kpi-card hold"><strong>${data.blocked.length}</strong><span>Blocked / Hold</span></div>
-    </div>`;
+    const score = data.readinessScore || 0;
+    if (scoreEl) scoreEl.textContent = `${score}%`;
+    if (gauge) gauge.style.setProperty('--score-deg', `${Math.max(0, Math.min(100, score)) * 3.6}deg`);
 
     const missingPayroll = (data.intakes || []).filter(x => !(x.payrollIdFiles || []).length).length;
     const missingCerts = (data.intakes || []).filter(x => !(x.certFiles || []).length).length;
-    if (issues) issues.innerHTML = `
-      <div class="exec-issue-row hold"><div><h4>Workers Blocked From Site</h4><p>Expired certs or compliance hold status.</p></div><div class="exec-issue-count">${data.blocked.length}</div></div>
-      <div class="exec-issue-row warn"><div><h4>Missing Payroll / ID</h4><p>Intake packets without uploaded payroll or ID documents.</p></div><div class="exec-issue-count">${missingPayroll}</div></div>
-      <div class="exec-issue-row warn"><div><h4>Missing Certification Uploads</h4><p>Workers or packets without certification files attached.</p></div><div class="exec-issue-count">${missingCerts}</div></div>
-      <div class="exec-issue-row blue"><div><h4>Packets Ready For Office Review</h4><p>Submitted packets waiting for office action.</p></div><div class="exec-issue-count">${data.readyReview.length}</div></div>`;
-    if (blocked) blocked.innerHTML = renderExecPeople(data.blocked, 'No workers currently blocked from site.');
-    if (expiringMissing) expiringMissing.innerHTML = renderExecPeople([...data.expiring, ...data.missing], 'No expiring or missing items detected.');
-    if (pipeline) pipeline.innerHTML = renderExecPeople(data.activePackets, 'No active onboarding packets needing action.');
-    if (good) good.innerHTML = renderExecPeople(data.good, 'No Good To Work records loaded yet.', 6);
+    const needsOffice = data.readyReview.length + data.activePackets.length;
+
+    if (kpis) kpis.innerHTML = `<div class="pal-command-kpis">
+      <div class="pal-command-kpi" style="--kpi-color:#2563eb"><strong>${data.totalRecords}</strong><span>Total Records</span><small>New hire packets + employee cert files.</small></div>
+      <div class="pal-command-kpi" style="--kpi-color:#16a34a"><strong>${data.good.length}</strong><span>Good To Work</span><small>Clean records ready for site.</small></div>
+      <div class="pal-command-kpi" style="--kpi-color:#d97706"><strong>${needsOffice}</strong><span>Office Actions</span><small>Packets or records needing review.</small></div>
+      <div class="pal-command-kpi" style="--kpi-color:#7c3aed"><strong>${data.expiring.length}</strong><span>Cert Warnings</span><small>Expiring soon or missing cert follow-up.</small></div>
+      <div class="pal-command-kpi" style="--kpi-color:#dc2626"><strong>${data.blocked.length}</strong><span>Blocked / Hold</span><small>Do not send until corrected.</small></div>
+    </div>`;
+
+    const riskRows = [
+      { color:'#dc2626', title:'Workers Blocked From Site', desc:'Expired certs or compliance hold status. These workers should not be cleared for the jobsite.', count:data.blocked.length },
+      { color:'#d97706', title:'Missing Payroll / ID', desc:'Packets without required payroll or identity uploads.', count:missingPayroll },
+      { color:'#d97706', title:'Missing Certification Uploads', desc:'Packets without cert files attached for office verification.', count:missingCerts },
+      { color:'#2563eb', title:'Packets Ready For Office Review', desc:'Submitted onboarding packets waiting for office action.', count:data.readyReview.length },
+      { color:'#16a34a', title:'Ready Workforce', desc:'Workers currently showing as Good To Work / valid.', count:data.good.length }
+    ];
+    if (issues) issues.innerHTML = riskRows.map(r => `<div class="pal-risk-row" style="--risk:${r.color}"><div><h4>${esc(r.title)}</h4><p>${esc(r.desc)}</p></div><div class="pal-risk-count">${r.count}</div></div>`).join('');
+
+    const people = (items, emptyText, limit = 6) => {
+      if (!items.length) return `<div class="pal-empty-soft">${esc(emptyText)}</div>`;
+      return items.slice(0, limit).map(x => `<div class="pal-command-person"><h4>${esc(x.name)}</h4><p>${x.trade ? `Trade: ${esc(x.trade)}<br>` : ''}${x.project ? `Project: ${esc(x.project)}<br>` : ''}${esc(x.detail || '')}</p><div class="pal-command-actions"><button class="btn-sm" onclick="${x.action}">Open Record</button></div></div>`).join('') + (items.length > limit ? `<div class="pal-empty-soft">+ ${items.length - limit} more records not shown in this preview.</div>` : '');
+    };
+    if (blocked) blocked.innerHTML = people(data.blocked, 'No workers currently blocked from site.');
+    if (expiringMissing) expiringMissing.innerHTML = people([...data.expiring, ...data.missing], 'No expiring or missing items detected.');
+    if (pipeline) pipeline.innerHTML = people(data.activePackets, 'No active onboarding packets needing action.', 4);
+    if (good) good.innerHTML = people(data.good, 'No Good To Work records loaded yet.', 4);
   }
 
   function printExecutiveComplianceDashboard() {
@@ -6271,6 +6336,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   // Enter key shortcuts
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+
 </script>
 </body>
 </html>
