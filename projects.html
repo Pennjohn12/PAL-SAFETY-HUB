@@ -1801,6 +1801,19 @@
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
   let publicNewHireIntakeId = new URLSearchParams(window.location.search).get('intake') || new URLSearchParams(window.location.search).get('newhire');
+  // PUBLIC_INTAKE_NO_LOGIN_START_FIX_2026_05_23
+  // Homepage can open projects.html?newhire=start without login.
+  // We immediately turn that into a unique intake packet ID so multiple employees do not overwrite one shared document.
+  if (publicNewHireIntakeId && ['start','new','public','public-start'].includes(String(publicNewHireIntakeId).toLowerCase())) {
+    const generatedIntakeId = 'public-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0,14) + '-' + Math.random().toString(36).slice(2,8);
+    publicNewHireIntakeId = generatedIntakeId;
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.delete('intake');
+      u.searchParams.set('newhire', generatedIntakeId);
+      history.replaceState({}, '', u.toString());
+    } catch(e) { console.warn('Could not update public intake URL', e); }
+  }
   let publicNewHireIntakeLoaded = false;
   let currentPublicNewHireIntake = null;
   document.title = 'PAL Safety Hub';
