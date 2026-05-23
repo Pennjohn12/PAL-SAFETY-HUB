@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23 -->
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <meta charset="UTF-8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -671,12 +676,14 @@
     }
   </style>
 
+
 <script>
-  // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
-  // Creates a no-login public new-hire intake route.
+  // LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23
+  // Laptop-safe version: forces a fresh projects.html route and prevents cached login page.
   window.startPublicNewHireIntake = function startPublicNewHireIntake() {
     var id = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
-    window.location.assign('projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1');
+    var url = 'projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1&noLogin=1&v=1779575382-' + Date.now();
+    window.location.href = url;
   };
 </script>
 
@@ -741,7 +748,7 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE BYPASS LOGIN FIX ACTIVE</div>
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">LAPTOP NO-LOGIN PATCH ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>

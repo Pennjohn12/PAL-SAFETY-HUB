@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23 -->
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -762,6 +767,31 @@
         status.innerHTML = '<h3>PAL New Hire Packet</h3><p class="helper-text">Public employee packet opened. No office login required.</p>';
       }
     });
+  })();
+</script>
+
+
+<script>
+  // LAPTOP_PUBLIC_NEWHIRE_ROUTE_FORCE_2026_05_23
+  (function(){
+    var p = new URLSearchParams(window.location.search);
+    var isPublic = p.get('newhire') || p.get('intake') || p.get('publicStart') || p.get('noLogin');
+    if (!isPublic) return;
+
+    // If this is a public route, never leave the login view active.
+    function forcePublicView(){
+      try {
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        var pub = document.getElementById('view-public-newhire-intake');
+        if (pub) pub.classList.add('active');
+        var login = document.getElementById('view-login');
+        if (login) login.classList.remove('active');
+      } catch(e) {}
+    }
+    document.addEventListener('DOMContentLoaded', forcePublicView);
+    setTimeout(forcePublicView, 0);
+    setTimeout(forcePublicView, 250);
+    setTimeout(forcePublicView, 1000);
   })();
 </script>
 
@@ -1823,7 +1853,8 @@
   let publicNewHireIntakeId = new URLSearchParams(window.location.search).get('intake') || new URLSearchParams(window.location.search).get('newhire');
 // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
-if (palPublicStartParam && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) {
+const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
+if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) {
   publicNewHireIntakeId = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
   const palPublicUrl = new URL(window.location.href);
   palPublicUrl.searchParams.set('newhire', publicNewHireIntakeId);
@@ -1920,7 +1951,7 @@ if (palPublicStartParam && (!publicNewHireIntakeId || publicNewHireIntakeId === 
     // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
     // If an employee opens any public new-hire route, bypass the foreman/office login wall.
     const palPublicParams = new URLSearchParams(window.location.search);
-    if (publicNewHireIntakeId || palPublicParams.get('newhire') || palPublicParams.get('intake') || palPublicParams.get('publicStart')) {
+    if (publicNewHireIntakeId || palPublicParams.get('newhire') || palPublicParams.get('intake') || palPublicParams.get('publicStart') || palPublicParams.get('noLogin')) {
       if (!publicNewHireIntakeId) {
         publicNewHireIntakeId = palPublicParams.get('newhire') || palPublicParams.get('intake') || ('public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9));
       }
