@@ -17,8 +17,6 @@
   <!-- SAFETY_AGREEMENT_SAFE_PHASE3_2026_05_15 -->
   <!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
   <!-- FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 -->
-  <!-- SMART_WORKFORCE_SYNC_ENGINE_PHASE4_2026_05_19 -->
-  <!-- PHASE3_GOOD_WORKER_DEMO_CORRECTED_JOHN_SMITH_2026_05_19 -->
   <style>
     :root {
       --navy: #1b3a5c;
@@ -746,107 +744,6 @@
     .workforce-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
 
-
-    /* AUTO_COMPLIANCE_ENGINE_PHASE3_2026_05_19 */
-    .compliance-banner {
-      border:1px solid var(--line);
-      border-left:6px solid var(--navy);
-      border-radius:14px;
-      padding:12px 14px;
-      margin:12px 0;
-      background:#fff;
-      font-size:13px;
-      line-height:1.45;
-    }
-    .compliance-banner.good { border-left-color:#16a34a; background:#f0fdf4; }
-    .compliance-banner.warn { border-left-color:#d97706; background:#fffbeb; }
-    .compliance-banner.hold { border-left-color:#dc2626; background:#fef2f2; }
-    .compliance-banner strong { display:block; color:var(--navy); margin-bottom:4px; }
-    .compliance-issues { margin:6px 0 0 18px; color:var(--text); }
-    .compliance-pill {
-      display:inline-flex; align-items:center; gap:5px;
-      border-radius:999px; padding:4px 9px;
-      font-size:11px; font-weight:900; white-space:nowrap;
-      background:#eef2f7; color:var(--navy); margin-left:6px;
-    }
-    .compliance-pill.good { background:#dcfce7; color:#166534; }
-    .compliance-pill.warn { background:#fef3c7; color:#92400e; }
-    .compliance-pill.hold { background:#fee2e2; color:#991b1b; }
-    .newhire-box.hold { border-left-color:#dc2626; }
-
-
-    /* PHASE5C_VISIBLE_COMMAND_CENTER_REAL_PATCH_2026_05_19 */
-    .command-hero {
-      background: linear-gradient(135deg, #10243a, #1b3a5c 55%, #254d78);
-      color: white;
-      border-radius: 24px;
-      padding: 22px;
-      margin: 0 0 18px;
-      box-shadow: 0 16px 38px rgba(16, 36, 58, .22);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .command-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap; }
-    .command-hero h2 { margin:0 0 6px; font-size:28px; line-height:1.1; color:white; }
-    .command-hero p { margin:0; color:rgba(255,255,255,.78); font-size:14px; line-height:1.55; max-width:620px; }
-    .command-score {
-      min-width:150px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:20px;
-      padding:14px;
-      text-align:center;
-    }
-    .command-score strong { display:block; font-size:42px; line-height:1; color:#78c240; }
-    .command-score span { display:block; margin-top:5px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; color:rgba(255,255,255,.78); }
-    .command-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:10px; margin-top:18px; }
-    .command-kpi {
-      background:white;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      box-shadow:0 6px 16px rgba(16,24,40,.06);
-      border-top:6px solid var(--kpi-color, var(--navy));
-    }
-    .command-kpi strong { display:block; font-size:28px; color:var(--navy); line-height:1; margin-bottom:6px; }
-    .command-kpi span { display:block; color:var(--text); font-size:13px; font-weight:900; }
-    .command-kpi small { display:block; margin-top:5px; color:var(--muted); font-size:11px; line-height:1.35; }
-    .command-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin:16px 0 18px; align-items:start; }
-    .command-panel {
-      background:white;
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:16px;
-      box-shadow:0 6px 16px rgba(16,24,40,.05);
-    }
-    .command-panel h3 { color:var(--navy); margin:0 0 10px; font-size:17px; }
-    .command-action-item {
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      border-top:1px solid var(--line);
-      padding:11px 0;
-    }
-    .command-action-item:first-of-type { border-top:0; }
-    .command-action-item strong { display:block; color:var(--text); font-size:14px; margin-bottom:3px; }
-    .command-action-item span { color:var(--muted); font-size:12px; line-height:1.4; }
-    .command-risk-pill {
-      display:inline-flex;
-      white-space:nowrap;
-      border-radius:999px;
-      padding:5px 9px;
-      font-size:11px;
-      font-weight:900;
-    }
-    .command-risk-pill.red { background:#fee2e2; color:#991b1b; }
-    .command-risk-pill.yellow { background:#fef3c7; color:#92400e; }
-    .command-risk-pill.green { background:#dcfce7; color:#166534; }
-    .command-mini-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; margin-bottom:16px; }
-    .command-mini-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:12px; }
-    .command-mini-card strong { display:block; font-size:20px; color:var(--navy); margin-bottom:4px; }
-    .command-mini-card span { color:var(--muted); font-size:12px; font-weight:800; }
-    @media(max-width:900px){ .command-kpi-grid, .command-layout, .command-mini-grid { grid-template-columns:1fr; } .command-score { width:100%; } }
-
   </style>
 </head>
 <body>
@@ -1051,7 +948,6 @@
   <div class="page-wrap">
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
       <button class="tab active" onclick="switchMainTab('main-projects', this)">🏗️ Projects</button>
-      <button class="tab" onclick="switchMainTab('main-workforce-status', this)">🚨 Command Center</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">🪪 Employee Certs</button>
       <button class="tab" onclick="switchMainTab('main-new-hires', this)">🧾 New Hire Intake</button>
       <button class="tab" onclick="switchMainTab('main-workforce-status', this)">✅ Good To Work</button>
@@ -1099,9 +995,6 @@
         <h2>New Hire / Pre-Site Intake</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
-          <button class="btn-outline" onclick="runComplianceAudit()">🛡️ Run Compliance Audit</button>
-          <button class="btn-outline" onclick="syncAllGoodToWorkIntakes()">🔁 Sync Good To Work</button>
-          <button class="btn-outline" onclick="resetDemoComplianceWorkers()">🧹 Reset Demo Workers</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
         </div>
       </div>
@@ -1115,7 +1008,6 @@
           <option value="Ready for Review">Ready for Review</option>
           <option value="Good To Work">Good To Work</option>
           <option value="Missing Info">Missing Info</option>
-          <option value="Compliance Hold">Compliance Hold</option>
         </select>
       </div>
       <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Click New Hire Intake to load requests.</p></div>
@@ -1124,21 +1016,12 @@
 
     <div class="tab-pane" id="main-workforce-status">
       <div class="page-header">
-        <h2>🚨 PAL Compliance Command Center</h2>
+        <h2>✅ Workforce Status Dashboard</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="printCommandCenterReport()">🖨️ Print Command Report</button>
-          <button class="btn-outline" onclick="loadWorkforceStatusDashboard(true)">↻ Refresh Command Center</button>
+          <button class="btn-outline" onclick="loadWorkforceStatusDashboard(true)">↻ Refresh</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Executive compliance view: readiness score, blocked workers, missing items, expiring certs, and Good To Work status in one office-ready screen.</div>
-      <div id="command-center-top">
-        <div class="command-hero">
-          <div class="command-hero-top">
-            <div><h2>Loading PAL Compliance Command Center…</h2><p>Open this tab or click Refresh Command Center to load live workforce compliance data.</p></div>
-            <div class="command-score"><strong>--</strong><span>Readiness</span></div>
-          </div>
-        </div>
-      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
       <div id="workforce-status-summary">
         <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
       </div>
@@ -1730,12 +1613,9 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
-      <button class="btn-secondary" onclick="syncNewHireToEmployeeCerts(currentNewHireReviewId)">Sync to Employee Certs</button>
-      <button class="btn-secondary" onclick="syncNewHireToEmployeeCerts(currentNewHireReviewId, { openEmployeeAfter: true })">Sync + Open Employee File</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
       <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
-      <button class="btn-secondary" style="color:var(--red);" onclick="deleteNewHireIntake(currentNewHireReviewId)">Delete Intake</button>
     </div>
   </div>
 </div>
@@ -1872,103 +1752,6 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-
-<!-- LOGIN_CLICK_BRIDGE_PATCH_2026_05_19
-     Fixes laptop/iPad issue where Sign In button appears to do nothing if the module login handler
-     is not attached yet. This binds the button directly and provides a Firebase fallback. -->
-<script>
-(function(){
-  async function showLoginError(message){
-    var errEl = document.getElementById('login-error');
-    if (errEl) {
-      errEl.textContent = message || 'Login failed. Please try again.';
-      errEl.classList.add('show');
-      errEl.style.display = 'block';
-    } else {
-      alert(message || 'Login failed. Please try again.');
-    }
-  }
-
-  window.palDirectLogin = async function palDirectLogin(evt){
-    if (evt && evt.preventDefault) evt.preventDefault();
-    var emailEl = document.getElementById('login-email');
-    var passEl = document.getElementById('login-password');
-    var btn = document.getElementById('login-btn');
-    var errEl = document.getElementById('login-error');
-    var email = (emailEl && emailEl.value ? emailEl.value : '').trim();
-    var password = passEl && passEl.value ? passEl.value : '';
-
-    if (errEl) { errEl.textContent=''; errEl.classList.remove('show'); errEl.style.display='none'; }
-    if (!email || !password) { await showLoginError('Please enter your email and password.'); return false; }
-
-    // If the real app login function loaded correctly, use it.
-    if (typeof window.__PAL_REAL_DO_LOGIN__ === 'function') {
-      try { await window.__PAL_REAL_DO_LOGIN__(); return false; }
-      catch (e) { console.warn('Normal login failed; using direct login fallback.', e); }
-    }
-
-    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Signing in…'; }
-    try {
-      var appMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-      var authMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-      var firebaseConfig = {
-        apiKey: 'AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80',
-        authDomain: 'pal-safety-hub.firebaseapp.com',
-        projectId: 'pal-safety-hub',
-        storageBucket: 'pal-safety-hub.firebasestorage.app',
-        messagingSenderId: '461653262208',
-        appId: '1:461653262208:web:fb88dc50ea0a2f68630b65'
-      };
-      var app = appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(firebaseConfig);
-      var auth = authMod.getAuth(app);
-      await Promise.race([
-        authMod.signInWithEmailAndPassword(auth, email, password),
-        new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('Firebase sign-in timed out after 20 seconds.')); }, 20000); })
-      ]);
-      var loginView = document.getElementById('view-login');
-      var registerView = document.getElementById('view-register');
-      var projectsView = document.getElementById('view-projects');
-      if (loginView) loginView.classList.remove('active');
-      if (registerView) registerView.classList.remove('active');
-      if (projectsView) projectsView.classList.add('active');
-      if (typeof window.loadProjects === 'function') window.loadProjects();
-      if (typeof window.showView === 'function') window.showView('view-projects');
-      return false;
-    } catch(error) {
-      console.error('PAL direct login failed:', error);
-      await showLoginError('Login failed: ' + ((error && (error.code || error.message)) || 'Please try again.').toString().replace('auth/','').replaceAll('-',' '));
-      if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
-      return false;
-    }
-  };
-
-  // Important: make inline onclick="doLogin()" work even if the module fails to attach.
-  if (typeof window.doLogin !== 'function') window.doLogin = window.palDirectLogin;
-
-  function bindLoginButton(){
-    var btn = document.getElementById('login-btn');
-    if (!btn || btn.dataset.palLoginBound === '1') return;
-    btn.dataset.palLoginBound = '1';
-    btn.setAttribute('type','button');
-    btn.onclick = window.palDirectLogin;
-    btn.addEventListener('click', window.palDirectLogin, true);
-    btn.addEventListener('touchend', function(e){ e.preventDefault(); window.palDirectLogin(e); }, {passive:false});
-
-    ['login-email','login-password'].forEach(function(id){
-      var el = document.getElementById(id);
-      if (el && el.dataset.palEnterBound !== '1') {
-        el.dataset.palEnterBound = '1';
-        el.addEventListener('keydown', function(e){ if(e.key === 'Enter') window.palDirectLogin(e); });
-      }
-    });
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindLoginButton);
-  else bindLoginButton();
-  setTimeout(bindLoginButton, 500);
-  setTimeout(bindLoginButton, 1500);
-})();
-</script>
-
 <!-- ══════════════════════════════════════════════
      FIREBASE + APP LOGIC
 ══════════════════════════════════════════════ -->
@@ -2023,7 +1806,6 @@
   document.title = 'PAL Safety Hub';
 
   // ── Expose functions to global scope ──
-  window.__PAL_REAL_DO_LOGIN__ = doLogin;
   window.doLogin = doLogin;
   window.doRegister = doRegister;
   window.doLogout = doLogout;
@@ -2066,12 +1848,8 @@
   window.copyNewHireIntakeText = copyNewHireIntakeText;
   window.copyNewHireIntakeTextById = copyNewHireIntakeTextById;
   window.openNewHireReview = openNewHireReview;
-  window.openEmployeePacketPDF = openEmployeePacketPDF;
-  window.openEmployeeRecordPacketPDF = openEmployeeRecordPacketPDF;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
-  window.deleteNewHireIntake = deleteNewHireIntake;
-  window.syncNewHireToEmployeeCerts = syncNewHireToEmployeeCerts;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.openPublicNewHireOrientationForm = openPublicNewHireOrientationForm;
@@ -2107,11 +1885,6 @@
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
-  window.runComplianceAudit = runComplianceAudit;
-  window.resetDemoComplianceWorkers = resetDemoComplianceWorkers;
-  window.createDemoComplianceEmployee = createDemoComplianceEmployee;
-  window.createDemoGoodToWorkEmployee = createDemoGoodToWorkEmployee;
-  window.createDemoJohnSmithGoodToWorkEmployee = createDemoJohnSmithGoodToWorkEmployee;
 
   // ── Auth state ──
   onAuthStateChanged(auth, async user => {
@@ -3051,7 +2824,6 @@
         <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
           ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
           <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
-          <button class="btn-sm" onclick="openEmployeeRecordPacketPDF('${emp.id}')">Employee PDF Packet</button>
           <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
           <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Delete Employee</button>
           <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
@@ -3141,7 +2913,6 @@
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
         <div class="employee-actions" style="margin-top:12px;">
           <button class="btn-sm" onclick="editEmployee('${employeeId}')">Detail Edit Employee</button>
-          <button class="btn-sm" onclick="openEmployeeRecordPacketPDF('${employeeId}')">Employee PDF Packet</button>
           <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Delete Employee</button>
         </div>
       </div>
@@ -4612,7 +4383,6 @@
   function newHireStatusClass(status) {
     const s = String(status || '').toLowerCase();
     if (s.includes('good')) return 'active';
-    if (s.includes('hold') || s.includes('expired')) return 'expired';
     if (s.includes('missing')) return 'expired';
     if (s.includes('review')) return 'blue';
     return 'warn';
@@ -4731,22 +4501,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function renderNewHireDashboard(items) {
     const el = document.getElementById('newhire-dashboard-main');
     if (!el) return;
-    const counts = { total: items.length, pending: 0, review: 0, good: 0, missing: 0, hold: 0 };
+    const counts = { total: items.length, pending: 0, review: 0, good: 0, missing: 0 };
     items.forEach(x => {
-      const compliance = getNewHireComplianceResult(x);
       const s = String(x.status || 'Pending');
-      if (compliance.level === 'hold' || s === 'Compliance Hold') counts.hold++;
-      else if (s === 'Good To Work') counts.good++;
+      if (s === 'Good To Work') counts.good++;
       else if (s === 'Ready for Review') counts.review++;
-      else if (s === 'Missing Info' || compliance.level === 'warn') counts.missing++;
+      else if (s === 'Missing Info') counts.missing++;
       else counts.pending++;
     });
-    el.innerHTML = `<div class="newhire-dashboard" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
-      <div class="newhire-box"><strong>${counts.total}</strong><span>Total Requests</span></div>
+    el.innerHTML = `<div class="newhire-dashboard">
+      <div class="newhire-box"><strong>${counts.total}</strong><span>Total Intake Requests</span></div>
       <div class="newhire-box pending"><strong>${counts.pending}</strong><span>Pending</span></div>
       <div class="newhire-box review"><strong>${counts.review}</strong><span>Ready for Review</span></div>
       <div class="newhire-box good"><strong>${counts.good}</strong><span>Good To Work</span></div>
-      <div class="newhire-box hold"><strong>${counts.hold}</strong><span>Compliance Hold</span></div>
     </div>`;
   }
 
@@ -4756,9 +4523,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const search = (document.getElementById('newhire-search')?.value || '').toLowerCase().trim();
     const status = document.getElementById('newhire-status-filter')?.value || 'all';
     let items = allNewHireIntakes.filter(x => {
-      const compliance = getNewHireComplianceResult(x);
-      const effectiveStatus = compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending');
-      if (status !== 'all' && effectiveStatus !== status && (x.status || 'Pending') !== status) return false;
+      if (status !== 'all' && (x.status || 'Pending') !== status) return false;
       if (!search) return true;
       return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status].some(v => String(v || '').toLowerCase().includes(search));
     });
@@ -4767,9 +4532,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       list.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><h3>No intake requests found</h3><p>Create a request to start pre-site onboarding.</p></div>';
       return;
     }
-    list.innerHTML = items.map(x => {
-      const compliance = getNewHireComplianceResult(x);
-      return `<div class="newhire-card">
+    list.innerHTML = items.map(x => `<div class="newhire-card">
       <div class="newhire-card-header">
         <div>
           <h4>${esc(x.name || 'New Hire')}</h4>
@@ -4780,285 +4543,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
             ${x.startDate ? `<span>📅 ${esc(x.startDate)}</span>` : ''}
             ${x.foreman ? `<span>👤 ${esc(x.foreman)}</span>` : ''}
             ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} cert file(s)</span>` : ''}${(x.payrollIdFiles || []).length ? `<span>🔒 ${(x.payrollIdFiles || []).length} payroll/ID file(s)</span>` : ''}
-            ${x.employeeCertLinked ? `<span>🔁 Synced to Employee Certs</span>` : `<span>⚪ Not synced</span>`}
           </div>
         </div>
-        <span class="pill ${newHireStatusClass(compliance.level === 'hold' ? 'Compliance Hold' : x.status)}">${esc(compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending'))}</span>
+        <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
       </div>
-      ${complianceBannerHTML(compliance)}
       <div class="newhire-actions">
         <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
-        <button class="btn-sm" onclick="openEmployeePacketPDF('${esc(x.id)}')">Employee PDF Packet</button>
         <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
-        <button class="btn-sm" onclick="syncNewHireToEmployeeCerts('${esc(x.id)}')">Sync to Employee Certs</button>
         <button class="btn-sm" onclick="setNewHireStatus('${esc(x.id)}','Good To Work')">Good To Work</button>
         <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
-        <button class="btn-sm danger" onclick="deleteNewHireIntake('${esc(x.id)}')">Delete Intake</button>
       </div>
-    </div>`;
-    }).join('');
+    </div>`).join('');
   }
-
-  // AUTO_COMPLIANCE_ENGINE_PHASE3_2026_05_19
-  function safeDateOnly(value) {
-    if (!value) return '';
-    if (typeof value === 'string') return value.slice(0, 10);
-    if (value?.toDate) {
-      try { return value.toDate().toISOString().slice(0, 10); } catch { return ''; }
-    }
-    return String(value || '').slice(0, 10);
-  }
-
-  function getNewHireComplianceResult(x) {
-    const issues = [];
-    const warnings = [];
-    const certFiles = Array.isArray(x?.certFiles) ? x.certFiles : [];
-    const payrollFiles = Array.isArray(x?.payrollIdFiles) ? x.payrollIdFiles : [];
-    const certWithDates = certFiles.filter(f => safeDateOnly(f.expirationDate));
-    const expiredCerts = certWithDates.filter(f => getCertStatusKey(safeDateOnly(f.expirationDate)) === 'expired');
-    const expiringSoonCerts = certWithDates.filter(f => getCertStatusKey(safeDateOnly(f.expirationDate)) === 'warn');
-
-    if (!x?.orientationForm?.completed) issues.push('Orientation form is not completed.');
-    if (!x?.drugConsentForm?.completed) issues.push('Drug & Alcohol Consent is not completed.');
-    if (!x?.safetyAgreementForm?.completed) issues.push('Safety Agreement is not completed.');
-    if (!(x?.certUploadsCompleted || certFiles.length)) issues.push('No certification uploads on file.');
-    if (!(x?.payrollIdUploadsCompleted || payrollFiles.length)) issues.push('No payroll / ID uploads on file.');
-    expiredCerts.forEach(f => issues.push(`${f.type || f.name || 'Certification'} expired on ${safeDateOnly(f.expirationDate)}.`));
-    expiringSoonCerts.forEach(f => warnings.push(`${f.type || f.name || 'Certification'} expires soon on ${safeDateOnly(f.expirationDate)}.`));
-
-    const hasExpired = expiredCerts.length > 0;
-    const missingCount = issues.filter(i => !i.toLowerCase().includes('expired on')).length;
-    let level = 'good';
-    let label = 'Compliant / Ready for Office Approval';
-    let recommendedStatus = 'Ready for Review';
-    if (hasExpired) {
-      level = 'hold';
-      label = 'Compliance Hold';
-      recommendedStatus = 'Compliance Hold';
-    } else if (missingCount > 0) {
-      level = 'warn';
-      label = 'Missing Info';
-      recommendedStatus = 'Missing Info';
-    } else if (warnings.length > 0) {
-      level = 'warn';
-      label = 'Needs Review Soon';
-      recommendedStatus = String(x?.status || '').includes('Good') ? 'Good To Work' : 'Ready for Review';
-    }
-    return { level, label, recommendedStatus, issues, warnings, expiredCerts, expiringSoonCerts, certCount: certFiles.length, payrollCount: payrollFiles.length };
-  }
-
-  function complianceBadgeHTML(result) {
-    const icon = result.level === 'good' ? '✅' : result.level === 'hold' ? '⛔' : '⚠️';
-    return `<span class="compliance-pill ${result.level}">${icon} ${esc(result.label)}</span>`;
-  }
-
-  function complianceBannerHTML(result) {
-    const icon = result.level === 'good' ? '✅' : result.level === 'hold' ? '⛔' : '⚠️';
-    const items = [...result.issues, ...result.warnings];
-    return `<div class="compliance-banner ${result.level}">
-      <strong>${icon} Auto Compliance Check: ${esc(result.label)}</strong>
-      ${items.length ? `<ul class="compliance-issues">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : '<div class="helper-text">No missing packet items or expired cert dates detected.</div>'}
-    </div>`;
-  }
-
-  async function runComplianceAudit() {
-    if (!currentUser) return toast('Please sign in first.');
-    try {
-      if (!allNewHireIntakes || !allNewHireIntakes.length) await loadNewHireIntakes(true);
-      let updates = 0;
-      for (const x of (allNewHireIntakes || [])) {
-        if (!x?.id) continue;
-        const result = getNewHireComplianceResult(x);
-        const current = String(x.status || 'Pending');
-        const target = result.recommendedStatus;
-        if (target && current !== target && current !== 'Good To Work') {
-          await updateDoc(doc(db, 'newHireIntakes', x.id), {
-            status: target,
-            complianceStatus: result.label,
-            complianceLevel: result.level,
-            complianceIssues: result.issues,
-            complianceWarnings: result.warnings,
-            complianceCheckedAt: new Date().toISOString(),
-            updatedAt: serverTimestamp()
-          });
-          updates++;
-        } else {
-          await updateDoc(doc(db, 'newHireIntakes', x.id), {
-            complianceStatus: result.label,
-            complianceLevel: result.level,
-            complianceIssues: result.issues,
-            complianceWarnings: result.warnings,
-            complianceCheckedAt: new Date().toISOString(),
-            updatedAt: serverTimestamp()
-          });
-        }
-      }
-      toast(`Compliance audit complete. ${updates} status update(s).`);
-      await loadNewHireIntakes(true);
-      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
-    } catch (e) {
-      console.error(e);
-      toast('Compliance audit failed. Check connection and try again.');
-    }
-  }
-
-
-  // DEMO_WORKER_RESET_CLEANUP_PATCH_2026_05_19
-  async function deleteDemoWorkersByNames(namesToDelete = []) {
-    // Strong cleanup: older demo patches may have created demo records without demoRecord=true.
-    // This scans New Hire Intake and removes anything clearly marked as Joe Blow / John Smith demo data.
-    const targetText = namesToDelete.map(n => String(n || '').toLowerCase()).join(' ');
-    const shouldCleanJoe = !targetText || targetText.includes('joe');
-    const shouldCleanJohn = !targetText || targetText.includes('john');
-    const snap = await getDocs(query(collection(db, 'newHireIntakes'), limit(500)));
-    const deletes = [];
-    snap.forEach(d => {
-      const data = d.data() || {};
-      const name = String(data.name || '').toLowerCase();
-      const email = String(data.email || '').toLowerCase();
-      const notes = String(data.notes || '').toLowerCase();
-      const isDemoFlag = data.demoRecord === true || notes.includes('demo record only') || email.includes('demo.');
-      const isJoeDemo = shouldCleanJoe && (name.includes('joe blow') || email.includes('joe.blow')) && isDemoFlag;
-      const isJohnDemo = shouldCleanJohn && (name.includes('john smith') || email.includes('john.smith')) && isDemoFlag;
-      if (isJoeDemo || isJohnDemo) deletes.push(deleteDoc(doc(db, 'newHireIntakes', d.id)));
-    });
-    await Promise.all(deletes);
-    return deletes.length;
-  }
-
-  async function resetDemoComplianceWorkers() {
-    if (!currentUser) return toast('Please sign in first.');
-    try {
-      const removed = await deleteDemoWorkersByNames(['Joe Blow', 'John Smith']);
-      await createDemoComplianceEmployee({ skipCleanup: true, silent: true });
-      await createDemoJohnSmithGoodToWorkEmployee({ skipCleanup: true, silent: true });
-      if (typeof loadNewHireIntakes === 'function') await loadNewHireIntakes(true);
-      if (typeof loadWorkforceStatusDashboard === 'function') await loadWorkforceStatusDashboard(true);
-      toast(`Demo workers reset. Removed ${removed} old demo record(s). Now showing 1 Joe Blow + 1 John Smith.`);
-    } catch (err) {
-      console.error('Reset demo workers error:', err);
-      toast('Could not reset demo workers.');
-    }
-  }
-
-  async function createDemoComplianceEmployee(options = {}) {
-    if (!currentUser) return toast('Please sign in first.');
-    try {
-      const demo = {
-        name: 'Joe Blow — DEMO',
-        phone: '(555) 010-2026',
-        email: 'demo.joe.blow@example.com',
-        trade: 'Fireproofer / Demo Worker',
-        projectName: 'Demo Project',
-        projectJobNumber: 'DEMO-001',
-        foreman: currentUser.displayName || currentUser.email || 'PAL Office',
-        startDate: todayISO(),
-        required: 'OSHA / SST / Payroll ID documents',
-        notes: 'Demo record only. Shows how an expired certification and missing payroll item appear in the compliance dashboard.',
-        status: 'Compliance Hold',
-        demoRecord: true,
-        orientationForm: { completed: true, signature: 'Joe Blow', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
-        drugConsentForm: { completed: true, signature: 'Joe Blow', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
-        safetyAgreementForm: { completed: true, signature: 'Joe Blow', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
-        certUploadsCompleted: true,
-        payrollIdUploadsCompleted: false,
-        certFiles: [
-          { type: 'OSHA 30', name: 'DEMO OSHA 30 - expired.pdf', url: '#', expirationDate: '2024-01-15', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'SST Card', name: 'DEMO SST Card - valid.pdf', url: '#', expirationDate: '2028-12-31', uploadedAt: new Date().toISOString(), demoFile: true }
-        ],
-        payrollIdFiles: [],
-        packetSubmitted: true,
-        packetSubmittedAt: new Date().toISOString(),
-        createdBy: currentUser.uid,
-        createdByName: currentUser.displayName || currentUser.email,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        complianceStatus: 'Compliance Hold',
-        complianceLevel: 'hold',
-        complianceIssues: ['OSHA 30 expired on 2024-01-15.', 'No payroll / ID uploads on file.'],
-        complianceWarnings: [],
-        complianceCheckedAt: new Date().toISOString()
-      };
-      const docRef = await addDoc(collection(db, 'newHireIntakes'), demo);
-      await updateDoc(doc(db, 'newHireIntakes', docRef.id), {
-        intakeLink: `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`
-      });
-      if (!options.silent) toast('Demo employee created: Joe Blow — Compliance Hold.');
-      await loadNewHireIntakes(true);
-    } catch (e) {
-      console.error(e);
-      toast('Could not create demo employee.');
-    }
-  }
-
-
-  async function createDemoJohnSmithGoodToWorkEmployee(options = {}) {
-    if (!currentUser) return toast('Please sign in first.');
-    try {
-      const demo = {
-        name: 'John Smith — DEMO',
-        phone: '(555) 010-3030',
-        email: 'demo.john.smith@example.com',
-        trade: 'Fireproofer / Scaffold Qualified Worker',
-        projectName: 'Demo Project',
-        projectJobNumber: 'DEMO-002',
-        foreman: currentUser.displayName || currentUser.email || 'PAL Office',
-        startDate: todayISO(),
-        required: 'All onboarding forms, OSHA, SST, scaffold/fall protection, payroll and ID documents',
-        notes: 'Demo record only. Shows a fully completed, valid employee packet that is approved Good To Work.',
-        status: 'Good To Work',
-        demoRecord: true,
-        orientationForm: { completed: true, signature: 'John Smith', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
-        drugConsentForm: { completed: true, signature: 'John Smith', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
-        safetyAgreementForm: { completed: true, signature: 'John Smith', dateSigned: todayISO(), savedAt: new Date().toISOString(), savedBy: 'demo' },
-        certUploadsCompleted: true,
-        payrollIdUploadsCompleted: true,
-        certFiles: [
-          { type: 'OSHA 30', name: 'DEMO OSHA 30 - valid.pdf', url: '#', expirationDate: '2029-05-19', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'SST Card', name: 'DEMO SST Card - valid.pdf', url: '#', expirationDate: '2028-12-31', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'Scaffold Builder', name: 'DEMO Scaffold Builder - valid.pdf', url: '#', expirationDate: '2027-10-01', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'Fall Protection', name: 'DEMO Fall Protection - valid.pdf', url: '#', expirationDate: '2027-05-19', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'Silica', name: 'DEMO Silica Awareness - valid.pdf', url: '#', expirationDate: '2027-05-19', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'Fire Watch / G60', name: 'DEMO G60 Fire Watch - valid.pdf', url: '#', expirationDate: '2028-06-30', uploadedAt: new Date().toISOString(), demoFile: true }
-        ],
-        payrollIdFiles: [
-          { type: 'Driver License / Photo ID', name: 'DEMO Driver License.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'Union Book / Union Card', name: 'DEMO Union Card.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'Social Security Card', name: 'DEMO SS Card.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true },
-          { type: 'W-4 / Payroll Form', name: 'DEMO W-4.pdf', url: '#', uploadedAt: new Date().toISOString(), demoFile: true }
-        ],
-        packetSubmitted: true,
-        packetSubmittedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString(),
-        approvedBy: currentUser.displayName || currentUser.email || 'PAL Office',
-        createdBy: currentUser.uid,
-        createdByName: currentUser.displayName || currentUser.email,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        complianceStatus: 'Good To Work',
-        complianceLevel: 'good',
-        complianceIssues: [],
-        complianceWarnings: [],
-        complianceCheckedAt: new Date().toISOString()
-      };
-      const docRef = await addDoc(collection(db, 'newHireIntakes'), demo);
-      await updateDoc(doc(db, 'newHireIntakes', docRef.id), {
-        intakeLink: `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`
-      });
-      if (!options.silent) toast('Demo Good To Work worker created: John Smith — all certs/payroll valid.');
-      await loadNewHireIntakes(true);
-      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
-    } catch (e) {
-      console.error(e);
-      toast('Could not create Good To Work demo employee.');
-    }
-  }
-
-  // Backward-compatible alias. The button above uses the explicit John Smith function.
-  async function createDemoGoodToWorkEmployee(options = {}) {
-    return createDemoJohnSmithGoodToWorkEmployee(options);
-  }
-
 
   function copyNewHireIntakeText() {
     const text = buildNewHireIntakeText(getNewHireFormData());
@@ -5079,8 +4575,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const title = document.getElementById('newhire-review-title');
     if (title) title.textContent = `New Hire Review — ${x.name || 'New Hire'}`;
     const body = document.getElementById('newhire-review-body');
-    const compliance = getNewHireComplianceResult(x);
-    if (body) body.innerHTML = `${complianceBannerHTML(compliance)}<div class="report-grid">
+    if (body) body.innerHTML = `<div class="report-grid">
       <div class="report-field"><span class="k">Employee</span><div class="v">${esc(x.name)}</div></div>
       <div class="report-field"><span class="k">Status</span><div class="v"><span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span></div></div>
       <div class="report-field"><span class="k">Phone</span><div class="v">${esc(x.phone)}</div></div>
@@ -5139,10 +4634,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         </div>
       </div>
     </div>
-    <div class="newhire-actions" style="margin-top:12px;">
-      <button class="btn-save" type="button" onclick="openEmployeePacketPDF('${esc(x.id)}')">Generate Employee PDF Packet</button>
-      <button class="btn-secondary" type="button" onclick="window.print()">Print Review Screen</button>
-    </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
       ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
@@ -5154,364 +4645,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
     document.getElementById('modal-newhire-review')?.classList.add('open');
-  }
-
-
-  // EMPLOYEE_PDF_PACKET_SAFE_PHASE2_2026_05_19
-  function packetBool(value) {
-    return value ? 'Completed' : 'Pending';
-  }
-
-  function packetDate(value) {
-    if (!value) return '';
-    if (typeof value === 'string') return value;
-    if (value?.toDate) {
-      try { return value.toDate().toLocaleString(); } catch { return ''; }
-    }
-    return String(value || '');
-  }
-
-  function buildPacketFileLinks(files, icon) {
-    const list = Array.isArray(files) ? files : [];
-    if (!list.length) return '<div class="muted-line">No files uploaded.</div>';
-    return list.map(f => `
-      <div class="packet-file-row">
-        <span>${icon || '📎'} ${esc(f.type || f.source || 'File')}</span>
-        <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Open File')}</a>
-      </div>
-    `).join('');
-  }
-
-  function buildEmployeePacketHTML(x) {
-    const orientation = x.orientationForm || {};
-    const drug = x.drugConsentForm || {};
-    const safety = x.safetyAgreementForm || {};
-    const certCount = (x.certFiles || []).length;
-    const payrollCount = (x.payrollIdFiles || []).length;
-    const generated = new Date().toLocaleString();
-    const compliance = getNewHireComplianceResult(x);
-
-    return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>PAL Employee Packet - ${esc(x.name || 'New Hire')}</title>
-  <style>
-    :root { --navy:#1b3a5c; --green:#78c240; --line:#d8dee8; --muted:#64748b; --red:#b91c1c; --orange:#d97706; }
-    * { box-sizing:border-box; }
-    body { margin:0; padding:24px; font-family:Arial, Helvetica, sans-serif; color:#111827; background:#fff; }
-    .packet { max-width:900px; margin:0 auto; }
-    .top { display:flex; justify-content:space-between; gap:18px; border-bottom:4px solid var(--navy); padding-bottom:14px; margin-bottom:18px; }
-    .brand { display:flex; gap:12px; align-items:center; }
-    .logo { width:58px; height:58px; border-radius:10px; background:var(--navy); color:var(--green); display:grid; place-items:center; font-size:20px; font-weight:900; }
-    h1 { margin:0; color:var(--navy); font-size:24px; }
-    .sub { color:var(--muted); font-size:12px; margin-top:4px; line-height:1.35; }
-    .meta { text-align:right; font-size:12px; color:#374151; line-height:1.45; }
-    .status { display:inline-block; margin-top:6px; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:900; background:#eef2f7; color:var(--navy); }
-    .status.good { background:#dcfce7; color:#166534; }
-    .status.missing { background:#fee2e2; color:#991b1b; }
-    .status.hold { background:#fee2e2; color:#991b1b; }
-    .compliance-list { margin:0; padding:10px 28px; font-size:13px; line-height:1.45; }
-    .compliance-good { padding:10px 12px; color:#166534; font-weight:800; }
-    .section { border:1px solid var(--line); border-radius:12px; margin:12px 0; overflow:hidden; page-break-inside:avoid; }
-    .section h2 { margin:0; padding:10px 12px; background:#f8fafc; color:var(--navy); font-size:15px; border-bottom:1px solid var(--line); }
-    .grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0; }
-    .field { padding:10px 12px; border-top:1px solid #eef2f7; min-height:54px; }
-    .field:nth-child(1), .field:nth-child(2) { border-top:0; }
-    .label { display:block; text-transform:uppercase; color:var(--muted); font-size:10px; font-weight:900; letter-spacing:.4px; margin-bottom:4px; }
-    .value { font-size:13px; white-space:pre-wrap; line-height:1.35; }
-    .span-2 { grid-column:1/-1; }
-    .check-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; padding:12px; }
-    .check { border:1px solid var(--line); border-radius:10px; padding:10px; }
-    .check strong { display:block; font-size:13px; margin-bottom:4px; color:#111827; }
-    .check span { font-size:12px; font-weight:900; color:var(--orange); }
-    .check.done span { color:#166534; }
-    .packet-file-row { display:flex; justify-content:space-between; gap:12px; padding:9px 12px; border-top:1px solid #eef2f7; font-size:13px; }
-    .packet-file-row:first-child { border-top:0; }
-    .packet-file-row a { color:var(--navy); font-weight:800; text-decoration:none; }
-    .muted-line { padding:10px 12px; color:var(--muted); font-size:13px; }
-    .sign-box { display:grid; grid-template-columns:1fr 180px; gap:12px; padding:12px; }
-    .sig-line { border-top:1.5px solid #111; padding-top:5px; font-size:11px; color:#374151; margin-top:24px; }
-    .footer { margin-top:18px; font-size:11px; color:var(--muted); text-align:center; }
-    .screen-actions { display:flex; gap:10px; justify-content:flex-end; margin:0 auto 14px; max-width:900px; }
-    .screen-actions button { border:0; border-radius:10px; padding:10px 14px; font-weight:800; cursor:pointer; }
-    .print-btn { background:var(--navy); color:#fff; }
-    .close-btn { background:#eef2f7; color:var(--navy); }
-    @media(max-width:700px){ body{padding:12px;} .top,.grid,.check-grid,.sign-box{grid-template-columns:1fr; display:grid;} .meta{text-align:left;} .field:nth-child(2){border-top:1px solid #eef2f7;} }
-    @media print {
-      body { padding:0.35in; }
-      .screen-actions { display:none !important; }
-      .section { break-inside:avoid; }
-      a { color:#111; text-decoration:none; }
-    }
-
-    /* PHASE5C_VISIBLE_COMMAND_CENTER_REAL_PATCH_2026_05_19 */
-    .command-hero {
-      background: linear-gradient(135deg, #10243a, #1b3a5c 55%, #254d78);
-      color: white;
-      border-radius: 24px;
-      padding: 22px;
-      margin: 0 0 18px;
-      box-shadow: 0 16px 38px rgba(16, 36, 58, .22);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .command-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap; }
-    .command-hero h2 { margin:0 0 6px; font-size:28px; line-height:1.1; color:white; }
-    .command-hero p { margin:0; color:rgba(255,255,255,.78); font-size:14px; line-height:1.55; max-width:620px; }
-    .command-score {
-      min-width:150px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:20px;
-      padding:14px;
-      text-align:center;
-    }
-    .command-score strong { display:block; font-size:42px; line-height:1; color:#78c240; }
-    .command-score span { display:block; margin-top:5px; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.6px; color:rgba(255,255,255,.78); }
-    .command-kpi-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:10px; margin-top:18px; }
-    .command-kpi {
-      background:white;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      box-shadow:0 6px 16px rgba(16,24,40,.06);
-      border-top:6px solid var(--kpi-color, var(--navy));
-    }
-    .command-kpi strong { display:block; font-size:28px; color:var(--navy); line-height:1; margin-bottom:6px; }
-    .command-kpi span { display:block; color:var(--text); font-size:13px; font-weight:900; }
-    .command-kpi small { display:block; margin-top:5px; color:var(--muted); font-size:11px; line-height:1.35; }
-    .command-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin:16px 0 18px; align-items:start; }
-    .command-panel {
-      background:white;
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:16px;
-      box-shadow:0 6px 16px rgba(16,24,40,.05);
-    }
-    .command-panel h3 { color:var(--navy); margin:0 0 10px; font-size:17px; }
-    .command-action-item {
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      border-top:1px solid var(--line);
-      padding:11px 0;
-    }
-    .command-action-item:first-of-type { border-top:0; }
-    .command-action-item strong { display:block; color:var(--text); font-size:14px; margin-bottom:3px; }
-    .command-action-item span { color:var(--muted); font-size:12px; line-height:1.4; }
-    .command-risk-pill {
-      display:inline-flex;
-      white-space:nowrap;
-      border-radius:999px;
-      padding:5px 9px;
-      font-size:11px;
-      font-weight:900;
-    }
-    .command-risk-pill.red { background:#fee2e2; color:#991b1b; }
-    .command-risk-pill.yellow { background:#fef3c7; color:#92400e; }
-    .command-risk-pill.green { background:#dcfce7; color:#166534; }
-    .command-mini-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; margin-bottom:16px; }
-    .command-mini-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:12px; }
-    .command-mini-card strong { display:block; font-size:20px; color:var(--navy); margin-bottom:4px; }
-    .command-mini-card span { color:var(--muted); font-size:12px; font-weight:800; }
-    @media(max-width:900px){ .command-kpi-grid, .command-layout, .command-mini-grid { grid-template-columns:1fr; } .command-score { width:100%; } }
-
-  </style>
-</head>
-<body>
-  <div class="screen-actions">
-    <button class="close-btn" onclick="window.close()">Close</button>
-    <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
-  </div>
-  <div class="packet">
-    <div class="top">
-      <div class="brand">
-        <div class="logo">PAL</div>
-        <div>
-          <h1>Employee Onboarding Packet</h1>
-          <div class="sub">PAL Environmental Services<br>Office Review / Workforce Compliance Copy</div>
-        </div>
-      </div>
-      <div class="meta">
-        Generated: ${esc(generated)}<br>
-        Packet ID: ${esc(x.id || '')}<br>
-        <span class="status ${compliance.level === 'hold' ? 'hold' : String(x.status || '').toLowerCase().includes('good') ? 'good' : String(x.status || '').toLowerCase().includes('missing') ? 'missing' : ''}">${esc(compliance.level === 'hold' ? 'Compliance Hold' : (x.status || 'Pending'))}</span>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Employee Information</h2>
-      <div class="grid">
-        <div class="field"><span class="label">Employee</span><div class="value">${esc(x.name || '')}</div></div>
-        <div class="field"><span class="label">Trade / Role</span><div class="value">${esc(x.trade || '')}</div></div>
-        <div class="field"><span class="label">Phone</span><div class="value">${esc(x.phone || '')}</div></div>
-        <div class="field"><span class="label">Email</span><div class="value">${esc(x.email || '')}</div></div>
-        <div class="field"><span class="label">Project</span><div class="value">${esc(x.projectName || '')}</div></div>
-        <div class="field"><span class="label">Job Number</span><div class="value">${esc(x.projectJobNumber || '')}</div></div>
-        <div class="field"><span class="label">Foreman / Contact</span><div class="value">${esc(x.foreman || '')}</div></div>
-        <div class="field"><span class="label">Start Date</span><div class="value">${esc(x.startDate || '')}</div></div>
-        <div class="field span-2"><span class="label">Required Certs / Documents</span><div class="value">${esc(x.required || '')}</div></div>
-        <div class="field span-2"><span class="label">Notes</span><div class="value">${esc(x.notes || '')}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Auto Compliance Summary</h2>
-      ${([...compliance.issues, ...compliance.warnings]).length ? `<ul class="compliance-list">${[...compliance.issues, ...compliance.warnings].map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : '<div class="compliance-good">No missing packet items or expired cert dates detected.</div>'}
-    </div>
-
-    <div class="section">
-      <h2>Packet Checklist</h2>
-      <div class="check-grid">
-        <div class="check ${orientation.completed ? 'done' : ''}"><strong>Orientation</strong><span>${packetBool(orientation.completed)}</span></div>
-        <div class="check ${drug.completed ? 'done' : ''}"><strong>Drug Consent</strong><span>${packetBool(drug.completed)}</span></div>
-        <div class="check ${safety.completed ? 'done' : ''}"><strong>Safety Agreement</strong><span>${packetBool(safety.completed)}</span></div>
-        <div class="check ${certCount ? 'done' : ''}"><strong>Cert Uploads</strong><span>${certCount} file(s)</span></div>
-        <div class="check ${payrollCount ? 'done' : ''}"><strong>Payroll / ID Uploads</strong><span>${payrollCount} file(s)</span></div>
-        <div class="check ${x.packetSubmitted ? 'done' : ''}"><strong>Final Submit</strong><span>${x.packetSubmitted ? 'Submitted' : 'Not Submitted'}</span></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Orientation Form</h2>
-      <div class="grid">
-        <div class="field"><span class="label">Completed</span><div class="value">${packetBool(orientation.completed)}</div></div>
-        <div class="field"><span class="label">Date Signed</span><div class="value">${esc(orientation.dateSigned || orientation.date || '')}</div></div>
-        <div class="field"><span class="label">Employee Signature / Typed Name</span><div class="value">${esc(orientation.signature || '')}</div></div>
-        <div class="field"><span class="label">Saved By</span><div class="value">${esc(orientation.savedBy || '')}</div></div>
-        <div class="field span-2"><span class="label">Notes</span><div class="value">${esc(orientation.notes || '')}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Drug & Alcohol Consent</h2>
-      <div class="grid">
-        <div class="field"><span class="label">Completed</span><div class="value">${packetBool(drug.completed)}</div></div>
-        <div class="field"><span class="label">Date Signed</span><div class="value">${esc(drug.dateSigned || drug.date || '')}</div></div>
-        <div class="field"><span class="label">Employee Signature / Typed Name</span><div class="value">${esc(drug.signature || '')}</div></div>
-        <div class="field"><span class="label">Saved By</span><div class="value">${esc(drug.savedBy || '')}</div></div>
-        <div class="field span-2"><span class="label">Notes</span><div class="value">${esc(drug.notes || '')}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Safety Agreement</h2>
-      <div class="grid">
-        <div class="field"><span class="label">Completed</span><div class="value">${packetBool(safety.completed)}</div></div>
-        <div class="field"><span class="label">Date Signed</span><div class="value">${esc(safety.dateSigned || safety.date || '')}</div></div>
-        <div class="field"><span class="label">Employee Signature / Typed Name</span><div class="value">${esc(safety.signature || '')}</div></div>
-        <div class="field"><span class="label">Saved By</span><div class="value">${esc(safety.savedBy || '')}</div></div>
-        <div class="field span-2"><span class="label">Notes</span><div class="value">${esc(safety.notes || '')}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Certification Files</h2>
-      ${buildPacketFileLinks(x.certFiles, '📎')}
-    </div>
-
-    <div class="section">
-      <h2>Payroll / ID Files</h2>
-      ${buildPacketFileLinks(x.payrollIdFiles, '🔒')}
-    </div>
-
-    <div class="section">
-      <h2>Office Final Review</h2>
-      <div class="sign-box">
-        <div>
-          <div class="sig-line">Office Reviewer Name / Signature</div>
-        </div>
-        <div>
-          <div class="sig-line">Date</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">PAL Safety Hub · Employee packet generated from protected office review data.</div>
-  </div>
-</body>
-</html>`;
-  }
-
-  function openEmployeePacketPDF(id) {
-    const x = (allNewHireIntakes || []).find(i => i.id === id);
-    if (!x) return toast('Intake request not found.');
-    const packetWindow = window.open('', '_blank');
-    if (!packetWindow) return toast('Popup blocked. Allow popups to generate the packet.');
-    packetWindow.document.open();
-    packetWindow.document.write(buildEmployeePacketHTML(x));
-    packetWindow.document.close();
-    packetWindow.focus();
-    setTimeout(() => {
-      try { packetWindow.print(); } catch (e) { console.warn('Packet print warning', e); }
-    }, 500);
-  }
-
-
-  // EMPLOYEE_CERT_PACKET_ACCESS_PHASE4B_2026_05_19
-  // Lets the permanent Employee Certs record generate the same professional employee packet.
-  // If the employee was synced from New Hire Intake, the packet uses the original intake data.
-  // If not, it builds a clean employee-file packet from the permanent employee record.
-  function employeeRecordToPacketObject(emp) {
-    const certFiles = Array.isArray(emp.certFiles) ? emp.certFiles : (Array.isArray(emp.certifications) ? emp.certifications.map(c => ({
-      name: c.fileName || c.name || c.title || c.type || 'Certification File',
-      fileName: c.fileName || c.name || c.title || c.type || 'Certification File',
-      url: c.url || '',
-      type: c.title || c.type || 'Certification',
-      title: c.title || c.type || 'Certification',
-      expirationDate: c.expirationDate || '',
-      issueDate: c.issueDate || ''
-    })) : []);
-    return {
-      id: emp.sourceNewHireIntakeId || emp.id || '',
-      name: emp.name || 'Employee',
-      phone: emp.phone || '',
-      email: emp.email || '',
-      trade: emp.trade || '',
-      emergencyName: emp.emergencyContactName || '',
-      emergencyPhone: emp.emergencyContactPhone || '',
-      projectName: emp.projectName || emp.lastProjectName || '',
-      projectJobNumber: emp.projectJobNumber || emp.lastProjectJobNumber || '',
-      foremanName: emp.foremanName || '',
-      status: emp.workforceStatus || emp.onboardingStatus || emp.complianceStatus || 'Employee Record',
-      notes: emp.notes || '',
-      packetSubmitted: emp.onboardingStatus === 'Good To Work' || emp.workforceStatus === 'Good To Work',
-      orientationForm: emp.orientationForm || emp.orientation || {},
-      drugConsentForm: emp.drugConsentForm || emp.drugConsent || {},
-      safetyAgreementForm: emp.safetyAgreementForm || emp.safetyAgreement || {},
-      certFiles,
-      payrollIdFiles: Array.isArray(emp.payrollIdFiles) ? emp.payrollIdFiles : [],
-      complianceStatus: emp.complianceStatus || '',
-      complianceLevel: emp.complianceLevel || '',
-      complianceIssues: Array.isArray(emp.complianceIssues) ? emp.complianceIssues : [],
-      complianceWarnings: Array.isArray(emp.complianceWarnings) ? emp.complianceWarnings : [],
-      employeeCertId: emp.id || '',
-      generatedFromEmployeeRecord: true
-    };
-  }
-
-  async function openEmployeeRecordPacketPDF(employeeId) {
-    const emp = (allEmployees || []).find(e => e.id === employeeId);
-    if (!emp) return toast('Employee record not found.');
-    let packetSource = null;
-    const linkedIntakeId = emp.sourceNewHireIntakeId || emp.newHireIntakeId || '';
-    if (linkedIntakeId) {
-      if (!allNewHireIntakes || !allNewHireIntakes.length) {
-        try { await loadNewHireIntakes(true); } catch (e) { console.warn('Could not load linked intake for packet.', e); }
-      }
-      packetSource = (allNewHireIntakes || []).find(x => x.id === linkedIntakeId) || null;
-    }
-    const packetData = packetSource || employeeRecordToPacketObject(emp);
-    const packetWindow = window.open('', '_blank');
-    if (!packetWindow) return toast('Popup blocked. Allow popups to generate the employee packet.');
-    packetWindow.document.open();
-    packetWindow.document.write(buildEmployeePacketHTML(packetData));
-    packetWindow.document.close();
-    packetWindow.focus();
-    setTimeout(() => {
-      try { packetWindow.print(); } catch (e) { console.warn('Employee record packet print warning', e); }
-    }, 500);
   }
 
   async function uploadNewHireCertFiles() {
@@ -5723,201 +4856,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
 
-  async function deleteNewHireIntake(id) {
-    if (!id) return;
-    const x = allNewHireIntakes.find(i => i.id === id);
-    const ok = confirm(`Delete new hire intake for ${x?.name || 'this worker'}? This removes the onboarding packet from New Hire Intake.`);
-    if (!ok) return;
-    try {
-      await deleteDoc(doc(db, 'newHireIntakes', id));
-      if (currentNewHireReviewId === id) {
-        currentNewHireReviewId = null;
-        closeModal('modal-newhire-review');
-      }
-      await loadNewHireIntakes(true);
-      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
-      toast('New hire intake deleted.');
-    } catch (e) {
-      console.error(e);
-      toast('Could not delete intake.');
-    }
-  }
-
-  function mapNewHireCertFilesToEmployeeCerts(x) {
-    const files = Array.isArray(x?.certFiles) ? x.certFiles : [];
-    return files.map(f => ({
-      type: f.type || f.title || 'Other',
-      title: f.type || f.title || f.name || 'Certification',
-      issueDate: f.issueDate || '',
-      expirationDate: safeDateOnly(f.expirationDate || f.expDate || ''),
-      fileName: f.fileName || f.name || 'New Hire Cert File',
-      mimeType: f.mimeType || '',
-      url: f.url || '#',
-      uploadedAt: f.uploadedAt || new Date().toISOString(),
-      uploadedBy: f.uploadedBy || currentUser?.displayName || currentUser?.email || 'New Hire Intake',
-      source: 'New Hire Intake',
-      sourceNewHireIntakeId: x.id,
-      demoFile: !!f.demoFile
-    }));
-  }
-
-  async function syncNewHireToEmployeeCerts(id, options = {}) {
-    if (!currentUser) return toast('Please sign in first.');
-    const x = allNewHireIntakes.find(i => i.id === id);
-    if (!x) return toast('Intake request not found.');
-    try {
-      if (!allEmployees || !allEmployees.length) await loadEmployees(true);
-      const email = String(x.email || '').trim().toLowerCase();
-      const name = String(x.name || '').trim().toLowerCase();
-      let existing = allEmployees.find(e => String(e.sourceNewHireIntakeId || '') === id)
-        || (x.employeeCertId ? allEmployees.find(e => e.id === x.employeeCertId) : null)
-        || (email ? allEmployees.find(e => String(e.email || '').trim().toLowerCase() === email) : null)
-        || (name ? allEmployees.find(e => String(e.name || '').trim().toLowerCase() === name) : null);
-
-      const compliance = getNewHireComplianceResult(x);
-      const incomingCerts = mapNewHireCertFilesToEmployeeCerts(x);
-      const payrollFiles = Array.isArray(x.payrollIdFiles) ? x.payrollIdFiles : [];
-      const intakeStatus = x.status || '';
-      const workforceStatus = compliance.level === 'good' && intakeStatus === 'Good To Work' ? 'Good To Work' : (compliance.level === 'hold' ? 'Compliance Hold' : intakeStatus || compliance.recommendedStatus || 'Pending');
-      const syncStamp = new Date().toISOString();
-
-      if (existing) {
-        const currentCerts = Array.isArray(existing.certifications) ? existing.certifications : [];
-        const merged = [...currentCerts];
-        incomingCerts.forEach(c => {
-          const key = `${c.title}|${c.expirationDate}|${c.fileName}`.toLowerCase();
-          const already = merged.some(m => `${m.title || m.type}|${m.expirationDate || ''}|${m.fileName || m.name || ''}`.toLowerCase() === key);
-          if (!already) merged.push(c);
-        });
-        await updateDoc(doc(db, 'employees', existing.id), {
-          name: x.name || existing.name || '',
-          email: x.email || existing.email || '',
-          phone: x.phone || existing.phone || '',
-          trade: x.trade || existing.trade || '',
-          emergencyContactName: x.emergencyName || existing.emergencyContactName || '',
-          emergencyContactPhone: x.emergencyPhone || existing.emergencyContactPhone || '',
-          notes: `${existing.notes || ''}${existing.notes ? '\n' : ''}Synced from New Hire Intake: ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
-          certifications: merged,
-          payrollIdFiles: payrollFiles,
-          orientationForm: x.orientationForm || {},
-          drugConsentForm: x.drugConsentForm || {},
-          safetyAgreementForm: x.safetyAgreementForm || {},
-          sourceNewHireIntakeId: id,
-          onboardingStatus: intakeStatus,
-          workforceStatus,
-          complianceStatus: compliance.label || '',
-          complianceLevel: compliance.level || '',
-          complianceIssues: compliance.issues || [],
-          complianceWarnings: compliance.warnings || [],
-          lastIntakeSyncAt: syncStamp,
-          updatedAt: new Date().toISOString(),
-          updatedBy: currentUser.displayName || currentUser.email
-        });
-      } else {
-        const docRef = await addDoc(collection(db, 'employees'), {
-          name: x.name || 'New Hire',
-          email: x.email || '',
-          phone: x.phone || '',
-          trade: x.trade || '',
-          emergencyContactName: x.emergencyName || '',
-          emergencyContactPhone: x.emergencyPhone || '',
-          notes: `Created from New Hire Intake. ${x.projectName || ''} ${x.projectJobNumber || ''}`.trim(),
-          certifications: incomingCerts,
-          payrollIdFiles: payrollFiles,
-          assignedProjectIds: [],
-          sourceNewHireIntakeId: id,
-          onboardingStatus: intakeStatus,
-          workforceStatus,
-          complianceStatus: compliance.label || '',
-          complianceLevel: compliance.level || '',
-          complianceIssues: compliance.issues || [],
-          complianceWarnings: compliance.warnings || [],
-          lastIntakeSyncAt: syncStamp,
-          createdBy: currentUser.uid,
-          createdByName: currentUser.displayName || currentUser.email,
-          createdAt: serverTimestamp()
-        });
-        existing = { id: docRef.id };
-      }
-      await updateDoc(doc(db, 'newHireIntakes', id), {
-        employeeCertLinked: true,
-        employeeCertId: existing.id,
-        employeeCertLinkedAt: syncStamp,
-        employeeCertSyncStatus: 'Synced',
-        employeeCertSyncStatusAt: syncStamp,
-        updatedAt: serverTimestamp()
-      });
-      if (!options.skipReload) {
-        await loadEmployees(true);
-        await loadNewHireIntakes(true);
-      }
-      if (!options.silent) toast('New hire synced to Employee Certs.');
-      if (options.openEmployeeAfter && existing?.id) openEmployeeDetail(existing.id);
-      return existing.id;
-    } catch (e) {
-      console.error(e);
-      toast('Could not sync to Employee Certs.');
-      return null;
-    }
-  }
-
-  async function syncAllGoodToWorkIntakes() {
-    if (!currentUser) return toast('Please sign in first.');
-    try {
-      if (!allNewHireIntakes || !allNewHireIntakes.length) await loadNewHireIntakes(true);
-      const ready = (allNewHireIntakes || []).filter(x => {
-        const result = getNewHireComplianceResult(x);
-        return String(x.status || '') === 'Good To Work' && result.level === 'good';
-      });
-      if (!ready.length) return toast('No Good To Work intakes ready to sync.');
-      for (const x of ready) {
-        await syncNewHireToEmployeeCerts(x.id, { silent: true, skipReload: true });
-      }
-      await loadEmployees(true);
-      await loadNewHireIntakes(true);
-      if (document.getElementById('main-workforce-status')?.classList.contains('active')) await loadWorkforceStatusDashboard(true);
-      toast(`Synced ${ready.length} Good To Work worker(s) to Employee Certs.`);
-    } catch (e) {
-      console.error(e);
-      toast('Could not sync Good To Work workers.');
-    }
-  }
-
   async function setNewHireStatus(id, status) {
     if (!id) return;
     try {
-      const x = allNewHireIntakes.find(i => i.id === id);
-      let finalStatus = status;
-      const compliance = x ? getNewHireComplianceResult(x) : null;
-      if (status === 'Good To Work' && compliance && compliance.level !== 'good') {
-        finalStatus = compliance.recommendedStatus || 'Missing Info';
-        toast(`Blocked by compliance: ${compliance.label}`);
-      }
-      const checkedAt = new Date().toISOString();
-      await updateDoc(doc(db, 'newHireIntakes', id), {
-        status: finalStatus,
-        complianceStatus: compliance?.label || '',
-        complianceLevel: compliance?.level || '',
-        complianceIssues: compliance?.issues || [],
-        complianceWarnings: compliance?.warnings || [],
-        complianceCheckedAt: checkedAt,
-        updatedAt: serverTimestamp()
-      });
-      const local = allNewHireIntakes.find(i => i.id === id);
-      if (local) {
-        local.status = finalStatus;
-        local.complianceStatus = compliance?.label || '';
-        local.complianceLevel = compliance?.level || '';
-        local.complianceIssues = compliance?.issues || [];
-        local.complianceWarnings = compliance?.warnings || [];
-        local.complianceCheckedAt = checkedAt;
-      }
-      if (finalStatus === 'Good To Work' && compliance?.level === 'good') {
-        await syncNewHireToEmployeeCerts(id, { silent: true, skipReload: true });
-        toast('Status updated: Good To Work — synced to Employee Certs.');
-      } else {
-        toast(`Status updated: ${finalStatus}`);
-      }
+      await updateDoc(doc(db, 'newHireIntakes', id), { status, updatedAt: serverTimestamp() });
+      toast(`Status updated: ${status}`);
       await loadNewHireIntakes(true);
       if (document.getElementById('modal-newhire-review')?.classList.contains('open')) openNewHireReview(id);
     } catch (e) { console.error(e); toast('Could not update status.'); }
@@ -5964,21 +4907,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
     (allNewHireIntakes || []).forEach(x => {
       const status = String(x.status || 'Pending');
-      const result = getNewHireComplianceResult(x);
       const certCount = (x.certFiles || []).length;
       const payrollCount = (x.payrollIdFiles || []).length;
-      const issueText = [...result.issues, ...result.warnings].slice(0, 2).join(' | ');
       const base = {
         id: x.id,
         type: 'intake',
         name: x.name || 'New Hire',
         project: x.projectName || '',
         trade: x.trade || '',
-        detail: `${result.label} • ${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}${issueText ? ' • ' + issueText : ''}`,
+        detail: `${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
         action: `openNewHireReview('${esc(x.id)}')`
       };
-      if (result.level === 'hold') hold.push(base);
-      else if (status === 'Good To Work' && result.level === 'good') good.push(base);
+      if (status === 'Good To Work') good.push(base);
+      else if (status === 'Missing Info') missing.push(base);
       else missing.push(base);
     });
 
@@ -6010,94 +4951,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       </div>`).join('') : `<p style="color:var(--muted);font-size:13px;">${emptyText}</p>`}</div>`;
   }
 
-
-  // PHASE5C_VISIBLE_COMMAND_CENTER_REAL_PATCH_2026_05_19
-  function renderCommandCenterTop(rows) {
-    const el = document.getElementById('command-center-top');
-    if (!el || !rows) return;
-    const good = rows.good || [];
-    const missing = rows.missing || [];
-    const hold = rows.hold || [];
-    const total = good.length + missing.length + hold.length;
-    const readiness = total ? Math.round((good.length / total) * 100) : 0;
-    const riskClass = hold.length ? 'red' : (missing.length ? 'yellow' : 'green');
-    const issueItems = [];
-    if (hold.length) issueItems.push({ level:'red', title:`${hold.length} worker(s) blocked / on hold`, desc:'Expired certs or compliance hold items need office action before site placement.' });
-    if (missing.length) issueItems.push({ level:'yellow', title:`${missing.length} worker(s) missing info or needing review`, desc:'Packet, payroll/ID, or cert information needs review before final clearance.' });
-    if (!hold.length && !missing.length) issueItems.push({ level:'green', title:'No major compliance issues detected', desc:'Current records loaded into this dashboard show no blocked workers.' });
-
-    const peopleHtml = (items, empty, limit=5) => items.length ? items.slice(0, limit).map(x => `
-      <div class="command-action-item">
-        <div><strong>${esc(x.name || 'Worker')}</strong><span>${esc(x.detail || '')}</span></div>
-        <button class="btn-sm" onclick="${x.action || ''}">Open</button>
-      </div>`).join('') : `<p class="helper-text">${empty}</p>`;
-
-    el.innerHTML = `
-      <div class="command-hero">
-        <div class="command-hero-top">
-          <div>
-            <h2>PAL Compliance Command Center</h2>
-            <p>Executive snapshot for workforce readiness, onboarding risk, expired certifications, missing payroll/ID items, and jobsite clearance.</p>
-          </div>
-          <div class="command-score"><strong>${readiness}%</strong><span>Readiness Score</span></div>
-        </div>
-        <div class="command-kpi-grid">
-          <div class="command-kpi" style="--kpi-color:#1b3a5c"><strong>${total}</strong><span>Total Records</span><small>Employees + active intake packets loaded.</small></div>
-          <div class="command-kpi" style="--kpi-color:#16a34a"><strong>${good.length}</strong><span>Good To Work</span><small>Ready for site based on current records.</small></div>
-          <div class="command-kpi" style="--kpi-color:#d97706"><strong>${missing.length}</strong><span>Needs Review</span><small>Missing info, packet review, or warnings.</small></div>
-          <div class="command-kpi" style="--kpi-color:#dc2626"><strong>${hold.length}</strong><span>Blocked / Hold</span><small>Expired certs or hold conditions.</small></div>
-          <div class="command-kpi" style="--kpi-color:${hold.length ? '#dc2626' : (missing.length ? '#d97706' : '#16a34a')}"><strong>${hold.length ? 'HIGH' : (missing.length ? 'MED' : 'LOW')}</strong><span>Office Risk</span><small>Priority level for compliance follow-up.</small></div>
-        </div>
-      </div>
-
-      <div class="command-layout">
-        <div class="command-panel">
-          <h3>Top Office Action Queue</h3>
-          ${issueItems.map(i => `
-            <div class="command-action-item">
-              <div><strong>${esc(i.title)}</strong><span>${esc(i.desc)}</span></div>
-              <span class="command-risk-pill ${i.level}">${i.level === 'red' ? 'URGENT' : (i.level === 'yellow' ? 'REVIEW' : 'CLEAR')}</span>
-            </div>`).join('')}
-        </div>
-        <div class="command-panel">
-          <h3>Executive Snapshot</h3>
-          <div class="command-mini-grid">
-            <div class="command-mini-card"><strong>${readiness}%</strong><span>Readiness</span></div>
-            <div class="command-mini-card"><strong>${hold.length}</strong><span>Blocked</span></div>
-            <div class="command-mini-card"><strong>${missing.length}</strong><span>Needs Review</span></div>
-          </div>
-          <p class="helper-text">Use this screen in an office meeting to show exactly who is ready, who is missing paperwork, and who should not be sent to site yet.</p>
-        </div>
-      </div>
-
-      <div class="command-layout">
-        <div class="command-panel"><h3>🔴 Workers Blocked From Site</h3>${peopleHtml(hold, 'No blocked workers loaded right now.', 6)}</div>
-        <div class="command-panel"><h3>🟢 Good To Work Snapshot</h3>${peopleHtml(good, 'No Good To Work workers loaded yet.', 6)}</div>
-      </div>
-    `;
-  }
-
-  function printCommandCenterReport() {
-    try {
-      const content = document.getElementById('command-center-top')?.innerHTML || '';
-      const summary = document.getElementById('workforce-status-summary')?.innerHTML || '';
-      const board = document.getElementById('workforce-status-board')?.innerHTML || '';
-      const w = window.open('', '_blank');
-      if (!w) return toast('Popup blocked. Allow popups to print the command report.');
-      w.document.write(`<!doctype html><html><head><title>PAL Compliance Command Report</title><style>
-        body{font-family:Arial,sans-serif;margin:24px;color:#1f2937}.command-hero{background:#1b3a5c;color:white;border-radius:18px;padding:20px;margin-bottom:14px}.command-hero h2{margin:0 0 6px}.command-kpi-grid,.workforce-status-grid,.workforce-board,.command-layout{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.command-kpi,.workforce-status-card,.workforce-column,.command-panel{border:1px solid #dde3ea;border-radius:14px;padding:12px;margin-bottom:10px}.command-score strong,.command-kpi strong,.workforce-status-card strong{font-size:28px;display:block}.btn-sm,.btn-outline{display:none}.helper-text,p,span,small{color:#555;font-size:12px}.workforce-person,.command-action-item{border-top:1px solid #eee;padding:8px 0}@media print{body{margin:12px}.command-kpi-grid,.workforce-status-grid,.workforce-board,.command-layout{grid-template-columns:1fr 1fr 1fr}}
-      </style></head><body><h1>PAL Compliance Command Report</h1>${content}${summary}${board}</body></html>`);
-      w.document.close();
-      setTimeout(() => w.print(), 300);
-    } catch (e) { console.error(e); toast('Could not open command report.'); }
-  }
-
   function renderWorkforceStatusDashboard() {
     const summary = document.getElementById('workforce-status-summary');
     const board = document.getElementById('workforce-status-board');
     if (!summary || !board) return;
     const rows = buildWorkforceRows();
-    renderCommandCenterTop(rows);
     summary.innerHTML = `<div class="workforce-status-grid">
       <div class="workforce-status-card good"><strong>${rows.good.length}</strong><span>Good To Work</span></div>
       <div class="workforce-status-card missing"><strong>${rows.missing.length}</strong><span>Missing / Needs Review</span></div>
