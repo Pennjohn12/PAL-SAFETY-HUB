@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23 -->
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-
   <meta charset="UTF-8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -675,91 +670,36 @@
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
   
-    /* EQUIPMENT_PPW_CHECKLIST_PHASE_2026_05_23 */
-    .ppw-intro {
-      background:#f8fafc;
-      border:1px solid var(--line);
-      border-left:6px solid var(--green-accent);
-      border-radius:16px;
-      padding:14px 16px;
-      margin:14px 0;
-      color:var(--text);
-      font-size:14px;
-      line-height:1.55;
-    }
-    .ppw-section {
-      background:#fff;
+    /* EQUIPMENT_PPW_SIMPLE_SAFE_PATCH_2026_05_23 */
+    .ppw-card-section {
+      background:white;
       border:1px solid var(--line);
       border-radius:18px;
       padding:16px;
       box-shadow:0 6px 18px rgba(16,24,40,.05);
-      margin-bottom:16px;
+      margin:0 0 16px;
     }
-    .ppw-section h3 {
-      color:var(--navy);
-      font-size:18px;
-      margin:0 0 6px;
+    .ppw-card-section h3 { margin:0 0 6px; color:var(--navy); font-size:18px; }
+    .ppw-card-section p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
+    .ppw-check-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .ppw-check-btn {
+      width:100%; border:1px solid var(--line); border-left:5px solid var(--green-accent);
+      background:#f8fafc; border-radius:16px; padding:14px; text-align:left; cursor:pointer;
+      font:inherit; min-height:82px; color:var(--text);
     }
-    .ppw-section p {
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.45;
-      margin:0 0 12px;
-    }
-    .ppw-grid {
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
-    .ppw-card {
-      border:1px solid var(--line);
-      background:#f8fafc;
-      border-left:5px solid var(--green-accent);
-      border-radius:16px;
-      padding:14px;
-      cursor:pointer;
-      text-align:left;
-      min-height:86px;
-      font:inherit;
-      color:var(--text);
-      display:block;
-      width:100%;
-    }
-    .ppw-card:hover {
-      background:#f0fae8;
-      border-color:var(--green-accent);
-      transform:translateY(-1px);
-    }
-    .ppw-card strong {
-      display:block;
-      color:var(--navy);
-      font-size:15px;
-      margin-bottom:4px;
-    }
-    .ppw-card small {
-      display:block;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
-      font-weight:650;
-    }
-    .ppw-card.ready { border-left-color:#16a34a; }
-    .ppw-card.soon { border-left-color:#d97706; }
-    @media(max-width:650px){
-      .ppw-grid { grid-template-columns:1fr; }
-      .ppw-card { min-height:72px; }
-    }
+    .ppw-check-btn strong { display:block; color:var(--navy); font-size:15px; margin-bottom:4px; }
+    .ppw-check-btn small { display:block; color:var(--muted); font-size:12px; line-height:1.35; }
+    .ppw-check-btn.ready { border-left-color:#16a34a; }
+    .ppw-check-btn.soon { border-left-color:#d97706; }
+    .ppw-check-btn:hover { background:#f0fae8; border-color:var(--green-accent); }
+    @media(max-width:650px){ .ppw-check-grid { grid-template-columns:1fr; } }
 
   </style>
 
-
 <script>
-  // LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23
-  // Laptop-safe version: forces a fresh projects.html route and prevents cached login page.
   window.startPublicNewHireIntake = function startPublicNewHireIntake() {
     var id = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
-    var url = 'projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1&noLogin=1&v=1779575382-' + Date.now();
-    window.location.href = url;
+    window.location.href = 'projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1&noLogin=1&v=' + Date.now();
   };
 </script>
 
@@ -824,7 +764,7 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">LAPTOP NO-LOGIN PATCH ACTIVE · EQUIPMENT / PPW CHECKLIST PATCH ACTIVE</div>
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">EQUIPMENT PPW SIMPLE PATCH ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
@@ -832,8 +772,7 @@
             <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
 
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
-              <button onclick="showPage('employee-safety')"><span>🦺 Employee Safety &amp; Checklists</span><span class="arrow">›</span></button>
+              <button onclick="showPage('employee-safety')"><span>✅ Equipment / PPW Checklists</span><span class="arrow">›</span></button>
               <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
@@ -867,67 +806,67 @@
     <section class="page" id="employee-safety">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">Equipment / PPW Checklists</h2>
-        <p class="muted">Public checklist library for PAL field crews. These are the equipment, PPE, protection, and work-area checklists employees can use without office login.</p>
+        <p class="muted">Public checklist library for PAL field crews. This tab is for equipment, PPE/PPW, access, demolition, abatement, fireproofing, and special-work checklists only.</p>
       </div>
 
-      <div class="ppw-intro">
-        Fill in the project/job number on the checklist so the completed form can be attached to the correct PAL project. Full form builds will use the same format: project link fields, 3 starting signature rows, add-row button, typed signature, print/share/PDF-ready layout.
+      <div class="employee-access-note">
+        Each checklist should be completed with project name, job number, foreman/supervisor, submitted by, and date so it can be attached to the correct PAL project later.
       </div>
 
-      <div class="ppw-section">
-        <h3>🧰 Equipment &amp; Access Checklists</h3>
-        <p>Pre-use and access inspections for field equipment and elevated work.</p>
-        <div class="ppw-grid">
-          <button class="ppw-card ready" type="button" onclick="showPage('harness-checklist')"><strong>🦺 Full-Body Harness Inspection</strong><small>Existing PAL checklist · pre-use harness inspection</small></button>
-          <button class="ppw-card ready" type="button" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL checklist · scaffold condition, rails, access, ties, decking</small></button>
-          <button class="ppw-card ready" type="button" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL checklist · walkaround, powered checks, workplace hazards</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Ladder Safety Checklist')"><strong>🪜 Ladder Safety Checklist</strong><small>Condition, setup, access, extension, 3-point contact</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Vehicle / Equipment Checklist')"><strong>🚚 Vehicle / Equipment Checklist</strong><small>Walkaround, damage, lights, fluids, condition, return status</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Spray Equipment Checklist')"><strong>🧯 Spray Equipment Checklist</strong><small>Hoses, fittings, pump, pressure, cleanup, material handling</small></button>
+      <div class="ppw-card-section">
+        <h3>🧰 Equipment &amp; Access</h3>
+        <p>Pre-use inspections for equipment and elevated work.</p>
+        <div class="ppw-check-grid">
+          <button type="button" class="ppw-check-btn ready" onclick="showPage('harness-checklist')"><strong>🦺 Full-Body Harness Inspection</strong><small>Existing PAL checklist</small></button>
+          <button type="button" class="ppw-check-btn ready" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL checklist</small></button>
+          <button type="button" class="ppw-check-btn ready" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL checklist</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Ladder Safety Checklist')"><strong>🪜 Ladder Safety Checklist</strong><small>Condition, setup, access, 3-point contact</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Vehicle / Equipment Checklist')"><strong>🚚 Vehicle / Equipment Checklist</strong><small>Walkaround, damage, lights, fluids, condition</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Spray Equipment Checklist')"><strong>🧯 Spray Equipment Checklist</strong><small>Hoses, fittings, pump, pressure, cleanup</small></button>
         </div>
       </div>
 
-      <div class="ppw-section">
-        <h3>🦺 PPE / PPW Checklists</h3>
-        <p>Personal protective equipment and worker-protection checks.</p>
-        <div class="ppw-grid">
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('PPE Inspection Checklist')"><strong>🥽 PPE Inspection Checklist</strong><small>Hard hat, glasses, gloves, boots, hi-vis, task-specific PPE</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Respirator Checklist')"><strong>😷 Respirator Checklist</strong><small>Fit, seal check, cartridge condition, storage, assignment</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Fall Protection Checklist')"><strong>🪢 Fall Protection Checklist</strong><small>Anchor points, lanyards, SRLs, guardrails, hole covers</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Fire Extinguisher Checklist')"><strong>🧯 Fire Extinguisher Checklist</strong><small>Location, access, gauge, pin, inspection tag, fire watch readiness</small></button>
+      <div class="ppw-card-section">
+        <h3>🦺 PPE / PPW</h3>
+        <p>Worker-protection and PPE checks.</p>
+        <div class="ppw-check-grid">
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('PPE Inspection Checklist')"><strong>🥽 PPE Inspection Checklist</strong><small>Hard hat, glasses, gloves, boots, hi-vis</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Respirator Checklist')"><strong>😷 Respirator Checklist</strong><small>Fit, seal check, cartridges, storage</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Fall Protection Checklist')"><strong>🪢 Fall Protection Checklist</strong><small>Anchors, lanyards, SRLs, rails, holes</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Fire Extinguisher Checklist')"><strong>🧯 Fire Extinguisher Checklist</strong><small>Gauge, pin, access, inspection tag</small></button>
         </div>
       </div>
 
-      <div class="ppw-section">
-        <h3>🏚️ Demolition / Cleanup Checklists</h3>
-        <p>Focused checks for demolition, debris handling, and changing work areas.</p>
-        <div class="ppw-grid">
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Demolition Safety Checklist')"><strong>🚧 Demolition Safety Checklist</strong><small>Utilities, falling debris, overhead hazards, barricades, exclusion zones</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Silica / Dust Control Checklist')"><strong>🌫️ Silica / Dust Control Checklist</strong><small>Wet methods, HEPA vacuum, respirators, dust control, housekeeping</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Housekeeping / Debris Checklist')"><strong>🧹 Housekeeping / Debris Checklist</strong><small>Walkways, cords, scrap, nails, trash, trip hazards</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Utility / Energy Isolation Checklist')"><strong>⚡ Utility / Energy Isolation Checklist</strong><small>Electric, gas, water, lockout awareness, supervisor verification</small></button>
+      <div class="ppw-card-section">
+        <h3>🏚️ Demolition / Cleanup</h3>
+        <p>Checks for demo, debris handling, dust, and changing work areas.</p>
+        <div class="ppw-check-grid">
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Demolition Safety Checklist')"><strong>🚧 Demolition Safety Checklist</strong><small>Utilities, debris, overhead hazards, exclusion zones</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Silica / Dust Control Checklist')"><strong>🌫️ Silica / Dust Control Checklist</strong><small>Wet methods, HEPA, respirators, dust control</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Housekeeping / Debris Checklist')"><strong>🧹 Housekeeping / Debris Checklist</strong><small>Walkways, cords, scrap, nails, trip hazards</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Utility / Energy Isolation Checklist')"><strong>⚡ Utility / Energy Isolation Checklist</strong><small>Electric, gas, water, lockout awareness</small></button>
         </div>
       </div>
 
-      <div class="ppw-section">
-        <h3>☣️ Abatement / Environmental Checklists</h3>
-        <p>Focused checks for containment, PPE, decon, and contamination control.</p>
-        <div class="ppw-grid">
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Abatement Safety Checklist')"><strong>☣️ Abatement Safety Checklist</strong><small>Containment, signage, PPE, disposal, decon, work-area control</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Containment / Negative Air Checklist')"><strong>💨 Containment / Negative Air Checklist</strong><small>Barriers, HEPA units, pressure, entry/exit, inspection points</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Waste Handling Checklist')"><strong>🗑️ Waste Handling Checklist</strong><small>Bags, labels, disposal path, sealed containers, housekeeping</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Decon Setup Checklist')"><strong>🚿 Decon Setup Checklist</strong><small>Clean/dirty areas, PPE removal, wash area, waste separation</small></button>
+      <div class="ppw-card-section">
+        <h3>☣️ Abatement / Environmental</h3>
+        <p>Checks for containment, PPE, decon, disposal, and contamination control.</p>
+        <div class="ppw-check-grid">
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Abatement Safety Checklist')"><strong>☣️ Abatement Safety Checklist</strong><small>Containment, PPE, decon, disposal, signage</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Containment / Negative Air Checklist')"><strong>💨 Containment / Negative Air Checklist</strong><small>Barriers, pressure, HEPA units, entry/exit</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Waste Handling Checklist')"><strong>🗑️ Waste Handling Checklist</strong><small>Bags, labels, disposal path, sealed containers</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Decon Setup Checklist')"><strong>🚿 Decon Setup Checklist</strong><small>Clean/dirty areas, PPE removal, wash area</small></button>
         </div>
       </div>
 
-      <div class="ppw-section">
-        <h3>🔥 Fireproofing / Special Work Checklists</h3>
+      <div class="ppw-card-section">
+        <h3>🔥 Fireproofing / Special Work</h3>
         <p>Checks for spray work, hot work, ventilation, and higher-risk tasks.</p>
-        <div class="ppw-grid">
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Fireproofing Safety Checklist')"><strong>🔥 Fireproofing Safety Checklist</strong><small>Overspray, slip hazards, hoses, ventilation, nearby trades</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Hot Work Checklist')"><strong>🔥 Hot Work Checklist</strong><small>Permit, fire watch, combustibles, extinguisher, 30-minute watch</small></button>
-          <button class="ppw-card soon" type="button" onclick="showComingSoonChecklist('Confined Space Awareness Checklist')"><strong>🚪 Confined Space Awareness Checklist</strong><small>Permit awareness, atmosphere, attendant, rescue, access</small></button>
-          <button class="ppw-card soon" type="button" onclick="showPage('incident-report')"><strong>🩹 Incident / Near Miss Report</strong><small>Existing PAL form · injury, near miss, damage, unsafe condition</small></button>
+        <div class="ppw-check-grid">
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Fireproofing Safety Checklist')"><strong>🔥 Fireproofing Safety Checklist</strong><small>Overspray, slip hazards, hoses, ventilation</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Hot Work Checklist')"><strong>🔥 Hot Work Checklist</strong><small>Permit, fire watch, extinguisher, combustibles</small></button>
+          <button type="button" class="ppw-check-btn soon" onclick="showComingSoonChecklist('Confined Space Awareness Checklist')"><strong>🚪 Confined Space Awareness Checklist</strong><small>Permit awareness, atmosphere, attendant, rescue</small></button>
+          <button type="button" class="ppw-check-btn ready" onclick="showPage('incident-report')"><strong>🩹 Incident / Near Miss Report</strong><small>Existing PAL form</small></button>
         </div>
       </div>
     </section>
@@ -999,7 +938,7 @@
           <li><a onclick="showPage('quick-reference')">Quick Reference</a></li>
           <li><a onclick="showPage('code-of-conduct')">Code of Conduct</a></li>
           <li><a onclick="showPage('whistleblower')">Whistleblower</a></li>
-          <li><a onclick="showPage('employee-safety')">Employee Safety &amp; Checklists</a></li>
+          <li><a onclick="showPage('employee-safety')">Equipment / PPW Checklists</a></li>
         </ol>
       </div>
     </section>
@@ -2900,11 +2839,11 @@
 
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
-      ['new-hire-public-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
-      ['employee-safety', { en: 'Equipment / PPW Checklists', es: 'Listas de Equipo / PPE', pl: 'Listy Sprzętu / PPE' }, true],
-      ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
+      ['employee-safety', { en: 'Equipment / PPW Checklists', es: 'Listas Equipo / PPE', pl: 'Listy Sprzętu / PPE' }, true],
+      ['ai-daily-safety', { en: 'AI Daily Safety', es: 'Seguridad Diaria AI', pl: 'AI BHP Dziennie' }, true],
+      ['projects-link', { en: '🔐 Login', es: '🔐 Acceso', pl: '🔐 Logowanie' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
-      ['projects-link', { en: '🔐 Office Login', es: '🔐 Acceso Oficina', pl: '🔐 Logowanie Biura' }]
+      ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }]
     ];
 
     const uiText = {
@@ -3045,15 +2984,11 @@
 
     function buildTabs() {
       const tabs = document.getElementById('tabs');
-      if (!tabs) return;
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
-        if (id === 'new-hire-public-link') {
-          return `<button type="button" class="tab" style="background:#78c240;color:#1b3a5c;font-weight:900;" onclick="startPublicNewHireIntake()">🧾 New Hire Intake</button>`;
-        }
         if (id === 'projects-link') {
-          return `<button type="button" class="tab" style="background:#1b3a5c;color:#78c240;font-weight:900;" onclick="window.location.href='projects.html'">🔐 Office Login</button>`;
+          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">🔐 Login</button>`;
         }
-        return `<button type="button" class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
+        return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
     }
 
@@ -3639,33 +3574,11 @@ function returnToApp() {
 <\/script>
 
 <script>
-  // EQUIPMENT_PPW_CHECKLIST_PHASE_2026_05_23
+  // EQUIPMENT_PPW_SIMPLE_SAFE_PATCH_2026_05_23
   function showComingSoonChecklist(title) {
-    const message = title + "\n\nThis checklist has been added to the Equipment / PPW Checklist library. Next phase can turn it into a full PAL form with project/job number linking, 3 starting signature rows, typed signature, print/share, and PDF-ready formatting.";
-    if (typeof palAlert === 'function') palAlert(title, message);
-    else alert(message);
+    var msg = title + "\n\nThis checklist has been added to the Equipment / PPW Checklist library. Next phase can turn it into a full PAL form with project/job number linking, 3 starting signature rows, typed signature, print/share, and PDF-ready formatting.";
+    alert(msg);
   }
-
-  // iPhone / iPad / laptop safety: make Equipment Checklist tab open even if Safari misses the inline click.
-  document.addEventListener('click', function(e) {
-    const btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    const text = (btn.textContent || '').toLowerCase();
-    if (text.includes('equipment') && text.includes('checklist')) {
-      e.preventDefault();
-      if (typeof showPage === 'function') showPage('employee-safety');
-    }
-  }, true);
-
-  document.addEventListener('touchend', function(e) {
-    const btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    const text = (btn.textContent || '').toLowerCase();
-    if (text.includes('equipment') && text.includes('checklist')) {
-      e.preventDefault();
-      if (typeof showPage === 'function') showPage('employee-safety');
-    }
-  }, { passive:false, capture:true });
 </script>
 
 </body>
