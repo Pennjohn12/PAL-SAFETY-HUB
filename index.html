@@ -17,6 +17,7 @@
   <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PAL Safety Hub</title>
+  <!-- PUBLIC_PORTAL_PHASE1_TOOLBOX_CHECKLIST_STRUCTURE_2026_05_23 -->
   <style>
     :root {
       --navy: #1b3a5c;
@@ -409,6 +410,35 @@
 
 
 
+
+    /* PUBLIC_PORTAL_PHASE1_TOOLBOX_CHECKLIST_STRUCTURE_2026_05_23 */
+    .portal-intro {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--green-accent);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 14px 0;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .coming-soon-card {
+      opacity: .78;
+      cursor: default !important;
+      border-left-color: #94a3b8 !important;
+    }
+    .coming-soon-card:hover {
+      transform: none !important;
+      box-shadow: 0 6px 18px rgba(16,24,40,.05) !important;
+    }
+    .portal-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
     /* Employee Safety & Checklist access patch */
     .employee-access-note {
       background:#f8fafc;
@@ -738,9 +768,9 @@
             <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
 
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="showPage('employee-safety')"><span>🦺 Employee Safety &amp; Checklists</span><span class="arrow">›</span></button>
-              <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
+              <button onclick="openPublicNewHireIntake()"><span>🧾 New Hire Intake / Pre-Site Packet</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
+              <button onclick="showPage('checklists')"><span>✅ Checklists &amp; Inspections</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
               <button onclick="window.location.href='projects.html'"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></button>
             </div>
@@ -771,28 +801,52 @@
 
     <section class="page" id="employee-safety">
       <div class="card">
-        <h2 style="margin-top:0;color:var(--navy);">Employee Safety &amp; Checklists</h2>
-        <p class="muted">Basic safety sheets and inspection checklists employees can use in the field. Payroll, new-hire paperwork, employee records, project dashboards, and office tools stay behind sign-in.</p>
+        <h2 style="margin-top:0;color:var(--navy);">Employee Safety Portal</h2>
+        <p class="muted">Public employee access for safety information, field checklists, and new hire intake. Protected office tools remain behind login.</p>
       </div>
 
-      <div class="employee-access-note">
-        Employees can complete the checklist they need, link it to a project/job number or foreman, then print/share it. Foremen or office staff can later attach the completed sheet to the correct project record.
+      <div class="portal-intro">
+        This page is designed for employees in the field. Use Toolbox Talks for safety topics, Checklists for inspection forms, and New Hire Intake for pre-site onboarding. Project dashboards, Employee Certs, Good To Work, and Command Center stay protected behind the office login.
       </div>
 
-      <div class="kit-section-title">Field Checklists</div>
+      <div class="kit-section-title">Public Employee Access</div>
+      <div class="grid grid-2">
+        <div class="kit-card" onclick="openPublicNewHireIntake()"><div class="kit-icon">🧾</div><h4>New Hire Intake</h4><p>Open a no-login PAL pre-site onboarding packet</p></div>
+        <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>General, demolition, abatement, fireproofing, and field safety topics</p></div>
+        <div class="kit-card" onclick="showPage('checklists')"><div class="kit-icon">✅</div><h4>Checklists &amp; Inspections</h4><p>Harness, scaffold, scissor lift, PPE, ladder, respirator, and more</p></div>
+        <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
+        <div class="kit-card restricted-card" onclick="window.location.href='projects.html'"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, Employee Certs, Good To Work, Command Center, tickets, and private tools</p></div>
+      </div>
+    </section>
+
+    <section class="page" id="checklists">
+      <div class="card">
+        <h2 style="margin-top:0;color:var(--navy);">Checklists &amp; Inspections</h2>
+        <p class="muted">Field-ready inspection forms. Each form keeps the project/job number link fields so it can be matched to the correct project record.</p>
+      </div>
+
+      <div class="portal-intro">
+        Phase 1 keeps the existing working forms safe and organizes them into one clean checklist area. Future checklist patches can add Firebase auto-filing directly into the matching project by job name or job number.
+      </div>
+
+      <div class="kit-section-title">Current Active Checklists</div>
       <div class="grid grid-2">
         <div class="kit-card" onclick="showPage('harness-checklist')"><div class="kit-icon">🦺</div><h4>Full-Body Harness Inspection</h4><p>Pre-use harness inspection checklist</p></div>
-        <div class="kit-card" onclick="showPage('scissor-lift-inspection')"><div class="kit-icon">🔧</div><h4>Scissor Lift Pre-Use Inspection</h4><p>Pre-start walk-around, powered checks &amp; workplace</p></div>
-        <div class="kit-card" onclick="showPage('scaffold-checklist')"><div class="kit-icon">🏗️</div><h4>Scaffolding Safety Checklist</h4><p>Pre-use scaffold inspection — general &amp; special</p></div>
+        <div class="kit-card" onclick="showPage('scaffold-checklist')"><div class="kit-icon">🏗️</div><h4>Scaffolding Safety Checklist</h4><p>Pre-use scaffold inspection — general and special scaffold items</p></div>
+        <div class="kit-card" onclick="showPage('scissor-lift-inspection')"><div class="kit-icon">🔧</div><h4>Scissor Lift Pre-Use Inspection</h4><p>Pre-start walk-around, powered checks, and workplace inspection</p></div>
         <div class="kit-card" onclick="showPage('incident-report')"><div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
       </div>
 
-      <div class="kit-section-title">Safety Information</div>
+      <div class="kit-section-title">Next Checklist Buildout</div>
       <div class="grid grid-2">
-        <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>Safety topics employees can review in the field</p></div>
-        <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
-        <div class="kit-card" onclick="showPage('quick-reference')"><div class="kit-icon">⚡</div><h4>Quick Reference</h4><p>Important safety numbers and field rules</p></div>
-        <div class="kit-card restricted-card" onclick="window.location.href='projects.html'"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, payroll, employee certs, tickets, and private company tools</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">🪜</div><h4>Ladder Inspection Checklist</h4><p>Planned checklist for ladder condition, setup, access, angle, and use</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">🥽</div><h4>PPE Checklist</h4><p>Planned checklist for hard hat, glasses, gloves, vest, boots, and task PPE</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">😷</div><h4>Respirator Checklist</h4><p>Planned checklist for respirator condition, fit, cartridges, and storage</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">🔥</div><h4>Hot Work Checklist</h4><p>Planned checklist for hot work permits, fire watch, extinguisher, and area prep</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">🧯</div><h4>Fire Extinguisher Checklist</h4><p>Planned checklist for access, charge, tag, condition, and location</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">🚚</div><h4>Vehicle / Equipment Checklist</h4><p>Planned checklist for daily equipment, vehicle, and tool condition</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">🚧</div><h4>Demolition Safety Checklist</h4><p>Planned demolition-focused checklist for utilities, debris, dust, falling material, and exclusion zones</p></div>
+        <div class="kit-card coming-soon-card"><div class="kit-icon">☣️</div><h4>Abatement Safety Checklist</h4><p>Planned abatement-focused checklist for containment, decon, PPE, negative pressure, and disposal</p></div>
       </div>
     </section>
 
@@ -920,6 +974,14 @@
         <div class="card">
           <h2 style="margin-top:0;color:var(--navy);">Toolbox Talks</h2>
           <p class="muted">Choose a topic to view the full talk and access the sign-in sheet.</p>
+        </div>
+
+        <h3 class="section-title">Trade-Focused Toolbox Talks</h3>
+        <div class="toolbox-grid">
+          <div class="topic-card" onclick="openTalk('demo_safety')"><small>PAL</small><strong>Demolition Safety</strong></div>
+          <div class="topic-card" onclick="openTalk('abatement_safety')"><small>PAL</small><strong>Abatement Safety</strong></div>
+          <div class="topic-card" onclick="openTalk('fireproofing_safety')"><small>PAL</small><strong>Fireproofing Safety</strong></div>
+          <div class="topic-card" onclick="openTalk('equipment_inspection')"><small>PAL</small><strong>Equipment Inspection</strong></div>
         </div>
 
         <h3 class="section-title">Safety Mindset</h3>
@@ -2764,11 +2826,11 @@
 
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
-      ['employee-safety', { en: 'Employee Safety', es: 'Seguridad del Empleado', pl: 'Bezpieczeństwo Pracownika' }, true],
-      ['ai-daily-safety', { en: 'AI Daily Safety', es: 'Seguridad Diaria AI', pl: 'AI BHP Dziennie' }, true],
-      ['projects-link', { en: '🔐 Login', es: '🔐 Acceso', pl: '🔐 Logowanie' }],
+      ['newhire-public-link', { en: 'New Hire Intake', es: 'Ingreso de Nuevo Empleado', pl: 'Nowy Pracownik' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
-      ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }]
+      ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
+      ['checklists', { en: 'Checklists', es: 'Listas de Verificación', pl: 'Listy Kontrolne' }],
+      ['projects-link', { en: '🔐 Login', es: '🔐 Acceso', pl: '🔐 Logowanie' }]
     ];
 
     const uiText = {
@@ -2904,7 +2966,11 @@
       electrical_talk: { title: 'Electrical Hazards', page: 'Field', overview: 'Electricity can kill instantly and without warning. On construction sites, electrical hazards are everywhere.', guide: 'Always use GFCI protection on temporary power — test at the start of every shift. Inspect extension cords before use — no damaged insulation, no splices. Never work near overhead lines without confirming clearance. Assume all overhead lines are live. Never use metal ladders near electrical work.', remember: 'Electricity does not give second chances. Treat every wire as if it is live.' },
       silica_talk: { title: 'Silica Dust Awareness', page: 'Field', overview: 'Silica dust is invisible and causes silicosis — an incurable, fatal lung disease. Cutting or grinding concrete without controls is extremely dangerous.', guide: 'Never dry cut, grind, or drill concrete without controls. Use wet methods or HEPA vacuum. Wear N95 minimum — a paper dust mask provides no protection. Never dry sweep silica debris. Wash hands and face before eating or leaving the site.', remember: 'You cannot feel silica going into your lungs. By the time you notice symptoms, serious damage is already done.' },
       confined_space_talk: { title: 'Confined Space Awareness', page: 'Field', overview: 'Confined spaces kill multiple workers every year — often because rescuers enter without equipment and become victims themselves.', guide: 'Never enter a permit-required confined space without a written permit, atmospheric testing, and a trained attendant outside. Test for oxygen (19.5–23.5%), flammable gas (below 10% LEL), and toxic gases before and during entry. If the alarm sounds, exit immediately. Do NOT enter to rescue — call 911.', remember: 'If someone collapses inside a confined space, do NOT go in after them. Call 911.' },
-      fall_protection_talk: { title: 'Fall Protection Awareness', page: 'Field', overview: 'Falls are the number one killer in construction. At PAL, fall protection is required at 6 feet or greater — no exceptions.', guide: 'Know your options: guardrails, personal fall arrest systems, safety nets. Inspect your harness before every use. Anchor points must be rated 5,000 lbs. Tie off before you reach the edge — not after. Guardrails must be 42 inches high and withstand 200 lbs of force.', remember: 'One second of inattention at height can end your career or your life. Tie off every time.' }
+      fall_protection_talk: { title: 'Fall Protection Awareness', page: 'Field', overview: 'Falls are the number one killer in construction. At PAL, fall protection is required at 6 feet or greater — no exceptions.', guide: 'Know your options: guardrails, personal fall arrest systems, safety nets. Inspect your harness before every use. Anchor points must be rated 5,000 lbs. Tie off before you reach the edge — not after. Guardrails must be 42 inches high and withstand 200 lbs of force.', remember: 'One second of inattention at height can end your career or your life. Tie off every time.' },
+      demo_safety: { title: 'Demolition Safety', page: 'PAL', overview: 'Demolition work creates changing hazards. Crews must control falling debris, dust, utilities, unstable materials, and exclusion zones before work starts.', guide: 'Review utility shutoffs, overhead hazards, floor openings, falling-object protection, dust control, debris removal, fire hazards, and communication with other trades. Set barricades and exclusion zones. Do not remove structural elements unless the plan and supervisor authorize it.', remember: 'Demo changes fast. Stop and reassess whenever the work area changes.' },
+      abatement_safety: { title: 'Abatement Safety', page: 'PAL', overview: 'Abatement work depends on containment, proper PPE, decontamination, and preventing contamination outside the work area.', guide: 'Check containment integrity, negative pressure, decon setup, respirator use, disposable PPE, waste bagging/labeling, and clean work practices. Follow the site-specific abatement plan and never bypass decon or containment procedures.', remember: 'Keep the hazard contained. Do not carry contamination outside the work area.' },
+      fireproofing_safety: { title: 'Fireproofing Safety', page: 'PAL', overview: 'Fireproofing crews must control overspray, hose hazards, elevated work, respirator use, material handling, and housekeeping.', guide: 'Review hose routing, slips/trips, overspray control, ventilation, respirator/PPE requirements, lift/scaffold setup, exclusion areas below work, and cleanup. Keep walkways clear and communicate before moving hoses or equipment.', remember: 'Control the hose, control the overspray, and keep the work area clean.' },
+      equipment_inspection: { title: 'Equipment Inspection', page: 'PAL', overview: 'Equipment must be inspected before use so unsafe tools, lifts, ladders, scaffolds, and harnesses are removed from service before someone gets hurt.', guide: 'Inspect before use, document the checklist, tag out damaged equipment, and notify the foreman/supervisor. Never use equipment with missing guards, damaged parts, leaks, frayed webbing, bent components, or unknown inspection status.', remember: 'If it is damaged, missing, leaking, bent, frayed, or questionable — do not use it.' }
     };
 
     function buildTabs() {
@@ -2912,6 +2978,9 @@
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
         if (id === 'projects-link') {
           return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">🔐 Login</button>`;
+        }
+        if (id === 'newhire-public-link') {
+          return `<button class="tab" data-page="newhire-public-link" onclick="openPublicNewHireIntake()">🧾 ${label[currentLang]}</button>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
@@ -2965,8 +3034,14 @@
       });
     }
 
+
+    function openPublicNewHireIntake() {
+      const token = `public-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+      window.location.href = `projects.html?newhire=${encodeURIComponent(token)}`;
+    }
+
     function showPage(id) {
-      const restrictedPublicPages = new Set(['foreman-kit','daily-safety-meeting','toolbox-signin','daily-report','daily-timesheet','weekly-timesheet-fp','expense-report','new-hire-orientation','new-hire-drug-consent','new-hire-scaffold','new-hire-w4']);
+      const restrictedPublicPages = new Set(['foreman-kit','ai-daily-safety','daily-safety-meeting','toolbox-signin','daily-report','daily-timesheet','weekly-timesheet-fp','expense-report','new-hire-orientation','new-hire-drug-consent','new-hire-scaffold','new-hire-w4']);
       if (restrictedPublicPages.has(id)) {
         palNotice('This form is for foreman, supervisor, or office access. Please sign in through the protected dashboard.');
         window.location.href = 'projects.html';
