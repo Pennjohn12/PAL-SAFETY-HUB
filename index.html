@@ -670,6 +670,16 @@
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
   </style>
+
+<script>
+  // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
+  // Creates a no-login public new-hire intake route.
+  window.startPublicNewHireIntake = function startPublicNewHireIntake() {
+    var id = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+    window.location.assign('projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1');
+  };
+</script>
+
 </head>
 <body>
 
@@ -731,17 +741,18 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE BYPASS LOGIN FIX ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
             <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
             <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
-            <div style="margin-top:12px;display:inline-flex;padding:7px 10px;border-radius:999px;background:#78c240;color:#1b3a5c;font-size:12px;font-weight:900;">PUBLIC INTAKE NO-LOGIN FIX ACTIVE</div>
 
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="window.location.href='projects.html?newhire=start'"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
+              <button onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
+              <button onclick="showPage('employee-safety')"><span>🦺 Employee Safety &amp; Checklists</span><span class="arrow">›</span></button>
+              <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
-              <button onclick="showPage('employee-safety')"><span>✅ Checklists &amp; Inspections</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
               <button onclick="window.location.href='projects.html'"><span>🔐 Foreman / Supervisor / Office Login</span><span class="arrow">›</span></button>
             </div>
@@ -2765,11 +2776,11 @@
 
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
-      ['newhire-public-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
-      ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
+      ['new-hire-public-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
       ['employee-safety', { en: 'Checklists', es: 'Listas de Verificación', pl: 'Listy Kontrolne' }, true],
+      ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
-      ['projects-link', { en: '🔐 Login', es: '🔐 Acceso', pl: '🔐 Logowanie' }]
+      ['projects-link', { en: '🔐 Office Login', es: '🔐 Acceso Oficina', pl: '🔐 Logowanie Biura' }]
     ];
 
     const uiText = {
@@ -2911,11 +2922,11 @@
     function buildTabs() {
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
-        if (id === 'newhire-public-link') {
-          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:900;" onclick="window.location.href='projects.html?newhire=start'">${label[currentLang]}</button>`;
+        if (id === 'new-hire-public-link') {
+          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:900;" onclick="startPublicNewHireIntake()">🧾 New Hire Intake</button>`;
         }
         if (id === 'projects-link') {
-          return `<button class="tab" style="background:#1b3a5c;color:#78c240;font-weight:900;" onclick="window.location.href='projects.html'">🔐 Login</button>`;
+          return `<button class="tab" style="background:#1b3a5c;color:#78c240;font-weight:900;" onclick="window.location.href='projects.html'">🔐 Office Login</button>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
