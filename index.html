@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PAL Safety Hub — Public Portal Phase 1</title>
+  <title>PAL Safety Hub</title>
   <style>
     :root {
       --navy: #1b3a5c;
@@ -669,39 +669,6 @@
       .inspection-grid { gap: 8px !important; }
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
-    /* PUBLIC_PORTAL_PHASE1_VISIBLE_PATCH_2026_05_23 */
-    .phase1-marker {
-      margin: 0 0 14px;
-      background: #e8f5e0;
-      color: var(--navy);
-      border: 1px solid #bfe4a8;
-      border-left: 6px solid var(--green-accent);
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 13px;
-      font-weight: 900;
-    }
-    .portal-section-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 14px;
-    }
-    .portal-feature-card {
-      background: white;
-      border: 1px solid var(--line);
-      border-left: 6px solid var(--green-accent);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 6px 18px rgba(16,24,40,.05);
-      cursor: pointer;
-    }
-    .portal-feature-card h4 { margin: 0 0 4px; color: var(--navy); }
-    .portal-feature-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
-    .portal-feature-card.secure { border-left-color: var(--navy); }
-    .portal-feature-card.warn { border-left-color: var(--orange); }
-    @media (max-width: 700px) { .portal-section-grid { grid-template-columns: 1fr; } }
-
   </style>
 </head>
 <body>
@@ -769,10 +736,10 @@
           <div>
             <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
             <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
+            <div style="margin-top:12px;display:inline-flex;padding:7px 10px;border-radius:999px;background:#78c240;color:#1b3a5c;font-size:12px;font-weight:900;">PUBLIC INTAKE NO-LOGIN FIX ACTIVE</div>
 
-            <div class="phase1-marker">PUBLIC PORTAL PHASE 1 ACTIVE — New Hire Intake / Toolbox Talks / Checklists separated</div>
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="window.location.href='projects.html?newhire=public-intake'"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
+              <button onclick="window.location.href='projects.html?newhire=start'"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="showPage('employee-safety')"><span>✅ Checklists &amp; Inspections</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
@@ -780,24 +747,13 @@
             </div>
           </div>
           <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
-            PAL Environmental Services · Public Intake · Toolbox Talks · Checklists · Secure Office Tools
+            PAL Environmental Services · Employee Safety · Checklists · Protected Office Tools
           </div>
         </div>
 
         <div class="home-visual">
           <img src="pal-fireproofing-worker.png" alt="PAL fireproofing worker spraying fireproofing on a jobsite">
           <div class="home-visual-label">Fireproofing · Field Ready</div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:18px;">
-        <h3 style="margin-top:0;color:var(--navy);">Public Worker Portal</h3>
-        <p class="muted" style="margin-bottom:0;">Workers can complete public safety forms without logging in. Office, foreman, compliance, employee certs, Good To Work, and Command Center remain protected behind login.</p>
-        <div class="portal-section-grid">
-          <div class="portal-feature-card" onclick="window.location.href='projects.html?newhire=public-intake'"><h4>🧾 New Hire Intake</h4><p>Public onboarding packet for new workers. No login required.</p></div>
-          <div class="portal-feature-card" onclick="showPage('toolbox-talks')"><h4>📋 Toolbox Talks</h4><p>Field safety talks for general, demolition, abatement, fireproofing, fall protection, PPE, silica, and more.</p></div>
-          <div class="portal-feature-card" onclick="showPage('employee-safety')"><h4>✅ Checklists</h4><p>Harness, scaffold, scissor lift, equipment, incident, and field inspection sheets.</p></div>
-          <div class="portal-feature-card secure" onclick="window.location.href='projects.html'"><h4>🔐 Secure Office Login</h4><p>Projects, employee certs, Good To Work, onboarding review, tickets, and Command Center.</p></div>
         </div>
       </div>
 
@@ -816,29 +772,24 @@
 
     <section class="page" id="employee-safety">
       <div class="card">
-        <h2 style="margin-top:0;color:var(--navy);">Checklists &amp; Inspections</h2>
-        <p class="muted">Public field checklists and inspection sheets. Each checklist includes project/job number fields so it can be linked to the correct project record.</p>
+        <h2 style="margin-top:0;color:var(--navy);">Employee Safety &amp; Checklists</h2>
+        <p class="muted">Basic safety sheets and inspection checklists employees can use in the field. Payroll, new-hire paperwork, employee records, project dashboards, and office tools stay behind sign-in.</p>
       </div>
 
       <div class="employee-access-note">
-        Employees can complete the checklist they need, enter the project/job number and foreman, then print/share it. The secure project system remains behind login.
+        Employees can complete the checklist they need, link it to a project/job number or foreman, then print/share it. Foremen or office staff can later attach the completed sheet to the correct project record.
       </div>
 
-      <div class="kit-section-title">Checklists &amp; Inspections</div>
+      <div class="kit-section-title">Field Checklists</div>
       <div class="grid grid-2">
         <div class="kit-card" onclick="showPage('harness-checklist')"><div class="kit-icon">🦺</div><h4>Full-Body Harness Inspection</h4><p>Pre-use harness inspection checklist</p></div>
         <div class="kit-card" onclick="showPage('scissor-lift-inspection')"><div class="kit-icon">🔧</div><h4>Scissor Lift Pre-Use Inspection</h4><p>Pre-start walk-around, powered checks &amp; workplace</p></div>
         <div class="kit-card" onclick="showPage('scaffold-checklist')"><div class="kit-icon">🏗️</div><h4>Scaffolding Safety Checklist</h4><p>Pre-use scaffold inspection — general &amp; special</p></div>
         <div class="kit-card" onclick="showPage('incident-report')"><div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
-        <div class="kit-card orange" onclick="palNotice('Phase 2 will add the Ladder Checklist form using the same PAL format and project-link fields.')"><div class="kit-icon">🪜</div><h4>Ladder Checklist</h4><p>Coming next phase — ladder condition, setup, access, and safe-use checks</p></div>
-        <div class="kit-card orange" onclick="palNotice('Phase 2 will add the Respirator Checklist form using the same PAL format and project-link fields.')"><div class="kit-icon">😷</div><h4>Respirator Checklist</h4><p>Coming next phase — fit, cartridges, condition, storage, and use checks</p></div>
-        <div class="kit-card orange" onclick="palNotice('Phase 2 will add the Hot Work Checklist form using the same PAL format and project-link fields.')"><div class="kit-icon">🔥</div><h4>Hot Work Checklist</h4><p>Coming next phase — permits, fire watch, extinguishers, and area protection</p></div>
-        <div class="kit-card orange" onclick="palNotice('Phase 2 will add the Vehicle / Equipment Checklist form using the same PAL format and project-link fields.')"><div class="kit-icon">🚚</div><h4>Vehicle / Equipment Checklist</h4><p>Coming next phase — daily equipment, vehicle, and tool condition checks</p></div>
       </div>
 
-      <div class="kit-section-title">Public Worker Access</div>
+      <div class="kit-section-title">Safety Information</div>
       <div class="grid grid-2">
-        <div class="kit-card green" onclick="window.location.href='projects.html?newhire=public-intake'"><div class="kit-icon">🧾</div><h4>New Hire Intake</h4><p>Public onboarding packet — no employee login required</p></div>
         <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>Safety topics employees can review in the field</p></div>
         <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
         <div class="kit-card" onclick="showPage('quick-reference')"><div class="kit-icon">⚡</div><h4>Quick Reference</h4><p>Important safety numbers and field rules</p></div>
@@ -969,8 +920,7 @@
       <div id="talk-grid-view">
         <div class="card">
           <h2 style="margin-top:0;color:var(--navy);">Toolbox Talks</h2>
-          <p class="muted">Trade-focused talks for General Safety, Demolition, Abatement, Fireproofing, Fall Protection, Silica, PPE, Housekeeping, Electrical, and equipment hazards. Each talk can be printed/shared and tied back to a project/job number through the sign-in sheet.</p>
-          <div class="phase1-marker" style="margin-top:12px;">Toolbox Talks are now separated from Checklists for a cleaner public portal.</div>
+          <p class="muted">Choose a topic to view the full talk and access the sign-in sheet.</p>
         </div>
 
         <h3 class="section-title">Safety Mindset</h3>
@@ -2815,11 +2765,11 @@
 
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
-      ['public-newhire-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
+      ['newhire-public-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
       ['employee-safety', { en: 'Checklists', es: 'Listas de Verificación', pl: 'Listy Kontrolne' }, true],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
-      ['projects-link', { en: '🔐 Office Login', es: '🔐 Acceso Oficina', pl: '🔐 Logowanie Biuro' }]
+      ['projects-link', { en: '🔐 Login', es: '🔐 Acceso', pl: '🔐 Logowanie' }]
     ];
 
     const uiText = {
@@ -2961,11 +2911,11 @@
     function buildTabs() {
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
-        if (id === 'projects-link') {
-          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:800;" onclick="window.location.href='projects.html'">${label[currentLang] || '🔐 Office Login'}</button>`;
+        if (id === 'newhire-public-link') {
+          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:900;" onclick="window.location.href='projects.html?newhire=start'">${label[currentLang]}</button>`;
         }
-        if (id === 'public-newhire-link') {
-          return `<button class="tab" style="background:#fff7ed;color:#92400e;font-weight:800;" onclick="window.location.href='projects.html?newhire=public-intake'">${label[currentLang] || '🧾 New Hire Intake'}</button>`;
+        if (id === 'projects-link') {
+          return `<button class="tab" style="background:#1b3a5c;color:#78c240;font-weight:900;" onclick="window.location.href='projects.html'">🔐 Login</button>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
@@ -4098,5 +4048,3 @@ function syncJobNumber(value) {
 
 </body>
 </html>
-
-<!-- PUBLIC_PORTAL_PHASE1_VISIBLE_PATCH_2026_05_23_VERIFIED -->
