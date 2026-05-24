@@ -686,6 +686,21 @@
     .clean-checklist-btn.soon{border-left-color:#d97706}
     @media(max-width:650px){.clean-checklist-grid{grid-template-columns:1fr}}
 
+  
+    /* REMOVE_LEFTOVER_PUBLIC_SAFETY_CARDS_2026_05_24 */
+    .print-footer,
+    .internal-print-footer,
+    .pal-print-footer {
+      display: none !important;
+    }
+    @media print {
+      .print-footer,
+      .internal-print-footer,
+      .pal-print-footer {
+        display: block !important;
+      }
+    }
+
   </style>
 
 
@@ -760,7 +775,7 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">AI REMOVED FROM PUBLIC HOME ACTIVE</div>
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">LEFTOVER SAFETY CARDS REMOVED ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
@@ -794,7 +809,7 @@
           <button type="button" class="clean-checklist-btn" onclick="showPage('harness-checklist')"><strong>🦺 Harness Inspection Checklist</strong><small>Existing PAL form</small></button>
           <button type="button" class="clean-checklist-btn" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL form</small></button>
           <button type="button" class="clean-checklist-btn" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL form</small></button>
-          <button type="button" class="clean-checklist-btn" onclick="showPage('incident-report')"><strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showP<strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form</small></button>
         </div>
       </div>
 
@@ -810,15 +825,7 @@
       </div>
     </section>
 
-    age('incident-report')"><div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
-      </div>
-
-      <div class="kit-section-title">Safety Information</div>
-      <div class="grid grid-2">
-        <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>Safety topics employees can review in the field</p></div>
-        <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
-        <div class="kit-card" onclick="showPage('quick-reference')"><div class="kit-icon">⚡</div><h4>Quick Reference</h4><p>Important safety numbers and field rules</p></div>
-        <div class="kit-card restricted-card" onclick="window.location.href='projects.html'"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, payroll, employee certs, tickets, and private company tools</p></div>
+    <div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
       </div>
     </section>
 
@@ -845,7 +852,7 @@
 
       <div class="kit-section-title">Incidents and Injury</div>
       <div class="grid grid-2">
-        <div class="kit-card orange" onclick="showPage('incident-report')"><div class="kit-icon">🩹</div><h4>Incident Report</h4><p>Accident / injury investigation form</p></div>
+        <div class="kit-card orange" onclick="showP<div class="kit-icon">🩹</div><h4>Incident Report</h4><p>Accident / injury investigation form</p></div>
       </div>
 
       <div class="kit-section-title">Equipment Inspections</div>
