@@ -792,7 +792,7 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE + PPE TAB REPAIR ACTIVE</div>
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE + PPE TAB REPAIR ACTIVE · PPE TAB DIRECT OPEN FIX ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
@@ -801,7 +801,7 @@
 
             <div class="home-menu" aria-label="Home Navigation">
               <button type="button" onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
-              <button onclick="showPage('employee-safety')"><span>✅ PPE / Equipment Checklists</span><span class="arrow">›</span></button>
+              <button onclick="return openPpeChecklistPage()"><span>✅ PPE / Equipment Checklists</span><span class="arrow">›</span></button>
               <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
@@ -3630,6 +3630,85 @@ function returnToApp() {
       showPage('employee-safety');
     }
   }, {passive:false, capture:true});
+</script>
+
+
+<script>
+  // PPE_CHECKLIST_DIRECT_OPEN_FIX_2026_05_23
+  window.openPpeChecklistPage = function openPpeChecklistPage() {
+    try {
+      document.querySelectorAll('.page').forEach(function(page) {
+        page.classList.remove('active');
+        page.style.display = 'none';
+      });
+      var target = document.getElementById('employee-safety');
+      if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert('Checklist page not found. Please refresh and try again.');
+      }
+      document.querySelectorAll('.tab').forEach(function(tab) {
+        tab.classList.remove('active');
+        var text = (tab.textContent || '').toLowerCase();
+        if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
+          tab.classList.add('active');
+        }
+      });
+      return false;
+    } catch (e) {
+      console.error('PPE checklist open failed:', e);
+      alert('Could not open checklist tab. Please refresh and try again.');
+      return false;
+    }
+  };
+
+  document.addEventListener('click', function(e) {
+    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+    if (!btn) return;
+    var text = (btn.textContent || '').toLowerCase();
+    if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.openPpeChecklistPage();
+    }
+  }, true);
+
+  document.addEventListener('touchend', function(e) {
+    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+    if (!btn) return;
+    var text = (btn.textContent || '').toLowerCase();
+    if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.openPpeChecklistPage();
+    }
+  }, { passive:false, capture:true });
+</script>
+
+
+<script>
+  // PPE_CHECKLIST_TAB_BINDER_2026_05_23
+  function bindPpeChecklistTabDirect() {
+    document.querySelectorAll('button.tab').forEach(function(tab) {
+      var text = (tab.textContent || '').toLowerCase();
+      if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
+        tab.setAttribute('type', 'button');
+        tab.onclick = function(e) {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          window.openPpeChecklistPage();
+          return false;
+        };
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    bindPpeChecklistTabDirect();
+    setTimeout(bindPpeChecklistTabDirect, 250);
+    setTimeout(bindPpeChecklistTabDirect, 1000);
+    setTimeout(bindPpeChecklistTabDirect, 2500);
+  });
 </script>
 
 </body>
