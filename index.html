@@ -675,53 +675,16 @@
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
   
-    /* PAL_PUBLIC_NEWHIRE_AND_PPE_TAB_REPAIR_2026_05_23 */
-    .ppe-check-section {
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:0 6px 18px rgba(16,24,40,.05);
-      margin-bottom:16px;
-    }
-    .ppe-check-section h3 { margin:0 0 6px; color:var(--navy); font-size:18px; }
-    .ppe-check-section p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
-    .ppe-check-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-    .ppe-check-btn {
-      display:block;
-      width:100%;
-      border:1px solid var(--line);
-      border-left:5px solid #78c240;
-      background:#f8fafc;
-      border-radius:16px;
-      padding:14px;
-      text-align:left;
-      cursor:pointer;
-      font:inherit;
-      color:var(--text);
-      min-height:82px;
-      touch-action:manipulation;
-    }
-    .ppe-check-btn strong { display:block; color:var(--navy); font-size:15px; margin-bottom:4px; }
-    .ppe-check-btn small { display:block; color:var(--muted); font-size:12px; line-height:1.35; }
-    .ppe-check-btn.ready { border-left-color:#16a34a; }
-    .ppe-check-btn.soon { border-left-color:#d97706; }
-    .ppe-check-btn:hover { background:#f0fae8; border-color:#78c240; }
-    @media(max-width:650px){ .ppe-check-grid { grid-template-columns:1fr; } }
-
-  
-    /* FORCE_ADD_EXISTING_PAL_CHECKLIST_CARDS_2026_05_24 */
-    .ppe-check-section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 6px 18px rgba(16,24,40,.05);margin-bottom:16px}
-    .ppe-check-section h3{margin:0 0 6px;color:var(--navy);font-size:18px}
-    .ppe-check-section p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
-    .ppe-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .ppe-check-btn{display:block;width:100%;border:1px solid var(--line);border-left:5px solid #78c240;background:#f8fafc;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font:inherit;color:var(--text);min-height:82px;touch-action:manipulation}
-    .ppe-check-btn strong{display:block;color:var(--navy);font-size:15px;margin-bottom:4px}
-    .ppe-check-btn small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
-    .ppe-check-btn.ready{border-left-color:#16a34a}
-    .ppe-check-btn.soon{border-left-color:#d97706}
-    .ppe-check-btn:hover{background:#f0fae8;border-color:#78c240}
-    @media(max-width:650px){.ppe-check-grid{grid-template-columns:1fr}}
+    /* CLEAN_RESET_PPE_TAB_SIMPLE_2026_05_24 */
+    .clean-checklist-section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(16,24,40,.05)}
+    .clean-checklist-section h3{margin:0 0 6px;color:var(--navy);font-size:18px}
+    .clean-checklist-section p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+    .clean-checklist-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .clean-checklist-btn{display:block;width:100%;border:1px solid var(--line);border-left:5px solid #16a34a;background:#f8fafc;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font:inherit;color:var(--text);min-height:80px}
+    .clean-checklist-btn strong{display:block;color:var(--navy);font-size:15px;margin-bottom:4px}
+    .clean-checklist-btn small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+    .clean-checklist-btn.soon{border-left-color:#d97706}
+    @media(max-width:650px){.clean-checklist-grid{grid-template-columns:1fr}}
 
   </style>
 
@@ -733,15 +696,6 @@
     var id = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
     var url = 'projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1&noLogin=1&v=1779575382-' + Date.now();
     window.location.href = url;
-  };
-</script>
-
-
-<script>
-  // PAL_PUBLIC_NEWHIRE_AND_PPE_TAB_REPAIR_2026_05_23
-  window.startPublicNewHireIntake = function startPublicNewHireIntake() {
-    var id = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
-    window.location.href = 'projects.html?newhire=' + encodeURIComponent(id) + '&publicStart=1&noLogin=1&v=1779579881-' + Date.now();
   };
 </script>
 
@@ -806,8 +760,7 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">FORCED EXISTING CHECKLIST CARDS ACTIVE</div>
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE + PPE TAB REPAIR ACTIVE · PPE LIVE TAB FIX ACTIVE</div>
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">CLEAN RESET PPE TAB ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
@@ -815,8 +768,8 @@
             <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
 
             <div class="home-menu" aria-label="Home Navigation">
-              <button type="button" onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
-              <button onclick="return openPpeChecklistPage()"><span>✅ PPE / Equipment Checklists</span><span class="arrow">›</span></button>
+              <button onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
+              <button onclick="showPage('employee-safety')"><span>✅ PPE / Equipment Checklists</span><span class="arrow">›</span></button>
               <button onclick="showPage('ai-daily-safety')"><span>🤖 AI Assisted Daily Safety</span><span class="arrow">›</span></button>
               <button onclick="showPage('toolbox-talks')"><span>📋 Toolbox Talks</span><span class="arrow">›</span></button>
               <button onclick="showPage('pal-policies')"><span>🏢 PAL Policies</span><span class="arrow">›</span></button>
@@ -829,89 +782,44 @@
         </div>
 
         <div class="home-visual">
-          <img src="pal-fireproofing-worker.png" alt="PAL fireproofing worker spraying fireproofing on a jobsite">
-          <div class="home-visual-label">Fireproofing · Field Ready</div>
+          <img src="pal-fireproofing-worker.png" alt="PAL fireproofing worker spraying fir<section class="page" id="employee-safety">
+      <div class="card">
+        <h2 style="margin-top:0;color:var(--navy);">PPE / Equipment Checklists</h2>
+        <p class="muted">Clean reset version. This tab restores the existing PAL checklist pages first. New checklist forms can be rebuilt one at a time after the tab is stable on iPhone, iPad, and laptop.</p>
+      </div>
+
+      <div class="clean-checklist-section">
+        <h3>✅ Existing PAL Forms</h3>
+        <p>These open the original checklist/report pages already built into the app.</p>
+        <div class="clean-checklist-grid">
+          <button type="button" class="clean-checklist-btn" onclick="showPage('harness-checklist')"><strong>🦺 Harness Inspection Checklist</strong><small>Existing PAL form</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL form</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL form</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('incident-report')"><strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form</small></button>
         </div>
       </div>
 
-      <div class="home-company-grid">
-        <div class="card"><h3>Company</h3><p class="muted">PAL Environmental Services<br>11-02 Queens Plaza South<br>Long Island City, NY 11101</p></div>
-        <div class="card"><h3>Phone</h3><p class="muted">Main: 718-349-0900<br>Fax: 718-349-2800<br>Web: www.palcorp.com</p></div>
-        <div class="card"><h3>Key Contacts</h3><p class="muted">EH&amp;S Director: Richardo Blake<br>Key Contact: Andrew Dilorenzo</p></div>
-      </div>
-
-      <div class="card" style="margin-top:14px;">
-        <h3 style="margin-top:0;color:var(--navy);">Printing Note</h3>
-        <p class="muted" style="margin-bottom:0;">Double-sided / front-and-back printing is controlled by the printer or phone print window. Use the printer settings to choose two-sided printing when available. Browser print headers and footers are controlled by the device/browser print settings.</p>
+      <div class="clean-checklist-section">
+        <h3>🚧 Next Universal Checklist Forms</h3>
+        <p>Listed only for now. Once this clean reset works, we will turn these into real forms one phase at a time.</p>
+        <div class="clean-checklist-grid">
+          <button type="button" class="clean-checklist-btn soon" onclick="alert('Next phase: build Decon Setup Checklist as a real form.')"><strong>🚿 Decon Setup Checklist</strong><small>Next build phase</small></button>
+          <button type="button" class="clean-checklist-btn soon" onclick="alert('Next phase: build PPE Inspection Checklist as a real form.')"><strong>🥽 PPE Inspection Checklist</strong><small>Next build phase</small></button>
+          <button type="button" class="clean-checklist-btn soon" onclick="alert('Next phase: build Respirator Checklist as a real form.')"><strong>😷 Respirator Checklist</strong><small>Next build phase</small></button>
+          <button type="button" class="clean-checklist-btn soon" onclick="alert('Next phase: build Demolition Safety Checklist as a real form.')"><strong>🚧 Demolition Safety Checklist</strong><small>Next build phase</small></button>
+        </div>
       </div>
     </section>
 
-
-    <section class="page" id="employee-safety">
-      <div class="card">
-        <h2 style="margin-top:0;color:var(--navy);">PPE / Equipment Checklists</h2>
-        <p class="muted">Public checklist library for PAL field crews. This tab is only for PPE, equipment, access, demolition, abatement, fireproofing, and special-work checklists.</p>
+    age('incident-report')"><div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
       </div>
 
-      <div class="employee-access-note">
-        Each checklist should include project name/job number so the completed form can later be tied back to the correct PAL project.
-      </div>
-
-      <div class="ppe-check-section">
-        <h3>🦺 PPE / Worker Protection</h3>
-        <p>Personal protective equipment and worker-protection checks.</p>
-        <div class="ppe-check-grid">
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('PPE Inspection Checklist')"><strong>🥽 PPE Inspection Checklist</strong><small>Hard hat, glasses, gloves, boots, hi-vis, task-specific PPE</small></button>
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('harness-checklist')"><strong>🦺 Full-Body Harness Inspection</strong><small>Existing PAL checklist · pre-use harness inspection</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Respirator Checklist')"><strong>😷 Respirator Checklist</strong><small>Fit, seal check, cartridges, storage, assignment</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Fall Protection Checklist')"><strong>🪢 Fall Protection Checklist</strong><small>Anchors, lanyards, SRLs, rails, hole covers</small></button>
-        </div>
-      </div>
-
-      <div class="ppe-check-section">
-        <h3>🧰 Equipment &amp; Access</h3>
-        <p>Pre-use inspections for equipment, scaffold, ladders, lifts, and job access.</p>
-        <div class="ppe-check-grid">
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL checklist · scaffold condition, rails, access, ties, decking</small></button>
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL checklist · walkaround, powered checks, workplace hazards</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Ladder Safety Checklist')"><strong>🪜 Ladder Safety Checklist</strong><small>Condition, setup, access, extension, 3-point contact</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Vehicle / Equipment Checklist')"><strong>🚚 Vehicle / Equipment Checklist</strong><small>Walkaround, damage, lights, fluids, condition, return status</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Spray Equipment Checklist')"><strong>🧯 Spray Equipment Checklist</strong><small>Hoses, fittings, pump, pressure, cleanup, material handling</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Fire Extinguisher Checklist')"><strong>🧯 Fire Extinguisher Checklist</strong><small>Location, access, gauge, pin, inspection tag</small></button>
-        </div>
-      </div>
-
-      <div class="ppe-check-section">
-        <h3>🏚️ Demolition / Cleanup</h3>
-        <p>Focused checks for demolition, debris handling, dust, and changing work areas.</p>
-        <div class="ppe-check-grid">
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Demolition Safety Checklist')"><strong>🚧 Demolition Safety Checklist</strong><small>Utilities, falling debris, overhead hazards, barricades, exclusion zones</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Silica / Dust Control Checklist')"><strong>🌫️ Silica / Dust Control Checklist</strong><small>Wet methods, HEPA vacuum, respirators, dust control, housekeeping</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Housekeeping / Debris Checklist')"><strong>🧹 Housekeeping / Debris Checklist</strong><small>Walkways, cords, scrap, nails, trip hazards</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Utility / Energy Isolation Checklist')"><strong>⚡ Utility / Energy Isolation Checklist</strong><small>Electric, gas, water, lockout awareness</small></button>
-        </div>
-      </div>
-
-      <div class="ppe-check-section">
-        <h3>☣️ Abatement / Environmental</h3>
-        <p>Checks for containment, PPE, decon, disposal, and contamination control.</p>
-        <div class="ppe-check-grid">
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Abatement Safety Checklist')"><strong>☣️ Abatement Safety Checklist</strong><small>Containment, PPE, decon, disposal, signage</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Containment / Negative Air Checklist')"><strong>💨 Containment / Negative Air Checklist</strong><small>Barriers, pressure, HEPA units, entry/exit</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Waste Handling Checklist')"><strong>🗑️ Waste Handling Checklist</strong><small>Bags, labels, disposal path, sealed containers</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Decon Setup Checklist')"><strong>🚿 Decon Setup Checklist</strong><small>Clean/dirty areas, PPE removal, wash area</small></button>
-        </div>
-      </div>
-
-      <div class="ppe-check-section">
-        <h3>🔥 Fireproofing / Special Work</h3>
-        <p>Checks for spray work, hot work, ventilation, and higher-risk tasks.</p>
-        <div class="ppe-check-grid">
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Fireproofing Safety Checklist')"><strong>🔥 Fireproofing Safety Checklist</strong><small>Overspray, slip hazards, hoses, ventilation</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Hot Work Checklist')"><strong>🔥 Hot Work Checklist</strong><small>Permit, fire watch, extinguisher, combustibles</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="showComingSoonChecklist('Confined Space Awareness Checklist')"><strong>🚪 Confined Space Awareness Checklist</strong><small>Permit awareness, atmosphere, attendant, rescue</small></button>
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('incident-report')"><strong>🩹 Incident / Near Miss Report</strong><small>Existing PAL form</small></button>
-        </div>
+      <div class="kit-section-title">Safety Information</div>
+      <div class="grid grid-2">
+        <div class="kit-card" onclick="showPage('toolbox-talks')"><div class="kit-icon">📋</div><h4>Toolbox Talks</h4><p>Safety topics employees can review in the field</p></div>
+        <div class="kit-card" onclick="showPage('pal-policies')"><div class="kit-icon">🏢</div><h4>PAL Policies</h4><p>Company safety policies and quick references</p></div>
+        <div class="kit-card" onclick="showPage('quick-reference')"><div class="kit-icon">⚡</div><h4>Quick Reference</h4><p>Important safety numbers and field rules</p></div>
+        <div class="kit-card restricted-card" onclick="window.location.href='projects.html'"><div class="kit-icon">🔐</div><h4>Foreman / Office Login</h4><p>Projects, payroll, employee certs, tickets, and private company tools</p></div>
       </div>
     </section>
 
@@ -982,7 +890,7 @@
           <li><a onclick="showPage('quick-reference')">Quick Reference</a></li>
           <li><a onclick="showPage('code-of-conduct')">Code of Conduct</a></li>
           <li><a onclick="showPage('whistleblower')">Whistleblower</a></li>
-          <li><a onclick="showPage('employee-safety')">PPE / Equipment Checklists</a></li>
+          <li><a onclick="showPage('employee-safety')">Employee Safety &amp; Checklists</a></li>
         </ol>
       </div>
     </section>
@@ -2884,7 +2792,7 @@
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
       ['new-hire-public-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
-      ['employee-safety', { en: 'PPE / Equipment Checklists', es: 'Listas PPE / Equipo', pl: 'Listy PPE / Sprzętu' }, true],
+      ['employee-safety', { en: 'Checklists', es: 'Listas de Verificación', pl: 'Listy Kontrolne' }, true],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
       ['projects-link', { en: '🔐 Office Login', es: '🔐 Acceso Oficina', pl: '🔐 Logowanie Biura' }]
@@ -3034,9 +2942,6 @@
         }
         if (id === 'projects-link') {
           return `<button class="tab" style="background:#1b3a5c;color:#78c240;font-weight:900;" onclick="window.location.href='projects.html'">🔐 Office Login</button>`;
-        }
-        if (id === 'employee-safety') {
-          return `<button class="tab ${foreman ? 'foreman' : ''}" data-page="employee-safety" onclick="return openPpeChecklistPage()">${label[currentLang]}</button>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
@@ -3622,34 +3527,6 @@ function returnToApp() {
   }
 }
 <\/script>
-
-<script>
-  // PAL_PUBLIC_NEWHIRE_AND_PPE_TAB_REPAIR_2026_05_23
-  function showComingSoonChecklist(title) {
-    alert(title + "\n\nThis checklist has been added to the PPE / Equipment Checklist library. Next phase can turn it into a full PAL form with project/job number linking, 3 starting signature rows, typed signature, print/share, and PDF-ready formatting.");
-  }
-
-  // Device-safe fallback: if a PPE/Equipment checklist button/tab is tapped, force the employee-safety page open.
-  document.addEventListener('click', function(e) {
-    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    var txt = (btn.textContent || '').toLowerCase();
-    if (txt.includes('ppe') && txt.includes('equipment') && typeof showPage === 'function') {
-      showPage('employee-safety');
-    }
-  }, true);
-
-  document.addEventListener('touchend', function(e) {
-    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    var txt = (btn.textContent || '').toLowerCase();
-    if (txt.includes('ppe') && txt.includes('equipment') && typeof showPage === 'function') {
-      e.preventDefault();
-      showPage('employee-safety');
-    }
-  }, {passive:false, capture:true});
-</script>
-
 </body>
 </html>`;
     }
@@ -4194,197 +4071,6 @@ function syncJobNumber(value) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
   </script>
-
-
-<script>
-  // PPE_CHECKLIST_LIVE_DIRECT_OPEN_FIX_2026_05_23
-  window.openPpeChecklistPage = function openPpeChecklistPage() {
-    try {
-      var pages = document.querySelectorAll('.page');
-      pages.forEach(function(page) {
-        page.classList.remove('active');
-        page.style.display = '';
-      });
-
-      var target = document.getElementById('employee-safety');
-      if (!target) {
-        alert('Checklist page not found. Please refresh and try again.');
-        return false;
-      }
-
-      target.classList.add('active');
-
-      document.querySelectorAll('.tab').forEach(function(tab) {
-        tab.classList.remove('active');
-        var text = (tab.textContent || '').toLowerCase();
-        if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
-          tab.classList.add('active');
-        }
-      });
-
-      setTimeout(function(){ window.scrollTo(0, 0); }, 10);
-      return false;
-    } catch (e) {
-      console.error('PPE checklist open failed:', e);
-      alert('Could not open checklist tab. Please refresh and try again.');
-      return false;
-    }
-  };
-
-  function bindLivePpeChecklistButton() {
-    document.querySelectorAll('button').forEach(function(btn) {
-      var text = (btn.textContent || '').toLowerCase();
-      if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
-        btn.setAttribute('type', 'button');
-        btn.onclick = function(e) {
-          if (e) { e.preventDefault(); e.stopPropagation(); }
-          return window.openPpeChecklistPage();
-        };
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    bindLivePpeChecklistButton();
-    setTimeout(bindLivePpeChecklistButton, 250);
-    setTimeout(bindLivePpeChecklistButton, 1000);
-    setTimeout(bindLivePpeChecklistButton, 2500);
-  });
-
-  document.addEventListener('click', function(e) {
-    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    var text = (btn.textContent || '').toLowerCase();
-    if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
-      e.preventDefault();
-      e.stopPropagation();
-      window.openPpeChecklistPage();
-    }
-  }, true);
-
-  document.addEventListener('touchend', function(e) {
-    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    var text = (btn.textContent || '').toLowerCase();
-    if ((text.includes('ppe') || text.includes('equipment')) && text.includes('checklist')) {
-      e.preventDefault();
-      e.stopPropagation();
-      window.openPpeChecklistPage();
-    }
-  }, { passive:false, capture:true });
-</script>
-
-
-<div class="checklist-form-overlay" id="universal-checklist-overlay" style="position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px;">
-  <div style="background:#fff;width:min(920px,100%);max-height:92vh;overflow:auto;border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.28);">
-    <div style="background:#1b3a5c;color:white;padding:18px 20px;"><h2 id="universal-checklist-title" style="margin:0;color:white;">PAL Checklist</h2><p style="margin:4px 0 0;color:rgba(255,255,255,.78);">Project-linked field checklist</p></div>
-    <div id="universal-checklist-body" style="padding:18px;"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid #dde3ea;">
-      <button type="button" class="btn-secondary" onclick="closeUniversalChecklist()">Close</button>
-      <button type="button" class="btn-save" onclick="window.print()">Print / Save PDF</button>
-    </div>
-  </div>
-</div>
-
-
-<script>
-  window.openUniversalChecklist = function(title) {
-    var overlay = document.getElementById('universal-checklist-overlay');
-    var body = document.getElementById('universal-checklist-body');
-    var titleEl = document.getElementById('universal-checklist-title');
-    if (!overlay || !body || !titleEl) { alert(title); return false; }
-    titleEl.textContent = title;
-    var today = new Date().toISOString().slice(0,10);
-    body.innerHTML = `
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
-        <label>Project Name<input style="width:100%;padding:10px;border:1px solid #dde3ea;border-radius:10px;margin-top:6px;"></label>
-        <label>Job Number<input style="width:100%;padding:10px;border:1px solid #dde3ea;border-radius:10px;margin-top:6px;"></label>
-        <label>Foreman / Supervisor<input style="width:100%;padding:10px;border:1px solid #dde3ea;border-radius:10px;margin-top:6px;"></label>
-        <label>Date<input type="date" value="${today}" style="width:100%;padding:10px;border:1px solid #dde3ea;border-radius:10px;margin-top:6px;"></label>
-      </div>
-      <div style="margin-top:16px;border:1px solid #dde3ea;border-radius:14px;overflow:hidden;">
-        ${["Clean/dirty areas identified","PPE removal sequence reviewed","Wash/decon supplies available","Waste and contaminated PPE separated","Workers know not to leave area with contamination"].map((x,i)=>`<div style="display:grid;grid-template-columns:1fr 110px;gap:10px;padding:10px;border-top:${i?'1px solid #dde3ea':'0'};"><span>${i+1}. ${x}</span><select><option>Yes</option><option>No</option><option>N/A</option></select></div>`).join('')}
-      </div>
-      <label style="display:block;margin-top:14px;">Notes / Corrective Actions<textarea rows="4" style="width:100%;padding:10px;border:1px solid #dde3ea;border-radius:10px;margin-top:6px;"></textarea></label>
-      <table style="width:100%;border-collapse:collapse;margin-top:14px;"><thead><tr><th>Employee Name</th><th>Typed Signature</th><th>Time</th></tr></thead><tbody>${[1,2,3].map(()=>'<tr><td><input style="width:100%;border:0;border-bottom:1px solid #ccc;"></td><td><input style="width:100%;border:0;border-bottom:1px solid #ccc;font-family:cursive;font-size:20px;"></td><td><input style="width:100%;border:0;border-bottom:1px solid #ccc;"></td></tr>').join('')}</tbody></table>
-    `;
-    overlay.style.display = 'flex';
-    overlay.classList.add('open');
-    return false;
-  };
-  window.closeUniversalChecklist = function() {
-    var overlay = document.getElementById('universal-checklist-overlay');
-    if (overlay) { overlay.style.display = 'none'; overlay.classList.remove('open'); }
-  };
-</script>
-
-
-<script>
-  // FORCE_ADD_EXISTING_PAL_CHECKLIST_CARDS_2026_05_24
-  function forceAddPalExistingChecklistCards() {
-    var section = document.getElementById('employee-safety');
-    if (!section) return;
-
-    // Avoid duplicates if this runs more than once.
-    if (document.getElementById('pal-existing-checklists-force-section')) return;
-
-    var card = document.createElement('div');
-    card.className = 'ppe-check-section';
-    card.id = 'pal-existing-checklists-force-section';
-    card.innerHTML = `
-      <h3>✅ Existing PAL Forms</h3>
-      <p>Original PAL checklist/report pages restored in this checklist tab.</p>
-      <div class="ppe-check-grid">
-        <button type="button" class="ppe-check-btn ready" onclick="showPage('harness-checklist')">
-          <strong>🦺 Harness Inspection Checklist</strong>
-          <small>Existing PAL form · full-body harness pre-use inspection</small>
-        </button>
-        <button type="button" class="ppe-check-btn ready" onclick="showPage('scaffold-checklist')">
-          <strong>🏗️ Scaffold Safety Checklist</strong>
-          <small>Existing PAL form · scaffold condition, access, guardrails, decking</small>
-        </button>
-        <button type="button" class="ppe-check-btn ready" onclick="showPage('scissor-lift-inspection')">
-          <strong>🔧 Scissor Lift Pre-Use Inspection</strong>
-          <small>Existing PAL form · lift inspection and work-area hazards</small>
-        </button>
-        <button type="button" class="ppe-check-btn ready" onclick="showPage('incident-report')">
-          <strong>🩹 Near Miss / Incident Report</strong>
-          <small>Existing PAL form · injury, near miss, damage, or unsafe condition</small>
-        </button>
-        <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Decon Setup Checklist')">
-          <strong>🚿 Decon Setup Checklist</strong>
-          <small>Universal PAL checklist · clean/dirty areas, PPE removal, wash area</small>
-        </button>
-      </div>
-    `;
-
-    // Put it right below the first intro card if possible, otherwise at the top.
-    var firstCard = section.querySelector('.card');
-    if (firstCard && firstCard.nextSibling) {
-      firstCard.parentNode.insertBefore(card, firstCard.nextSibling);
-    } else {
-      section.insertBefore(card, section.firstChild);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    forceAddPalExistingChecklistCards();
-    setTimeout(forceAddPalExistingChecklistCards, 300);
-    setTimeout(forceAddPalExistingChecklistCards, 1000);
-    setTimeout(forceAddPalExistingChecklistCards, 2500);
-  });
-
-  // Also run every time the PPE/checklist tab is opened.
-  document.addEventListener('click', function(e) {
-    var btn = e.target && e.target.closest ? e.target.closest('button') : null;
-    if (!btn) return;
-    var txt = (btn.textContent || '').toLowerCase();
-    if ((txt.includes('ppe') || txt.includes('equipment')) && txt.includes('checklist')) {
-      setTimeout(forceAddPalExistingChecklistCards, 50);
-      setTimeout(forceAddPalExistingChecklistCards, 500);
-    }
-  }, true);
-</script>
 
 </body>
 </html>
