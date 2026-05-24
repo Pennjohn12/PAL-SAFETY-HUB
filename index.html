@@ -801,7 +801,7 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE + PPE TAB REPAIR ACTIVE · PPE LIVE TAB FIX ACTIVE · PPE CHECKLIST CLEAN FORMS ACTIVE</div>
+      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">PUBLIC NEW HIRE + PPE TAB REPAIR ACTIVE · PPE LIVE TAB FIX ACTIVE · PPE CHECKLIST CLEAN FORMS ACTIVE · EXISTING PAL FORMS RESTORED ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
@@ -844,7 +844,7 @@
     <section class="page" id="employee-safety">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">PPE / Equipment Checklists</h2>
-        <p class="muted">Public checklist library for PAL field crews. Existing PAL checklists open normally. New checklist cards open a standardized PAL checklist form.</p>
+        <p class="muted">Public checklist library for PAL field crews. Existing PAL checklist pages open normally. New checklist cards open a standardized PAL checklist form.</p>
       </div>
 
       <div class="employee-access-note">
@@ -852,26 +852,34 @@
       </div>
 
       <div class="ppe-check-section">
+        <h3>✅ Existing PAL Forms</h3>
+        <p>These are the original PAL pages/forms already built into the app.</p>
+        <div class="ppe-check-grid">
+          <button type="button" class="ppe-check-btn ready" onclick="showPage('harness-checklist')"><strong>🦺 Harness Inspection Checklist</strong><small>Existing PAL form · full-body harness pre-use inspection</small></button>
+          <button type="button" class="ppe-check-btn ready" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL form · scaffold condition, access, guardrails, decking</small></button>
+          <button type="button" class="ppe-check-btn ready" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL form · lift inspection and work-area hazards</small></button>
+          <button type="button" class="ppe-check-btn ready" onclick="showPage('incident-report')"><strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form · injury, near miss, damage, or unsafe condition</small></button>
+        </div>
+      </div>
+
+      <div class="ppe-check-section">
         <h3>🦺 PPE / Worker Protection</h3>
         <p>Personal protective equipment and worker-protection checks.</p>
         <div class="ppe-check-grid">
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('PPE Inspection Checklist')"><strong>🥽 PPE Inspection Checklist</strong><small>Hard hat, glasses, gloves, boots, hi-vis, task-specific PPE</small></button>
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('harness-checklist')"><strong>🦺 Full-Body Harness Inspection</strong><small>Existing PAL checklist</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Respirator Checklist')"><strong>😷 Respirator Checklist</strong><small>Fit, seal check, cartridges, storage</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Fall Protection Checklist')"><strong>🪢 Fall Protection Checklist</strong><small>Anchors, lanyards, SRLs, rails, hole covers</small></button>
+          <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Fire Extinguisher Checklist')"><strong>🧯 Fire Extinguisher Checklist</strong><small>Location, access, gauge, pin, inspection tag</small></button>
         </div>
       </div>
 
       <div class="ppe-check-section">
         <h3>🧰 Equipment &amp; Access</h3>
-        <p>Pre-use inspections for equipment, scaffold, ladders, lifts, and job access.</p>
+        <p>Additional pre-use inspections for equipment, ladders, vehicles, and spray equipment.</p>
         <div class="ppe-check-grid">
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL checklist</small></button>
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL checklist</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Ladder Safety Checklist')"><strong>🪜 Ladder Safety Checklist</strong><small>Condition, setup, access, 3-point contact</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Vehicle / Equipment Checklist')"><strong>🚚 Vehicle / Equipment Checklist</strong><small>Walkaround, damage, lights, fluids, condition</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Spray Equipment Checklist')"><strong>🧯 Spray Equipment Checklist</strong><small>Hoses, fittings, pump, pressure, cleanup</small></button>
-          <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Fire Extinguisher Checklist')"><strong>🧯 Fire Extinguisher Checklist</strong><small>Location, access, gauge, pin, inspection tag</small></button>
         </div>
       </div>
 
@@ -904,7 +912,6 @@
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Fireproofing Safety Checklist')"><strong>🔥 Fireproofing Safety Checklist</strong><small>Overspray, slip hazards, hoses, ventilation</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Hot Work Checklist')"><strong>🔥 Hot Work Checklist</strong><small>Permit, fire watch, extinguisher, combustibles</small></button>
           <button type="button" class="ppe-check-btn soon" onclick="return openUniversalChecklist('Confined Space Awareness Checklist')"><strong>🚪 Confined Space Awareness Checklist</strong><small>Permit awareness, atmosphere, attendant, rescue</small></button>
-          <button type="button" class="ppe-check-btn ready" onclick="showPage('incident-report')"><strong>🩹 Incident / Near Miss Report</strong><small>Existing PAL form</small></button>
         </div>
       </div>
     </section>
