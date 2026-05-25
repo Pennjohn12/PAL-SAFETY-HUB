@@ -775,12 +775,11 @@
 
   <main class="page-wrap">
     <section class="page active" id="cover">
-      <div style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12px;font-weight:900;">LEFTOVER SAFETY CARDS REMOVED ACTIVE</div>
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
             <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
-            <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Abra el kit del capataz, charlas de seguridad, políticas, proyectos y certificaciones de empleados rápidamente desde una pantalla principal limpia." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Szybki dostęp do zestawu brygadzisty, odpraw BHP, zasad, projektów i certyfikatów pracowników z jednego przejrzystego ekranu.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
+            <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Los empleados pueden acceder a listas de verificación, charlas de seguridad y políticas, mientras las herramientas de capataz, supervisor y oficina permanecen protegidas detrás del inicio de sesión." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Pracownicy mogą uzyskać dostęp do list kontrolnych, odpraw BHP i zasad, a narzędzia brygadzisty, nadzorcy i biura pozostają chronione logowaniem.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
 
             <div class="home-menu" aria-label="Home Navigation">
               <button onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
@@ -796,10 +795,16 @@
         </div>
 
         <div class="home-visual">
-          <img src="pal-fireproofing-worker.png" alt="PAL fireproofing worker spraying fir<section class="page" id="employee-safety">
+          <img src="pal-fireproofing-worker.png" alt="PAL fireproofing worker spraying fireproofing material" />
+          <div class="home-visual-label">PAL Field Safety</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="employee-safety">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">PPE / Equipment Checklists</h2>
-        <p class="muted">Clean reset version. This tab restores the existing PAL checklist pages first. New checklist forms can be rebuilt one at a time after the tab is stable on iPhone, iPad, and laptop.</p>
+        <p class="muted">Clean reset version. This tab restores the existing PAL checklist pages first. New checklist forms can be rebuilt one at a time after the tab is stable on iPhone, iPad, laptop, and Android.</p>
       </div>
 
       <div class="clean-checklist-section">
@@ -809,7 +814,7 @@
           <button type="button" class="clean-checklist-btn" onclick="showPage('harness-checklist')"><strong>🦺 Harness Inspection Checklist</strong><small>Existing PAL form</small></button>
           <button type="button" class="clean-checklist-btn" onclick="showPage('scaffold-checklist')"><strong>🏗️ Scaffold Safety Checklist</strong><small>Existing PAL form</small></button>
           <button type="button" class="clean-checklist-btn" onclick="showPage('scissor-lift-inspection')"><strong>🔧 Scissor Lift Pre-Use Inspection</strong><small>Existing PAL form</small></button>
-          <button type="button" class="clean-checklist-btn" onclick="showP<strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('incident-report')"><strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form</small></button>
         </div>
       </div>
 
@@ -822,10 +827,6 @@
           <button type="button" class="clean-checklist-btn soon" onclick="alert('Next phase: build Respirator Checklist as a real form.')"><strong>😷 Respirator Checklist</strong><small>Next build phase</small></button>
           <button type="button" class="clean-checklist-btn soon" onclick="alert('Next phase: build Demolition Safety Checklist as a real form.')"><strong>🚧 Demolition Safety Checklist</strong><small>Next build phase</small></button>
         </div>
-      </div>
-    </section>
-
-    <div class="kit-icon">🩹</div><h4>Incident / Near Miss Report</h4><p>Report injury, accident, damage, or near miss information</p></div>
       </div>
     </section>
 
@@ -852,7 +853,7 @@
 
       <div class="kit-section-title">Incidents and Injury</div>
       <div class="grid grid-2">
-        <div class="kit-card orange" onclick="showP<div class="kit-icon">🩹</div><h4>Incident Report</h4><p>Accident / injury investigation form</p></div>
+        <div class="kit-card orange" onclick="showPage('incident-report')"><div class="kit-icon">🩹</div><h4>Incident Report</h4><p>Accident / injury investigation form</p></div>
       </div>
 
       <div class="kit-section-title">Equipment Inspections</div>
