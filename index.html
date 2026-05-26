@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- IPHONE_FORCED_ONE_PAGE_PRINT_PATCH_2026_05_24 -->
   <!-- LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23 -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -3852,6 +3853,303 @@ function returnToApp() {
   }
 }
 <\/script>
+
+
+<!-- IPHONE_FORCED_ONE_PAGE_PRINT_PATCH_2026_05_24 -->
+<style>
+@media print {
+  @page { size: letter portrait; margin: 0.06in !important; }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 8.5in !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  /* iPhone/Safari needs real compression, not just browser zoom. */
+  #harness-checklist,
+  #scaffold-checklist,
+  #scissor-lift-inspection,
+  #incident-report {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    font-size: 5.2px !important;
+    line-height: 1 !important;
+  }
+
+  #harness-checklist .form-shell,
+  #scaffold-checklist .form-shell,
+  #scissor-lift-inspection .form-shell,
+  #incident-report .form-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #harness-checklist .form-head,
+  #scaffold-checklist .form-head,
+  #scissor-lift-inspection .form-head,
+  #incident-report .form-head {
+    padding: 1px 5px !important;
+    min-height: 0 !important;
+    gap: 4px !important;
+    margin: 0 0 1px 0 !important;
+  }
+
+  #harness-checklist .pal-logo,
+  #scaffold-checklist .pal-logo,
+  #scissor-lift-inspection .pal-logo,
+  #incident-report .pal-logo {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #harness-checklist .pal-logo svg,
+  #scaffold-checklist .pal-logo svg,
+  #scissor-lift-inspection .pal-logo svg,
+  #incident-report .pal-logo svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #harness-checklist .form-head h2,
+  #scaffold-checklist .form-head h2,
+  #scissor-lift-inspection .form-head h2,
+  #incident-report .form-head h2 {
+    font-size: 7px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .form-head p,
+  #scaffold-checklist .form-head p,
+  #scissor-lift-inspection .form-head p,
+  #incident-report .form-head p,
+  #harness-checklist .form-meta,
+  #scaffold-checklist .form-meta,
+  #scissor-lift-inspection .form-meta,
+  #incident-report .form-meta {
+    font-size: 4.8px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .form-body,
+  #scaffold-checklist .form-body,
+  #scissor-lift-inspection .form-body,
+  #incident-report .form-body {
+    padding: 1px 5px !important;
+    margin: 0 !important;
+    font-size: 5.2px !important;
+    line-height: 1 !important;
+  }
+
+  #harness-checklist .toolbar,
+  #scaffold-checklist .toolbar,
+  #scissor-lift-inspection .toolbar,
+  #incident-report .toolbar,
+  #harness-checklist .sticky-actions,
+  #scaffold-checklist .sticky-actions,
+  #scissor-lift-inspection .sticky-actions,
+  #incident-report .sticky-actions {
+    display: none !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .checklist-link-box,
+  #scaffold-checklist .checklist-link-box,
+  #scissor-lift-inspection .checklist-link-box,
+  #incident-report .checklist-link-box {
+    padding: 1px 3px !important;
+    margin: 0 0 1px 0 !important;
+    border-radius: 0 !important;
+    border-width: 0.5px !important;
+  }
+
+  #harness-checklist .checklist-link-box h4,
+  #scaffold-checklist .checklist-link-box h4,
+  #scissor-lift-inspection .checklist-link-box h4,
+  #incident-report .checklist-link-box h4 {
+    display: none !important;
+  }
+
+  #harness-checklist div[style*="grid-template-columns:1fr 1fr"],
+  #scaffold-checklist div[style*="grid-template-columns:1fr 1fr"],
+  #scissor-lift-inspection div[style*="grid-template-columns:1fr 1fr"],
+  #incident-report div[style*="grid-template-columns:1fr 1fr"],
+  #harness-checklist .form-grid,
+  #scaffold-checklist .form-grid,
+  #scissor-lift-inspection .form-grid,
+  #incident-report .form-grid,
+  #harness-checklist .grid,
+  #scaffold-checklist .grid,
+  #scissor-lift-inspection .grid,
+  #incident-report .grid,
+  #harness-checklist .grid-2,
+  #scaffold-checklist .grid-2,
+  #scissor-lift-inspection .grid-2,
+  #incident-report .grid-2 {
+    gap: 1px !important;
+    margin: 0 0 1px 0 !important;
+  }
+
+  #harness-checklist .field,
+  #scaffold-checklist .field,
+  #scissor-lift-inspection .field,
+  #incident-report .field {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #harness-checklist .field label,
+  #scaffold-checklist .field label,
+  #scissor-lift-inspection .field label,
+  #incident-report .field label,
+  #harness-checklist label,
+  #scaffold-checklist label,
+  #scissor-lift-inspection label,
+  #incident-report label {
+    font-size: 5px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #harness-checklist input,
+  #harness-checklist textarea,
+  #harness-checklist select,
+  #scaffold-checklist input,
+  #scaffold-checklist textarea,
+  #scaffold-checklist select,
+  #scissor-lift-inspection input,
+  #scissor-lift-inspection textarea,
+  #scissor-lift-inspection select,
+  #incident-report input,
+  #incident-report textarea,
+  #incident-report select {
+    font-size: 5px !important;
+    line-height: 1 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 1px !important;
+    margin: 0 !important;
+    border-bottom-width: 0.5px !important;
+  }
+
+  #harness-checklist textarea,
+  #scaffold-checklist textarea,
+  #scissor-lift-inspection textarea,
+  #incident-report textarea {
+    min-height: 8px !important;
+    background: none !important;
+  }
+
+  #harness-checklist table,
+  #scaffold-checklist table,
+  #scissor-lift-inspection table,
+  #incident-report table {
+    font-size: 4.9px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+  }
+
+  #harness-checklist th,
+  #harness-checklist td,
+  #scaffold-checklist th,
+  #scaffold-checklist td,
+  #scissor-lift-inspection th,
+  #scissor-lift-inspection td,
+  #incident-report th,
+  #incident-report td {
+    font-size: 4.9px !important;
+    line-height: 1 !important;
+    padding: 0 2px !important;
+    margin: 0 !important;
+    border-width: 0.5px !important;
+  }
+
+  #harness-checklist tr,
+  #scaffold-checklist tr,
+  #scissor-lift-inspection tr,
+  #incident-report tr {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  #harness-checklist input[type="radio"],
+  #scaffold-checklist input[type="radio"],
+  #scissor-lift-inspection input[type="radio"],
+  #incident-report input[type="radio"],
+  #harness-checklist input[type="checkbox"],
+  #scaffold-checklist input[type="checkbox"],
+  #scissor-lift-inspection input[type="checkbox"],
+  #incident-report input[type="checkbox"] {
+    width: 6px !important;
+    height: 6px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .subhead,
+  #scaffold-checklist .subhead,
+  #scissor-lift-inspection .subhead,
+  #incident-report .subhead {
+    font-size: 5.5px !important;
+    line-height: 1 !important;
+    margin: 1px 0 !important;
+  }
+
+  #harness-checklist .sig-pad-wrap canvas,
+  #scaffold-checklist .sig-pad-wrap canvas,
+  #scissor-lift-inspection .sig-pad-wrap canvas,
+  #incident-report .sig-pad-wrap canvas {
+    height: 10px !important;
+  }
+
+  #harness-checklist p,
+  #scaffold-checklist p,
+  #scissor-lift-inspection p,
+  #incident-report p,
+  #harness-checklist .warn-box,
+  #scaffold-checklist .warn-box,
+  #scissor-lift-inspection .warn-box,
+  #incident-report .warn-box,
+  #harness-checklist .card,
+  #scaffold-checklist .card,
+  #scissor-lift-inspection .card,
+  #incident-report .card,
+  #harness-checklist .pass-box,
+  #scaffold-checklist .pass-box,
+  #scissor-lift-inspection .pass-box,
+  #incident-report .pass-box {
+    font-size: 5px !important;
+    line-height: 1 !important;
+    padding: 1px 2px !important;
+    margin: 1px 0 !important;
+  }
+
+  /* Harness was the hardest one on iPhone: remove non-essential footer notes in print only. */
+  #harness-checklist p[style*="font-size:10px"] {
+    display: none !important;
+  }
+}
+</style>
+
 </body>
 </html>`;
     }
@@ -4396,6 +4694,303 @@ function syncJobNumber(value) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
   </script>
+
+
+
+<!-- IPHONE_FORCED_ONE_PAGE_PRINT_PATCH_2026_05_24 -->
+<style>
+@media print {
+  @page { size: letter portrait; margin: 0.06in !important; }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 8.5in !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  /* iPhone/Safari needs real compression, not just browser zoom. */
+  #harness-checklist,
+  #scaffold-checklist,
+  #scissor-lift-inspection,
+  #incident-report {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    font-size: 5.2px !important;
+    line-height: 1 !important;
+  }
+
+  #harness-checklist .form-shell,
+  #scaffold-checklist .form-shell,
+  #scissor-lift-inspection .form-shell,
+  #incident-report .form-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #harness-checklist .form-head,
+  #scaffold-checklist .form-head,
+  #scissor-lift-inspection .form-head,
+  #incident-report .form-head {
+    padding: 1px 5px !important;
+    min-height: 0 !important;
+    gap: 4px !important;
+    margin: 0 0 1px 0 !important;
+  }
+
+  #harness-checklist .pal-logo,
+  #scaffold-checklist .pal-logo,
+  #scissor-lift-inspection .pal-logo,
+  #incident-report .pal-logo {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #harness-checklist .pal-logo svg,
+  #scaffold-checklist .pal-logo svg,
+  #scissor-lift-inspection .pal-logo svg,
+  #incident-report .pal-logo svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #harness-checklist .form-head h2,
+  #scaffold-checklist .form-head h2,
+  #scissor-lift-inspection .form-head h2,
+  #incident-report .form-head h2 {
+    font-size: 7px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .form-head p,
+  #scaffold-checklist .form-head p,
+  #scissor-lift-inspection .form-head p,
+  #incident-report .form-head p,
+  #harness-checklist .form-meta,
+  #scaffold-checklist .form-meta,
+  #scissor-lift-inspection .form-meta,
+  #incident-report .form-meta {
+    font-size: 4.8px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .form-body,
+  #scaffold-checklist .form-body,
+  #scissor-lift-inspection .form-body,
+  #incident-report .form-body {
+    padding: 1px 5px !important;
+    margin: 0 !important;
+    font-size: 5.2px !important;
+    line-height: 1 !important;
+  }
+
+  #harness-checklist .toolbar,
+  #scaffold-checklist .toolbar,
+  #scissor-lift-inspection .toolbar,
+  #incident-report .toolbar,
+  #harness-checklist .sticky-actions,
+  #scaffold-checklist .sticky-actions,
+  #scissor-lift-inspection .sticky-actions,
+  #incident-report .sticky-actions {
+    display: none !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .checklist-link-box,
+  #scaffold-checklist .checklist-link-box,
+  #scissor-lift-inspection .checklist-link-box,
+  #incident-report .checklist-link-box {
+    padding: 1px 3px !important;
+    margin: 0 0 1px 0 !important;
+    border-radius: 0 !important;
+    border-width: 0.5px !important;
+  }
+
+  #harness-checklist .checklist-link-box h4,
+  #scaffold-checklist .checklist-link-box h4,
+  #scissor-lift-inspection .checklist-link-box h4,
+  #incident-report .checklist-link-box h4 {
+    display: none !important;
+  }
+
+  #harness-checklist div[style*="grid-template-columns:1fr 1fr"],
+  #scaffold-checklist div[style*="grid-template-columns:1fr 1fr"],
+  #scissor-lift-inspection div[style*="grid-template-columns:1fr 1fr"],
+  #incident-report div[style*="grid-template-columns:1fr 1fr"],
+  #harness-checklist .form-grid,
+  #scaffold-checklist .form-grid,
+  #scissor-lift-inspection .form-grid,
+  #incident-report .form-grid,
+  #harness-checklist .grid,
+  #scaffold-checklist .grid,
+  #scissor-lift-inspection .grid,
+  #incident-report .grid,
+  #harness-checklist .grid-2,
+  #scaffold-checklist .grid-2,
+  #scissor-lift-inspection .grid-2,
+  #incident-report .grid-2 {
+    gap: 1px !important;
+    margin: 0 0 1px 0 !important;
+  }
+
+  #harness-checklist .field,
+  #scaffold-checklist .field,
+  #scissor-lift-inspection .field,
+  #incident-report .field {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #harness-checklist .field label,
+  #scaffold-checklist .field label,
+  #scissor-lift-inspection .field label,
+  #incident-report .field label,
+  #harness-checklist label,
+  #scaffold-checklist label,
+  #scissor-lift-inspection label,
+  #incident-report label {
+    font-size: 5px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #harness-checklist input,
+  #harness-checklist textarea,
+  #harness-checklist select,
+  #scaffold-checklist input,
+  #scaffold-checklist textarea,
+  #scaffold-checklist select,
+  #scissor-lift-inspection input,
+  #scissor-lift-inspection textarea,
+  #scissor-lift-inspection select,
+  #incident-report input,
+  #incident-report textarea,
+  #incident-report select {
+    font-size: 5px !important;
+    line-height: 1 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 1px !important;
+    margin: 0 !important;
+    border-bottom-width: 0.5px !important;
+  }
+
+  #harness-checklist textarea,
+  #scaffold-checklist textarea,
+  #scissor-lift-inspection textarea,
+  #incident-report textarea {
+    min-height: 8px !important;
+    background: none !important;
+  }
+
+  #harness-checklist table,
+  #scaffold-checklist table,
+  #scissor-lift-inspection table,
+  #incident-report table {
+    font-size: 4.9px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+  }
+
+  #harness-checklist th,
+  #harness-checklist td,
+  #scaffold-checklist th,
+  #scaffold-checklist td,
+  #scissor-lift-inspection th,
+  #scissor-lift-inspection td,
+  #incident-report th,
+  #incident-report td {
+    font-size: 4.9px !important;
+    line-height: 1 !important;
+    padding: 0 2px !important;
+    margin: 0 !important;
+    border-width: 0.5px !important;
+  }
+
+  #harness-checklist tr,
+  #scaffold-checklist tr,
+  #scissor-lift-inspection tr,
+  #incident-report tr {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  #harness-checklist input[type="radio"],
+  #scaffold-checklist input[type="radio"],
+  #scissor-lift-inspection input[type="radio"],
+  #incident-report input[type="radio"],
+  #harness-checklist input[type="checkbox"],
+  #scaffold-checklist input[type="checkbox"],
+  #scissor-lift-inspection input[type="checkbox"],
+  #incident-report input[type="checkbox"] {
+    width: 6px !important;
+    height: 6px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #harness-checklist .subhead,
+  #scaffold-checklist .subhead,
+  #scissor-lift-inspection .subhead,
+  #incident-report .subhead {
+    font-size: 5.5px !important;
+    line-height: 1 !important;
+    margin: 1px 0 !important;
+  }
+
+  #harness-checklist .sig-pad-wrap canvas,
+  #scaffold-checklist .sig-pad-wrap canvas,
+  #scissor-lift-inspection .sig-pad-wrap canvas,
+  #incident-report .sig-pad-wrap canvas {
+    height: 10px !important;
+  }
+
+  #harness-checklist p,
+  #scaffold-checklist p,
+  #scissor-lift-inspection p,
+  #incident-report p,
+  #harness-checklist .warn-box,
+  #scaffold-checklist .warn-box,
+  #scissor-lift-inspection .warn-box,
+  #incident-report .warn-box,
+  #harness-checklist .card,
+  #scaffold-checklist .card,
+  #scissor-lift-inspection .card,
+  #incident-report .card,
+  #harness-checklist .pass-box,
+  #scaffold-checklist .pass-box,
+  #scissor-lift-inspection .pass-box,
+  #incident-report .pass-box {
+    font-size: 5px !important;
+    line-height: 1 !important;
+    padding: 1px 2px !important;
+    margin: 1px 0 !important;
+  }
+
+  /* Harness was the hardest one on iPhone: remove non-essential footer notes in print only. */
+  #harness-checklist p[style*="font-size:10px"] {
+    display: none !important;
+  }
+}
+</style>
 
 </body>
 </html>
