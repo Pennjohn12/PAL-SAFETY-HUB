@@ -701,7 +701,133 @@
       }
     }
 
-  </style>
+  
+
+    /* PRINT_ONE_PAGE_CHECKLIST_PATCH_2026_05_24
+       Keeps the 4 main checklist/report forms from splitting header onto page 1
+       and body onto page 2 when using Save / Print on iPhone, iPad, laptop, Android. */
+    @media print {
+      #harness-checklist,
+      #scaffold-checklist,
+      #scissor-lift-inspection,
+      #incident-report {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        overflow: visible !important;
+      }
+
+      #harness-checklist .form-shell,
+      #scaffold-checklist .form-shell,
+      #scissor-lift-inspection .form-shell,
+      #incident-report .form-shell {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+      }
+
+      #harness-checklist .form-head,
+      #scaffold-checklist .form-head,
+      #scissor-lift-inspection .form-head,
+      #incident-report .form-head {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+        padding: 3px 8px !important;
+      }
+
+      #harness-checklist .form-body,
+      #scaffold-checklist .form-body,
+      #scissor-lift-inspection .form-body,
+      #incident-report .form-body {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+        padding: 4px 8px !important;
+      }
+
+      #harness-checklist .form-head h2,
+      #scaffold-checklist .form-head h2,
+      #scissor-lift-inspection .form-head h2,
+      #incident-report .form-head h2 {
+        font-size: 10px !important;
+        line-height: 1.05 !important;
+      }
+
+      #harness-checklist .form-head p,
+      #scaffold-checklist .form-head p,
+      #scissor-lift-inspection .form-head p,
+      #incident-report .form-head p,
+      #harness-checklist .form-meta,
+      #scaffold-checklist .form-meta,
+      #scissor-lift-inspection .form-meta,
+      #incident-report .form-meta {
+        font-size: 7px !important;
+        line-height: 1.1 !important;
+      }
+
+      #harness-checklist .pal-logo svg,
+      #scaffold-checklist .pal-logo svg,
+      #scissor-lift-inspection .pal-logo svg,
+      #incident-report .pal-logo svg {
+        width: 26px !important;
+        height: 26px !important;
+      }
+
+      #harness-checklist .field label,
+      #scaffold-checklist .field label,
+      #scissor-lift-inspection .field label,
+      #incident-report .field label,
+      #harness-checklist th, #harness-checklist td,
+      #scaffold-checklist th, #scaffold-checklist td,
+      #scissor-lift-inspection th, #scissor-lift-inspection td,
+      #incident-report th, #incident-report td {
+        font-size: 7px !important;
+        line-height: 1.1 !important;
+        padding: 1px 4px !important;
+      }
+
+      #harness-checklist input, #harness-checklist textarea, #harness-checklist select,
+      #scaffold-checklist input, #scaffold-checklist textarea, #scaffold-checklist select,
+      #scissor-lift-inspection input, #scissor-lift-inspection textarea, #scissor-lift-inspection select,
+      #incident-report input, #incident-report textarea, #incident-report select {
+        font-size: 7px !important;
+        padding: 0 2px !important;
+        line-height: 1.1 !important;
+      }
+
+      #harness-checklist textarea,
+      #scaffold-checklist textarea,
+      #scissor-lift-inspection textarea,
+      #incident-report textarea {
+        min-height: 18px !important;
+      }
+
+      #harness-checklist .sig-pad-wrap canvas,
+      #scaffold-checklist .sig-pad-wrap canvas,
+      #scissor-lift-inspection .sig-pad-wrap canvas,
+      #incident-report .sig-pad-wrap canvas {
+        height: 22px !important;
+      }
+
+      #harness-checklist .subhead,
+      #scaffold-checklist .subhead,
+      #scissor-lift-inspection .subhead,
+      #incident-report .subhead {
+        font-size: 8px !important;
+        margin: 3px 0 2px !important;
+      }
+
+      #incident-report .warn-box,
+      #incident-report .card,
+      #harness-checklist .warn-box,
+      #scaffold-checklist .warn-box,
+      #scissor-lift-inspection .warn-box {
+        padding: 3px 6px !important;
+        margin-bottom: 3px !important;
+        font-size: 7px !important;
+        line-height: 1.1 !important;
+      }
+    }
+</style>
 
 
 <script>
