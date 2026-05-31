@@ -1020,7 +1020,26 @@
       }
     }
 
-  </style>
+  
+
+    /* STANDARD_3_BUTTON_DOCUMENT_FOOTER_FINAL_2026_05_24 */
+    .sticky-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sticky-actions .btn {
+      min-width: 150px;
+      text-align: center;
+      font-weight: 800;
+    }
+    @media (max-width: 650px) {
+      .sticky-actions { gap: 8px; padding: 10px; }
+      .sticky-actions .btn { flex: 1 1 100%; min-width: 0; width: 100%; }
+    }
+</style>
 
 
 <script>
@@ -1444,7 +1463,7 @@
             </div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('ai-daily-safety');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('ai-daily-safety');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('ai-daily-safety');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('ai-daily-safety');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('ai-daily-safety');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('ai-daily-safety');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -1516,7 +1535,7 @@
             </div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('daily-safety-meeting');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('daily-safety-meeting');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-safety-meeting');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('daily-safety-meeting');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('daily-safety-meeting');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('daily-safety-meeting');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -1555,7 +1574,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('toolbox-signin');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('toolbox-signin');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('toolbox-signin');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('toolbox-signin');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('toolbox-signin');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('toolbox-signin');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -1661,7 +1680,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('daily-report');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('daily-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-report');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('daily-report');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('daily-report');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('daily-report');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -1715,7 +1734,7 @@
           </div>
           <p style="margin-top:8px;"><button class="btn secondary" onclick="addTimesheetRow()">+ Add Worker</button></p>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('daily-timesheet');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('daily-timesheet');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('daily-timesheet');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('daily-timesheet');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('daily-timesheet');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('daily-timesheet');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -1814,7 +1833,7 @@
           </div>
 
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('weekly-timesheet-fp');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('weekly-timesheet-fp');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('weekly-timesheet-fp');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('weekly-timesheet-fp');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('weekly-timesheet-fp');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('weekly-timesheet-fp');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -1867,7 +1886,7 @@
             <div class="sig-pad-wrap" id="exp-sig-wrap"><canvas id="exp-sig-canvas"></canvas><button class="sig-clear" type="button" onclick="clearSigById('exp-sig-canvas')">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('expense-report');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('expense-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('expense-report');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('expense-report');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('expense-report');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('expense-report');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -2043,7 +2062,7 @@
           </div>
           <p class="save-note">Report all incidents to Richardo Blake (347-844-0476) immediately. A copy of this report must be filed with EH&S within 24 hours of the incident.</p>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="saveForm('incident-report');exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="saveForm('incident-report');shareCurrentPage()">Share File</button><button class="btn gold" onclick="saveForm('incident-report');printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('incident-report');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('incident-report');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('incident-report');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
     <!-- SCISSOR LIFT PRE-USE INSPECTION -->
@@ -2181,12 +2200,7 @@
           </div>
 
         </div><!-- end form-body -->
-        <div class="sticky-actions">
-          <button class="btn secondary" onclick="printPage()">Open Print View</button>
-          <button class="btn pdf" onclick="saveForm('scissor-lift-inspection');exportCurrentPagePDF()">Open Save / Print</button>
-          <button class="btn share" onclick="saveForm('scissor-lift-inspection');shareCurrentPage()">Share File</button>
-          <button class="btn gold" onclick="saveForm('scissor-lift-inspection');printPage()">Open Save / Print</button>
-        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('scissor-lift-inspection');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('scissor-lift-inspection');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('scissor-lift-inspection');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -2279,12 +2293,7 @@
           </table>
 
         </div><!-- end form-body -->
-        <div class="sticky-actions">
-          <button class="btn secondary" onclick="printPage()">Open Print View</button>
-          <button class="btn pdf" onclick="saveForm('scaffold-checklist');exportCurrentPagePDF()">Open Save / Print</button>
-          <button class="btn share" onclick="saveForm('scaffold-checklist');shareCurrentPage()">Share File</button>
-          <button class="btn gold" onclick="saveForm('scaffold-checklist');printPage()">Open Save / Print</button>
-        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('scaffold-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('scaffold-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('scaffold-checklist');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -2381,12 +2390,7 @@
           <!-- Inspector signature removed -->
 
         </div>
-        <div class="sticky-actions">
-          <button class="btn secondary" onclick="printPage()">Open Print View</button>
-          <button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">Open Save / Print</button>
-          <button class="btn share" onclick="saveForm('harness-checklist');shareCurrentPage()">Share File</button>
-          <button class="btn gold" onclick="saveForm('harness-checklist');printPage()">Open Save / Print</button>
-        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('harness-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('harness-checklist');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -2896,7 +2900,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -2939,7 +2943,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -2985,7 +2989,7 @@
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
 
@@ -3064,7 +3068,7 @@
             </div>
           </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
   </main>
@@ -4150,6 +4154,99 @@ function returnToApp() {
 }
 </style>
 
+
+
+<!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
+     Standardizes every form/document footer to 3 buttons:
+     Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
+<style>
+  .sticky-actions.pal-standard-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .sticky-actions.pal-standard-footer .btn {
+    min-width: 138px;
+    text-align: center;
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .sticky-actions.pal-standard-footer {
+      justify-content: stretch;
+    }
+    .sticky-actions.pal-standard-footer .btn {
+      flex: 1 1 100%;
+      width: 100%;
+      min-width: 0;
+    }
+  }
+</style>
+<script>
+(function(){
+  function saveActiveFormSilently(){
+    try {
+      const active = document.querySelector('.page.active');
+      if (!active) return;
+      const form = active.querySelector('form[data-save-key]');
+      if (!form) return;
+      if (typeof saveForm === 'function') saveForm(active.id);
+    } catch(e) {}
+  }
+
+  window.palPreviewDocument = function(){
+    saveActiveFormSilently();
+    if (typeof printPage === 'function') printPage();
+    else window.print();
+  };
+
+  window.palSavePdfDocument = function(){
+    saveActiveFormSilently();
+    if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
+    else window.print();
+  };
+
+  window.palShareDocument = function(){
+    saveActiveFormSilently();
+    if (typeof shareCurrentPage === 'function') shareCurrentPage();
+    else if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
+    else window.print();
+  };
+
+  window.standardizePalFormFooters = function(){
+    document.querySelectorAll('.sticky-actions').forEach(function(bar){
+      bar.classList.add('pal-standard-footer');
+      bar.innerHTML = '' +
+        '<button class="btn secondary" type="button" onclick="palPreviewDocument()">📄 Preview</button>' +
+        '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">📥 Save PDF</button>' +
+        '<button class="btn share" type="button" onclick="palShareDocument()">📤 Share</button>';
+    });
+  };
+
+  const originalSetLanguage = window.setLanguage;
+  if (typeof originalSetLanguage === 'function') {
+    window.setLanguage = function(){
+      const result = originalSetLanguage.apply(this, arguments);
+      setTimeout(window.standardizePalFormFooters, 0);
+      return result;
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.standardizePalFormFooters);
+  } else {
+    window.standardizePalFormFooters();
+  }
+
+  const observer = new MutationObserver(function(){
+    window.clearTimeout(window.__palFooterStandardTimer);
+    window.__palFooterStandardTimer = window.setTimeout(window.standardizePalFormFooters, 50);
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+
 </body>
 </html>`;
     }
@@ -4251,7 +4348,7 @@ function syncJobNumber(value) {
               <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
             </div>
         </div>
-        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">Open Print View</button><button class="btn pdf" onclick="exportCurrentPagePDF()">Open Save / Print</button><button class="btn share" onclick="shareCurrentPage()">Share File</button><button class="btn gold" onclick="printPage()">Open Save / Print</button></div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>`;
       container.querySelectorAll('canvas').forEach(initSigPad);
     }
@@ -4991,6 +5088,99 @@ function syncJobNumber(value) {
   }
 }
 </style>
+
+
+
+<!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
+     Standardizes every form/document footer to 3 buttons:
+     Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
+<style>
+  .sticky-actions.pal-standard-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .sticky-actions.pal-standard-footer .btn {
+    min-width: 138px;
+    text-align: center;
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .sticky-actions.pal-standard-footer {
+      justify-content: stretch;
+    }
+    .sticky-actions.pal-standard-footer .btn {
+      flex: 1 1 100%;
+      width: 100%;
+      min-width: 0;
+    }
+  }
+</style>
+<script>
+(function(){
+  function saveActiveFormSilently(){
+    try {
+      const active = document.querySelector('.page.active');
+      if (!active) return;
+      const form = active.querySelector('form[data-save-key]');
+      if (!form) return;
+      if (typeof saveForm === 'function') saveForm(active.id);
+    } catch(e) {}
+  }
+
+  window.palPreviewDocument = function(){
+    saveActiveFormSilently();
+    if (typeof printPage === 'function') printPage();
+    else window.print();
+  };
+
+  window.palSavePdfDocument = function(){
+    saveActiveFormSilently();
+    if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
+    else window.print();
+  };
+
+  window.palShareDocument = function(){
+    saveActiveFormSilently();
+    if (typeof shareCurrentPage === 'function') shareCurrentPage();
+    else if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
+    else window.print();
+  };
+
+  window.standardizePalFormFooters = function(){
+    document.querySelectorAll('.sticky-actions').forEach(function(bar){
+      bar.classList.add('pal-standard-footer');
+      bar.innerHTML = '' +
+        '<button class="btn secondary" type="button" onclick="palPreviewDocument()">📄 Preview</button>' +
+        '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">📥 Save PDF</button>' +
+        '<button class="btn share" type="button" onclick="palShareDocument()">📤 Share</button>';
+    });
+  };
+
+  const originalSetLanguage = window.setLanguage;
+  if (typeof originalSetLanguage === 'function') {
+    window.setLanguage = function(){
+      const result = originalSetLanguage.apply(this, arguments);
+      setTimeout(window.standardizePalFormFooters, 0);
+      return result;
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.standardizePalFormFooters);
+  } else {
+    window.standardizePalFormFooters();
+  }
+
+  const observer = new MutationObserver(function(){
+    window.clearTimeout(window.__palFooterStandardTimer);
+    window.__palFooterStandardTimer = window.setTimeout(window.standardizePalFormFooters, 50);
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
 
 </body>
 </html>
