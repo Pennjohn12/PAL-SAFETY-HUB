@@ -4311,7 +4311,7 @@ function returnToApp() {
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
-</script>
+<\/script>
 
 </body>
 </html>`;
@@ -4424,43 +4424,11 @@ function syncJobNumber(value) {
 
   container.querySelectorAll('canvas').forEach(initSigPad);
 }
-      
-      
-      
-      
-      
-      
-        
-        
-          
-          
-          
-        
-        
-          
-    
-        
-            
-          
-              
-          
-          
-          
-                
-        
-              
-              
-              
-            
-      
-        
-      
-    }
 
-    
-      document.getElementById('talk-grid-view').classList.remove('hidden');
-      document.getElementById('talk-detail-view').classList.add('hidden');
-    }
+function closeTalk() {
+  document.getElementById('talk-grid-view').classList.remove('hidden');
+  document.getElementById('talk-detail-view').classList.add('hidden');
+}
 
 
     function generateAiDailySafety() {
