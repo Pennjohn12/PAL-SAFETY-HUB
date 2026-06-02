@@ -6,7 +6,6 @@
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-
   <meta charset="UTF-8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -14,10 +13,8 @@
   <meta name="theme-color" content="#1b3a5c" />
   <meta name="description" content="PAL Environmental Services — Digital Safety Binder & Field Forms" />
   <meta name="mobile-web-app-capable" content="yes" />
-
   <!-- PWA Manifest (Android + modern browsers) -->
   <link rel="manifest" href="manifest.json" />
-
   <!-- Icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
@@ -60,7 +57,6 @@
       border-radius: 999px; cursor: pointer; font-size: 12px;
     }
     .lang-switch button.active { background: var(--green-accent); color: var(--navy); border-color: var(--green-accent); font-weight: 700; }
-
     .tabs {
       position: sticky; top: 64px; z-index: 999; display: flex; gap: 8px; overflow-x: auto; white-space: nowrap;
       padding: 10px 12px; background: white; border-bottom: 1px solid var(--line);
@@ -72,18 +68,15 @@
     .tab.active { color: var(--navy); border-bottom-color: var(--green-accent); }
     .tab.foreman { background: var(--navy); color: var(--green-accent); }
     .tab.foreman.active { border-bottom-color: var(--green-accent); }
-
     .page-wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px 92px; }
     .page { display: none; }
     .page.active { display: block; }
-
     .hero {
       background: linear-gradient(145deg, var(--navy), #1b3a5c); color: white; border-radius: 20px; padding: 28px;
       box-shadow: 0 12px 30px rgba(26,39,68,.2);
     }
     .hero h2 { margin: 0 0 10px; font-size: 28px; }
     .hero p { margin: 0; color: rgba(255,255,255,.86); line-height: 1.7; }
-
     .grid { display: grid; gap: 16px; }
     .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
@@ -100,7 +93,6 @@
     .check-list li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.08); }
     .check-list li:first-child { border-top: 0; }
     .check { width: 24px; height: 24px; flex: 0 0 auto; border-radius: 999px; background: var(--green-accent); color: var(--navy); display: grid; place-items: center; font-weight: 900; }
-
     .kit-section-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; margin: 24px 0 12px; color: var(--navy); }
     .kit-card {
       background: white; border: 1px solid var(--line); border-left: 6px solid var(--green-accent); border-radius: 16px; padding: 16px; cursor: pointer;
@@ -113,12 +105,10 @@
     .kit-icon { font-size: 28px; margin-bottom: 10px; }
     .kit-card h4 { margin: 0 0 4px; }
     .kit-card p { margin: 0; color: var(--muted); font-size: 14px; }
-
     .toc a, .link-btn {
       color: var(--navy); text-decoration: none; font-weight: 600; cursor: pointer;
     }
     .toc li { margin: 8px 0; }
-
     .form-shell { background: white; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
     .form-head {
       background: var(--navy);
@@ -134,8 +124,6 @@
     .form-meta { text-align: right; font-size: 11px; color: rgba(255,255,255,.8); }
     .pal-logo { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pal-logo svg { width: 52px; height: 52px; }
-
-    
     .form-body { padding: 18px; }
     .subhead { margin: 18px 0 12px; color: var(--navy); font-size: 16px; }
     .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
@@ -174,9 +162,7 @@
       resize: vertical;
       border-bottom: none;
     }
-    
     .span-2 { grid-column: span 2; }
-
     table { width: 100%; border-collapse: collapse; background: white; }
     th, td { border: 1px solid #d6dde7; padding: 9px 10px; vertical-align: top; text-align: left; font-size: 14px; }
     th { background: #eff4f8; color: var(--navy); }
@@ -219,14 +205,11 @@
     .hidden { display: none !important; }
     .pill { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #eef2f7; color: var(--navy); font-size: 12px; font-weight: 700; }
     .save-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
-
     .toolbox-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
     .topic-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 16px; cursor: pointer; }
     .topic-card small { color: var(--muted); display: block; margin-bottom: 6px; }
     .topic-card strong { color: var(--navy); }
     .talk-section { border-left: 5px solid var(--green-accent); }
-
-
     .cloud-panel {
       background: linear-gradient(180deg, #f7fbff, #eef5fb);
       border: 1px solid #cddceb;
@@ -243,8 +226,6 @@
       background:#eef4fa; color:var(--navy); font-size:12px; font-weight:700;
     }
     .sync-note { font-size:12px; color:var(--muted); margin-top:8px; }
-
-
     /* AI Assisted Daily Safety Helper */
     .ai-helper-panel {
       background: linear-gradient(180deg, #f7fbff, #eef5fb);
@@ -269,21 +250,18 @@
       margin: 12px 0;
     }
     @media (max-width: 700px) { .ai-form-grid { grid-template-columns: 1fr; } .ai-form-grid .span-2 { grid-column: span 1; } }
-
     @media (max-width: 600px) {
       .grid-2, .grid-3, .form-grid, .toolbox-grid, .project-context-grid { grid-template-columns: 1fr; }
       .span-2 { grid-column: span 1; }
       .header { padding: 0 10px; }
       .brand-text h1 { font-size: 16px; }
     }
-
     /* Cover scenes */
     .cover-scenes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0 4px; }
     .scene-wrap { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.18); background: #e8f4fd; }
     .scene-wrap svg { display: block; width: 100%; height: auto; }
     .scene-label { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #fff; background: #1b3a5c; padding: 5px 0 6px; font-family: "Segoe UI", sans-serif; }
     @media (max-width: 480px) { .cover-scenes { grid-template-columns: 1fr; } }
-
     /* Scissor lift inspection */
     .inspection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
     .inspection-section { background: #f9fafb; border: 1px solid #dde3ea; border-radius: 12px; overflow: hidden; }
@@ -300,7 +278,6 @@
     .inspection-radios label.no-lbl { color: #b91c1c; }
     .inspection-radios label.na-lbl { color: #6b7280; }
     @media (max-width: 640px) { .inspection-grid { grid-template-columns: 1fr; } }
-
     /* Scaffolding checklist */
     .scaffold-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
     .scaffold-table th { background: #1b3a5c; color: white; padding: 9px 12px; text-align: left; font-size: 12px; }
@@ -315,7 +292,6 @@
     .scaffold-table .yn-cell input[type=radio] { width: 18px; height: 18px; accent-color: var(--navy); cursor: pointer; }
     .scaffold-table .remarks-cell input { width: 100%; border: none; border-bottom: 1px solid #aebccc; padding: 4px 2px; font: inherit; background: transparent; font-size: 12px; }
     .scaffold-table .checked-cell input { width: 100%; border: none; border-bottom: 1px solid #aebccc; padding: 4px 2px; font: inherit; background: transparent; font-size: 12px; }
-
     .cloud-panel {
       background: linear-gradient(180deg, #f7fbff, #eef5fb);
       border: 1px solid #cddceb;
@@ -332,8 +308,6 @@
       background:#eef4fa; color:var(--navy); font-size:12px; font-weight:700;
     }
     .sync-note { font-size:12px; color:var(--muted); margin-top:8px; }
-
-
     /* AI Assisted Daily Safety Helper */
     .ai-helper-panel {
       background: linear-gradient(180deg, #f7fbff, #eef5fb);
@@ -358,14 +332,11 @@
       margin: 12px 0;
     }
     @media (max-width: 700px) { .ai-form-grid { grid-template-columns: 1fr; } .ai-form-grid .span-2 { grid-column: span 1; } }
-
     @media (max-width: 600px) {
       .scaffold-table { font-size: 12px; }
       .scaffold-table td, .scaffold-table th { padding: 6px 8px; }
       .scaffold-table .yn-cell label { margin: 0 2px; font-size: 9px; }
     }
-
-
     /* Home dashboard patch — left-aligned Foreman's Kit menu + fireproofing image */
     #cover .home-dashboard {
       display: grid;
@@ -411,10 +382,6 @@
       #cover .home-visual img { aspect-ratio: 4 / 3; }
       #cover .home-company-grid { grid-template-columns: 1fr; }
     }
-
-
-
-
     /* Employee Safety & Checklist access patch */
     .employee-access-note {
       background:#f8fafc;
@@ -448,7 +415,6 @@
       .checklist-link-box .field label { font-size:7px !important; }
       .checklist-link-box .field input { font-size:7px !important; padding:0 2px !important; }
     }
-
     /* PAL custom message modal — removes browser URL prefix on app messages */
     .pal-modal-overlay {
       position: fixed;
@@ -479,78 +445,60 @@
     }
     .pal-modal-ok { background: var(--navy); color: white; }
     .pal-modal-cancel { background: #eef2f7; color: var(--navy); }
-
-    
 /* Force single page in print */
-
-
-
 #harness-checklist h2 {
   font-size: 16px !important;
 }
-
 #harness-checklist label,
 #harness-checklist p {
   font-size: 11px !important;
 }
-
 #harness-checklist input,
 #harness-checklist textarea {
   font-size: 11px !important;
   padding: 3px !important;
 }
-
-
 @media print {
   #harness-checklist {
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
-
   #harness-checklist h2 {
     font-size: 15px !important;
     margin-bottom: 4px !important;
   }
-
   #harness-checklist label,
   #harness-checklist p {
     font-size: 10.5px !important;
     line-height: 1.2 !important;
     margin: 1px 0 !important;
   }
-
   #harness-checklist input,
   #harness-checklist textarea {
     font-size: 10.5px !important;
     padding: 2px !important;
   }
-
   #harness-checklist .card {
     padding: 6px !important;
     margin-bottom: 4px !important;
   }
-
   #harness-checklist .grid,
   #harness-checklist .grid-2 {
     gap: 4px !important;
   }
-
   /* Prevent phantom extra page */
   body {
     height: auto !important;
     overflow: visible !important;
   }
-
   html {
     height: auto !important;
   }
 }
-
 @media print {
   body { zoom: 0.95; }
 }
-
 @media print {
   #harness-checklist {
     page-break-inside: avoid !important;
@@ -559,37 +507,28 @@
     page-break-inside: avoid !important;
   }
 }
-
 @media print {
       @page { size: letter; margin: 0.5in; }
-
       /* Hide ALL elements on the page by default */
       html, body { height: auto !important; overflow: visible !important; }
       body > * { display: none !important; }
-
       /* Show ONLY the main content wrapper */
       body > main.page-wrap { display: block !important; }
-
       /* Inside page-wrap: hide all pages */
       .page-wrap .page { display: none !important; }
-
       /* Show ONLY the active page */
       .page-wrap .page.active { display: block !important; }
-
       /* Hide nav chrome */
       .header, .tabs, .sticky-actions, .toolbar,
       #install-banner, .cover-scenes, .lang-switch { display: none !important; }
-
       /* Remove page-wrap padding/margin so content fills print area */
       .page-wrap { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
-
       /* Color accuracy */
       .page.active { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .form-shell { border: none !important; box-shadow: none !important; }
       .form-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .card, .policy-card { box-shadow: none !important; }
       body { background: white !important; }
-
       /* Fix blacked-out text on print/share — force all inputs to show text */
       .field input, .field select, .field textarea,
       input, select, textarea, [contenteditable] {
@@ -600,7 +539,6 @@
       }
       /* Fix table input fields */
       table input { color: #000 !important; background: white !important; -webkit-text-fill-color: #000 !important; }
-
       /* Tighter print sizing for all forms */
       .form-body { font-size: 11px; }
       .form-head h2 { font-size: 15px !important; }
@@ -637,7 +575,6 @@
       #scissor-lift-inspection [style*="margin-top:12px;border-top"] { margin-top: 3px !important; padding-top: 3px !important; }
       #scissor-lift-inspection [style*="margin-top:12px;border-top"] label { font-size: 7px !important; margin: 3px 0 1px !important; }
       #scissor-lift-inspection textarea { min-height: 18px !important; font-size: 7px !important; }
-
       /* Scaffold checklist — force 1 page, same sizing as scissor lift */
       #scaffold-checklist .form-head { padding: 3px 8px !important; }
       #scaffold-checklist .form-head h2 { font-size: 10px !important; }
@@ -675,7 +612,6 @@
       .inspection-grid { gap: 8px !important; }
       .toolbar, .btn.secondary, .save-note, #install-banner { display: none !important; }
     }
-  
     /* CLEAN_RESET_PPE_TAB_SIMPLE_2026_05_24 */
     .clean-checklist-section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(16,24,40,.05)}
     .clean-checklist-section h3{margin:0 0 6px;color:var(--navy);font-size:18px}
@@ -686,8 +622,6 @@
     .clean-checklist-btn small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
     .clean-checklist-btn.soon{border-left-color:#d97706}
     @media(max-width:650px){.clean-checklist-grid{grid-template-columns:1fr}}
-
-  
     /* REMOVE_LEFTOVER_PUBLIC_SAFETY_CARDS_2026_05_24 */
     .print-footer,
     .internal-print-footer,
@@ -701,9 +635,6 @@
         display: block !important;
       }
     }
-
-  
-
     /* PRINT_ONE_PAGE_CHECKLIST_PATCH_2026_05_24
        Keeps the 4 main checklist/report forms from splitting header onto page 1
        and body onto page 2 when using Save / Print on iPhone, iPad, laptop, Android. */
@@ -716,7 +647,6 @@
         page-break-inside: avoid !important;
         overflow: visible !important;
       }
-
       #harness-checklist .form-shell,
       #scaffold-checklist .form-shell,
       #scissor-lift-inspection .form-shell,
@@ -726,7 +656,6 @@
         box-shadow: none !important;
         margin: 0 !important;
       }
-
       #harness-checklist .form-head,
       #scaffold-checklist .form-head,
       #scissor-lift-inspection .form-head,
@@ -735,7 +664,6 @@
         page-break-after: avoid !important;
         padding: 3px 8px !important;
       }
-
       #harness-checklist .form-body,
       #scaffold-checklist .form-body,
       #scissor-lift-inspection .form-body,
@@ -744,7 +672,6 @@
         page-break-before: avoid !important;
         padding: 4px 8px !important;
       }
-
       #harness-checklist .form-head h2,
       #scaffold-checklist .form-head h2,
       #scissor-lift-inspection .form-head h2,
@@ -752,7 +679,6 @@
         font-size: 10px !important;
         line-height: 1.05 !important;
       }
-
       #harness-checklist .form-head p,
       #scaffold-checklist .form-head p,
       #scissor-lift-inspection .form-head p,
@@ -764,7 +690,6 @@
         font-size: 7px !important;
         line-height: 1.1 !important;
       }
-
       #harness-checklist .pal-logo svg,
       #scaffold-checklist .pal-logo svg,
       #scissor-lift-inspection .pal-logo svg,
@@ -772,7 +697,6 @@
         width: 26px !important;
         height: 26px !important;
       }
-
       #harness-checklist .field label,
       #scaffold-checklist .field label,
       #scissor-lift-inspection .field label,
@@ -785,7 +709,6 @@
         line-height: 1.1 !important;
         padding: 1px 4px !important;
       }
-
       #harness-checklist input, #harness-checklist textarea, #harness-checklist select,
       #scaffold-checklist input, #scaffold-checklist textarea, #scaffold-checklist select,
       #scissor-lift-inspection input, #scissor-lift-inspection textarea, #scissor-lift-inspection select,
@@ -794,21 +717,18 @@
         padding: 0 2px !important;
         line-height: 1.1 !important;
       }
-
       #harness-checklist textarea,
       #scaffold-checklist textarea,
       #scissor-lift-inspection textarea,
       #incident-report textarea {
         min-height: 18px !important;
       }
-
       #harness-checklist .sig-pad-wrap canvas,
       #scaffold-checklist .sig-pad-wrap canvas,
       #scissor-lift-inspection .sig-pad-wrap canvas,
       #incident-report .sig-pad-wrap canvas {
         height: 22px !important;
       }
-
       #harness-checklist .subhead,
       #scaffold-checklist .subhead,
       #scissor-lift-inspection .subhead,
@@ -816,7 +736,6 @@
         font-size: 8px !important;
         margin: 3px 0 2px !important;
       }
-
       #incident-report .warn-box,
       #incident-report .card,
       #harness-checklist .warn-box,
@@ -828,18 +747,14 @@
         line-height: 1.1 !important;
       }
     }
-
-
     /* IPHONE_TIGHT_PRINT_RESIZE_PATCH_2026_05_24
        Extra compression for iPhone/iPad Save-to-PDF where Safari prints slightly larger than laptop browsers. */
     @media print {
       @page { size: letter; margin: 0.22in !important; }
-
       /* Tighten the whole printable active form */
       .page.active {
         transform-origin: top left !important;
       }
-
       #harness-checklist .form-shell,
       #scaffold-checklist .form-shell,
       #scissor-lift-inspection .form-shell,
@@ -850,7 +765,6 @@
         border-radius: 0 !important;
         overflow: visible !important;
       }
-
       #harness-checklist .form-head,
       #scaffold-checklist .form-head,
       #scissor-lift-inspection .form-head,
@@ -859,14 +773,12 @@
         padding: 2px 6px !important;
         gap: 5px !important;
       }
-
       #harness-checklist .form-body,
       #scaffold-checklist .form-body,
       #scissor-lift-inspection .form-body,
       #incident-report .form-body {
         padding: 2px 6px !important;
       }
-
       #harness-checklist .form-head h2,
       #scaffold-checklist .form-head h2,
       #scissor-lift-inspection .form-head h2,
@@ -875,7 +787,6 @@
         line-height: 1 !important;
         margin: 0 !important;
       }
-
       #harness-checklist .form-head p,
       #scaffold-checklist .form-head p,
       #scissor-lift-inspection .form-head p,
@@ -888,7 +799,6 @@
         line-height: 1 !important;
         margin: 0 !important;
       }
-
       #harness-checklist .pal-logo svg,
       #scaffold-checklist .pal-logo svg,
       #scissor-lift-inspection .pal-logo svg,
@@ -896,7 +806,6 @@
         width: 20px !important;
         height: 20px !important;
       }
-
       #harness-checklist .form-grid,
       #scaffold-checklist .form-grid,
       #scissor-lift-inspection .form-grid,
@@ -912,7 +821,6 @@
         gap: 1px !important;
         margin: 0 !important;
       }
-
       #harness-checklist .field,
       #scaffold-checklist .field,
       #scissor-lift-inspection .field,
@@ -920,7 +828,6 @@
         gap: 0 !important;
         margin-bottom: 0 !important;
       }
-
       #harness-checklist .field label,
       #scaffold-checklist .field label,
       #scissor-lift-inspection .field label,
@@ -929,7 +836,6 @@
         line-height: 1 !important;
         margin: 0 !important;
       }
-
       #harness-checklist input, #harness-checklist textarea, #harness-checklist select,
       #scaffold-checklist input, #scaffold-checklist textarea, #scaffold-checklist select,
       #scissor-lift-inspection input, #scissor-lift-inspection textarea, #scissor-lift-inspection select,
@@ -939,7 +845,6 @@
         padding: 0 1px !important;
         min-height: 0 !important;
       }
-
       #harness-checklist textarea,
       #scaffold-checklist textarea,
       #scissor-lift-inspection textarea,
@@ -947,7 +852,6 @@
         min-height: 12px !important;
         background-size: auto 12px !important;
       }
-
       #harness-checklist th, #harness-checklist td,
       #scaffold-checklist th, #scaffold-checklist td,
       #scissor-lift-inspection th, #scissor-lift-inspection td,
@@ -956,7 +860,6 @@
         line-height: 1 !important;
         padding: 0 2px !important;
       }
-
       #harness-checklist .subhead,
       #scaffold-checklist .subhead,
       #scissor-lift-inspection .subhead,
@@ -965,14 +868,12 @@
         line-height: 1 !important;
         margin: 1px 0 !important;
       }
-
       #harness-checklist .sig-pad-wrap canvas,
       #scaffold-checklist .sig-pad-wrap canvas,
       #scissor-lift-inspection .sig-pad-wrap canvas,
       #incident-report .sig-pad-wrap canvas {
         height: 14px !important;
       }
-
       #harness-checklist .card,
       #scaffold-checklist .card,
       #scissor-lift-inspection .card,
@@ -991,7 +892,6 @@
         line-height: 1 !important;
         border-radius: 0 !important;
       }
-
       #scissor-lift-inspection .inspection-grid {
         gap: 1px !important;
         margin-top: 1px !important;
@@ -1019,9 +919,6 @@
         gap: 0 !important;
       }
     }
-
-  
-
     /* STANDARD_3_BUTTON_DOCUMENT_FOOTER_FINAL_2026_05_24 */
     .sticky-actions {
       display: flex;
@@ -1039,9 +936,41 @@
       .sticky-actions { gap: 8px; padding: 10px; }
       .sticky-actions .btn { flex: 1 1 100%; min-width: 0; width: 100%; }
     }
+    /* TYPED_SIGNATURE_PATCH_2026_05_31 */
+    .typed-signature-input {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid #a9b8c8;
+      padding: 6px 42px 4px 2px;
+      font: inherit;
+      background: transparent;
+      outline: none;
+    }
+    .typed-signature-display {
+      min-height: 36px;
+      padding: 4px 42px 4px 2px;
+      border-bottom: 2px solid #a9b8c8;
+      font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive;
+      font-size: 24px;
+      line-height: 1.2;
+      color: #1b3a5c;
+      opacity: .45;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .typed-signature-display.has-signature { opacity: 1; }
+    @media print {
+      .typed-signature-input { display: none !important; }
+      .typed-signature-display {
+        min-height: 24px !important;
+        font-size: 18px !important;
+        padding: 0 2px !important;
+        color: #000 !important;
+        opacity: 1 !important;
+      }
+    }
 </style>
-
-
 <script>
   // LAPTOP_PUBLIC_NEWHIRE_CACHE_BUSTER_2026_05_23
   // Laptop-safe version: forces a fresh projects.html route and prevents cached login page.
@@ -1051,10 +980,8 @@
     window.location.href = url;
   };
 </script>
-
 </head>
 <body>
-
   <div class="pal-modal-overlay" id="pal-modal-overlay" role="dialog" aria-modal="true">
     <div class="pal-modal-box">
       <h3 id="pal-modal-title">PAL Safety Hub</h3>
@@ -1065,7 +992,6 @@
       </div>
     </div>
   </div>
-
   <!-- Android install prompt banner -->
   <div id="install-banner" class="hidden" style="
     position:fixed; bottom:0; left:0; right:0; z-index:9999;
@@ -1085,7 +1011,6 @@
       <button onclick="installApp()" style="background:#78c240;border:0;color:#1b3a5c;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">Install</button>
     </div>
   </div>
-
   <header class="header">
     <div class="brand">
       <div class="badge">
@@ -1108,9 +1033,7 @@
       <button onclick="setLanguage('pl', this)">PL</button>
     </div>
   </header>
-
   <nav class="tabs" id="tabs"></nav>
-
   <main class="page-wrap">
     <section class="page active" id="cover">
       <div class="home-dashboard">
@@ -1118,7 +1041,6 @@
           <div>
             <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczeństwa PAL">PAL Safety Hub</h2>
             <p data-en="A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in." data-es="Un centro de seguridad listo para el campo para PAL Environmental Services. Los empleados pueden acceder a listas de verificación, charlas de seguridad y políticas, mientras las herramientas de capataz, supervisor y oficina permanecen protegidas detrás del inicio de sesión." data-pl="Gotowe do pracy w terenie centrum bezpieczeństwa PAL Environmental Services. Pracownicy mogą uzyskać dostęp do list kontrolnych, odpraw BHP i zasad, a narzędzia brygadzisty, nadzorcy i biura pozostają chronione logowaniem.">A field-ready safety hub for PAL Environmental Services. Employees can access safety checklists, toolbox talks, and policies, while foreman, supervisor, and office tools stay protected behind sign-in.</p>
-
             <div class="home-menu" aria-label="Home Navigation">
               <button onclick="startPublicNewHireIntake()"><span>🧾 New Hire Intake</span><span class="arrow">›</span></button>
               <button onclick="showPage('employee-safety')"><span>✅ PPE / Equipment Checklists</span><span class="arrow">›</span></button>
@@ -1131,20 +1053,17 @@
             PAL Environmental Services · Employee Safety · Checklists · Protected Office Tools
           </div>
         </div>
-
         <div class="home-visual">
           <img src="pal-fireproofing-worker.png" alt="PAL fireproofing worker spraying fireproofing material" />
           <div class="home-visual-label">PAL Field Safety</div>
         </div>
       </div>
     </section>
-
     <section class="page" id="employee-safety">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">PPE / Equipment Checklists</h2>
         <p class="muted">Clean reset version. This tab restores the existing PAL checklist pages first. New checklist forms can be rebuilt one at a time after the tab is stable on iPhone, iPad, laptop, and Android.</p>
       </div>
-
       <div class="clean-checklist-section">
         <h3>✅ Existing PAL Forms</h3>
         <p>These open the original checklist/report pages already built into the app.</p>
@@ -1155,7 +1074,6 @@
           <button type="button" class="clean-checklist-btn" onclick="showPage('incident-report')"><strong>🩹 Near Miss / Incident Report</strong><small>Existing PAL form</small></button>
         </div>
       </div>
-
       <div class="clean-checklist-section">
         <h3>🚧 Next Universal Checklist Forms</h3>
         <p>Listed only for now. Once this clean reset works, we will turn these into real forms one phase at a time.</p>
@@ -1167,13 +1085,11 @@
         </div>
       </div>
     </section>
-
     <section class="page" id="foreman-kit">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">Foreman's Kit</h2>
         <p class="muted">Fast access to the forms most used in the field.</p>
       </div>
-
       <div class="kit-section-title">Daily Safety Forms</div>
       <div class="grid grid-2">
         <div class="kit-card" onclick="showPage('daily-safety-meeting')"><div class="kit-icon">💬</div><h4>Daily Safety Meeting</h4><p>Hazards, tasks, locations + crew sign-in</p></div>
@@ -1182,25 +1098,21 @@
         <div class="kit-card" onclick="showPage('daily-report')"><div class="kit-icon">📋</div><h4>Daily Field Report</h4><p>Crew, work performed, equipment, incidents</p></div>
         <div class="kit-card" onclick="showPage('daily-timesheet')"><div class="kit-icon">🗓️</div><h4>Daily Timesheet</h4><p>Daily worker hours log</p></div>
       </div>
-
       <div class="kit-section-title">Time and Pay</div>
       <div class="grid grid-2">
         <div class="kit-card green" onclick="showPage('weekly-timesheet-fp')"><div class="kit-icon">📊</div><h4>Weekly Timesheet - FP</h4><p>Fireproofing with cost codes</p></div>
         <div class="kit-card green" onclick="showPage('expense-report')"><div class="kit-icon">💵</div><h4>Expense Report</h4><p>Auto-calculating, print ready</p></div>
       </div>
-
       <div class="kit-section-title">Incidents and Injury</div>
       <div class="grid grid-2">
         <div class="kit-card orange" onclick="showPage('incident-report')"><div class="kit-icon">🩹</div><h4>Incident Report</h4><p>Accident / injury investigation form</p></div>
       </div>
-
       <div class="kit-section-title">Equipment Inspections</div>
       <div class="grid grid-2">
         <div class="kit-card" onclick="showPage('scissor-lift-inspection')"><div class="kit-icon">🔧</div><h4>Scissor Lift Pre-Use Inspection</h4><p>Pre-start walk-around, powered checks &amp; workplace</p></div>
         <div class="kit-card" onclick="showPage('scaffold-checklist')"><div class="kit-icon">🏗️</div><h4>Scaffolding Safety Checklist</h4><p>Pre-use scaffold inspection — general &amp; special</p></div>
         <div class="kit-card" onclick="showPage('harness-checklist')"><div class="kit-icon">🦺</div><h4>Full-Body Harness Inspection</h4><p>Pre-use harness inspection checklist</p></div>
       </div>
-
       <div class="kit-section-title">New Hire Documents</div>
       <div class="grid grid-2">
         <div class="kit-card" style="border-top:4px solid #e8b84b;" onclick="showPage('new-hire-orientation')"><div class="kit-icon">📋</div><h4>Site Orientation Form</h4><p>New hire orientation checklist &amp; sign-off</p></div>
@@ -1209,7 +1121,6 @@
         <div class="kit-card" style="border-top:4px solid #e8b84b;" onclick="showPage('new-hire-w4')"><div class="kit-icon">📄</div><h4>W-4 (Federal)</h4><p>Employee's withholding certificate</p></div>
       </div>
     </section>
-
     <section class="page" id="contents">
       <div class="card toc">
         <h2 style="margin-top:0;color:var(--navy);">Contents</h2>
@@ -1239,7 +1150,6 @@
         </ol>
       </div>
     </section>
-
     <section class="page" id="training-records">
       <div class="policy-card">
         <h3 style="margin-top:0; color: var(--green-accent);">At a minimum, all employees must possess the following training records prior to work on any PAL project site:</h3>
@@ -1253,7 +1163,6 @@
         </ul>
       </div>
     </section>
-
     <section class="page" id="pal-policies">
       <h2 class="section-title">PAL Official Policies</h2>
       <div class="grid">
@@ -1267,7 +1176,6 @@
         <div class="policy-card"><h4>Policy 12: Scaffolds</h4><p>Must be erected by a competent person. Outriggers and guardrails must be installed on all baker scaffolds regardless of height. Fall protection required at 10 feet.</p></div>
       </div>
     </section>
-
     <section class="page" id="goals">
       <div class="hero">
         <h2 data-en="Program Goals" data-es="Objetivos del Programa" data-pl="Cele Programu">Program Goals</h2>
@@ -1278,7 +1186,6 @@
         <div class="card"><h3>Office Ready</h3><p class="muted">Cleaner paperwork, stronger accountability, easier printing and sharing.</p></div>
       </div>
     </section>
-
     <section class="page" id="eap">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">Emergency Action Plan</h2>
@@ -1286,14 +1193,12 @@
         <p class="muted">This section can be expanded later into full site-specific emergency procedures, clinic locations, incident steps, and reporting contacts.</p>
       </div>
     </section>
-
     <section class="page" id="toolbox-talks">
       <div id="talk-grid-view">
         <div class="card">
           <h2 style="margin-top:0;color:var(--navy);">Toolbox Talks</h2>
           <p class="muted">Choose a topic to view the full talk and access the sign-in sheet.</p>
         </div>
-
         <h3 class="section-title">Safety Mindset</h3>
         <div class="toolbox-grid">
           <div class="topic-card" onclick="openTalk('whose')"><small>p.6</small><strong>Whose Responsibility Is It?</strong></div>
@@ -1304,7 +1209,6 @@
           <div class="topic-card" onclick="openTalk('avoidable')"><small>p.14</small><strong>Accidents Are Avoidable</strong></div>
           <div class="topic-card" onclick="openTalk('common_sense')"><small>p.18</small><strong>Safety Is Common Sense</strong></div>
         </div>
-
         <h3 class="section-title">Reporting & Response</h3>
         <div class="toolbox-grid">
           <div class="topic-card" onclick="openTalk('near_miss')"><small>p.12</small><strong>Near Misses</strong></div>
@@ -1312,7 +1216,6 @@
           <div class="topic-card" onclick="openTalk('incident_reporting')"><small>p.16</small><strong>Accident / Incident Reporting</strong></div>
           <div class="topic-card" onclick="openTalk('listening')"><small>p.15</small><strong>Listening Safety</strong></div>
         </div>
-
         <h3 class="section-title">Body & Physical Health</h3>
         <div class="toolbox-grid">
           <div class="topic-card" onclick="openTalk('lifting')"><small>p.21</small><strong>Proper Lifting</strong></div>
@@ -1321,14 +1224,12 @@
           <div class="topic-card" onclick="openTalk('heat_stress')"><small>Field</small><strong>Heat Stress & Heat Illness</strong></div>
           <div class="topic-card" onclick="openTalk('cold_weather')"><small>Field</small><strong>Cold Weather & Winter Safety</strong></div>
         </div>
-
         <h3 class="section-title">Falls & Elevated Work</h3>
         <div class="toolbox-grid">
           <div class="topic-card" onclick="openTalk('fall_protection_talk')"><small>Field</small><strong>Fall Protection Awareness</strong></div>
           <div class="topic-card" onclick="openTalk('ladders')"><small>p.61</small><strong>Ladders</strong></div>
           <div class="topic-card" onclick="openTalk('pfas')"><small>p.65</small><strong>Full Body Harnesses / Lifelines</strong></div>
         </div>
-
         <h3 class="section-title">Hazards & Equipment</h3>
         <div class="toolbox-grid">
           <div class="topic-card" onclick="openTalk('electrical_talk')"><small>Field</small><strong>Electrical Hazards</strong></div>
@@ -1336,7 +1237,6 @@
           <div class="topic-card" onclick="openTalk('silica_talk')"><small>Field</small><strong>Silica Dust Awareness</strong></div>
           <div class="topic-card" onclick="openTalk('confined_space_talk')"><small>Field</small><strong>Confined Space Awareness</strong></div>
         </div>
-
         <h3 class="section-title">Housekeeping & Materials</h3>
         <div class="toolbox-grid">
           <div class="topic-card" onclick="openTalk('housekeeping')"><small>p.40</small><strong>Housekeeping</strong></div>
@@ -1345,7 +1245,6 @@
       </div>
       <div id="talk-detail-view" class="hidden"></div>
     </section>
-
     <section class="page" id="quick-reference">
       <div class="card">
         <h2 style="margin-top:0;color:var(--navy);">Quick Reference</h2>
@@ -1368,21 +1267,16 @@
           <tr><td>Fire Watch Duration After Hot Work</td><td><code>30 minutes</code> after work stops</td></tr>
           <tr><td>Emergency</td><td><code>911</code></td></tr>
           <tr><td>Richardo Blake (EH&S Director)</td><td><code>347-844-0476</code></td></tr>
-          
-          
           <tr><td>Clarity Testing Services</td><td><code>914-593-0300</code></td></tr>
         </table>
       </div>
     </section>
-
     <section class="page" id="code-of-conduct">
       <div class="card"><h2 style="margin-top:0;color:var(--navy);">Code of Conduct</h2><p>Maintain professional conduct on all jobsites. Follow safety rules, use required PPE, report hazards, and avoid horseplay or unsafe shortcuts.</p></div>
     </section>
-
     <section class="page" id="whistleblower">
       <div class="card"><h2 style="margin-top:0;color:var(--navy);">Whistleblower</h2><p>Hotline English: <strong>877-222-2069</strong><br>Hotline Spanish: <strong>800-216-1288</strong><br>Compliance Office: Attn: Richardo Blake<br>Guidepost Solutions LLC: 212-817-6709</p></div>
     </section>
-
     <section class="page" id="ai-daily-safety">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1398,7 +1292,6 @@
             <button class="btn secondary" onclick="showPage('daily-safety-meeting')">Open Manual Form</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('ai-daily-safety')">🗑 Clear Sheet</button>
           </div>
-
           <div class="ai-helper-panel">
             <h3>Daily Safety AI Helper</h3>
             <p>Type what the crews are doing, where they are working, equipment being used, and any special conditions. The helper will fill in safety topics, hazards, and controls. Foreman must review before using.</p>
@@ -1419,7 +1312,6 @@
             </div>
             <div class="ai-output-note">AI assisted text is a starting point only. Foreman/supervisor must review site-specific hazards before presenting the meeting.</div>
           </div>
-
           <form data-save-key="ai-daily-safety">
             <div class="form-grid">
               <div class="field"><label>Project Name</label><input name="project_name" id="ai-out-project-name"></div>
@@ -1437,13 +1329,11 @@
             </div>
             <div class="field" style="margin-top:8px;"><label>360° Inspection — Additional Hazards</label><textarea name="inspection_hazards" id="ai-out-inspection" style="min-height:44px;"></textarea></div>
           </form>
-
           <h3 class="subhead" style="margin-top:14px;">Sign-In — Page 1 (Front) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 1–11</small></h3>
           <table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead><tr><th style="width:28px;background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">#</th><th style="background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">Print Name</th><th style="background:#eff4f8;color:var(--navy);padding:6px 8px;border:1px solid #d6dde7;">Signature</th></tr></thead>
             <tbody id="ai-dsm-front"></tbody>
           </table>
-
           <div class="back-page" style="margin-top:16px;">
             <h3 class="subhead" style="margin-top:0;">Sign-In — Page 2 (Back) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 12–26</small></h3>
             <table style="width:100%;border-collapse:collapse;font-size:13px;">
@@ -1466,7 +1356,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('ai-daily-safety');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('ai-daily-safety');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('ai-daily-safety');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="daily-safety-meeting">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1498,7 +1387,6 @@
             </div>
             <div class="field" style="margin-top:8px;"><label>360° Inspection — Additional Hazards</label><textarea name="inspection_hazards" style="min-height:40px;"></textarea></div>
           </form>
-
           <h3 class="subhead" style="margin-top:14px;">Sign-In — Page 1 (Front) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 1–11</small></h3>
           <table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead><tr>
@@ -1508,7 +1396,6 @@
             </tr></thead>
             <tbody id="dsm-front"></tbody>
           </table>
-
           <div class="back-page" style="margin-top:16px;">
             <h3 class="subhead" style="margin-top:0;">Sign-In — Page 2 (Back) &nbsp;<small style="font-weight:400;color:var(--muted);font-size:12px;">Rows 12–26</small></h3>
             <table style="width:100%;border-collapse:collapse;font-size:13px;">
@@ -1538,7 +1425,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('daily-safety-meeting');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('daily-safety-meeting');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('daily-safety-meeting');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="toolbox-signin">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1564,7 +1450,6 @@
           <h3 class="subhead">Attendee Sign-In</h3>
           <table><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="toolbox-signin-rows"></tbody></table>
           <p class="save-note">Print front and back (double-sided) for additional sign-in rows.</p>
-
           <div style="margin-top:24px;border-top:2px solid var(--line);padding-top:16px;">
             <div class="form-grid">
               <div class="field"><label>Supervisor / Foreman Printed Name</label><input name="sup_name" form="toolbox-signin-form"></div>
@@ -1577,7 +1462,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('toolbox-signin');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('toolbox-signin');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('toolbox-signin');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="daily-report">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1593,7 +1477,6 @@
             <button class="btn secondary hidden" id="daily-report-project-back" onclick="returnToProjectDashboard()">← Back to Project Dashboard</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('daily-report')">🗑 Clear Sheet</button>
           </div>
-
           <div class="cloud-panel" id="daily-report-cloud-panel">
             <h4>Project Cloud Link</h4>
             <p>Pick the correct project before saving so this report lands under the right job in PAL Projects.</p>
@@ -1615,7 +1498,6 @@
             </div>
             <div class="sync-note" id="daily-report-project-hint">Sign in through the Projects page to load your assigned projects here.</div>
           </div>
-
           <form data-save-key="daily-report">
             <h3 class="subhead">Project Information</h3>
             <div class="form-grid">
@@ -1626,7 +1508,6 @@
               <div class="field"><label>Floor(s) Worked</label><input name="floors"></div>
               <div class="field"><label>Ticket #</label><input name="ticket"></div>
             </div>
-
             <h3 class="subhead">Weather</h3>
             <div class="form-grid">
               <div class="field"><label>Conditions</label><select name="conditions"><option>Clear</option><option>Cloudy</option><option>Rain</option><option>Snow</option><option>Fog</option><option>Wind</option></select></div>
@@ -1634,33 +1515,28 @@
               <div class="field"><label>Wind</label><input name="wind"></div>
               <div class="field"><label>Weather Delays?</label><select name="delays"><option>No</option><option>Yes</option></select></div>
             </div>
-
             <h3 class="subhead">Crew and Hours</h3>
             <div class="form-grid">
               <div class="field"><label>Total Workers on Site</label><input type="number" name="crew_total"></div>
               <div class="field"><label>Total Man-Hours Worked</label><input type="number" name="man_hours"></div>
             </div>
-
             <h3 class="subhead">Work Performed</h3>
             <div class="form-grid">
               <div class="field span-2"><label>Description</label><textarea name="work_description"></textarea></div>
               <div class="field"><label>Work Status</label><select name="status"><option>On schedule</option><option>Ahead</option><option>Behind</option><option>On hold</option><option>Complete</option></select></div>
               <div class="field"><label>% Complete</label><input name="percent_complete"></div>
             </div>
-
             <h3 class="subhead">Deliveries and Materials</h3>
             <div class="form-grid">
               <div class="field"><label>Delivery received today?</label><select name="delivery_received" onchange="toggleConditional(this.value === 'Yes', 'delivery-details')"><option>No</option><option>Yes</option></select></div>
               <div class="field hidden" id="delivery-details"><label>Delivery Description</label><textarea name="delivery_description"></textarea></div>
             </div>
-
             <h3 class="subhead">Equipment on Site</h3>
             <div class="form-grid">
               <div class="field span-2"><label>Company-Owned Equipment</label><textarea name="company_equipment"></textarea></div>
               <div class="field"><label>Rental equipment on site?</label><select name="rental_equipment" onchange="toggleConditional(this.value === 'Yes', 'rental-details')"><option>No</option><option>Yes</option></select></div>
               <div class="field hidden" id="rental-details"><label>Rental Equipment Details</label><textarea name="rental_details"></textarea></div>
             </div>
-
             <h3 class="subhead">Safety and Incidents</h3>
             <div class="form-grid">
               <div class="field"><label>Safety Incidents</label><select name="safety_incidents"><option>None</option><option>Near Miss</option><option>First Aid</option><option>Recordable Injury</option><option>Lost Time Injury</option><option>Property Damage</option></select></div>
@@ -1683,7 +1559,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('daily-report');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('daily-report');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('daily-report');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="daily-timesheet">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1737,7 +1612,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('daily-timesheet');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('daily-timesheet');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('daily-timesheet');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="weekly-timesheet-fp">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1791,7 +1665,6 @@
           </div>
           <p style="font-size:10px;color:var(--muted);margin:3px 0 5px;">⚡ Mon–Fri: OT after 8 hrs/day · All Sat &amp; Sun = OT</p>
           <p><button class="btn secondary" onclick="addWeeklyFpRow()">+ Add Row</button></p>
-
           <!-- Cost Code Reference Chart -->
           <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
             <div style="border:1px solid #d6dde7;border-radius:6px;overflow:hidden;">
@@ -1831,12 +1704,10 @@
               </div>
             </div>
           </div>
-
         </div>
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('weekly-timesheet-fp');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('weekly-timesheet-fp');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('weekly-timesheet-fp');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="expense-report">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1889,7 +1760,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('expense-report');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('expense-report');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('expense-report');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <section class="page" id="incident-report">
       <div class="form-shell">
         <div class="form-head"><div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1905,9 +1775,7 @@
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('incident-report')">🗑 Clear Sheet</button>
           </div>
           <div class="warn-box" style="margin-bottom:14px;">⚠️ Report ALL incidents immediately — no matter how minor. Call Richardo Blake (347-844-0476) for any injury.</div>
-
           <form data-save-key="incident-report">
-
             <h3 class="subhead">Section 1 — Incident Classification</h3>
             <div class="form-grid">
               <div class="field span-2">
@@ -1928,7 +1796,6 @@
               <div class="field"><label>Time Reported</label><input type="time" name="reported_time"></div>
               <div class="field span-2"><label>Exact Location of Incident (Job name, address, floor, area)</label><input name="incident_location"></div>
             </div>
-
             <h3 class="subhead">Section 2 — Injured / Involved Person</h3>
             <div class="form-grid">
               <div class="field"><label>Full Name</label><input name="injured_name"></div>
@@ -1948,7 +1815,6 @@
                 </div>
               </div>
             </div>
-
             <h3 class="subhead">Section 3 — Injury / Illness Details</h3>
             <div class="form-grid">
               <div class="field span-2"><label>Nature of Injury / Illness (cut, sprain, fracture, burn, etc.)</label><input name="injury_nature"></div>
@@ -1973,7 +1839,6 @@
                 </div>
               </div>
             </div>
-
             <h3 class="subhead">Section 4 — Incident Description</h3>
             <div class="form-grid">
               <div class="field span-2"><label>Describe exactly what happened — what was the person doing, what went wrong, and what was the result</label><textarea name="incident_description" style="min-height:120px;"></textarea></div>
@@ -1982,7 +1847,6 @@
               <div class="field span-2"><label>Eyewitness Names</label><input name="witnesses"></div>
               <div class="field span-2"><label>Information from witnesses, surveillance, or records</label><textarea name="witness_info"></textarea></div>
             </div>
-
             <h3 class="subhead">Section 5 — PPE in Use at Time of Incident</h3>
             <div class="form-grid">
               <div class="field span-2">
@@ -2005,7 +1869,6 @@
                 </div>
               </div>
             </div>
-
             <h3 class="subhead">Section 6 — Root Cause Analysis</h3>
             <div class="form-grid">
               <div class="field span-2">
@@ -2026,10 +1889,8 @@
               <div class="field span-2"><label>Root Cause (describe the underlying reason this happened)</label><textarea name="root_cause" style="min-height:100px;"></textarea></div>
               <div class="field span-2"><label>Recommended Corrective Actions to Prevent Recurrence</label><textarea name="corrective_recommendations" style="min-height:100px;"></textarea></div>
             </div>
-
             <h3 class="subhead">Section 7 — Corrective Actions Assigned</h3>
           </form>
-
           <div style="overflow:auto;">
             <table>
               <thead><tr><th>#</th><th>Corrective Action</th><th>Person Assigned</th><th>Due Date</th><th>Completed</th></tr></thead>
@@ -2041,7 +1902,6 @@
               </tbody>
             </table>
           </div>
-
           <h3 class="subhead">Section 8 — Signatures</h3>
           <div class="form-grid" style="margin-top:0;">
             <div class="field"><label>Prepared by (Foreman / Supervisor)</label><input name="prepared_by"></div>
@@ -2079,15 +1939,12 @@
           <div class="title-wrap"><h2>Scissor Lift Pre-Use Inspection</h2><p>Complete before every use — all items must be checked</p></div>
           <div class="form-meta">Form: PAL-SLI-001<br>Rev: 1.0<br>Date: 2026</div>
         </div>
-
         <div class="form-body">
           <div class="toolbar">
             <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('scissor-lift-inspection')">🗑 Clear Sheet</button>
           </div>
-
           <div class="warn-box" style="margin-bottom:14px;">⚠️ Do NOT operate this equipment if any item is marked NO. Remove from service and notify your supervisor immediately.</div>
-
           <form data-save-key="scissor-lift-inspection">
             <div class="checklist-link-box">
               <h4>Link This Checklist</h4>
@@ -2109,9 +1966,7 @@
               <div class="field"><label>Shift</label><input name="shift"></div>
             </div>
           </form>
-
           <div class="inspection-grid">
-
             <!-- SECTION 1: Pre Start-up Walk-around -->
             <div class="inspection-section">
               <div class="inspection-section-head">
@@ -2144,10 +1999,8 @@
                 <div class="inspection-item"><span class="inspection-item-label">Other:</span><div class="inspection-radios"><label class="ok-lbl"><input type="radio" name="s1_other" value="OK">OK</label><label class="no-lbl"><input type="radio" name="s1_other" value="NO">NO</label><label class="na-lbl"><input type="radio" name="s1_other" value="NA">N/A</label></div></div>
               </div>
             </div>
-
             <!-- RIGHT COLUMN: Sections 2 & 3 stacked -->
             <div style="display:flex;flex-direction:column;gap:16px;">
-
               <!-- SECTION 2: Powered Checks -->
               <div class="inspection-section">
                 <div class="inspection-section-head">
@@ -2169,7 +2022,6 @@
                 <div class="inspection-item"><span class="inspection-item-label">Safety interlocks</span><div class="inspection-radios"><label class="ok-lbl"><input type="radio" name="s2_interlocks" value="OK">OK</label><label class="no-lbl"><input type="radio" name="s2_interlocks" value="NO">NO</label><label class="na-lbl"><input type="radio" name="s2_interlocks" value="NA">N/A</label></div></div>
                 <div class="inspection-item"><span class="inspection-item-label">Other:</span><div class="inspection-radios"><label class="ok-lbl"><input type="radio" name="s2_other" value="OK">OK</label><label class="no-lbl"><input type="radio" name="s2_other" value="NO">NO</label><label class="na-lbl"><input type="radio" name="s2_other" value="NA">N/A</label></div></div>
               </div>
-
               <!-- SECTION 3: Workplace Inspection -->
               <div class="inspection-section">
                 <div class="inspection-section-head">
@@ -2187,10 +2039,8 @@
                 <div class="inspection-item"><span class="inspection-item-label">Wind &amp; weather conditions</span><div class="inspection-radios"><label class="ok-lbl"><input type="radio" name="s3_wind" value="OK">OK</label><label class="no-lbl"><input type="radio" name="s3_wind" value="NO">NO</label><label class="na-lbl"><input type="radio" name="s3_wind" value="NA">N/A</label></div></div>
                 <div class="inspection-item"><span class="inspection-item-label">Other possible hazards</span><div class="inspection-radios"><label class="ok-lbl"><input type="radio" name="s3_other_hazards" value="OK">OK</label><label class="no-lbl"><input type="radio" name="s3_other_hazards" value="NO">NO</label><label class="na-lbl"><input type="radio" name="s3_other_hazards" value="NA">N/A</label></div></div>
               </div>
-
             </div><!-- end right column -->
           </div><!-- end inspection-grid -->
-
           <!-- Comments + Operator Sig only -->
           <div style="margin-top:12px;border-top:2px solid var(--line);padding-top:12px;">
             <label style="font-size:13px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Comments / Deficiencies Found</label>
@@ -2198,12 +2048,10 @@
             <label style="font-size:13px;font-weight:700;color:var(--navy);display:block;margin:10px 0 4px;">Operator Signature</label>
             <div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
           </div>
-
         </div><!-- end form-body -->
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('scissor-lift-inspection');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('scissor-lift-inspection');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('scissor-lift-inspection');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <!-- SCAFFOLDING SAFETY CHECKLIST -->
     <section class="page" id="scaffold-checklist">
       <div class="form-shell">
@@ -2218,15 +2066,12 @@
           <div class="title-wrap"><h2>Scaffolding Safety Checklist</h2><p>Complete before every scaffold use</p></div>
           <div class="form-meta">Form: PAL-SSC-001<br>Rev: 1.0<br>Date: 2026</div>
         </div>
-
         <div class="form-body">
           <div class="toolbar">
             <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('scaffold-checklist')">🗑 Clear Sheet</button>
           </div>
-
           <div class="warn-box" style="margin-bottom:10px;padding:8px 12px;font-size:12px;">⚠️ Do NOT use any scaffold where items are marked NO. Tag out and notify supervisor immediately.</div>
-
           <!-- TOP: Date, Inspector info, Signature — all above the table -->
           <form data-save-key="scaffold-checklist">
             <div class="checklist-link-box">
@@ -2251,7 +2096,6 @@
           </div>
           <label style="font-size:13px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Inspector Signature</label>
           <div class="sig-pad-wrap" style="margin-bottom:12px;"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>
-
           <table class="scaffold-table">
             <thead>
               <tr>
@@ -2291,12 +2135,10 @@
               <tr><td>25</td><td>Are all scaffold components in good condition, well maintained, and being used correctly?</td><td class="yn-cell"><label class="yes-lbl"><input type="radio" name="sc25" value="Yes">Yes</label><label class="no-lbl"><input type="radio" name="sc25" value="No">No</label></td><td class="remarks-cell"><input></td></tr>
             </tbody>
           </table>
-
         </div><!-- end form-body -->
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('scaffold-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('scaffold-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('scaffold-checklist');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <!-- FULL-BODY HARNESS INSPECTION CHECKLIST -->
     <section class="page" id="harness-checklist">
       <div class="form-shell">
@@ -2311,13 +2153,11 @@
           <div class="title-wrap"><h2>Full-Body Harnesses Inspection Checklist</h2><p>Complete before every use — PAL Environmental Services</p></div>
           <div class="form-meta">Form: PAL-HIC-001<br>Rev: 1.0<br>Date: 2026</div>
         </div>
-
         <div class="form-body">
           <div class="toolbar">
             <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
             <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('harness-checklist')">🗑 Clear Sheet</button>
           </div>
-
           <form data-save-key="harness-checklist">
             <div class="checklist-link-box">
               <h4>Link This Checklist</h4>
@@ -2337,7 +2177,6 @@
               <div class="field"><label>Model Serial Number</label><input name="model_serial"></div>
             </div>
           </form>
-
           <!-- Inspection Table -->
           <table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead>
@@ -2366,34 +2205,28 @@
               <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">11) Ensure the outer and center bars on friction and slotted mating buckles are straight.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h11" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h11" value="FAIL"></td></tr>
               <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">12) Inspect webbing by bending a portion of the webbing six to eight inches (15 to 20 centimeters) into an inverted "U" shape. Continue along all webbing inspecting for tears, cuts, fraying, abrasions, discoloration, burns, holes, mold, additional punched holes, missing straps, excessive hardness or brittleness, or other signs of wear or damage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h12" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h12" value="FAIL"></td></tr>
               <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">13) Inspect all webbing hidden by components by adjusting all keepers, buckles, padding, and D-Ring.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h13" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h13" value="FAIL"></td></tr>
-
               <!-- Section header: Tongue Buckles -->
               <tr><td colspan="3" style="background:#1b3a5c;color:white;padding:6px 10px;font-weight:700;font-size:12px;border:1px solid #4a6580;">Tongue Buckles/Grommet Tongues Inspection</td></tr>
               <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">1) Tongue buckles/grommet tongues, if supplied, should be free of distortion in shape and motion.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h14" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h14" value="FAIL"></td></tr>
               <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">2) Tongue buckles should overlap the buckle frame and move freely in their socket.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h15" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h15" value="FAIL"></td></tr>
               <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">3) The roller should turn freely on frame.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h16" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h16" value="FAIL"></td></tr>
               <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">4) Inspect tongue buckles for loose, distorted, or broken grommets (holes).</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h17" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h17" value="FAIL"></td></tr>
-
               <!-- Section header: Quick-Connect -->
               <tr><td colspan="3" style="background:#1b3a5c;color:white;padding:6px 10px;font-weight:700;font-size:12px;border:1px solid #4a6580;">Quick-Connect Buckle Inspection</td></tr>
               <tr style="background:#fafafa;"><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">1) Ensure that quick-connect buckles, if supplied, engage properly by tugging on both halves of the buckle to make sure it will not disengage.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h18" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h18" value="FAIL"></td></tr>
               <tr><td style="padding:7px 10px;border:1px solid #d6dde7;font-size:12px;">2) Ensure the quick-connect buckles' release mechanisms are free of debris.</td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h19" value="PASS"></td><td style="border:1px solid #d6dde7;text-align:center;"><input type="radio" name="h19" value="FAIL"></td></tr>
             </tbody>
           </table>
-
           <p style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;">
             <strong>NOTE:</strong> This checklist must be used in conjunction with the User Manual. Please refer to the manual before using this checklist.<br>
             ©2018. All Rights Reserved. All specifications and product designs subject to change without prior notice.
           </p>
           <p style="font-size:10px;color:var(--muted);">718.349.0900 &nbsp;|&nbsp; 11-02 Queens Plaza South &nbsp;|&nbsp; Long Island City, NY 11101 &nbsp;|&nbsp; www.palcorp.com</p>
-
           <!-- Inspector signature removed -->
-
         </div>
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('harness-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('harness-checklist');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <!-- FULL-BODY HARNESS INSPECTION CHECKLIST -->
     <section class="page" id="ppe">
       <div class="hero"><h2>Personal Protective Equipment (PPE)</h2><p>All PAL employees must wear required PPE at all times on every jobsite. PPE is your last line of defense against injury.</p></div>
@@ -2432,7 +2265,6 @@
         <div class="card"><h4 style="color:var(--navy);">Visitors</h4><p class="muted">All visitors to PAL job sites must also wear minimum PPE before entering the work area. No exceptions.</p></div>
       </div>
     </section>
-
     <!-- Fall Protection -->
     <section class="page" id="fall-protection">
       <div class="hero"><h2>Fall Protection</h2><p>Falls are the leading cause of death in construction. PAL requires fall protection for any exposure at 6 feet or greater.</p></div>
@@ -2463,7 +2295,6 @@
       </div>
       <div class="warn-box" style="margin-top:14px;">A harness that has arrested a fall MUST be removed from service immediately — even if it looks undamaged. Tag it "DO NOT USE" and report it to your supervisor.</div>
     </section>
-
     <!-- Electrical Safety -->
     <section class="page" id="electrical-safety">
       <div class="hero"><h2>Electrical Safety</h2><p>Electrical hazards can kill instantly. Follow PAL electrical safety rules on every job — no exceptions.</p></div>
@@ -2489,7 +2320,6 @@
         </ol>
       </div>
     </section>
-
     <!-- Ladder Safety -->
     <section class="page" id="ladder-safety">
       <div class="hero"><h2>Ladder Safety</h2><p>Falls from ladders are one of the most common causes of serious injury in construction. PAL has strict ladder rules — follow them every time.</p></div>
@@ -2526,7 +2356,6 @@
         </ul>
       </div>
     </section>
-
     <!-- Hand and Power Tools -->
     <section class="page" id="hand-power-tools">
       <div class="hero"><h2>Hand &amp; Power Tools</h2><p>Improper tool use is a major cause of injury on construction sites. Use the right tool the right way — every time.</p></div>
@@ -2555,7 +2384,6 @@
         <div class="card"><h4 style="color:var(--navy);">Powder-Actuated Tools</h4><p class="muted">Only trained, authorized operators may use powder-actuated tools. Store cartridges separately from tools. Never use in explosive atmospheres.</p></div>
       </div>
     </section>
-
     <!-- Lockout Tagout -->
     <section class="page" id="loto">
       <div class="hero"><h2>Lockout / Tagout (LOTO)</h2><p>LOTO protects workers from the unexpected energization or startup of machinery and equipment. It saves lives.</p></div>
@@ -2581,7 +2409,6 @@
         <div class="policy-card"><h4>Restoring Energy</h4><p>Before restoring power: ensure all tools and materials are removed, all workers are clear of the machine, notify all affected employees, then remove locks and tags in reverse order.</p></div>
       </div>
     </section>
-
     <!-- Fire Safety -->
     <section class="page" id="fire-safety">
       <div class="hero"><h2>Fire Safety</h2><p>Know your Emergency Action Plan. Know where the fire extinguisher is. Know when to fight and when to evacuate.</p></div>
@@ -2612,7 +2439,6 @@
         <div class="policy-card"><h4>Evacuation</h4><p>Know your site's evacuation routes and assembly point before starting work. Walk the route on your first day at any new job site.</p></div>
       </div>
     </section>
-
     <!-- Confined Space -->
     <section class="page" id="confined-space">
       <div class="hero"><h2>Confined Space Entry</h2><p>Confined space entry is one of the most dangerous operations in our industry. Never enter a permit-required confined space without proper authorization and equipment.</p></div>
@@ -2647,7 +2473,6 @@
       <h3 class="section-title">Emergency Contacts for Confined Space</h3>
       <div class="card"><p>Any confined space emergency: <strong>Call 911 immediately.</strong><br>Then notify <strong>Richardo Blake: 347-844-0476</strong></p></div>
     </section>
-
     <!-- Asbestos and Lead -->
     <section class="page" id="asbestos-lead">
       <div class="hero"><h2>Asbestos &amp; Lead Exposure</h2><p>PAL Environmental Services specializes in abatement. Know the hazards, know the controls, and follow the program every time.</p></div>
@@ -2668,7 +2493,6 @@
       <h3 class="section-title">Key Contacts</h3>
       <div class="card"><p><strong>EH&S Director:</strong> Richardo Blake (347-844-0476)<br><strong>Testing Lab:</strong> Clarity Testing Services — 914-593-0300<br><strong>Medical Surveillance:</strong> Required for all employees with regular asbestos or lead exposure. Contact EH&S Director to schedule.</p></div>
     </section>
-
     <!-- Silica -->
     <section class="page" id="silica">
       <div class="hero"><h2>Respirable Crystalline Silica</h2><p>Silica dust is invisible and deadly. Cutting, grinding, or drilling concrete, brick, or stone without controls can cause silicosis — an incurable, fatal lung disease.</p></div>
@@ -2704,7 +2528,6 @@
         </ul>
       </div>
     </section>
-
     <!-- Housekeeping -->
     <section class="page" id="housekeeping">
       <div class="hero"><h2>Housekeeping</h2><p>A clean job site is a safe job site. Good housekeeping prevents slips, trips, falls, fires, and injuries — and it reflects on PAL's professionalism.</p></div>
@@ -2730,7 +2553,6 @@
         <div class="card"><h4 style="color:var(--navy);">Reflects on PAL</h4><p class="muted">Clients notice. A clean, organized job site shows professionalism and builds trust with owners and inspectors.</p></div>
       </div>
     </section>
-
     <!-- Scaffolds -->
     <section class="page" id="scaffolds">
       <div class="hero"><h2>Scaffolds</h2><p>Scaffold collapses and falls from scaffolds are among the most serious hazards in construction. Follow PAL scaffold rules every time.</p></div>
@@ -2763,7 +2585,6 @@
         </ul>
       </div>
     </section>
-
     <!-- HazCom -->
     <section class="page" id="hazcom">
       <div class="hero"><h2>Hazard Communication (HazCom)</h2><p>PAL's HazCom Program ensures all employees know the hazards of the chemicals they work with and how to protect themselves. CFR 1926.59.</p></div>
@@ -2813,9 +2634,7 @@
         <p style="margin-top:10px;">Never remove or deface a label. If a label is damaged or unreadable, remove the container from use and contact your supervisor.</p>
       </div>
     </section>
-
     <div class="form-footer">PAL Environmental Services • Internal Use • Printed via PAL Safety Hub</div>
-
     <!-- NEW HIRE: SITE ORIENTATION FORM -->
     <section class="page" id="new-hire-orientation">
       <div class="form-shell">
@@ -2841,12 +2660,10 @@
               <div class="field"><label>Phone Number</label><input type="tel" name="phone"></div>
               <div class="field span-2"><label>Emergency Contact Name &amp; Number</label><input name="emergency_contact"></div>
             </div>
-
             <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px;">
               <h4 style="margin:0;color:var(--navy);">Orientation Topics Covered</h4>
               <button type="button" onclick="checkAllTopics()" style="font-size:12px;padding:5px 12px;background:var(--navy);color:white;border:none;border-radius:6px;cursor:pointer;">✓ Check All</button>
             </div>
-
             <div style="display:flex;flex-direction:column;gap:6px;">
               <div style="background:#f9fafb;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;">
                 <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">Emergency &amp; Incident</div>
@@ -2881,7 +2698,6 @@
                 <label class="ori-topic"><input type="checkbox" name="topic_siterules"> Site-Specific Rules &amp; Procedures</label>
               </div>
             </div>
-
             <h4 style="margin:18px 0 8px;color:var(--navy);">Employee Acknowledgement</h4>
             <p style="font-size:13px;">I confirm that I have received and understood the above orientation topics. I agree to comply with all PAL Environmental Services safety policies and procedures.</p>
             <div class="form-grid" style="margin-top:12px;">
@@ -2903,7 +2719,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <!-- NEW HIRE: DRUG & ALCOHOL CONSENT (APPENDIX B) -->
     <section class="page" id="new-hire-drug-consent">
       <div class="form-shell">
@@ -2946,7 +2761,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <!-- NEW HIRE: SCAFFOLD / FALL / LADDER AGREEMENT -->
     <section class="page" id="new-hire-scaffold">
       <div class="form-shell">
@@ -2992,7 +2806,6 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-
     <!-- NEW HIRE: W-4 -->
     <section class="page" id="new-hire-w4">
       <div class="form-shell">
@@ -3030,11 +2843,9 @@
                 <label><input type="radio" name="filing_status" value="hoh"> Head of household</label>
               </div>
             </div>
-
             <h4 style="margin:14px 0 8px;background:var(--navy);color:white;padding:6px 10px;border-radius:4px;">Step 2 — Multiple Jobs or Spouse Works</h4>
             <p style="font-size:12px;margin-bottom:8px;">Complete this step if you (1) hold more than one job at a time, or (2) are married filing jointly and your spouse also works.</p>
             <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;"><input type="checkbox" name="multiple_jobs" style="margin-top:2px;"> Check here if there are only two jobs total and you/your spouse's wages are similar. (See instructions for other options.)</label>
-
             <h4 style="margin:14px 0 8px;background:var(--navy);color:white;padding:6px 10px;border-radius:4px;">Step 3 — Claim Dependents</h4>
             <p style="font-size:12px;margin-bottom:8px;">If your total income will be $200,000 or less ($400,000 or less if married filing jointly):</p>
             <div class="form-grid">
@@ -3042,14 +2853,12 @@
               <div class="field"><label>Other dependents × $500</label><input type="number" name="other_credit" step="1" min="0" placeholder="e.g. 500"></div>
               <div class="field"><label>Total (add amounts above)</label><input type="number" name="total_credits" step="1" min="0" placeholder="e.g. 4500"></div>
             </div>
-
             <h4 style="margin:14px 0 8px;background:var(--navy);color:white;padding:6px 10px;border-radius:4px;">Step 4 — Other Adjustments (Optional)</h4>
             <div class="form-grid">
               <div class="field"><label>(a) Other income not from jobs (interest, dividends, retirement)</label><input type="number" name="other_income" step="1" min="0"></div>
               <div class="field"><label>(b) Deductions (if you plan to itemize)</label><input type="number" name="deductions" step="1" min="0"></div>
               <div class="field"><label>(c) Extra withholding per pay period ($)</label><input type="number" name="extra_withholding" step="1" min="0"></div>
             </div>
-
             <h4 style="margin:14px 0 8px;background:var(--navy);color:white;padding:6px 10px;border-radius:4px;">Step 5 — Signature</h4>
             <p style="font-size:12px;margin-bottom:8px;">Under penalties of perjury, I declare that this certificate, to the best of my knowledge and belief, is true, correct, and complete.</p>
           </form>
@@ -3057,7 +2866,6 @@
           <div class="form-grid" style="margin-top:10px;">
             <div class="field"><label>Date</label><input type="date" id="w4-date"></div>
           </div>
-
           <div class="card" style="margin-top:20px;border-top:3px solid var(--navy);">
             <h4 style="margin:0 0 8px;color:var(--navy);">Employer Section — Do Not Fill (Payroll Use Only)</h4>
             <div class="form-grid">
@@ -3072,27 +2880,22 @@
       </div>
     </section>
   </main>
-
   <script>
-
     function palNotice(message, title = 'PAL Safety Hub') {
       const overlay = document.getElementById('pal-modal-overlay');
       const titleEl = document.getElementById('pal-modal-title');
       const msgEl = document.getElementById('pal-modal-message');
       const okBtn = document.getElementById('pal-modal-ok');
       const cancelBtn = document.getElementById('pal-modal-cancel');
-
       if (!overlay || !titleEl || !msgEl || !okBtn || !cancelBtn) {
         if (typeof toastPalMessage === 'function') toastPalMessage(String(message || 'Saved to device'));
         else console.log(message);
         return Promise.resolve(true);
       }
-
       titleEl.textContent = title;
       msgEl.textContent = String(message || '');
       cancelBtn.style.display = 'none';
       overlay.classList.add('show');
-
       return new Promise(resolve => {
         okBtn.onclick = () => {
           overlay.classList.remove('show');
@@ -3106,7 +2909,6 @@
         };
       });
     }
-
     function palSavedMessage(type = 'saved') {
       const msg = type === 'share'
         ? 'Open the print view, then use your device share/save options.'
@@ -3116,9 +2918,7 @@
       if (typeof toastPalMessage === 'function') toastPalMessage(msg);
       else palNotice(msg);
     }
-
     let currentLang = localStorage.getItem('pal-language') || 'en';
-
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
       ['new-hire-public-link', { en: '🧾 New Hire Intake', es: '🧾 Nuevo Empleado', pl: '🧾 Nowy Pracownik' }],
@@ -3127,7 +2927,6 @@
       ['pal-policies', { en: 'PAL Policies', es: 'Políticas PAL', pl: 'Zasady PAL' }],
       ['projects-link', { en: '🔐 Office Login', es: '🔐 Acceso Oficina', pl: '🔐 Logowanie Biura' }]
     ];
-
     const uiText = {
       en: {
         foremanTitle: "Foreman's Kit",
@@ -3235,7 +3034,6 @@
         savePrint: 'Zapisz i Drukuj'
       }
     };
-
     const talkData = {
       whose: { title: 'Whose Responsibility Is It?', page: 'p.6', overview: 'After an accident occurs, it is common to hear someone say it was somebody else\'s fault. Safety only works when responsibility is shared by everyone on the job.', guide: 'Responsibility belongs to management, supervisors, each worker, safety staff, and the company as a whole. If it is unsafe for you, it is unsafe for the next person too. Correct hazards, report them, and remember your responsibility to yourself, your family, your co-workers, and your company.', remember: 'Without cooperation from everyone on the worksite, the job will never be as safe as it should be.' },
       deadly: { title: 'The Deadly Dozen', page: 'p.7', overview: 'Every accident comes from an unsafe act or unsafe condition. Knowing the common causes helps crews recognize and stop hazards before someone gets hurt.', guide: 'Unsafe acts include using defective tools, working too fast, lifting wrong, failing to use PPE, and standing in dangerous positions. Unsafe conditions include poor housekeeping, poor lighting, fire hazards, lack of guards, inadequate warning systems, and improper storage.', remember: 'Be alert to the conditions on the job. Identify them, report them, and correct them.' },
@@ -3263,7 +3061,6 @@
       confined_space_talk: { title: 'Confined Space Awareness', page: 'Field', overview: 'Confined spaces kill multiple workers every year — often because rescuers enter without equipment and become victims themselves.', guide: 'Never enter a permit-required confined space without a written permit, atmospheric testing, and a trained attendant outside. Test for oxygen (19.5–23.5%), flammable gas (below 10% LEL), and toxic gases before and during entry. If the alarm sounds, exit immediately. Do NOT enter to rescue — call 911.', remember: 'If someone collapses inside a confined space, do NOT go in after them. Call 911.' },
       fall_protection_talk: { title: 'Fall Protection Awareness', page: 'Field', overview: 'Falls are the number one killer in construction. At PAL, fall protection is required at 6 feet or greater — no exceptions.', guide: 'Know your options: guardrails, personal fall arrest systems, safety nets. Inspect your harness before every use. Anchor points must be rated 5,000 lbs. Tie off before you reach the edge — not after. Guardrails must be 42 inches high and withstand 200 lbs of force.', remember: 'One second of inattention at height can end your career or your life. Tie off every time.' }
     };
-
     function buildTabs() {
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
@@ -3276,7 +3073,6 @@
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
     }
-
     function applyTranslations() {
       const t = uiText[currentLang];
       document.querySelector('#foreman-kit .card h2').textContent = t.foremanTitle;
@@ -3284,7 +3080,6 @@
       document.querySelectorAll('#foreman-kit .kit-section-title')[0].textContent = t.dailyForms;
       document.querySelectorAll('#foreman-kit .kit-section-title')[1].textContent = t.timePay;
       document.querySelectorAll('#foreman-kit .kit-section-title')[2].textContent = t.incidents;
-
       const kitCards = document.querySelectorAll('#foreman-kit .kit-card');
       const kitVals = [
         [t.dsmTitle, t.dsmSub],
@@ -3300,19 +3095,16 @@
         const p = card.querySelector('p');
         if (kitVals[idx]) { h4.textContent = kitVals[idx][0]; p.textContent = kitVals[idx][1]; }
       });
-
       const eapPage = document.getElementById('eap');
       eapPage.querySelector('h2').textContent = t.eapTitle;
       eapPage.querySelectorAll('p')[0].textContent = t.eapBody;
       eapPage.querySelectorAll('p')[1].textContent = t.eapNote;
-
       document.querySelector('#toolbox-talks .card h2').textContent = t.toolboxTitle;
       document.querySelector('#toolbox-talks .card p').textContent = t.toolboxSub;
       document.querySelector('#quick-reference .card h2').textContent = t.quickTitle;
       document.querySelector('#code-of-conduct .card h2').textContent = t.cocTitle;
       document.querySelector('#code-of-conduct .card p').textContent = t.cocBody;
       document.querySelector('#whistleblower .card h2').textContent = t.whistleTitle;
-
       document.querySelectorAll('.toolbar .btn.secondary').forEach(btn => {
         if (btn.textContent.includes('Back to Foreman')) btn.textContent = t.backKit;
       });
@@ -3324,7 +3116,6 @@
         if (btns[3]) btns[3].textContent = t.savePrint;
       });
     }
-
     function showPage(id) {
       const restrictedPublicPages = new Set(['foreman-kit','daily-safety-meeting','toolbox-signin','daily-report','daily-timesheet','weekly-timesheet-fp','expense-report','new-hire-orientation','new-hire-drug-consent','new-hire-scaffold','new-hire-w4']);
       if (restrictedPublicPages.has(id)) {
@@ -3347,12 +3138,24 @@
         });
       }
     }
-
     function clearSigById(canvasId) {
-      const c = document.getElementById(canvasId);
-      if (c) { const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
+      const el = document.getElementById(canvasId);
+      if (!el) return;
+      const wrap = el.closest('.sig-pad-wrap');
+      if (wrap) {
+        const input = wrap.querySelector('.typed-signature-input');
+        const display = wrap.querySelector('.typed-signature-display');
+        if (input) input.value = '';
+        if (display) {
+          display.textContent = 'Signature';
+          display.classList.remove('has-signature');
+        }
+      }
+      if (el.tagName && el.tagName.toLowerCase() === 'canvas') {
+        const ctx = el.getContext('2d');
+        ctx.clearRect(0, 0, el.width, el.height);
+      }
     }
-
     function setLanguage(lang, btn) {
       currentLang = lang;
       localStorage.setItem('pal-language', lang);
@@ -3368,12 +3171,10 @@
       const activeTab = document.querySelector(`.tab[data-page="${document.querySelector('.page.active')?.id || 'cover'}"]`);
       if (activeTab) activeTab.classList.add('active');
     }
-
     function addSignRows(targetId, start, end) {
   const tbody = document.getElementById(targetId);
   if (!tbody) return;
   tbody.innerHTML = '';
-
   for (let i = start; i <= end; i++) {
     const row = document.createElement('tr');
     row.innerHTML =
@@ -3382,106 +3183,55 @@
       '<td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>';
     tbody.appendChild(row);
   }
-
   tbody.querySelectorAll('canvas').forEach(initSigPad);
 }
-      
-    
-    
-      
-      
-        
-        
-          
-          
-      
-      
-    
-    
-
     function initSigPad(canvas) {
-      canvas._sigInited = true;
-      const dpr = window.devicePixelRatio || 1;
-      function resize() {
-        const w = canvas.offsetWidth || 200;
-        const h = 52;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
+      if (!canvas) return;
+      const wrap = canvas.closest('.sig-pad-wrap');
+      if (!wrap || wrap.dataset.typedSigInited === '1') return;
+      wrap.dataset.typedSigInited = '1';
+      const oldCanvasId = canvas.id || '';
+      const clearBtn = wrap.querySelector('.sig-clear');
+      canvas.remove();
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'typed-signature-input';
+      input.placeholder = 'Type full name to sign';
+      if (oldCanvasId) input.id = oldCanvasId;
+      const display = document.createElement('div');
+      display.className = 'typed-signature-display';
+      display.textContent = 'Signature';
+      function updateTypedSignature() {
+        const value = input.value.trim();
+        display.textContent = value || 'Signature';
+        display.classList.toggle('has-signature', !!value);
       }
-      resize();
-
-      function getCtx() {
-        const ctx = canvas.getContext('2d');
-        ctx.strokeStyle = '#1b3a5c';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        return ctx;
-      }
-
-      let drawing = false;
-      let lastX = 0, lastY = 0;
-
-      function getXY(e) {
-        const r = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / dpr / r.width;
-        const scaleY = canvas.height / dpr / r.height;
-        if (e.touches && e.touches.length > 0) {
-          return [
-            (e.touches[0].clientX - r.left) * scaleX,
-            (e.touches[0].clientY - r.top) * scaleY
-          ];
-        }
-        return [
-          (e.clientX - r.left) * scaleX,
-          (e.clientY - r.top) * scaleY
-        ];
-      }
-
-      function onStart(e) {
-        e.preventDefault();
-        drawing = true;
-        [lastX, lastY] = getXY(e);
-      }
-      function onMove(e) {
-        if (!drawing) return;
-        e.preventDefault();
-        const [x, y] = getXY(e);
-        const ctx = getCtx();
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        lastX = x; lastY = y;
-      }
-      function onEnd(e) {
-        drawing = false;
-      }
-
-      // Mouse
-      canvas.addEventListener('mousedown', onStart);
-      canvas.addEventListener('mousemove', onMove);
-      canvas.addEventListener('mouseup', onEnd);
-      canvas.addEventListener('mouseleave', onEnd);
-      // Touch
-      canvas.addEventListener('touchstart', onStart, { passive: false });
-      canvas.addEventListener('touchmove', onMove, { passive: false });
-      canvas.addEventListener('touchend', onEnd);
+      input.addEventListener('input', updateTypedSignature);
+      wrap.insertBefore(input, clearBtn || null);
+      wrap.insertBefore(display, clearBtn || null);
+      if (clearBtn) clearBtn.textContent = 'Clear';
+      updateTypedSignature();
     }
-
     function clearSig(btn) {
-      const canvas = btn.closest('.sig-pad-wrap').querySelector('canvas');
-      const dpr = window.devicePixelRatio || 1;
-      canvas.getContext('2d').clearRect(0, 0, canvas.width / dpr * dpr, canvas.height / dpr * dpr);
+      const wrap = btn.closest('.sig-pad-wrap');
+      if (!wrap) return;
+      const input = wrap.querySelector('.typed-signature-input');
+      const display = wrap.querySelector('.typed-signature-display');
+      if (input) input.value = '';
+      if (display) {
+        display.textContent = 'Signature';
+        display.classList.remove('has-signature');
+      }
+      const canvas = wrap.querySelector('canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     }
-
     // Init any signature canvases already in the HTML (incident report signatures)
     function initAllSigPads() {
-      document.querySelectorAll('.signature-cell canvas').forEach(initSigPad);
+      document.querySelectorAll('.sig-pad-wrap canvas').forEach(initSigPad);
     }
-
     function addWorkerRow(name='', role='', hrs='', ot='') {
       const tbody = document.getElementById('worker-rows');
       const tr = document.createElement('tr');
@@ -3491,19 +3241,12 @@
   '<td><input type="number" value="' + hrs + '" style="width:100%"></td>' +
   '<td><input type="number" value="' + ot + '" style="width:100%"></td>' +
   '<td><button type="button" class="btn secondary" onclick="this.closest(\'tr\').remove()">X</button></td>';
-      
-        
-        
-        
-        
       tbody.appendChild(tr);
     }
-
     function roundTo15(mins) {
       // Round down to nearest 15-min interval (7:04 → 7:00, 7:16 → 7:15, 7:31 → 7:30, 7:46 → 7:45)
       return Math.floor(mins / 15) * 15;
     }
-
     function calcDailyHours(tr) {
       const timeIn = tr.querySelector('.ts-in').value;
       const timeOut = tr.querySelector('.ts-out').value;
@@ -3527,7 +3270,6 @@
       const totalEl = tr.querySelector('.ts-total');
       if (totalEl) totalEl.value = totalHrs > 0 ? totalHrs.toFixed(2) : '';
     }
-
     function addTimesheetRow() {
       const tbody = document.getElementById('daily-timesheet-rows');
       const rowNum = tbody.children.length + 1;
@@ -3543,25 +3285,13 @@
   '<td style="min-width:80px;"><input type="number" class="ts-ot" step="0.01" style="width:100%;min-width:70px;" readonly></td>' +
   '<td style="min-width:80px;"><input type="number" class="ts-total" step="0.01" style="width:100%;min-width:70px;" readonly></td>' +
   '<td style="width:36px;text-align:center;"><button onclick="this.closest(\'tr\').remove();renumberTs()" style="background:none;border:none;color:#b91c1c;font-weight:bold;cursor:pointer;">×</button></td>';
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        
       tbody.appendChild(tr);
     }
-
     function renumberTs() {
       document.querySelectorAll('#daily-timesheet-rows tr').forEach((tr,i) => {
         tr.cells[0].textContent = i + 1;
       });
     }
-
     function clearDailyTimesheet() {
       if (!confirm('Clear all timesheet data? This cannot be undone.')) return;
       document.querySelectorAll('#daily-timesheet form input').forEach(el => el.value = '');
@@ -3571,7 +3301,6 @@
       document.getElementById('dts-sig-date').value = '';
       addTimesheetRow();
     }
-
     function calcWeeklyRow(tr) {
       const days = ['mon','tue','wed','thu','fri']; // weekdays capped at 8
       const wknd = ['sat','sun']; // all OT
@@ -3589,15 +3318,12 @@
       tr.querySelector('.wk-ot').value = ot > 0 ? ot.toFixed(2) : '';
       tr.querySelector('.wk-total').value = (reg + ot) > 0 ? (reg + ot).toFixed(2) : '';
     }
-
     function addWeeklyFpRow() {
   const tbody = document.getElementById('weekly-fp-rows');
   const tr = document.createElement('tr');
-
   const mkDay = function(cls) {
     return '<td style="min-width:70px;"><input type="number" step="0.5" min="0" max="24" class="wk-' + cls + '" style="width:100%;min-width:60px;" oninput="calcWeeklyFpHours(this.closest(\'tr\'))"></td>';
   };
-
   tr.innerHTML =
     '<td style="min-width:70px;"><input style="width:100%;min-width:60px;"></td>' +
     '<td style="min-width:150px;"><input style="width:100%;min-width:130px;"></td>' +
@@ -3608,63 +3334,29 @@
     '<td style="min-width:90px;"><input class="wk-ot" style="width:100%;min-width:80px;" readonly></td>' +
     '<td style="min-width:90px;"><input class="wk-total" style="width:100%;min-width:80px;" readonly></td>' +
     '<td style="width:36px;text-align:center;"><button onclick="this.closest(\'tr\').remove()" style="background:none;border:none;color:#b91c1c;font-weight:bold;cursor:pointer;">×</button></td>';
-
   tbody.appendChild(tr);
 }
-      
-      
-      
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-    
-
     function clearWeeklyTimesheet() {
       if (!confirm('Clear all weekly timesheet data? This cannot be undone.')) return;
       document.querySelectorAll('#weekly-timesheet-fp form input').forEach(el => el.value = '');
       document.getElementById('weekly-fp-rows').innerHTML = '';
       for (let i = 0; i < 26; i++) addWeeklyFpRow();
     }
-
     function addExpenseRow(desc='', date='', cat='Misc', amt='') {
   const tbody = document.getElementById('expense-rows');
   const tr = document.createElement('tr');
-
   const categories = ['Air/Rail','Car Rental','Auto Expenses','Taxi/Toll','Lodging','Breakfast','Lunch','Dinner','Entertainment','Misc'];
   const options = categories.map(function(v) {
     return '<option value="' + v + '"' + (v === cat ? ' selected' : '') + '>' + v + '</option>';
   }).join('');
-
   tr.innerHTML =
     '<td><input value="' + desc + '" style="width:100%"></td>' +
     '<td><input type="date" value="' + date + '" style="width:100%"></td>' +
     '<td><select style="width:100%" onchange="updateExpenseTotals()">' + options + '</select></td>' +
     '<td><input type="number" step="0.01" value="' + amt + '" style="width:100%" oninput="updateExpenseTotals()"></td>';
-
   tbody.appendChild(tr);
   updateExpenseTotals();
 }
-      
-      
-    
-        
-        
-        
-        
-        
-        
-      
-    
-    
-
     function updateExpenseTotals() {
       const amounts = [...document.querySelectorAll('#expense-rows tr td:last-child input')]
         .map(i => parseFloat(i.value || 0));
@@ -3674,7 +3366,6 @@
       const advance = parseFloat(document.getElementById('cash-advance').value || 0);
       document.getElementById('total-due').value = (total - advance).toFixed(2);
     }
-
     function clearForm(pageId) {
       if (!confirm('Clear all data on this form? This cannot be undone.')) return;
       const page = document.getElementById(pageId);
@@ -3688,9 +3379,12 @@
       page.querySelectorAll('textarea').forEach(el => { el.value = ''; });
       // Clear all select dropdowns to first option
       page.querySelectorAll('select:not([readonly])').forEach(el => { el.selectedIndex = 0; });
-      // Clear all signature canvases
+      // Clear typed signatures and any older canvas signatures
+      page.querySelectorAll('.typed-signature-display').forEach(el => {
+        el.textContent = 'Signature';
+        el.classList.remove('has-signature');
+      });
       page.querySelectorAll('.sig-pad-wrap canvas').forEach(c => {
-        const dpr = window.devicePixelRatio || 1;
         const ctx = c.getContext('2d');
         ctx.clearRect(0, 0, c.width, c.height);
       });
@@ -3702,23 +3396,19 @@
       const workerRows = page.querySelector('#worker-rows');
       if (workerRows) { workerRows.innerHTML = ''; }
     }
-
     function checkAllTopics() {
       const boxes = document.querySelectorAll('#new-hire-orientation input[type="checkbox"]');
       const allChecked = [...boxes].every(b => b.checked);
       boxes.forEach(b => b.checked = !allChecked);
     }
-
     function toggleConditional(show, id) {
       document.getElementById(id).classList.toggle('hidden', !show);
     }
-
     function formToJSON(form) {
       const data = {};
       new FormData(form).forEach((v,k)=>data[k]=v);
       return data;
     }
-
     function fillForm(form, data) {
       if (!data) return;
       Object.entries(data).forEach(([k,v]) => {
@@ -3726,7 +3416,6 @@
         if (el) el.value = v;
       });
     }
-
     function saveForm(pageId) {
       const page = document.getElementById(pageId);
       const form = page.querySelector('form[data-save-key]');
@@ -3736,7 +3425,6 @@
       localStorage.setItem(`pal-${key}`, JSON.stringify(data));
       palNotice('Saved on this device.');
     }
-
     function restoreForms() {
       document.querySelectorAll('form[data-save-key]').forEach(form => {
         const key = form.dataset.saveKey;
@@ -3748,7 +3436,6 @@
         document.querySelectorAll('.job-number-field').forEach(field => field.value = sharedJobNumber);
       }
     }
-
     function toastPalMessage(message) {
       let el = document.getElementById('pal-toast');
       if (!el) {
@@ -3776,29 +3463,24 @@
       window.__palToastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2600);
     }
     window.toastPalMessage = toastPalMessage;
-
     function getCleanDocumentTitle() {
       const active = document.querySelector('.page.active');
       const rawTitle =
         active?.querySelector('.form-head h2')?.textContent ||
         active?.querySelector('h2')?.textContent ||
         'PAL Safety Document';
-
       return rawTitle
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '') || 'PAL-Safety-Document';
     }
-
     function copyLiveValuesIntoClone(originalPage, clonedPage) {
       const originalFields = originalPage.querySelectorAll('input, textarea, select');
       const clonedFields = clonedPage.querySelectorAll('input, textarea, select');
-
       originalFields.forEach((field, index) => {
         const clone = clonedFields[index];
         if (!clone) return;
-
         if (field.tagName === 'TEXTAREA') {
           clone.textContent = field.value || '';
           clone.innerHTML = field.value || '';
@@ -3814,14 +3496,11 @@
           clone.setAttribute('value', field.value || '');
         }
       });
-
       const originalCanvases = originalPage.querySelectorAll('canvas');
       const clonedCanvases = clonedPage.querySelectorAll('canvas');
-
       originalCanvases.forEach((canvas, index) => {
         const cloneCanvas = clonedCanvases[index];
         if (!cloneCanvas) return;
-
         try {
           const img = document.createElement('img');
           img.src = canvas.toDataURL('image/png');
@@ -3833,21 +3512,16 @@
         } catch (e) {}
       });
     }
-
     function getCleanPrintableHTML() {
       const activePage = document.querySelector('.page.active');
       if (!activePage) return '';
-
       const cleanTitle = getCleanDocumentTitle();
       const clonedPage = activePage.cloneNode(true);
       copyLiveValuesIntoClone(activePage, clonedPage);
-
       clonedPage.classList.add('active');
       clonedPage.style.display = 'block';
       clonedPage.querySelectorAll('.sticky-actions, .toolbar, .btn, button, #install-banner, nav, header').forEach(el => el.remove());
-
       const styles = Array.from(document.querySelectorAll('style')).map(s => s.innerHTML).join('\n');
-
       return `<!DOCTYPE html>
 <html>
 <head>
@@ -3864,7 +3538,6 @@ body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: #1f
 .form-shell { border: none !important; box-shadow: none !important; }
 .card, .policy-card { box-shadow: none !important; }
 input, textarea, select { color: #000 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; }
-
 .print-helper-bar {
   display: flex !important;
   gap: 10px;
@@ -3898,7 +3571,6 @@ input, textarea, select { color: #000 !important; -webkit-text-fill-color: #000 
   font-size: 12px;
   line-height: 1.35;
 }
-
 @media print {
   .print-helper-bar { display: none !important; height:0 !important; padding:0 !important; margin:0 !important; border:0 !important; }
 }
@@ -3923,13 +3595,10 @@ function returnToApp() {
   }
 }
 <\/script>
-
-
 <!-- IPHONE_FORCED_ONE_PAGE_PRINT_PATCH_2026_05_24 -->
 <style>
 @media print {
   @page { size: letter portrait; margin: 0.06in !important; }
-
   html, body {
     margin: 0 !important;
     padding: 0 !important;
@@ -3938,7 +3607,6 @@ function returnToApp() {
     overflow: visible !important;
     background: #fff !important;
   }
-
   /* iPhone/Safari needs real compression, not just browser zoom. */
   #harness-checklist,
   #scaffold-checklist,
@@ -3952,7 +3620,6 @@ function returnToApp() {
     font-size: 5.2px !important;
     line-height: 1 !important;
   }
-
   #harness-checklist .form-shell,
   #scaffold-checklist .form-shell,
   #scissor-lift-inspection .form-shell,
@@ -3966,7 +3633,6 @@ function returnToApp() {
     box-shadow: none !important;
     overflow: visible !important;
   }
-
   #harness-checklist .form-head,
   #scaffold-checklist .form-head,
   #scissor-lift-inspection .form-head,
@@ -3976,7 +3642,6 @@ function returnToApp() {
     gap: 4px !important;
     margin: 0 0 1px 0 !important;
   }
-
   #harness-checklist .pal-logo,
   #scaffold-checklist .pal-logo,
   #scissor-lift-inspection .pal-logo,
@@ -3984,7 +3649,6 @@ function returnToApp() {
     width: 18px !important;
     height: 18px !important;
   }
-
   #harness-checklist .pal-logo svg,
   #scaffold-checklist .pal-logo svg,
   #scissor-lift-inspection .pal-logo svg,
@@ -3992,7 +3656,6 @@ function returnToApp() {
     width: 18px !important;
     height: 18px !important;
   }
-
   #harness-checklist .form-head h2,
   #scaffold-checklist .form-head h2,
   #scissor-lift-inspection .form-head h2,
@@ -4001,7 +3664,6 @@ function returnToApp() {
     line-height: 1 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .form-head p,
   #scaffold-checklist .form-head p,
   #scissor-lift-inspection .form-head p,
@@ -4014,7 +3676,6 @@ function returnToApp() {
     line-height: 1 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .form-body,
   #scaffold-checklist .form-body,
   #scissor-lift-inspection .form-body,
@@ -4024,7 +3685,6 @@ function returnToApp() {
     font-size: 5.2px !important;
     line-height: 1 !important;
   }
-
   #harness-checklist .toolbar,
   #scaffold-checklist .toolbar,
   #scissor-lift-inspection .toolbar,
@@ -4038,7 +3698,6 @@ function returnToApp() {
     padding: 0 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .checklist-link-box,
   #scaffold-checklist .checklist-link-box,
   #scissor-lift-inspection .checklist-link-box,
@@ -4048,14 +3707,12 @@ function returnToApp() {
     border-radius: 0 !important;
     border-width: 0.5px !important;
   }
-
   #harness-checklist .checklist-link-box h4,
   #scaffold-checklist .checklist-link-box h4,
   #scissor-lift-inspection .checklist-link-box h4,
   #incident-report .checklist-link-box h4 {
     display: none !important;
   }
-
   #harness-checklist div[style*="grid-template-columns:1fr 1fr"],
   #scaffold-checklist div[style*="grid-template-columns:1fr 1fr"],
   #scissor-lift-inspection div[style*="grid-template-columns:1fr 1fr"],
@@ -4075,7 +3732,6 @@ function returnToApp() {
     gap: 1px !important;
     margin: 0 0 1px 0 !important;
   }
-
   #harness-checklist .field,
   #scaffold-checklist .field,
   #scissor-lift-inspection .field,
@@ -4084,7 +3740,6 @@ function returnToApp() {
     margin: 0 !important;
     padding: 0 !important;
   }
-
   #harness-checklist .field label,
   #scaffold-checklist .field label,
   #scissor-lift-inspection .field label,
@@ -4098,7 +3753,6 @@ function returnToApp() {
     margin: 0 !important;
     padding: 0 !important;
   }
-
   #harness-checklist input,
   #harness-checklist textarea,
   #harness-checklist select,
@@ -4119,7 +3773,6 @@ function returnToApp() {
     margin: 0 !important;
     border-bottom-width: 0.5px !important;
   }
-
   #harness-checklist textarea,
   #scaffold-checklist textarea,
   #scissor-lift-inspection textarea,
@@ -4127,7 +3780,6 @@ function returnToApp() {
     min-height: 8px !important;
     background: none !important;
   }
-
   #harness-checklist table,
   #scaffold-checklist table,
   #scissor-lift-inspection table,
@@ -4137,7 +3789,6 @@ function returnToApp() {
     margin: 0 !important;
     border-collapse: collapse !important;
   }
-
   #harness-checklist th,
   #harness-checklist td,
   #scaffold-checklist th,
@@ -4152,7 +3803,6 @@ function returnToApp() {
     margin: 0 !important;
     border-width: 0.5px !important;
   }
-
   #harness-checklist tr,
   #scaffold-checklist tr,
   #scissor-lift-inspection tr,
@@ -4160,7 +3810,6 @@ function returnToApp() {
     height: auto !important;
     min-height: 0 !important;
   }
-
   #harness-checklist input[type="radio"],
   #scaffold-checklist input[type="radio"],
   #scissor-lift-inspection input[type="radio"],
@@ -4174,7 +3823,6 @@ function returnToApp() {
     padding: 0 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .subhead,
   #scaffold-checklist .subhead,
   #scissor-lift-inspection .subhead,
@@ -4183,14 +3831,12 @@ function returnToApp() {
     line-height: 1 !important;
     margin: 1px 0 !important;
   }
-
   #harness-checklist .sig-pad-wrap canvas,
   #scaffold-checklist .sig-pad-wrap canvas,
   #scissor-lift-inspection .sig-pad-wrap canvas,
   #incident-report .sig-pad-wrap canvas {
     height: 10px !important;
   }
-
   #harness-checklist p,
   #scaffold-checklist p,
   #scissor-lift-inspection p,
@@ -4212,16 +3858,12 @@ function returnToApp() {
     padding: 1px 2px !important;
     margin: 1px 0 !important;
   }
-
   /* Harness was the hardest one on iPhone: remove non-essential footer notes in print only. */
   #harness-checklist p[style*="font-size:10px"] {
     display: none !important;
   }
 }
 </style>
-
-
-
 <!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
      Standardizes every form/document footer to 3 buttons:
      Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
@@ -4260,26 +3902,22 @@ function returnToApp() {
       if (typeof saveForm === 'function') saveForm(active.id);
     } catch(e) {}
   }
-
   window.palPreviewDocument = function(){
     saveActiveFormSilently();
     if (typeof printPage === 'function') printPage();
     else window.print();
   };
-
   window.palSavePdfDocument = function(){
     saveActiveFormSilently();
     if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
     else window.print();
   };
-
   window.palShareDocument = function(){
     saveActiveFormSilently();
     if (typeof shareCurrentPage === 'function') shareCurrentPage();
     else if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
     else window.print();
   };
-
   window.standardizePalFormFooters = function(){
     document.querySelectorAll('.sticky-actions').forEach(function(bar){
       bar.classList.add('pal-standard-footer');
@@ -4289,7 +3927,6 @@ function returnToApp() {
         '<button class="btn share" type="button" onclick="palShareDocument()">📤 Share</button>';
     });
   };
-
   const originalSetLanguage = window.setLanguage;
   if (typeof originalSetLanguage === 'function') {
     window.setLanguage = function(){
@@ -4298,13 +3935,11 @@ function returnToApp() {
       return result;
     };
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', window.standardizePalFormFooters);
   } else {
     window.standardizePalFormFooters();
   }
-
   const observer = new MutationObserver(function(){
     window.clearTimeout(window.__palFooterStandardTimer);
     window.__palFooterStandardTimer = window.setTimeout(window.standardizePalFormFooters, 50);
@@ -4312,48 +3947,38 @@ function returnToApp() {
   observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 <\/script>
-
 </body>
 </html>`;
     }
-
     function openCleanPrintWindow() {
       const oldTitle = document.title;
       const cleanTitle = getCleanDocumentTitle();
       document.title = cleanTitle;
-
       const printWindow = window.open('', '_blank');
-
       if (!printWindow) {
         // Popup blocked fallback: print current page with clean title.
         window.print();
         setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
         return;
       }
-
       printWindow.document.open();
       printWindow.document.write(getCleanPrintableHTML());
       printWindow.document.close();
-
       // Do not auto-print and do not auto-close on mobile.
       // The clean print page now has its own Print / Save PDF and Return buttons.
       setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
     }
-
     function printPage() {
       openCleanPrintWindow();
       palSavedMessage('saved');
     }
-
     async function exportCurrentPagePDF() {
       openCleanPrintWindow();
       palSavedMessage('pdf');
     }
-
     async function shareCurrentPage() {
       const activePage = document.querySelector('.page.active');
       if (!activePage) return;
-
       const cleanTitle = getCleanDocumentTitle().replace(/-/g, ' ');
       const form = activePage.querySelector('form[data-save-key]');
       const data = form ? formToJSON(form) : {};
@@ -4362,7 +3987,6 @@ function returnToApp() {
         .map(([k,v]) => `${k.replace(/_/g, ' ')}: ${v}`)
         .join('\n');
       const shareBody = cleanTitle + '\n\nPAL Environmental Services\n\n' + (prettyData || '');
-
       if (navigator.share) {
         try {
           await navigator.share({ title: cleanTitle, text: shareBody });
@@ -4371,28 +3995,22 @@ function returnToApp() {
           if (err && err.name === 'AbortError') return;
         }
       }
-
       openCleanPrintWindow();
     }
-
-
 function syncJobNumber(value) {
       document.querySelectorAll('.job-number-field').forEach(field => {
         if (field.value !== value) field.value = value;
       });
       localStorage.setItem('pal-shared-job-number', value || '');
     }
-
     function openTalk(key) {
   const talk = talkData[key];
   const container = document.getElementById('talk-detail-view');
   document.getElementById('talk-grid-view').classList.add('hidden');
   container.classList.remove('hidden');
-
   const rows = Array.from({length: 10}, function(_, i) {
     return '<tr><td>' + (i + 1) + '</td><td><input style="width:100%"></td><td><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>';
   }).join('');
-
   container.innerHTML =
     '<div class="toolbar"><button class="btn secondary" onclick="closeTalk()">← Back</button></div>' +
     '<div class="card"><span class="pill">' + talk.page + '</span><h2 style="color:var(--navy);">' + talk.title + '</h2></div>' +
@@ -4421,16 +4039,12 @@ function syncJobNumber(value) {
       '</div>' +
       '<div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>' +
     '</div>';
-
   container.querySelectorAll('canvas').forEach(initSigPad);
 }
-
 function closeTalk() {
   document.getElementById('talk-grid-view').classList.remove('hidden');
   document.getElementById('talk-detail-view').classList.add('hidden');
 }
-
-
     function generateAiDailySafety() {
       const project = document.getElementById('ai-project-name')?.value.trim() || '';
       const job = document.getElementById('ai-job-number')?.value.trim() || '';
@@ -4441,7 +4055,6 @@ function closeTalk() {
       const equipment = document.getElementById('ai-equipment')?.value.trim() || '';
       const conditions = document.getElementById('ai-conditions')?.value.trim() || '';
       const notes = document.getElementById('ai-work-notes')?.value.trim() || '';
-
       const lower = (workType + ' ' + equipment + ' ' + conditions + ' ' + notes).toLowerCase();
       const isSOFP = lower.includes('sofp') || lower.includes('spray') || lower.includes('fireproof');
       const usesLift = lower.includes('lift') || lower.includes('scissor') || lower.includes('boom');
@@ -4449,14 +4062,12 @@ function closeTalk() {
       const otherTrades = lower.includes('other trade') || lower.includes('trades') || lower.includes('congested') || lower.includes('busy');
       const hotWeather = lower.includes('heat') || lower.includes('hot');
       const coldWeather = lower.includes('cold') || lower.includes('winter');
-
       const taskLine =
   workType.toUpperCase() +
   ' work in ' +
   areas +
   (equipment ? ' using ' + equipment : '') +
   (conditions ? '. Conditions: ' + conditions : '');
-
       const items = [
         "Review today\'s work locations, crew assignments, access routes, and site-specific hazards.",
         'Confirm required PPE is being worn and that all workers understand the task before starting.',
@@ -4464,14 +4075,12 @@ function closeTalk() {
         isSOFP ? 'Discuss overspray control, respiratory protection, eye protection, gloves, hose management, and restricted spray zones.' : 'Discuss task-specific PPE, tools, materials, and communication with nearby workers.',
         nearEdge ? 'Review fall protection, guardrails, floor openings, perimeter edges, and 100% tie-off where required.' : 'Review walking/working surface hazards and keeping clear access paths.'
       ];
-
       let hazard1 = usesLift
         ? 'Lift operation hazards: tip-over, struck-by/crush points, overhead obstructions, uneven surfaces, and workers entering the lift travel path.'
         : 'Work area hazards: slips/trips, material handling, tools/equipment, limited access, and changing conditions in the work area.';
       let control1 = usesLift
         ? 'Complete lift pre-use inspection, operate only by trained/authorized workers, maintain clear travel path, use spotter when needed, avoid overhead hazards, and keep workers clear of lift movement.'
         : 'Inspect the work area before starting, keep access clear, stage materials safely, use proper body mechanics, and correct/report hazards immediately.';
-
       let hazard2 = isSOFP
         ? 'SOFP hazards: overspray, airborne material exposure, eye/skin irritation, hose trip hazards, spray equipment pressure, and nearby trades entering the spray area.'
         : otherTrades
@@ -4482,12 +4091,10 @@ function closeTalk() {
         : otherTrades
           ? 'Coordinate with GC/other trades, barricade or mark work areas, maintain communication, avoid stacking work in the same space, and stop work if conditions become unsafe.'
           : 'Use required PPE, keep work area organized, communicate changes to the crew, inspect tools/equipment, and stop to correct unsafe conditions.';
-
       if (nearEdge) {
         hazard2 += ' Additional fall exposure may exist near building edges, floor openings, shafts, or incomplete guardrails.';
         control2 += ' Verify guardrails/covers are in place and secure, use approved fall protection where required, and do not work near unprotected edges without controls.';
       }
-
       const inspection = [
         `360 inspection required before starting in ${areas}.`,
         nearEdge ? 'Verify edge protection, floor openings, guardrails, covers, and anchor points before work starts.' : 'Check walking surfaces, access paths, lighting, housekeeping, and material staging.',
@@ -4496,7 +4103,6 @@ function closeTalk() {
         hotWeather ? 'Monitor workers for heat illness and take water/rest breaks as needed.' : '',
         coldWeather ? 'Monitor slippery surfaces, cold stress, gloves, and winter access conditions.' : ''
       ].filter(Boolean).join(' ');
-
       const projectDisplay = job ? `${project}${project ? ' — ' : ''}${job}` : project;
       document.getElementById('ai-out-project-name').value = projectDisplay;
       document.getElementById('ai-out-date').value = date;
@@ -4509,10 +4115,8 @@ function closeTalk() {
       document.getElementById('ai-out-hazard2').value = hazard2;
       document.getElementById('ai-out-control2').value = control2;
       document.getElementById('ai-out-inspection').value = inspection;
-
       if (typeof toastPalMessage === 'function') toastPalMessage('AI assisted safety sheet generated. Review before use.');
     }
-
     function copyAiDailySafetyToManual() {
       const aiMap = {
         project_name: 'ai-out-project-name',
@@ -4536,7 +4140,6 @@ function closeTalk() {
       });
       if (typeof toastPalMessage === 'function') toastPalMessage('Copied to manual Daily Safety form.');
     }
-
     function init() {
       buildTabs();
       createSignRows('dsm-front', 1, 11);
@@ -4553,9 +4156,7 @@ function closeTalk() {
       const activeLangBtn = document.querySelector(`.lang-switch button[onclick*="'${currentLang}'"]`);
       setLanguage(currentLang, activeLangBtn);
     }
-
     init();
-  
   function getCleanDocumentTitle() {
     const active = document.querySelector('.page.active');
     const title = active?.querySelector('.form-head h2')?.textContent || active?.querySelector('h2')?.textContent || 'PAL Safety Document';
@@ -4580,9 +4181,7 @@ function closeTalk() {
       else { window.exportCurrentPagePDF(); }
     } catch (e) { if (!e || e.name !== 'AbortError') window.exportCurrentPagePDF(); }
   };
-
 </script>
-
   <script>
     // Register service worker for offline support + PWA installability on Android
     if ('serviceWorker' in navigator) {
@@ -4592,7 +4191,6 @@ function closeTalk() {
         });
       });
     }
-
     // Show Android "Add to Home Screen" install prompt
     let deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -4601,7 +4199,6 @@ function closeTalk() {
       const banner = document.getElementById('install-banner');
       if (banner) banner.classList.remove('hidden');
     });
-
     function installApp() {
       if (!deferredInstallPrompt) return;
       deferredInstallPrompt.prompt();
@@ -4611,18 +4208,15 @@ function closeTalk() {
         if (banner) banner.classList.add('hidden');
       });
     }
-
     window.addEventListener('appinstalled', () => {
       const banner = document.getElementById('install-banner');
       if (banner) banner.classList.add('hidden');
     });
   </script>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, serverTimestamp, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80",
       authDomain: "pal-safety-hub.firebaseapp.com",
@@ -4631,28 +4225,22 @@ function closeTalk() {
       messagingSenderId: "461653262208",
       appId: "1:461653262208:web:fb88dc50ea0a2f68630b65"
     };
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
     let palProjects = [];
     let palCurrentUser = null;
     let palCurrentUserProfile = null;
     let palDailyReportInitialized = false;
-
     const originalSaveForm = window.saveForm;
-
     window.refreshDailyReportProjects = refreshDailyReportProjects;
     window.openProjectDashboardFromReport = openProjectDashboardFromReport;
     window.returnToProjectDashboard = returnToProjectDashboard;
-
     onAuthStateChanged(auth, async (user) => {
       palCurrentUser = user || null;
       palCurrentUserProfile = user ? await loadUserProfile(user) : null;
       await refreshDailyReportProjects();
     });
-
     async function loadUserProfile(user) {
       try {
         const q = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
@@ -4663,19 +4251,16 @@ function closeTalk() {
       }
       return { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
     }
-
     function isOfficeRole() {
       const role = (palCurrentUserProfile?.role || '').toLowerCase();
       return ['office', 'admin', 'administrator', 'project manager', 'project_manager'].includes(role);
     }
-
     async function refreshDailyReportProjects() {
       const select = document.getElementById('daily-report-project-select');
       const status = document.getElementById('daily-report-cloud-status');
       const hint = document.getElementById('daily-report-project-hint');
       const backBtn = document.getElementById('daily-report-project-back');
       if (!select || !status || !hint) return;
-
       if (!palCurrentUser) {
         palProjects = [];
         select.innerHTML = '<option value="">Select a project…</option>';
@@ -4685,7 +4270,6 @@ function closeTalk() {
         applyProjectSelectionFromStorage();
         return;
       }
-
       try {
         const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
         const snap = await getDocs(q);
@@ -4696,30 +4280,20 @@ function closeTalk() {
           const foremen = Array.isArray(p.foremen) ? p.foremen : [];
           return foremen.some(f => (f.email || '').toLowerCase() === (palCurrentUser?.email || '').toLowerCase() || (f.uid && f.uid === palCurrentUser?.uid)) || p.createdBy === palCurrentUser?.uid;
         });
-
       select.innerHTML = '<option value="">Select a project...</option>' + palProjects.map(function(p){
   return '<option value="' + p.id + '">' + escapeHtml(p.name || 'Project') + (p.jobNumber ? ' - ' + escapeHtml(p.jobNumber) : '') + '</option>';
 }).join('');
-
 hint.textContent = palProjects.length
   ? palProjects.length + ' project' + (palProjects.length === 1 ? '' : 's') + ' available for cloud save.'
   : 'No assigned projects were found for this account.';
-
 status.textContent = palProjects.length ? 'Ready for cloud save' : 'No projects available';
 applyProjectSelectionFromStorage();
-        
-        
-
-        
-      
-      
       } catch (err) {
         console.error(err);
         status.textContent = 'Cloud unavailable';
         hint.textContent = 'Could not load projects right now. You can still save on this device.';
       }
     }
-
     function getStoredCurrentProject() {
       try {
         const raw = localStorage.getItem('pal-current-project');
@@ -4728,7 +4302,6 @@ applyProjectSelectionFromStorage();
         return null;
       }
     }
-
     function setStoredCurrentProject(project) {
       if (!project) return;
       localStorage.setItem('pal-current-project', JSON.stringify({
@@ -4739,7 +4312,6 @@ applyProjectSelectionFromStorage();
         status: project.status || 'active'
       }));
     }
-
     function applyProjectSelectionFromStorage() {
       const select = document.getElementById('daily-report-project-select');
       const backBtn = document.getElementById('daily-report-project-back');
@@ -4759,13 +4331,11 @@ applyProjectSelectionFromStorage();
         showPage('daily-report');
       }
     }
-
     function bindDailyReportProjectSelection() {
       const select = document.getElementById('daily-report-project-select');
       if (!select) return;
       select.addEventListener('change', syncDailyReportProjectFields);
     }
-
     function syncDailyReportProjectFields() {
       const select = document.getElementById('daily-report-project-select');
       const status = document.getElementById('daily-report-cloud-status');
@@ -4794,13 +4364,11 @@ applyProjectSelectionFromStorage();
         status.textContent = palCurrentUser ? 'Ready for cloud save' : 'Local only';
       }
     }
-
     async function saveDailyReportToFirestore() {
       if (!palCurrentUser) return { saved: false, reason: 'not-signed-in' };
       const select = document.getElementById('daily-report-project-select');
       const projectId = select?.value || getStoredCurrentProject()?.id;
       if (!projectId) return { saved: false, reason: 'no-project' };
-
       const page = document.getElementById('daily-report');
       const form = page?.querySelector('form[data-save-key="daily-report"]');
       if (!form) return { saved: false, reason: 'no-form' };
@@ -4810,7 +4378,6 @@ applyProjectSelectionFromStorage();
       data.project_name = project.name || data.job_name || '';
       data.project_location = project.location || '';
       data.project_status = project.status || '';
-
       await addDoc(collection(db, 'projects', projectId, 'reports'), {
         ...data,
         submittedAt: serverTimestamp(),
@@ -4819,18 +4386,15 @@ applyProjectSelectionFromStorage();
         submittedByName: palCurrentUser.displayName || palCurrentUser.email || '',
         source: 'daily-report'
       });
-
       setStoredCurrentProject(project);
       const status = document.getElementById('daily-report-cloud-status');
       if (status) status.textContent = 'Saved to cloud';
       return { saved: true };
     }
-
     window.saveForm = function(pageId) {
       if (pageId !== 'daily-report') {
         return originalSaveForm.call(this, pageId);
       }
-
       const page = document.getElementById(pageId);
       const form = page?.querySelector('form[data-save-key]');
       if (form) {
@@ -4838,7 +4402,6 @@ applyProjectSelectionFromStorage();
         const data = window.formToJSON ? window.formToJSON(form) : Object.fromEntries(new FormData(form).entries());
       localStorage.setItem('pal-' + key, JSON.stringify(data));
       }
-
       saveDailyReportToFirestore()
         .then((result) => {
           if (result.saved) {
@@ -4854,7 +4417,6 @@ applyProjectSelectionFromStorage();
           if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Saved on this device. Cloud save failed.');
         });
     };
-
     function openProjectDashboardFromReport() {
       const select = document.getElementById('daily-report-project-select');
       const projectId = select?.value || getStoredCurrentProject()?.id;
@@ -4864,7 +4426,6 @@ applyProjectSelectionFromStorage();
       }
       window.location.href = 'projects.html?projectId=' + encodeURIComponent(projectId);
     }
-
     function returnToProjectDashboard() {
       const stored = getStoredCurrentProject();
       if (!stored?.id) {
@@ -4873,19 +4434,14 @@ applyProjectSelectionFromStorage();
       }
     window.location.href = 'projects.html?projectId=' + encodeURIComponent(stored.id);
     }
-
     function escapeHtml(str) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
   </script>
-
-
-
 <!-- IPHONE_FORCED_ONE_PAGE_PRINT_PATCH_2026_05_24 -->
 <style>
 @media print {
   @page { size: letter portrait; margin: 0.06in !important; }
-
   html, body {
     margin: 0 !important;
     padding: 0 !important;
@@ -4894,7 +4450,6 @@ applyProjectSelectionFromStorage();
     overflow: visible !important;
     background: #fff !important;
   }
-
   /* iPhone/Safari needs real compression, not just browser zoom. */
   #harness-checklist,
   #scaffold-checklist,
@@ -4908,7 +4463,6 @@ applyProjectSelectionFromStorage();
     font-size: 5.2px !important;
     line-height: 1 !important;
   }
-
   #harness-checklist .form-shell,
   #scaffold-checklist .form-shell,
   #scissor-lift-inspection .form-shell,
@@ -4922,7 +4476,6 @@ applyProjectSelectionFromStorage();
     box-shadow: none !important;
     overflow: visible !important;
   }
-
   #harness-checklist .form-head,
   #scaffold-checklist .form-head,
   #scissor-lift-inspection .form-head,
@@ -4932,7 +4485,6 @@ applyProjectSelectionFromStorage();
     gap: 4px !important;
     margin: 0 0 1px 0 !important;
   }
-
   #harness-checklist .pal-logo,
   #scaffold-checklist .pal-logo,
   #scissor-lift-inspection .pal-logo,
@@ -4940,7 +4492,6 @@ applyProjectSelectionFromStorage();
     width: 18px !important;
     height: 18px !important;
   }
-
   #harness-checklist .pal-logo svg,
   #scaffold-checklist .pal-logo svg,
   #scissor-lift-inspection .pal-logo svg,
@@ -4948,7 +4499,6 @@ applyProjectSelectionFromStorage();
     width: 18px !important;
     height: 18px !important;
   }
-
   #harness-checklist .form-head h2,
   #scaffold-checklist .form-head h2,
   #scissor-lift-inspection .form-head h2,
@@ -4957,7 +4507,6 @@ applyProjectSelectionFromStorage();
     line-height: 1 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .form-head p,
   #scaffold-checklist .form-head p,
   #scissor-lift-inspection .form-head p,
@@ -4970,7 +4519,6 @@ applyProjectSelectionFromStorage();
     line-height: 1 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .form-body,
   #scaffold-checklist .form-body,
   #scissor-lift-inspection .form-body,
@@ -4980,7 +4528,6 @@ applyProjectSelectionFromStorage();
     font-size: 5.2px !important;
     line-height: 1 !important;
   }
-
   #harness-checklist .toolbar,
   #scaffold-checklist .toolbar,
   #scissor-lift-inspection .toolbar,
@@ -4994,7 +4541,6 @@ applyProjectSelectionFromStorage();
     padding: 0 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .checklist-link-box,
   #scaffold-checklist .checklist-link-box,
   #scissor-lift-inspection .checklist-link-box,
@@ -5004,14 +4550,12 @@ applyProjectSelectionFromStorage();
     border-radius: 0 !important;
     border-width: 0.5px !important;
   }
-
   #harness-checklist .checklist-link-box h4,
   #scaffold-checklist .checklist-link-box h4,
   #scissor-lift-inspection .checklist-link-box h4,
   #incident-report .checklist-link-box h4 {
     display: none !important;
   }
-
   #harness-checklist div[style*="grid-template-columns:1fr 1fr"],
   #scaffold-checklist div[style*="grid-template-columns:1fr 1fr"],
   #scissor-lift-inspection div[style*="grid-template-columns:1fr 1fr"],
@@ -5031,7 +4575,6 @@ applyProjectSelectionFromStorage();
     gap: 1px !important;
     margin: 0 0 1px 0 !important;
   }
-
   #harness-checklist .field,
   #scaffold-checklist .field,
   #scissor-lift-inspection .field,
@@ -5040,7 +4583,6 @@ applyProjectSelectionFromStorage();
     margin: 0 !important;
     padding: 0 !important;
   }
-
   #harness-checklist .field label,
   #scaffold-checklist .field label,
   #scissor-lift-inspection .field label,
@@ -5054,7 +4596,6 @@ applyProjectSelectionFromStorage();
     margin: 0 !important;
     padding: 0 !important;
   }
-
   #harness-checklist input,
   #harness-checklist textarea,
   #harness-checklist select,
@@ -5075,7 +4616,6 @@ applyProjectSelectionFromStorage();
     margin: 0 !important;
     border-bottom-width: 0.5px !important;
   }
-
   #harness-checklist textarea,
   #scaffold-checklist textarea,
   #scissor-lift-inspection textarea,
@@ -5083,7 +4623,6 @@ applyProjectSelectionFromStorage();
     min-height: 8px !important;
     background: none !important;
   }
-
   #harness-checklist table,
   #scaffold-checklist table,
   #scissor-lift-inspection table,
@@ -5093,7 +4632,6 @@ applyProjectSelectionFromStorage();
     margin: 0 !important;
     border-collapse: collapse !important;
   }
-
   #harness-checklist th,
   #harness-checklist td,
   #scaffold-checklist th,
@@ -5108,7 +4646,6 @@ applyProjectSelectionFromStorage();
     margin: 0 !important;
     border-width: 0.5px !important;
   }
-
   #harness-checklist tr,
   #scaffold-checklist tr,
   #scissor-lift-inspection tr,
@@ -5116,7 +4653,6 @@ applyProjectSelectionFromStorage();
     height: auto !important;
     min-height: 0 !important;
   }
-
   #harness-checklist input[type="radio"],
   #scaffold-checklist input[type="radio"],
   #scissor-lift-inspection input[type="radio"],
@@ -5130,7 +4666,6 @@ applyProjectSelectionFromStorage();
     padding: 0 !important;
     margin: 0 !important;
   }
-
   #harness-checklist .subhead,
   #scaffold-checklist .subhead,
   #scissor-lift-inspection .subhead,
@@ -5139,14 +4674,12 @@ applyProjectSelectionFromStorage();
     line-height: 1 !important;
     margin: 1px 0 !important;
   }
-
   #harness-checklist .sig-pad-wrap canvas,
   #scaffold-checklist .sig-pad-wrap canvas,
   #scissor-lift-inspection .sig-pad-wrap canvas,
   #incident-report .sig-pad-wrap canvas {
     height: 10px !important;
   }
-
   #harness-checklist p,
   #scaffold-checklist p,
   #scissor-lift-inspection p,
@@ -5168,16 +4701,12 @@ applyProjectSelectionFromStorage();
     padding: 1px 2px !important;
     margin: 1px 0 !important;
   }
-
   /* Harness was the hardest one on iPhone: remove non-essential footer notes in print only. */
   #harness-checklist p[style*="font-size:10px"] {
     display: none !important;
   }
 }
 </style>
-
-
-
 <!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
      Standardizes every form/document footer to 3 buttons:
      Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
@@ -5216,26 +4745,22 @@ applyProjectSelectionFromStorage();
       if (typeof saveForm === 'function') saveForm(active.id);
     } catch(e) {}
   }
-
   window.palPreviewDocument = function(){
     saveActiveFormSilently();
     if (typeof printPage === 'function') printPage();
     else window.print();
   };
-
   window.palSavePdfDocument = function(){
     saveActiveFormSilently();
     if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
     else window.print();
   };
-
   window.palShareDocument = function(){
     saveActiveFormSilently();
     if (typeof shareCurrentPage === 'function') shareCurrentPage();
     else if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
     else window.print();
   };
-
   window.standardizePalFormFooters = function(){
     document.querySelectorAll('.sticky-actions').forEach(function(bar){
       bar.classList.add('pal-standard-footer');
@@ -5245,7 +4770,6 @@ applyProjectSelectionFromStorage();
         '<button class="btn share" type="button" onclick="palShareDocument()">📤 Share</button>';
     });
   };
-
   const originalSetLanguage = window.setLanguage;
   if (typeof originalSetLanguage === 'function') {
     window.setLanguage = function(){
@@ -5254,13 +4778,11 @@ applyProjectSelectionFromStorage();
       return result;
     };
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', window.standardizePalFormFooters);
   } else {
     window.standardizePalFormFooters();
   }
-
   const observer = new MutationObserver(function(){
     window.clearTimeout(window.__palFooterStandardTimer);
     window.__palFooterStandardTimer = window.setTimeout(window.standardizePalFormFooters, 50);
@@ -5268,6 +4790,5 @@ applyProjectSelectionFromStorage();
   observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
-
 </body>
 </html>
