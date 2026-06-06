@@ -4188,27 +4188,46 @@ function returnToApp() {
       if (!active) return;
       const form = active.querySelector('form[data-save-key]');
       if (!form) return;
-      if (typeof saveForm === 'function') saveForm(active.id);
+      const key = form.dataset.saveKey;
+      if (!key) return;
+      const data = typeof formToJSON === 'function' ? formToJSON(form) : Object.fromEntries(new FormData(form).entries());
+      localStorage.setItem('pal-' + key, JSON.stringify(data));
     } catch(e) {}
+  }
+  function openPalDocumentPreview(){
+    if (typeof openCleanPrintWindow === 'function') {
+      openCleanPrintWindow();
+    } else if (typeof printPage === 'function') {
+      printPage();
+    } else {
+      window.print();
+    }
   }
   window.palPreviewDocument = function(){
     saveActiveFormSilently();
-    if (typeof printPage === 'function') printPage();
-    else window.print();
+    openPalDocumentPreview();
   };
   window.palSavePdfDocument = function(){
     saveActiveFormSilently();
-    if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
-    else window.print();
+    openPalDocumentPreview();
   };
-  window.palShareDocument = function(){
+  window.palShareDocument = async function(){
     saveActiveFormSilently();
-    if (typeof shareCurrentPage === 'function') shareCurrentPage();
-    else if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
-    else window.print();
+    const cleanTitle = typeof getCleanDocumentTitle === 'function' ? getCleanDocumentTitle().replace(/-/g, ' ') : 'PAL Safety Document';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: cleanTitle, text: cleanTitle + ' - PAL Safety Hub' });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+    openPalDocumentPreview();
   };
   window.standardizePalFormFooters = function(){
     document.querySelectorAll('.sticky-actions').forEach(function(bar){
+      if (bar.dataset.palStandardFooter === 'true') return;
+      bar.dataset.palStandardFooter = 'true';
       bar.classList.add('pal-standard-footer');
       bar.innerHTML = '' +
         '<button class="btn secondary" type="button" onclick="palPreviewDocument()">📄 Preview</button>' +
@@ -4236,6 +4255,59 @@ function returnToApp() {
   observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 <\/script>
+<style>
+@media print {
+  @page { size: letter portrait; margin: 0.25in !important; }
+  #harness-checklist, #scaffold-checklist, #scissor-lift-inspection, #incident-report,
+  #decon-setup-checklist, #ppe-inspection-checklist, #respirator-checklist, #demolition-safety-checklist {
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+    transform: none !important;
+    zoom: 1 !important;
+  }
+  #harness-checklist .form-head, #scaffold-checklist .form-head, #scissor-lift-inspection .form-head, #incident-report .form-head,
+  #decon-setup-checklist .form-head, #ppe-inspection-checklist .form-head, #respirator-checklist .form-head, #demolition-safety-checklist .form-head {
+    padding: 11px 14px !important;
+    gap: 12px !important;
+    margin: 0 0 10px 0 !important;
+  }
+  #harness-checklist .form-head h2, #scaffold-checklist .form-head h2, #scissor-lift-inspection .form-head h2, #incident-report .form-head h2,
+  #decon-setup-checklist .form-head h2, #ppe-inspection-checklist .form-head h2, #respirator-checklist .form-head h2, #demolition-safety-checklist .form-head h2 {
+    font-size: 20px !important;
+  }
+  #harness-checklist .form-head p, #scaffold-checklist .form-head p, #scissor-lift-inspection .form-head p, #incident-report .form-head p,
+  #decon-setup-checklist .form-head p, #ppe-inspection-checklist .form-head p, #respirator-checklist .form-head p, #demolition-safety-checklist .form-head p,
+  #harness-checklist .form-meta, #scaffold-checklist .form-meta, #scissor-lift-inspection .form-meta, #incident-report .form-meta,
+  #decon-setup-checklist .form-meta, #ppe-inspection-checklist .form-meta, #respirator-checklist .form-meta, #demolition-safety-checklist .form-meta {
+    font-size: 11px !important;
+  }
+  #harness-checklist .form-body, #scaffold-checklist .form-body, #scissor-lift-inspection .form-body, #incident-report .form-body,
+  #decon-setup-checklist .form-body, #ppe-inspection-checklist .form-body, #respirator-checklist .form-body, #demolition-safety-checklist .form-body {
+    padding: 10px 14px !important;
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+  }
+  #harness-checklist th, #harness-checklist td, #scaffold-checklist th, #scaffold-checklist td,
+  #scissor-lift-inspection th, #scissor-lift-inspection td, #incident-report th, #incident-report td,
+  #decon-setup-checklist th, #decon-setup-checklist td, #ppe-inspection-checklist th, #ppe-inspection-checklist td,
+  #respirator-checklist th, #respirator-checklist td, #demolition-safety-checklist th, #demolition-safety-checklist td {
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+    padding: 5px 6px !important;
+  }
+  #harness-checklist input, #harness-checklist textarea, #harness-checklist select,
+  #scaffold-checklist input, #scaffold-checklist textarea, #scaffold-checklist select,
+  #scissor-lift-inspection input, #scissor-lift-inspection textarea, #scissor-lift-inspection select,
+  #incident-report input, #incident-report textarea, #incident-report select,
+  #decon-setup-checklist input, #decon-setup-checklist textarea, #decon-setup-checklist select,
+  #ppe-inspection-checklist input, #ppe-inspection-checklist textarea, #ppe-inspection-checklist select,
+  #respirator-checklist input, #respirator-checklist textarea, #respirator-checklist select,
+  #demolition-safety-checklist input, #demolition-safety-checklist textarea, #demolition-safety-checklist select {
+    font-size: 11px !important;
+    padding: 3px 4px !important;
+  }
+}
+</style>
 </body>
 </html>`;
     }
@@ -5031,27 +5103,46 @@ applyProjectSelectionFromStorage();
       if (!active) return;
       const form = active.querySelector('form[data-save-key]');
       if (!form) return;
-      if (typeof saveForm === 'function') saveForm(active.id);
+      const key = form.dataset.saveKey;
+      if (!key) return;
+      const data = typeof formToJSON === 'function' ? formToJSON(form) : Object.fromEntries(new FormData(form).entries());
+      localStorage.setItem('pal-' + key, JSON.stringify(data));
     } catch(e) {}
+  }
+  function openPalDocumentPreview(){
+    if (typeof openCleanPrintWindow === 'function') {
+      openCleanPrintWindow();
+    } else if (typeof printPage === 'function') {
+      printPage();
+    } else {
+      window.print();
+    }
   }
   window.palPreviewDocument = function(){
     saveActiveFormSilently();
-    if (typeof printPage === 'function') printPage();
-    else window.print();
+    openPalDocumentPreview();
   };
   window.palSavePdfDocument = function(){
     saveActiveFormSilently();
-    if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
-    else window.print();
+    openPalDocumentPreview();
   };
-  window.palShareDocument = function(){
+  window.palShareDocument = async function(){
     saveActiveFormSilently();
-    if (typeof shareCurrentPage === 'function') shareCurrentPage();
-    else if (typeof exportCurrentPagePDF === 'function') exportCurrentPagePDF();
-    else window.print();
+    const cleanTitle = typeof getCleanDocumentTitle === 'function' ? getCleanDocumentTitle().replace(/-/g, ' ') : 'PAL Safety Document';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: cleanTitle, text: cleanTitle + ' - PAL Safety Hub' });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+    openPalDocumentPreview();
   };
   window.standardizePalFormFooters = function(){
     document.querySelectorAll('.sticky-actions').forEach(function(bar){
+      if (bar.dataset.palStandardFooter === 'true') return;
+      bar.dataset.palStandardFooter = 'true';
       bar.classList.add('pal-standard-footer');
       bar.innerHTML = '' +
         '<button class="btn secondary" type="button" onclick="palPreviewDocument()">📄 Preview</button>' +
@@ -5079,5 +5170,327 @@ applyProjectSelectionFromStorage();
   observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
+<style>
+@media print {
+  @page { size: letter portrait; margin: 0.25in !important; }
+  #harness-checklist,
+  #scaffold-checklist,
+  #scissor-lift-inspection,
+  #incident-report,
+  #decon-setup-checklist,
+  #ppe-inspection-checklist,
+  #respirator-checklist,
+  #demolition-safety-checklist {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+    transform: none !important;
+    zoom: 1 !important;
+  }
+  #harness-checklist .form-shell,
+  #scaffold-checklist .form-shell,
+  #scissor-lift-inspection .form-shell,
+  #incident-report .form-shell,
+  #decon-setup-checklist .form-shell,
+  #ppe-inspection-checklist .form-shell,
+  #respirator-checklist .form-shell,
+  #demolition-safety-checklist .form-shell {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+  #harness-checklist .form-head,
+  #scaffold-checklist .form-head,
+  #scissor-lift-inspection .form-head,
+  #incident-report .form-head,
+  #decon-setup-checklist .form-head,
+  #ppe-inspection-checklist .form-head,
+  #respirator-checklist .form-head,
+  #demolition-safety-checklist .form-head {
+    padding: 11px 14px !important;
+    gap: 12px !important;
+    margin: 0 0 10px 0 !important;
+    min-height: 0 !important;
+  }
+  #harness-checklist .pal-logo,
+  #scaffold-checklist .pal-logo,
+  #scissor-lift-inspection .pal-logo,
+  #incident-report .pal-logo,
+  #decon-setup-checklist .pal-logo,
+  #ppe-inspection-checklist .pal-logo,
+  #respirator-checklist .pal-logo,
+  #demolition-safety-checklist .pal-logo,
+  #harness-checklist .pal-logo svg,
+  #scaffold-checklist .pal-logo svg,
+  #scissor-lift-inspection .pal-logo svg,
+  #incident-report .pal-logo svg,
+  #decon-setup-checklist .pal-logo svg,
+  #ppe-inspection-checklist .pal-logo svg,
+  #respirator-checklist .pal-logo svg,
+  #demolition-safety-checklist .pal-logo svg {
+    width: 42px !important;
+    height: 42px !important;
+  }
+  #harness-checklist .form-head h2,
+  #scaffold-checklist .form-head h2,
+  #scissor-lift-inspection .form-head h2,
+  #incident-report .form-head h2,
+  #decon-setup-checklist .form-head h2,
+  #ppe-inspection-checklist .form-head h2,
+  #respirator-checklist .form-head h2,
+  #demolition-safety-checklist .form-head h2 {
+    font-size: 20px !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+  }
+  #harness-checklist .form-head p,
+  #scaffold-checklist .form-head p,
+  #scissor-lift-inspection .form-head p,
+  #incident-report .form-head p,
+  #decon-setup-checklist .form-head p,
+  #ppe-inspection-checklist .form-head p,
+  #respirator-checklist .form-head p,
+  #demolition-safety-checklist .form-head p,
+  #harness-checklist .form-meta,
+  #scaffold-checklist .form-meta,
+  #scissor-lift-inspection .form-meta,
+  #incident-report .form-meta,
+  #decon-setup-checklist .form-meta,
+  #ppe-inspection-checklist .form-meta,
+  #respirator-checklist .form-meta,
+  #demolition-safety-checklist .form-meta {
+    font-size: 11px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+  }
+  #harness-checklist .form-body,
+  #scaffold-checklist .form-body,
+  #scissor-lift-inspection .form-body,
+  #incident-report .form-body,
+  #decon-setup-checklist .form-body,
+  #ppe-inspection-checklist .form-body,
+  #respirator-checklist .form-body,
+  #demolition-safety-checklist .form-body {
+    padding: 10px 14px !important;
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+  }
+  #harness-checklist .toolbar,
+  #scaffold-checklist .toolbar,
+  #scissor-lift-inspection .toolbar,
+  #incident-report .toolbar,
+  #decon-setup-checklist .toolbar,
+  #ppe-inspection-checklist .toolbar,
+  #respirator-checklist .toolbar,
+  #demolition-safety-checklist .toolbar,
+  #harness-checklist .sticky-actions,
+  #scaffold-checklist .sticky-actions,
+  #scissor-lift-inspection .sticky-actions,
+  #incident-report .sticky-actions,
+  #decon-setup-checklist .sticky-actions,
+  #ppe-inspection-checklist .sticky-actions,
+  #respirator-checklist .sticky-actions,
+  #demolition-safety-checklist .sticky-actions {
+    display: none !important;
+  }
+  #harness-checklist .checklist-link-box,
+  #scaffold-checklist .checklist-link-box,
+  #scissor-lift-inspection .checklist-link-box,
+  #incident-report .checklist-link-box,
+  #decon-setup-checklist .checklist-link-box,
+  #ppe-inspection-checklist .checklist-link-box,
+  #respirator-checklist .checklist-link-box,
+  #demolition-safety-checklist .checklist-link-box {
+    padding: 8px 10px !important;
+    margin: 0 0 10px 0 !important;
+    border-radius: 4px !important;
+  }
+  #harness-checklist .checklist-link-box h4,
+  #scaffold-checklist .checklist-link-box h4,
+  #scissor-lift-inspection .checklist-link-box h4,
+  #incident-report .checklist-link-box h4,
+  #decon-setup-checklist .checklist-link-box h4,
+  #ppe-inspection-checklist .checklist-link-box h4,
+  #respirator-checklist .checklist-link-box h4,
+  #demolition-safety-checklist .checklist-link-box h4 {
+    font-size: 12px !important;
+    margin: 0 0 6px 0 !important;
+  }
+  #harness-checklist .form-grid,
+  #scaffold-checklist .form-grid,
+  #scissor-lift-inspection .form-grid,
+  #incident-report .form-grid,
+  #decon-setup-checklist .form-grid,
+  #ppe-inspection-checklist .form-grid,
+  #respirator-checklist .form-grid,
+  #demolition-safety-checklist .form-grid {
+    gap: 7px !important;
+    margin-bottom: 10px !important;
+  }
+  #harness-checklist .field,
+  #scaffold-checklist .field,
+  #scissor-lift-inspection .field,
+  #incident-report .field,
+  #decon-setup-checklist .field,
+  #ppe-inspection-checklist .field,
+  #respirator-checklist .field,
+  #demolition-safety-checklist .field {
+    gap: 2px !important;
+    margin: 0 !important;
+  }
+  #harness-checklist .field label,
+  #scaffold-checklist .field label,
+  #scissor-lift-inspection .field label,
+  #incident-report .field label,
+  #decon-setup-checklist .field label,
+  #ppe-inspection-checklist .field label,
+  #respirator-checklist .field label,
+  #demolition-safety-checklist .field label,
+  #harness-checklist label,
+  #scaffold-checklist label,
+  #scissor-lift-inspection label,
+  #incident-report label,
+  #decon-setup-checklist label,
+  #ppe-inspection-checklist label,
+  #respirator-checklist label,
+  #demolition-safety-checklist label {
+    font-size: 11px !important;
+    line-height: 1.22 !important;
+    margin: 0 !important;
+  }
+  #harness-checklist input,
+  #harness-checklist textarea,
+  #harness-checklist select,
+  #scaffold-checklist input,
+  #scaffold-checklist textarea,
+  #scaffold-checklist select,
+  #scissor-lift-inspection input,
+  #scissor-lift-inspection textarea,
+  #scissor-lift-inspection select,
+  #incident-report input,
+  #incident-report textarea,
+  #incident-report select,
+  #decon-setup-checklist input,
+  #decon-setup-checklist textarea,
+  #decon-setup-checklist select,
+  #ppe-inspection-checklist input,
+  #ppe-inspection-checklist textarea,
+  #ppe-inspection-checklist select,
+  #respirator-checklist input,
+  #respirator-checklist textarea,
+  #respirator-checklist select,
+  #demolition-safety-checklist input,
+  #demolition-safety-checklist textarea,
+  #demolition-safety-checklist select {
+    font-size: 11px !important;
+    line-height: 1.22 !important;
+    min-height: 0 !important;
+    padding: 3px 4px !important;
+    margin: 0 !important;
+  }
+  #harness-checklist table,
+  #scaffold-checklist table,
+  #scissor-lift-inspection table,
+  #incident-report table,
+  #decon-setup-checklist table,
+  #ppe-inspection-checklist table,
+  #respirator-checklist table,
+  #demolition-safety-checklist table {
+    width: 100% !important;
+    font-size: 11px !important;
+    line-height: 1.22 !important;
+    margin: 7px 0 !important;
+  }
+  #harness-checklist th,
+  #harness-checklist td,
+  #scaffold-checklist th,
+  #scaffold-checklist td,
+  #scissor-lift-inspection th,
+  #scissor-lift-inspection td,
+  #incident-report th,
+  #incident-report td,
+  #decon-setup-checklist th,
+  #decon-setup-checklist td,
+  #ppe-inspection-checklist th,
+  #ppe-inspection-checklist td,
+  #respirator-checklist th,
+  #respirator-checklist td,
+  #demolition-safety-checklist th,
+  #demolition-safety-checklist td {
+    font-size: 11px !important;
+    line-height: 1.22 !important;
+    padding: 5px 6px !important;
+  }
+  #harness-checklist input[type="radio"],
+  #scaffold-checklist input[type="radio"],
+  #scissor-lift-inspection input[type="radio"],
+  #incident-report input[type="radio"],
+  #decon-setup-checklist input[type="radio"],
+  #ppe-inspection-checklist input[type="radio"],
+  #respirator-checklist input[type="radio"],
+  #demolition-safety-checklist input[type="radio"],
+  #harness-checklist input[type="checkbox"],
+  #scaffold-checklist input[type="checkbox"],
+  #scissor-lift-inspection input[type="checkbox"],
+  #incident-report input[type="checkbox"],
+  #decon-setup-checklist input[type="checkbox"],
+  #ppe-inspection-checklist input[type="checkbox"],
+  #respirator-checklist input[type="checkbox"],
+  #demolition-safety-checklist input[type="checkbox"] {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  #harness-checklist .subhead,
+  #scaffold-checklist .subhead,
+  #scissor-lift-inspection .subhead,
+  #incident-report .subhead,
+  #decon-setup-checklist .subhead,
+  #ppe-inspection-checklist .subhead,
+  #respirator-checklist .subhead,
+  #demolition-safety-checklist .subhead,
+  #harness-checklist .warn-box,
+  #scaffold-checklist .warn-box,
+  #scissor-lift-inspection .warn-box,
+  #incident-report .warn-box,
+  #decon-setup-checklist .warn-box,
+  #ppe-inspection-checklist .warn-box,
+  #respirator-checklist .warn-box,
+  #demolition-safety-checklist .warn-box {
+    font-size: 11.5px !important;
+    line-height: 1.22 !important;
+    padding: 7px 9px !important;
+    margin: 7px 0 !important;
+  }
+  #harness-checklist .inspection-section-head,
+  #scissor-lift-inspection .inspection-section-head {
+    font-size: 12px !important;
+    padding: 8px 10px !important;
+  }
+  #harness-checklist .inspection-item,
+  #scissor-lift-inspection .inspection-item {
+    font-size: 11px !important;
+    padding: 5px 9px !important;
+    line-height: 1.22 !important;
+  }
+  #harness-checklist .inspection-radios label,
+  #scissor-lift-inspection .inspection-radios label,
+  #scaffold-checklist .yn-cell label,
+  #decon-setup-checklist .yn-cell label,
+  #ppe-inspection-checklist .yn-cell label,
+  #respirator-checklist .yn-cell label,
+  #demolition-safety-checklist .yn-cell label {
+    font-size: 10px !important;
+    gap: 2px !important;
+  }
+  #harness-checklist p[style*="font-size:10px"] {
+    display: none !important;
+  }
+}
+</style>
 </body>
 </html>
