@@ -4154,8 +4154,8 @@ function returnToApp() {
 }
 </style>
 <!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
-     Standardizes every form/document footer to 3 buttons:
-     Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
+     Standardizes every form/document footer to 4 buttons:
+     Submit to Project / Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
 <style>
   .sticky-actions.pal-standard-footer {
     display: flex;
@@ -4168,6 +4168,12 @@ function returnToApp() {
     min-width: 138px;
     text-align: center;
     justify-content: center;
+  }
+  .sticky-actions.pal-standard-footer .submit-project {
+    background: #78c943;
+    color: #16395c;
+    border-color: #78c943;
+    font-weight: 800;
   }
   @media (max-width: 640px) {
     .sticky-actions.pal-standard-footer {
@@ -4230,6 +4236,7 @@ function returnToApp() {
       bar.dataset.palStandardFooter = 'true';
       bar.classList.add('pal-standard-footer');
       bar.innerHTML = '' +
+        '<button class="btn submit-project" type="button" onclick="submitActiveDocumentToProject()">Submit to Project</button>' +
         '<button class="btn secondary" type="button" onclick="palPreviewDocument()">📄 Preview</button>' +
         '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">📥 Save PDF</button>' +
         '<button class="btn share" type="button" onclick="palShareDocument()">📤 Share</button>';
@@ -4378,7 +4385,7 @@ function syncJobNumber(value) {
   document.getElementById('talk-grid-view').classList.add('hidden');
   container.classList.remove('hidden');
   const rows = Array.from({length: 10}, function(_, i) {
-    return '<tr><td>' + (i + 1) + '</td><td><input style="width:100%"></td><td><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>';
+    return '<tr><td>' + (i + 1) + '</td><td><input name="attendee_' + (i + 1) + '" style="width:100%"></td><td><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>';
   }).join('');
   container.innerHTML =
     '<div class="toolbar"><button class="btn secondary" onclick="closeTalk()">← Back</button></div>' +
@@ -4388,27 +4395,31 @@ function syncJobNumber(value) {
       '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">Guide for Discussion</h3><p>' + talk.guide + '</p></div>' +
       '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">Remember</h3><p>' + talk.remember + '</p></div>' +
     '</div>' +
-    '<div class="form-shell" style="margin-top:14px;">' +
+    '<form class="form-shell" data-save-key="toolbox-talk-' + key + '" style="margin-top:14px;">' +
       '<div class="form-head"><h2>Attendee Sign-In</h2><p>' + talk.title + '</p></div>' +
       '<div class="form-body">' +
+        '<input type="hidden" name="toolbox_topic" value="' + talk.title + '">' +
+        '<input type="hidden" name="toolbox_page" value="' + talk.page + '">' +
         '<div class="form-grid">' +
-          '<div class="field"><label>Date</label><input type="date"></div>' +
-          '<div class="field"><label>Job / Project</label><input></div>' +
-          '<div class="field span-2"><label>Conducted By</label><input></div>' +
+          '<div class="field"><label>Date</label><input type="date" name="date"></div>' +
+          '<div class="field"><label>Job / Project</label><input name="linked_project"></div>' +
+          '<div class="field"><label>PAL Job No.</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" inputmode="numeric"></div>' +
+          '<div class="field"><label>Conducted By</label><input name="submitted_by"></div>' +
         '</div>' +
         '<table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody>' + rows + '</tbody></table>' +
         '<div style="margin-top:24px;border-top:2px solid #dde3ea;padding-top:16px;">' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">' +
-            '<div class="field"><label>Supervisor / Foreman Printed Name</label><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
-            '<div class="field"><label>Date</label><input type="date" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
+            '<div class="field"><label>Supervisor / Foreman Printed Name</label><input name="sup_name" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
+            '<div class="field"><label>Date</label><input type="date" name="sup_date" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
           '</div>' +
           '<label style="font-size:13px;font-weight:700;color:#1b3a5c;display:block;margin-bottom:6px;">Supervisor Signature</label>' +
           '<div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>' +
         '</div>' +
       '</div>' +
       '<div class="sticky-actions"><button class="btn secondary" onclick="printPage()">📄 Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="shareCurrentPage()">📤 Share</button></div>' +
-    '</div>';
+    '</form>';
   container.querySelectorAll('canvas').forEach(initSigPad);
+  if (typeof standardizePalFormFooters === 'function') standardizePalFormFooters();
 }
 function closeTalk() {
   document.getElementById('talk-grid-view').classList.remove('hidden');
@@ -4605,6 +4616,7 @@ function closeTalk() {
     window.refreshDailyReportProjects = refreshDailyReportProjects;
     window.openProjectDashboardFromReport = openProjectDashboardFromReport;
     window.returnToProjectDashboard = returnToProjectDashboard;
+    window.submitActiveDocumentToProject = submitActiveDocumentToProject;
     onAuthStateChanged(auth, async (user) => {
       palCurrentUser = user || null;
       palCurrentUserProfile = user ? await loadUserProfile(user) : null;
@@ -4802,6 +4814,114 @@ applyProjectSelectionFromStorage();
         return;
       }
     window.location.href = 'projects.html?projectId=' + encodeURIComponent(stored.id);
+    }
+    function getActiveDocumentForm() {
+      const active = document.querySelector('.page.active');
+      if (!active) return { active: null, form: null, data: {} };
+      const form = active.querySelector('form[data-save-key]');
+      const data = form && window.formToJSON ? window.formToJSON(form) : (form ? Object.fromEntries(new FormData(form).entries()) : {});
+      return { active, form, data };
+    }
+    function cleanProjectValue(value) {
+      return String(value || '').trim().toLowerCase();
+    }
+    function trimProjectValue(value) {
+      return String(value || '').trim();
+    }
+    function getDocumentProjectHints(data) {
+      const stored = getStoredCurrentProject() || {};
+      return {
+        projectId: trimProjectValue(data.projectId || data.project_id || stored.id || ''),
+        projectName: trimProjectValue(data.linked_project || data.job_name || data.project_name || data.project || stored.name || ''),
+        jobNumber: trimProjectValue(data.linked_job_number || data.job_number || data.job_no || localStorage.getItem('pal-shared-job-number') || stored.jobNumber || ''),
+        submittedBy: trimProjectValue(data.submitted_by || data.foreman || data.supervisor || data.conducted_by || data.sup_name || '')
+      };
+    }
+    async function findProjectForDocument(data) {
+      const hints = getDocumentProjectHints(data);
+      if (palCurrentUser && !palProjects.length) {
+        try { await refreshDailyReportProjects(); } catch (err) {}
+      }
+      if (hints.projectId) {
+        const cached = palProjects.find(p => p.id === hints.projectId);
+        if (cached) return cached;
+        try {
+          const snap = await getDoc(doc(db, 'projects', hints.projectId));
+          if (snap.exists()) return { id: snap.id, ...snap.data() };
+        } catch (err) {}
+      }
+      const jobNeedle = cleanProjectValue(hints.jobNumber);
+      const nameNeedle = cleanProjectValue(hints.projectName);
+      const cachedMatch = palProjects.find(p => {
+        return (jobNeedle && cleanProjectValue(p.jobNumber) === jobNeedle) ||
+          (nameNeedle && cleanProjectValue(p.name) === nameNeedle);
+      });
+      if (cachedMatch) return cachedMatch;
+      try {
+        if (jobNeedle) {
+          const snap = await getDocs(query(collection(db, 'projects'), where('jobNumber', '==', trimProjectValue(hints.jobNumber)), limit(1)));
+          if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+        }
+        if (nameNeedle) {
+          const snap = await getDocs(query(collection(db, 'projects'), where('name', '==', trimProjectValue(hints.projectName)), limit(1)));
+          if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+        }
+      } catch (err) {
+        console.error('Project lookup failed', err);
+      }
+      return null;
+    }
+    async function submitActiveDocumentToProject() {
+      const submitButton = document.activeElement?.matches?.('.submit-project') ? document.activeElement : null;
+      const { active, form, data } = getActiveDocumentForm();
+      if (!active) return;
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+      }
+      if (form) {
+        const key = form.dataset.saveKey;
+        if (key) localStorage.setItem('pal-' + key, JSON.stringify(data));
+      }
+      try {
+        const project = await findProjectForDocument(data);
+        if (!project?.id) {
+          if (typeof window.toastPalMessage === 'function') {
+            window.toastPalMessage('Enter the exact project name or PAL job number before submitting.');
+          }
+          return;
+        }
+        const title = active.querySelector('.form-head h2, h2, h1')?.textContent?.trim() ||
+          (typeof window.getCleanDocumentTitle === 'function' ? window.getCleanDocumentTitle().replace(/-/g, ' ') : 'PAL Safety Document');
+        const hints = getDocumentProjectHints(data);
+        const payload = {
+          formTitle: title,
+          formKey: form?.dataset.saveKey || active.id || 'pal-document',
+          sourcePageId: active.id || '',
+          projectId: project.id,
+          projectName: project.name || hints.projectName || '',
+          jobNumber: project.jobNumber || hints.jobNumber || '',
+          submittedByName: hints.submittedBy || palCurrentUser?.displayName || palCurrentUser?.email || '',
+          submittedByEmail: palCurrentUser?.email || '',
+          submittedByUid: palCurrentUser?.uid || '',
+          submittedAt: serverTimestamp(),
+          localSubmittedAt: new Date().toISOString(),
+          documentData: data
+        };
+        await addDoc(collection(db, 'projects', project.id, 'fieldForms'), payload);
+        setStoredCurrentProject(project);
+        if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Submitted to ' + (project.name || 'project') + '.');
+      } catch (err) {
+        console.error('Submit to project failed', err);
+        if (typeof window.toastPalMessage === 'function') {
+          window.toastPalMessage('Saved on this device. Project submit needs sign-in or access.');
+        }
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit to Project';
+        }
+      }
     }
     function escapeHtml(str) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -5077,8 +5197,8 @@ applyProjectSelectionFromStorage();
 }
 </style>
 <!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
-     Standardizes every form/document footer to 3 buttons:
-     Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
+     Standardizes every form/document footer to 4 buttons:
+     Submit to Project / Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
 <style>
   .sticky-actions.pal-standard-footer {
     display: flex;
@@ -5091,6 +5211,12 @@ applyProjectSelectionFromStorage();
     min-width: 138px;
     text-align: center;
     justify-content: center;
+  }
+  .sticky-actions.pal-standard-footer .submit-project {
+    background: #78c943;
+    color: #16395c;
+    border-color: #78c943;
+    font-weight: 800;
   }
   @media (max-width: 640px) {
     .sticky-actions.pal-standard-footer {
@@ -5153,6 +5279,7 @@ applyProjectSelectionFromStorage();
       bar.dataset.palStandardFooter = 'true';
       bar.classList.add('pal-standard-footer');
       bar.innerHTML = '' +
+        '<button class="btn submit-project" type="button" onclick="submitActiveDocumentToProject()">Submit to Project</button>' +
         '<button class="btn secondary" type="button" onclick="palPreviewDocument()">📄 Preview</button>' +
         '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">📥 Save PDF</button>' +
         '<button class="btn share" type="button" onclick="palShareDocument()">📤 Share</button>';

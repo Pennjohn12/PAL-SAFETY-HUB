@@ -1170,6 +1170,7 @@
     </div>
 
     <div class="tabs">
+      <button class="tab" onclick="switchTab('tab-field-forms', this)">Safety Forms</button>
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
@@ -1239,6 +1240,18 @@
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
     </div>
 
+
+    <!-- SAFETY FORMS TAB -->
+    <div class="tab-pane" id="tab-field-forms">
+      <div class="action-row">
+        <div>
+          <div class="section-label">Submitted Safety Forms</div>
+          <div class="helper-text">Checklists, toolbox talks, and other app documents submitted to this project.</div>
+        </div>
+        <button class="btn-outline" type="button" onclick="loadProjectFieldForms()">Refresh</button>
+      </div>
+      <div id="field-forms-list"><p style="color:var(--muted);font-size:14px;">No submitted safety forms yet.</p></div>
+    </div>
 
     <!-- EXTRA WORK TICKETS TAB -->
     <div class="tab-pane" id="tab-project-tickets">
@@ -1886,6 +1899,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.copyProjectLink = copyProjectLink;
   window.downloadProjectFile = downloadProjectFile;
   window.openReportDetail = openReportDetail;
+  window.loadProjectFieldForms = loadProjectFieldForms;
+  window.openFieldFormDetail = openFieldFormDetail;
   window.openEmployeeModal = openEmployeeModal;
   window.editEmployee = editEmployee;
   window.deleteEmployee = deleteEmployee;
@@ -2241,6 +2256,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       loadProjectDocs(id);
       loadProjectPhotos(id);
       loadProjectReports(id);
+      loadProjectFieldForms(id);
       loadProjectForemen(currentProjectDoc);
       if (isOfficeRole()) await loadEmployees();
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
@@ -2266,6 +2282,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     loadProjectDocs(projectId);
     loadProjectPhotos(projectId);
     loadProjectReports(projectId);
+    loadProjectFieldForms(projectId);
     loadProjectForemen(currentProjectDoc);
     if (isOfficeRole()) await loadEmployees();
   }
@@ -2663,6 +2680,94 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   // ── FOREMEN ──
+  async function loadProjectFieldForms(projectId = currentProject?.id) {
+    const list = document.getElementById('field-forms-list');
+    if (!list || !projectId) return;
+    list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading submitted safety forms...</p>';
+    try {
+      const q = query(collection(db, 'projects', projectId, 'fieldForms'), orderBy('submittedAt', 'desc'));
+      const snap = await getDocs(q);
+      const rows = [];
+      snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
+      if (!rows.length) {
+        list.dataset.fieldFormMap = '[]';
+        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No submitted safety forms yet.</p>';
+        return;
+      }
+      list.dataset.fieldFormMap = JSON.stringify(rows.map(row => ({
+        ...row,
+        submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : row.submittedAt
+      })));
+      list.innerHTML = '';
+      rows.forEach(form => {
+        const data = form.documentData || {};
+        const row = document.createElement('div');
+        row.className = 'report-card';
+        row.innerHTML = `
+          <div class="report-card-header">
+            <div>
+              <h4>${esc(form.formTitle || 'Safety Form')}</h4>
+              <div class="report-meta">
+                ${form.jobNumber ? `<span>Job ${esc(form.jobNumber)}</span>` : ''}
+                ${form.submittedByName ? `<span>By ${esc(form.submittedByName)}</span>` : ''}
+                ${data.date || data.inspection_date || data.sup_date ? `<span>${esc(data.date || data.inspection_date || data.sup_date)}</span>` : ''}
+                ${form.localSubmittedAt ? `<span>${esc(formatDate(form.localSubmittedAt))}</span>` : ''}
+              </div>
+            </div>
+            <span class="pill blue">${esc(form.formKey || 'Form')}</span>
+          </div>
+          <div class="report-snippet">${esc(getFieldFormSnippet(form))}</div>
+          <div class="report-actions">
+            <button class="btn-sm" onclick="openFieldFormDetail('${form.id}')">Open Details</button>
+          </div>`;
+        list.appendChild(row);
+      });
+    } catch(e) {
+      console.error(e);
+      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load submitted safety forms.</p>';
+    }
+  }
+
+  function getFieldFormSnippet(form) {
+    const data = form.documentData || {};
+    return data.notes || data.corrective_actions || data.work_description || data.toolbox_topic || data.comments || form.projectName || 'Submitted to this project.';
+  }
+
+  function prettyFieldLabel(key) {
+    return String(key || '')
+      .replace(/^q(\d+)$/i, 'Question $1')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function openFieldFormDetail(formId) {
+    const list = document.getElementById('field-forms-list');
+    const rows = JSON.parse(list?.dataset.fieldFormMap || '[]');
+    const form = rows.find(r => r.id === formId);
+    if (!form) return;
+    const modal = document.getElementById('modal-report-detail');
+    const heading = modal?.querySelector('h3');
+    const action = modal?.querySelector('.btn-save');
+    if (heading) heading.textContent = 'Safety Form Details';
+    if (action) action.style.display = 'none';
+    const grid = document.getElementById('report-detail-grid');
+    const data = form.documentData || {};
+    const topFields = [
+      ['Document', form.formTitle],
+      ['Project', form.projectName || currentProject?.name],
+      ['Job Number', form.jobNumber || currentProject?.jobNumber],
+      ['Submitted By', form.submittedByName || form.submittedByEmail],
+      ['Submitted', form.localSubmittedAt ? formatDate(form.localSubmittedAt) : ''],
+      ['Source', form.formKey]
+    ];
+    const dataFields = Object.entries(data)
+      .filter(([, value]) => String(value || '').trim())
+      .map(([key, value]) => [prettyFieldLabel(key), value]);
+    const fields = topFields.concat(dataFields).filter(([, value]) => value);
+    grid.innerHTML = fields.map(([k, v]) => `<div class="report-field"><span class="k">${esc(k)}</span><div class="v">${esc(v)}</div></div>`).join('');
+    document.getElementById('modal-report-detail').classList.add('open');
+  }
+
   function loadProjectForemen(data) {
     const list = document.getElementById('foremen-list');
     const foremen = data.foremen || [];
@@ -3289,6 +3394,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const rows = JSON.parse(list.dataset.reportMap || '[]');
     const report = rows.find(r => r.id === reportId);
     if (!report) return;
+    const modal = document.getElementById('modal-report-detail');
+    const heading = modal?.querySelector('h3');
+    const action = modal?.querySelector('.btn-save');
+    if (heading) heading.textContent = 'Daily Report Details';
+    if (action) action.style.display = '';
     const grid = document.getElementById('report-detail-grid');
     const fields = [
       ['Date', report.date],
@@ -5054,6 +5164,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const su = document.getElementById('sticky-upload');
     if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
     if (tabId === 'tab-employees') loadEmployees(true);
+    if (tabId === 'tab-field-forms') loadProjectFieldForms(currentProject?.id);
     if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
     if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
   }
