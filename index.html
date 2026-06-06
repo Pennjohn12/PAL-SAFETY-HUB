@@ -1123,10 +1123,10 @@
         <h3>Coming Next</h3>
         <p>These are planned employee-facing forms. They are listed here so the homepage structure is ready as the documents are added.</p>
         <div class="clean-checklist-grid">
-          <button type="button" class="clean-checklist-btn soon" onclick="alert('This form is planned and will be added in a future update.')"><strong>Decon Setup Checklist</strong><small>Planned form</small></button>
-          <button type="button" class="clean-checklist-btn soon" onclick="alert('This form is planned and will be added in a future update.')"><strong>PPE Inspection Checklist</strong><small>Planned form</small></button>
-          <button type="button" class="clean-checklist-btn soon" onclick="alert('This form is planned and will be added in a future update.')"><strong>Respirator Checklist</strong><small>Planned form</small></button>
-          <button type="button" class="clean-checklist-btn soon" onclick="alert('This form is planned and will be added in a future update.')"><strong>Demolition Safety Checklist</strong><small>Planned form</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('decon-setup-checklist')"><strong>Decon Setup Checklist</strong><small>Containment and cleanup controls</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('ppe-inspection-checklist')"><strong>PPE Inspection Checklist</strong><small>Required personal protective equipment</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('respirator-checklist')"><strong>Respirator Checklist</strong><small>Respiratory protection pre-use check</small></button>
+          <button type="button" class="clean-checklist-btn" onclick="showPage('demolition-safety-checklist')"><strong>Demolition Safety Checklist</strong><small>Pre-task demolition controls</small></button>
         </div>
       </div>
     </section>
@@ -2272,7 +2272,251 @@
         <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('harness-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('harness-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('harness-checklist');shareCurrentPage()">📤 Share</button></div>
       </div>
     </section>
-    <!-- FULL-BODY HARNESS INSPECTION CHECKLIST -->
+    <!-- DECON SETUP CHECKLIST -->
+    <section class="page" id="decon-setup-checklist">
+      <div class="form-shell">
+        <div class="form-head">
+          <div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="14" fill="#1b3a5c"/>
+            <text x="50" y="42" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="36" fill="#e8b84b" letter-spacing="1">PAL</text>
+            <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">ENVIRONMENTAL</text>
+            <text x="50" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">SERVICES</text>
+            <rect x="18" y="79" width="64" height="2" rx="1" fill="#e8b84b" opacity=".5"/>
+          </svg></div>
+          <div class="title-wrap"><h2>Decon Setup Checklist</h2><p>Verify decontamination setup before regulated work begins</p></div>
+          <div class="form-meta">Form: PAL-DSC-001<br>Rev: 1.0<br>Date: 2026</div>
+        </div>
+        <div class="form-body">
+          <div class="toolbar">
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
+            <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('decon-setup-checklist')">🗑 Clear Sheet</button>
+          </div>
+          <div class="warn-box" style="margin-bottom:14px;">Do not begin regulated work until the decon area is complete, signed off, and available to the crew.</div>
+          <form data-save-key="decon-setup-checklist">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:8px;">
+              <div class="field"><label>Date</label><input type="date" name="date"></div>
+              <div class="field"><label>Work Area / Floor</label><input name="work_area"></div>
+              <div class="field"><label>Material / Hazard</label><input name="material_hazard" placeholder="Asbestos, lead, silica, dust, other"></div>
+              <div class="field"><label>Competent Person</label><input name="competent_person"></div>
+            </div>
+            <div style="overflow:auto;margin-top:12px;">
+              <table>
+                <thead><tr><th>#</th><th>Checklist Item</th><th>Status</th><th>Remarks</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Decon location selected with safe access and clear path to work area.</td><td class="yn-cell"><label><input type="radio" name="decon_1" value="Yes">Yes</label><label><input type="radio" name="decon_1" value="No">No</label><label><input type="radio" name="decon_1" value="NA">N/A</label></td><td><input name="decon_1_remarks" style="width:100%"></td></tr>
+                  <tr><td>2</td><td>Clean room, shower/wash area, and equipment/dirty room set up as required.</td><td class="yn-cell"><label><input type="radio" name="decon_2" value="Yes">Yes</label><label><input type="radio" name="decon_2" value="No">No</label><label><input type="radio" name="decon_2" value="NA">N/A</label></td><td><input name="decon_2_remarks" style="width:100%"></td></tr>
+                  <tr><td>3</td><td>Poly, barriers, flaps, and seals are secure with no visible gaps.</td><td class="yn-cell"><label><input type="radio" name="decon_3" value="Yes">Yes</label><label><input type="radio" name="decon_3" value="No">No</label><label><input type="radio" name="decon_3" value="NA">N/A</label></td><td><input name="decon_3_remarks" style="width:100%"></td></tr>
+                  <tr><td>4</td><td>Water supply, drain controls, and waste water handling are ready.</td><td class="yn-cell"><label><input type="radio" name="decon_4" value="Yes">Yes</label><label><input type="radio" name="decon_4" value="No">No</label><label><input type="radio" name="decon_4" value="NA">N/A</label></td><td><input name="decon_4_remarks" style="width:100%"></td></tr>
+                  <tr><td>5</td><td>HEPA vacuum, bags, labels, and waste containers are staged.</td><td class="yn-cell"><label><input type="radio" name="decon_5" value="Yes">Yes</label><label><input type="radio" name="decon_5" value="No">No</label><label><input type="radio" name="decon_5" value="NA">N/A</label></td><td><input name="decon_5_remarks" style="width:100%"></td></tr>
+                  <tr><td>6</td><td>Required signage and restricted-area controls are posted.</td><td class="yn-cell"><label><input type="radio" name="decon_6" value="Yes">Yes</label><label><input type="radio" name="decon_6" value="No">No</label><label><input type="radio" name="decon_6" value="NA">N/A</label></td><td><input name="decon_6_remarks" style="width:100%"></td></tr>
+                  <tr><td>7</td><td>PPE and respirator storage/disposal points are identified.</td><td class="yn-cell"><label><input type="radio" name="decon_7" value="Yes">Yes</label><label><input type="radio" name="decon_7" value="No">No</label><label><input type="radio" name="decon_7" value="NA">N/A</label></td><td><input name="decon_7_remarks" style="width:100%"></td></tr>
+                  <tr><td>8</td><td>Crew has been briefed on entry/exit procedure and decon use.</td><td class="yn-cell"><label><input type="radio" name="decon_8" value="Yes">Yes</label><label><input type="radio" name="decon_8" value="No">No</label><label><input type="radio" name="decon_8" value="NA">N/A</label></td><td><input name="decon_8_remarks" style="width:100%"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-grid" style="margin-top:12px;">
+              <div class="field span-2"><label>Corrective Actions / Notes</label><textarea name="corrective_actions"></textarea></div>
+              <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
+              <div class="field"><label>Date Completed</label><input type="date" name="completed_date"></div>
+            </div>
+          </form>
+        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('decon-setup-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('decon-setup-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('decon-setup-checklist');shareCurrentPage()">📤 Share</button></div>
+      </div>
+    </section>
+    <!-- PPE INSPECTION CHECKLIST -->
+    <section class="page" id="ppe-inspection-checklist">
+      <div class="form-shell">
+        <div class="form-head">
+          <div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="14" fill="#1b3a5c"/>
+            <text x="50" y="42" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="36" fill="#e8b84b" letter-spacing="1">PAL</text>
+            <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">ENVIRONMENTAL</text>
+            <text x="50" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">SERVICES</text>
+            <rect x="18" y="79" width="64" height="2" rx="1" fill="#e8b84b" opacity=".5"/>
+          </svg></div>
+          <div class="title-wrap"><h2>PPE Inspection Checklist</h2><p>Verify required PPE before work starts</p></div>
+          <div class="form-meta">Form: PAL-PPE-001<br>Rev: 1.0<br>Date: 2026</div>
+        </div>
+        <div class="form-body">
+          <div class="toolbar">
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
+            <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('ppe-inspection-checklist')">🗑 Clear Sheet</button>
+          </div>
+          <form data-save-key="ppe-inspection-checklist">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:8px;">
+              <div class="field"><label>Date</label><input type="date" name="date"></div>
+              <div class="field"><label>Work Area / Task</label><input name="work_area"></div>
+              <div class="field"><label>Employee / Crew</label><input name="employee_crew"></div>
+              <div class="field"><label>Inspector</label><input name="inspector"></div>
+            </div>
+            <div style="overflow:auto;margin-top:12px;">
+              <table>
+                <thead><tr><th>#</th><th>PPE Item</th><th>Status</th><th>Remarks</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Hard hat available, in good condition, and worn correctly.</td><td class="yn-cell"><label><input type="radio" name="ppe_1" value="Pass">Pass</label><label><input type="radio" name="ppe_1" value="Fail">Fail</label><label><input type="radio" name="ppe_1" value="NA">N/A</label></td><td><input name="ppe_1_remarks" style="width:100%"></td></tr>
+                  <tr><td>2</td><td>Safety glasses or goggles are ANSI rated and not damaged.</td><td class="yn-cell"><label><input type="radio" name="ppe_2" value="Pass">Pass</label><label><input type="radio" name="ppe_2" value="Fail">Fail</label><label><input type="radio" name="ppe_2" value="NA">N/A</label></td><td><input name="ppe_2_remarks" style="width:100%"></td></tr>
+                  <tr><td>3</td><td>Hi-vis vest/shirt is available, visible, and in usable condition.</td><td class="yn-cell"><label><input type="radio" name="ppe_3" value="Pass">Pass</label><label><input type="radio" name="ppe_3" value="Fail">Fail</label><label><input type="radio" name="ppe_3" value="NA">N/A</label></td><td><input name="ppe_3_remarks" style="width:100%"></td></tr>
+                  <tr><td>4</td><td>Work gloves match the task and are free from damage.</td><td class="yn-cell"><label><input type="radio" name="ppe_4" value="Pass">Pass</label><label><input type="radio" name="ppe_4" value="Fail">Fail</label><label><input type="radio" name="ppe_4" value="NA">N/A</label></td><td><input name="ppe_4_remarks" style="width:100%"></td></tr>
+                  <tr><td>5</td><td>Safety boots are appropriate for jobsite conditions.</td><td class="yn-cell"><label><input type="radio" name="ppe_5" value="Pass">Pass</label><label><input type="radio" name="ppe_5" value="Fail">Fail</label><label><input type="radio" name="ppe_5" value="NA">N/A</label></td><td><input name="ppe_5_remarks" style="width:100%"></td></tr>
+                  <tr><td>6</td><td>Hearing protection is available where noise exposure is present.</td><td class="yn-cell"><label><input type="radio" name="ppe_6" value="Pass">Pass</label><label><input type="radio" name="ppe_6" value="Fail">Fail</label><label><input type="radio" name="ppe_6" value="NA">N/A</label></td><td><input name="ppe_6_remarks" style="width:100%"></td></tr>
+                  <tr><td>7</td><td>Respirator or dust protection is available when required.</td><td class="yn-cell"><label><input type="radio" name="ppe_7" value="Pass">Pass</label><label><input type="radio" name="ppe_7" value="Fail">Fail</label><label><input type="radio" name="ppe_7" value="NA">N/A</label></td><td><input name="ppe_7_remarks" style="width:100%"></td></tr>
+                  <tr><td>8</td><td>Fall protection equipment is inspected when working at height.</td><td class="yn-cell"><label><input type="radio" name="ppe_8" value="Pass">Pass</label><label><input type="radio" name="ppe_8" value="Fail">Fail</label><label><input type="radio" name="ppe_8" value="NA">N/A</label></td><td><input name="ppe_8_remarks" style="width:100%"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-grid" style="margin-top:12px;">
+              <div class="field span-2"><label>Missing / Damaged PPE and Corrective Action</label><textarea name="missing_damaged_ppe"></textarea></div>
+              <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
+              <div class="field"><label>Date Completed</label><input type="date" name="completed_date"></div>
+            </div>
+          </form>
+        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('ppe-inspection-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('ppe-inspection-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('ppe-inspection-checklist');shareCurrentPage()">📤 Share</button></div>
+      </div>
+    </section>
+    <!-- RESPIRATOR CHECKLIST -->
+    <section class="page" id="respirator-checklist">
+      <div class="form-shell">
+        <div class="form-head">
+          <div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="14" fill="#1b3a5c"/>
+            <text x="50" y="42" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="36" fill="#e8b84b" letter-spacing="1">PAL</text>
+            <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">ENVIRONMENTAL</text>
+            <text x="50" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">SERVICES</text>
+            <rect x="18" y="79" width="64" height="2" rx="1" fill="#e8b84b" opacity=".5"/>
+          </svg></div>
+          <div class="title-wrap"><h2>Respirator Checklist</h2><p>Respiratory protection pre-use inspection</p></div>
+          <div class="form-meta">Form: PAL-RC-001<br>Rev: 1.0<br>Date: 2026</div>
+        </div>
+        <div class="form-body">
+          <div class="toolbar">
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
+            <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('respirator-checklist')">🗑 Clear Sheet</button>
+          </div>
+          <div class="warn-box" style="margin-bottom:14px;">Do not use a respirator if it is damaged, dirty, missing parts, or cannot pass a seal check.</div>
+          <form data-save-key="respirator-checklist">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:8px;">
+              <div class="field"><label>Date</label><input type="date" name="date"></div>
+              <div class="field"><label>Employee Name</label><input name="employee_name"></div>
+              <div class="field"><label>Respirator Type / Model</label><input name="respirator_type"></div>
+              <div class="field"><label>Cartridge / Filter Type</label><input name="filter_type"></div>
+            </div>
+            <div style="overflow:auto;margin-top:12px;">
+              <table>
+                <thead><tr><th>#</th><th>Checklist Item</th><th>Status</th><th>Remarks</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Employee is clean shaven where respirator seals to face.</td><td class="yn-cell"><label><input type="radio" name="resp_1" value="Yes">Yes</label><label><input type="radio" name="resp_1" value="No">No</label><label><input type="radio" name="resp_1" value="NA">N/A</label></td><td><input name="resp_1_remarks" style="width:100%"></td></tr>
+                  <tr><td>2</td><td>Respirator is clean and free from cracks, tears, or distortion.</td><td class="yn-cell"><label><input type="radio" name="resp_2" value="Yes">Yes</label><label><input type="radio" name="resp_2" value="No">No</label><label><input type="radio" name="resp_2" value="NA">N/A</label></td><td><input name="resp_2_remarks" style="width:100%"></td></tr>
+                  <tr><td>3</td><td>Straps, buckles, facepiece, and nose bridge are in good condition.</td><td class="yn-cell"><label><input type="radio" name="resp_3" value="Yes">Yes</label><label><input type="radio" name="resp_3" value="No">No</label><label><input type="radio" name="resp_3" value="NA">N/A</label></td><td><input name="resp_3_remarks" style="width:100%"></td></tr>
+                  <tr><td>4</td><td>Inhalation and exhalation valves are present, clean, and seated properly.</td><td class="yn-cell"><label><input type="radio" name="resp_4" value="Yes">Yes</label><label><input type="radio" name="resp_4" value="No">No</label><label><input type="radio" name="resp_4" value="NA">N/A</label></td><td><input name="resp_4_remarks" style="width:100%"></td></tr>
+                  <tr><td>5</td><td>Cartridges/filters are correct for hazard and within service life.</td><td class="yn-cell"><label><input type="radio" name="resp_5" value="Yes">Yes</label><label><input type="radio" name="resp_5" value="No">No</label><label><input type="radio" name="resp_5" value="NA">N/A</label></td><td><input name="resp_5_remarks" style="width:100%"></td></tr>
+                  <tr><td>6</td><td>Positive and negative pressure seal checks were completed successfully.</td><td class="yn-cell"><label><input type="radio" name="resp_6" value="Yes">Yes</label><label><input type="radio" name="resp_6" value="No">No</label><label><input type="radio" name="resp_6" value="NA">N/A</label></td><td><input name="resp_6_remarks" style="width:100%"></td></tr>
+                  <tr><td>7</td><td>Storage bag/container is clean and respirator will be stored properly.</td><td class="yn-cell"><label><input type="radio" name="resp_7" value="Yes">Yes</label><label><input type="radio" name="resp_7" value="No">No</label><label><input type="radio" name="resp_7" value="NA">N/A</label></td><td><input name="resp_7_remarks" style="width:100%"></td></tr>
+                  <tr><td>8</td><td>User understands task hazards and required respiratory protection.</td><td class="yn-cell"><label><input type="radio" name="resp_8" value="Yes">Yes</label><label><input type="radio" name="resp_8" value="No">No</label><label><input type="radio" name="resp_8" value="NA">N/A</label></td><td><input name="resp_8_remarks" style="width:100%"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-grid" style="margin-top:12px;">
+              <div class="field span-2"><label>Issues Found / Replacement Needed</label><textarea name="issues_found"></textarea></div>
+              <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
+              <div class="field"><label>Date Completed</label><input type="date" name="completed_date"></div>
+            </div>
+          </form>
+        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('respirator-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('respirator-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('respirator-checklist');shareCurrentPage()">📤 Share</button></div>
+      </div>
+    </section>
+    <!-- DEMOLITION SAFETY CHECKLIST -->
+    <section class="page" id="demolition-safety-checklist">
+      <div class="form-shell">
+        <div class="form-head">
+          <div class="pal-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="14" fill="#1b3a5c"/>
+            <text x="50" y="42" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="36" fill="#e8b84b" letter-spacing="1">PAL</text>
+            <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">ENVIRONMENTAL</text>
+            <text x="50" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="10.5" fill="#78c240" letter-spacing="1.2">SERVICES</text>
+            <rect x="18" y="79" width="64" height="2" rx="1" fill="#e8b84b" opacity=".5"/>
+          </svg></div>
+          <div class="title-wrap"><h2>Demolition Safety Checklist</h2><p>Pre-task demolition hazard review</p></div>
+          <div class="form-meta">Form: PAL-DS-001<br>Rev: 1.0<br>Date: 2026</div>
+        </div>
+        <div class="form-body">
+          <div class="toolbar">
+            <button class="btn secondary" onclick="showPage('employee-safety')">← Back to Employee Safety</button>
+            <button class="btn" style="background:#b91c1c;color:white;" onclick="clearForm('demolition-safety-checklist')">🗑 Clear Sheet</button>
+          </div>
+          <div class="warn-box" style="margin-bottom:14px;">Stop work and notify the foreman if utilities, unstable materials, hidden hazards, or unauthorized workers are found in the demolition area.</div>
+          <form data-save-key="demolition-safety-checklist">
+            <div class="checklist-link-box">
+              <h4>Link This Checklist</h4>
+              <div class="form-grid">
+                <div class="field"><label>Project / Job Name</label><input name="linked_project" placeholder="Project or jobsite name"></div>
+                <div class="field"><label>Job Number</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
+                <div class="field"><label>Foreman / Supervisor</label><input name="linked_foreman" placeholder="Who should receive/review this"></div>
+                <div class="field"><label>Submitted By</label><input name="submitted_by" placeholder="Employee name"></div>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:8px;">
+              <div class="field"><label>Date</label><input type="date" name="date"></div>
+              <div class="field"><label>Work Area / Floor</label><input name="work_area"></div>
+              <div class="field"><label>Demolition Task</label><input name="demo_task"></div>
+              <div class="field"><label>Competent Person / Foreman</label><input name="competent_person"></div>
+            </div>
+            <div style="overflow:auto;margin-top:12px;">
+              <table>
+                <thead><tr><th>#</th><th>Checklist Item</th><th>Status</th><th>Remarks</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Work area has been reviewed and demolition limits are clearly identified.</td><td class="yn-cell"><label><input type="radio" name="demo_1" value="Yes">Yes</label><label><input type="radio" name="demo_1" value="No">No</label><label><input type="radio" name="demo_1" value="NA">N/A</label></td><td><input name="demo_1_remarks" style="width:100%"></td></tr>
+                  <tr><td>2</td><td>Utilities have been identified, protected, shut off, or locked/tagged out as required.</td><td class="yn-cell"><label><input type="radio" name="demo_2" value="Yes">Yes</label><label><input type="radio" name="demo_2" value="No">No</label><label><input type="radio" name="demo_2" value="NA">N/A</label></td><td><input name="demo_2_remarks" style="width:100%"></td></tr>
+                  <tr><td>3</td><td>Adjacent workers and other trades are protected from falling debris and dust.</td><td class="yn-cell"><label><input type="radio" name="demo_3" value="Yes">Yes</label><label><input type="radio" name="demo_3" value="No">No</label><label><input type="radio" name="demo_3" value="NA">N/A</label></td><td><input name="demo_3_remarks" style="width:100%"></td></tr>
+                  <tr><td>4</td><td>Barricades, signage, and controlled access are in place.</td><td class="yn-cell"><label><input type="radio" name="demo_4" value="Yes">Yes</label><label><input type="radio" name="demo_4" value="No">No</label><label><input type="radio" name="demo_4" value="NA">N/A</label></td><td><input name="demo_4_remarks" style="width:100%"></td></tr>
+                  <tr><td>5</td><td>Fall hazards, floor openings, edges, and overhead hazards are controlled.</td><td class="yn-cell"><label><input type="radio" name="demo_5" value="Yes">Yes</label><label><input type="radio" name="demo_5" value="No">No</label><label><input type="radio" name="demo_5" value="NA">N/A</label></td><td><input name="demo_5_remarks" style="width:100%"></td></tr>
+                  <tr><td>6</td><td>Dust controls, ventilation, and required respiratory protection are ready.</td><td class="yn-cell"><label><input type="radio" name="demo_6" value="Yes">Yes</label><label><input type="radio" name="demo_6" value="No">No</label><label><input type="radio" name="demo_6" value="NA">N/A</label></td><td><input name="demo_6_remarks" style="width:100%"></td></tr>
+                  <tr><td>7</td><td>Tools and equipment are inspected and appropriate for the task.</td><td class="yn-cell"><label><input type="radio" name="demo_7" value="Yes">Yes</label><label><input type="radio" name="demo_7" value="No">No</label><label><input type="radio" name="demo_7" value="NA">N/A</label></td><td><input name="demo_7_remarks" style="width:100%"></td></tr>
+                  <tr><td>8</td><td>Debris removal route and disposal container are ready and clear.</td><td class="yn-cell"><label><input type="radio" name="demo_8" value="Yes">Yes</label><label><input type="radio" name="demo_8" value="No">No</label><label><input type="radio" name="demo_8" value="NA">N/A</label></td><td><input name="demo_8_remarks" style="width:100%"></td></tr>
+                  <tr><td>9</td><td>Crew has been briefed on sequence of work, hazards, and emergency stop conditions.</td><td class="yn-cell"><label><input type="radio" name="demo_9" value="Yes">Yes</label><label><input type="radio" name="demo_9" value="No">No</label><label><input type="radio" name="demo_9" value="NA">N/A</label></td><td><input name="demo_9_remarks" style="width:100%"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-grid" style="margin-top:12px;">
+              <div class="field span-2"><label>Corrective Actions / Notes</label><textarea name="corrective_actions"></textarea></div>
+              <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
+              <div class="field"><label>Date Completed</label><input type="date" name="completed_date"></div>
+            </div>
+          </form>
+        </div>
+        <div class="sticky-actions"><button class="btn secondary" onclick="saveForm('demolition-safety-checklist');printPage()">📄 Preview</button><button class="btn pdf" onclick="saveForm('demolition-safety-checklist');exportCurrentPagePDF()">📥 Save PDF</button><button class="btn share" onclick="saveForm('demolition-safety-checklist');shareCurrentPage()">📤 Share</button></div>
+      </div>
+    </section>
+    <!-- SAFETY POLICY: PPE -->
     <section class="page" id="ppe">
       <div class="hero"><h2>Personal Protective Equipment (PPE)</h2><p>All PAL employees must wear required PPE at all times on every jobsite. PPE is your last line of defense against injury.</p></div>
       <h3 class="section-title">Minimum Required PPE — All PAL Sites</h3>
