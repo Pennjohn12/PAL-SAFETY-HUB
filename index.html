@@ -4194,9 +4194,9 @@ function returnToApp() {
       localStorage.setItem('pal-' + key, JSON.stringify(data));
     } catch(e) {}
   }
-  function openPalDocumentPreview(){
+  function openPalDocumentPreview(autoPrint){
     if (typeof openCleanPrintWindow === 'function') {
-      openCleanPrintWindow();
+      openCleanPrintWindow(!!autoPrint);
     } else if (typeof printPage === 'function') {
       printPage();
     } else {
@@ -4209,7 +4209,7 @@ function returnToApp() {
   };
   window.palSavePdfDocument = function(){
     saveActiveFormSilently();
-    openPalDocumentPreview();
+    openPalDocumentPreview(true);
   };
   window.palShareDocument = async function(){
     saveActiveFormSilently();
@@ -4311,7 +4311,7 @@ function returnToApp() {
 </body>
 </html>`;
     }
-    function openCleanPrintWindow() {
+    function openCleanPrintWindow(autoPrint = false) {
       const oldTitle = document.title;
       const cleanTitle = getCleanDocumentTitle();
       document.title = cleanTitle;
@@ -4325,8 +4325,16 @@ function returnToApp() {
       printWindow.document.open();
       printWindow.document.write(getCleanPrintableHTML());
       printWindow.document.close();
-      // Do not auto-print and do not auto-close on mobile.
-      // The clean print page now has its own Print / Save PDF and Return buttons.
+      if (autoPrint) {
+        setTimeout(() => {
+          try {
+            printWindow.focus();
+            printWindow.print();
+          } catch (e) {
+            window.print();
+          }
+        }, 450);
+      }
       setTimeout(() => { document.title = oldTitle || 'PAL Safety Hub'; }, 1000);
     }
     function printPage() {
@@ -4334,7 +4342,7 @@ function returnToApp() {
       palSavedMessage('saved');
     }
     async function exportCurrentPagePDF() {
-      openCleanPrintWindow();
+      openCleanPrintWindow(true);
       palSavedMessage('pdf');
     }
     async function shareCurrentPage() {
@@ -5109,9 +5117,9 @@ applyProjectSelectionFromStorage();
       localStorage.setItem('pal-' + key, JSON.stringify(data));
     } catch(e) {}
   }
-  function openPalDocumentPreview(){
+  function openPalDocumentPreview(autoPrint){
     if (typeof openCleanPrintWindow === 'function') {
-      openCleanPrintWindow();
+      openCleanPrintWindow(!!autoPrint);
     } else if (typeof printPage === 'function') {
       printPage();
     } else {
@@ -5124,7 +5132,7 @@ applyProjectSelectionFromStorage();
   };
   window.palSavePdfDocument = function(){
     saveActiveFormSilently();
-    openPalDocumentPreview();
+    openPalDocumentPreview(true);
   };
   window.palShareDocument = async function(){
     saveActiveFormSilently();
