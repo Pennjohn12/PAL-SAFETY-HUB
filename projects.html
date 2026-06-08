@@ -2503,8 +2503,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <p>${d.uploadedBy} · ${formatDate(d.uploadedAt)}</p>
         </div>
         <div class="file-actions">
-          <button class="btn-sm" onclick="downloadProjectFile('${d.url}', '${esc(d.name)}')">Download</button>
-          <a href="${d.url}" target="_blank" rel="noopener" class="btn-sm">Open Backup</a>
+          <button class="btn-sm" data-url="${esc(safeFileUrl(d.url))}" data-name="${esc(d.name || 'Project document')}" onclick="downloadProjectFile(this.dataset.url, this.dataset.name)">Download</button>
+          <a href="${esc(safeFileUrl(d.url))}" target="_blank" rel="noopener" class="btn-sm">Open Backup</a>
         </div>
         <div class="file-clean-note">Use Download for the cleanest save/share flow. On laptop, choose where to save when prompted.</div>`;
       list.appendChild(row);
@@ -3057,7 +3057,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         cert.fileName ? esc(cert.fileName) : ''
       ].filter(Boolean).join('<br>');
       const preview = isImageCert(cert)
-        ? `<a href="${cert.url}" target="_blank"><img class="cert-preview-img" src="${cert.url}" alt="${title}"></a>`
+        ? `<a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener"><img class="cert-preview-img" src="${esc(safeFileUrl(cert.url))}" alt="${title}"></a>`
         : `<div class="cert-pdf-box"><div style="font-size:34px;">📄</div><div>PDF / Document</div></div>`;
       return `<div class="cert-preview-card">
         <h4>${title}</h4>
@@ -3065,7 +3065,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="status-row" style="margin-bottom:8px;"><span class="pill ${key}">${getCertStatusText(cert.expirationDate)}</span></div>
         ${preview}
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="${cert.url}" target="_blank" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
+          <a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
           <button class="btn-sm" onclick="editCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Edit Cert</button>
           <button class="btn-sm danger" onclick="deleteCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Delete Cert</button>
         </div>
@@ -3423,7 +3423,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       ['Additional Notes', report.notes]
     ].filter(([,value]) => value);
     const photos = Array.isArray(report.photos) ? report.photos : [];
-    const photoHTML = photos.length ? `<div class="report-field" style="grid-column:1/-1;"><span class="k">Attached Photos</span><div class="report-detail-photos">${photos.map(p => `<a href="${p.url}" target="_blank"><img src="${p.url}" alt="${esc(p.name || 'Daily report photo')}"></a>`).join('')}</div></div>` : '';
+    const photoHTML = photos.length ? `<div class="report-field" style="grid-column:1/-1;"><span class="k">Attached Photos</span><div class="report-detail-photos">${photos.map(p => `<a href="${esc(safeFileUrl(p.url))}" target="_blank" rel="noopener"><img src="${esc(safeFileUrl(p.url))}" alt="${esc(p.name || 'Daily report photo')}"></a>`).join('')}</div></div>` : '';
     grid.innerHTML = fields.map(([k, v]) => `<div class="report-field"><span class="k">${esc(k)}</span><div class="v">${esc(v)}</div></div>`).join('') + photoHTML;
     document.getElementById('modal-report-detail').classList.add('open');
   }
@@ -4810,12 +4810,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
-      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
+      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
     </div>
     <div class="newhire-upload-list" style="margin-top:12px;">
       <strong>Payroll / ID Uploads</strong>
       <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
-      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">🔒 ${esc(f.type || 'Payroll / ID Document')}: <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded Document')}</a></div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
+      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">🔒 ${esc(f.type || 'Payroll / ID Document')}: <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded Document')}</a></div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
     document.getElementById('modal-newhire-review')?.classList.add('open');
@@ -5195,6 +5195,16 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function esc(str) {
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function safeFileUrl(url) {
+    const value = String(url || '').trim();
+    if (!value) return '#';
+    try {
+      const parsed = new URL(value, window.location.origin);
+      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') return parsed.href;
+    } catch (e) {}
+    return '#';
   }
 
   function capitalize(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; }

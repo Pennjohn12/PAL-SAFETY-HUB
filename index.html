@@ -1085,7 +1085,7 @@
               <button onclick="startPublicNewHireIntake()"><span>New Hire Orientation</span><span class="arrow">&gt;</span></button>
               <button onclick="showPage('employee-safety')"><span>Checklists and Field Forms</span><span class="arrow">&gt;</span></button>
               <button onclick="showPage('toolbox-talks')"><span>Toolbox Talks</span><span class="arrow">&gt;</span></button>
-              <button onclick="showPage('pal-policies')"><span>Safety Policies and Sheets</span><span class="arrow">&gt;</span></button>
+              <button onclick="showPage('pal-policies')"><span>PAL Policies</span><span class="arrow">&gt;</span></button>
               <button onclick="window.location.href='projects.html'"><span>Office / Supervisor Login</span><span class="arrow">&gt;</span></button>
             </div>
           </div>
@@ -3213,7 +3213,7 @@
       ['new-hire-public-link', { en: 'New Hire Orientation', es: 'Orientacion Nuevo Empleado', pl: 'Orientacja Nowego Pracownika' }],
       ['employee-safety', { en: 'Checklists', es: 'Listas de Seguridad', pl: 'Listy Kontrolne' }, true],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
-      ['pal-policies', { en: 'Safety Sheets', es: 'Hojas de Seguridad', pl: 'Karty BHP' }],
+      ['pal-policies', { en: 'PAL Policies', es: 'Politicas PAL', pl: 'Zasady PAL' }],
       ['projects-link', { en: 'Office Login', es: 'Acceso Oficina', pl: 'Logowanie Biura' }]
     ];
     const uiText = {
@@ -3698,6 +3698,20 @@
       new FormData(form).forEach((v,k)=>data[k]=v);
       return data;
     }
+    function isPalSensitiveLocalSaveKey(key) {
+      return /^new-hire-/i.test(String(key || '')) || /w4|ssn|drug|payroll|id/i.test(String(key || ''));
+    }
+    function savePalFormLocally(key, data) {
+      if (!key) return false;
+      if (isPalSensitiveLocalSaveKey(key)) {
+        localStorage.removeItem(`pal-${key}`);
+        return false;
+      }
+      localStorage.setItem(`pal-${key}`, JSON.stringify(data));
+      return true;
+    }
+    window.isPalSensitiveLocalSaveKey = isPalSensitiveLocalSaveKey;
+    window.savePalFormLocally = savePalFormLocally;
     function fillForm(form, data) {
       if (!data) return;
       Object.entries(data).forEach(([k,v]) => {
@@ -3711,12 +3725,19 @@
       if (!form) return;
       const key = form.dataset.saveKey;
       const data = formToJSON(form);
-      localStorage.setItem(`pal-${key}`, JSON.stringify(data));
-      palNotice('Saved on this device.');
+      if (savePalFormLocally(key, data)) {
+        palNotice('Saved on this device.');
+      } else {
+        palNotice('Sensitive form not saved on this device.');
+      }
     }
     function restoreForms() {
       document.querySelectorAll('form[data-save-key]').forEach(form => {
         const key = form.dataset.saveKey;
+        if (isPalSensitiveLocalSaveKey(key)) {
+          localStorage.removeItem(`pal-${key}`);
+          return;
+        }
         const saved = localStorage.getItem(`pal-${key}`);
         if (saved) fillForm(form, JSON.parse(saved));
       });
@@ -4197,7 +4218,11 @@ function returnToApp() {
       const key = form.dataset.saveKey;
       if (!key) return;
       const data = typeof formToJSON === 'function' ? formToJSON(form) : Object.fromEntries(new FormData(form).entries());
-      localStorage.setItem('pal-' + key, JSON.stringify(data));
+      if (typeof savePalFormLocally === 'function') {
+        savePalFormLocally(key, data);
+      } else {
+        localStorage.setItem('pal-' + key, JSON.stringify(data));
+      }
     } catch(e) {}
   }
   function openPalDocumentPreview(autoPrint){
@@ -4781,7 +4806,11 @@ applyProjectSelectionFromStorage();
       if (form) {
         const key = form.dataset.saveKey;
         const data = window.formToJSON ? window.formToJSON(form) : Object.fromEntries(new FormData(form).entries());
-      localStorage.setItem('pal-' + key, JSON.stringify(data));
+        if (typeof window.savePalFormLocally === 'function') {
+          window.savePalFormLocally(key, data);
+        } else {
+          localStorage.setItem('pal-' + key, JSON.stringify(data));
+        }
       }
       saveDailyReportToFirestore()
         .then((result) => {
@@ -4881,7 +4910,13 @@ applyProjectSelectionFromStorage();
       }
       if (form) {
         const key = form.dataset.saveKey;
-        if (key) localStorage.setItem('pal-' + key, JSON.stringify(data));
+        if (key) {
+          if (typeof window.savePalFormLocally === 'function') {
+            window.savePalFormLocally(key, data);
+          } else {
+            localStorage.setItem('pal-' + key, JSON.stringify(data));
+          }
+        }
       }
       try {
         const project = await findProjectForDocument(data);
@@ -5240,7 +5275,11 @@ applyProjectSelectionFromStorage();
       const key = form.dataset.saveKey;
       if (!key) return;
       const data = typeof formToJSON === 'function' ? formToJSON(form) : Object.fromEntries(new FormData(form).entries());
-      localStorage.setItem('pal-' + key, JSON.stringify(data));
+      if (typeof savePalFormLocally === 'function') {
+        savePalFormLocally(key, data);
+      } else {
+        localStorage.setItem('pal-' + key, JSON.stringify(data));
+      }
     } catch(e) {}
   }
   function openPalDocumentPreview(autoPrint){
