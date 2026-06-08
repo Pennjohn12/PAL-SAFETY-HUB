@@ -730,6 +730,22 @@
     .newhire-doc-head h3 { color:#fff; margin:0 0 4px; }
     .newhire-doc-head p { margin:0; color:rgba(255,255,255,.78); font-size:13px; }
     .newhire-doc-body { padding:18px; }
+    .orientation-module { border:1px solid var(--line); border-radius:8px; overflow:hidden; margin-bottom:16px; background:#f8fafc; }
+    .orientation-module-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; padding:14px 16px; background:#fff; border-bottom:1px solid var(--line); }
+    .orientation-module-head h4 { color:var(--navy); margin:0 0 4px; }
+    .orientation-module-head p { color:var(--muted); font-size:13px; line-height:1.45; margin:0; }
+    .draft-pill { border:1px solid #f59e0b; background:#fffbeb; color:#92400e; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.35px; }
+    .orientation-slide { display:none; min-height:220px; padding:22px; background:linear-gradient(135deg,#f8fafc,#eef4fa); border-bottom:1px solid var(--line); }
+    .orientation-slide.active { display:block; }
+    .orientation-slide small { display:block; color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
+    .orientation-slide h3 { color:var(--navy); font-size:24px; margin:0 0 10px; }
+    .orientation-slide p { color:var(--text); line-height:1.6; margin:0 0 12px; }
+    .orientation-slide ul { margin-left:20px; line-height:1.7; color:var(--text); }
+    .orientation-controls { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 16px; background:#fff; }
+    .orientation-controls .step-label { color:var(--muted); font-size:12px; font-weight:800; }
+    .orientation-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .orientation-ack { padding:12px 16px; background:#fff; border-top:1px solid var(--line); display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text); line-height:1.45; }
+    .orientation-ack input { margin-top:3px; width:18px; height:18px; accent-color:var(--green); }
     .doc-review-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; }
     .doc-review-box h4 { color:var(--navy); margin-bottom:8px; }
     .doc-review-box ul { margin-left:20px; line-height:1.6; color:var(--text); }
@@ -1719,6 +1735,96 @@
         <p>This form is linked to the selected employee intake packet and saves back to the employee file workflow.</p>
       </div>
       <div class="newhire-doc-body">
+        <div class="orientation-module" id="pal-orientation-module">
+          <div class="orientation-module-head">
+            <div>
+              <h4>PAL Safety Orientation Module</h4>
+              <p>Temporary in-app orientation preview for office/safety review. Final content should be approved by PAL safety leadership before permanent use.</p>
+            </div>
+            <span class="draft-pill">Draft</span>
+          </div>
+          <div class="orientation-slide active" data-orientation-slide="0">
+            <small>Slide 1 of 7</small>
+            <h3>Welcome to PAL</h3>
+            <p>PAL employees are expected to work safely, follow site rules, and stop work when a condition could hurt someone.</p>
+            <ul>
+              <li>Report to your foreman or supervisor before starting work.</li>
+              <li>Ask questions when a task or hazard is unclear.</li>
+              <li>Do not begin work until required training and certifications are reviewed.</li>
+            </ul>
+          </div>
+          <div class="orientation-slide" data-orientation-slide="1">
+            <small>Slide 2 of 7</small>
+            <h3>Required PPE</h3>
+            <p>Wear required PPE at all times as directed by PAL, the site, and the task hazard assessment.</p>
+            <ul>
+              <li>Hard hat, safety glasses, gloves, and proper work boots.</li>
+              <li>High-visibility clothing or vest when required.</li>
+              <li>Respiratory protection only when trained, fit tested, and authorized.</li>
+            </ul>
+          </div>
+          <div class="orientation-slide" data-orientation-slide="2">
+            <small>Slide 3 of 7</small>
+            <h3>Fall Protection</h3>
+            <p>Falls are a leading construction hazard. Use fall protection whenever required by PAL policy, site rules, or OSHA requirements.</p>
+            <ul>
+              <li>Inspect harnesses, lanyards, and lifelines before use.</li>
+              <li>Use approved anchor points only.</li>
+              <li>Report missing guardrails, holes, unsafe ladders, and fall hazards immediately.</li>
+            </ul>
+          </div>
+          <div class="orientation-slide" data-orientation-slide="3">
+            <small>Slide 4 of 7</small>
+            <h3>Scaffolds, Lifts, and Equipment</h3>
+            <p>Only trained and authorized employees may operate lifts, work from scaffolds, or use specialized equipment.</p>
+            <ul>
+              <li>Complete pre-use inspections before operating equipment.</li>
+              <li>Follow load limits, access rules, and manufacturer instructions.</li>
+              <li>Tag damaged or unsafe equipment out of service.</li>
+            </ul>
+          </div>
+          <div class="orientation-slide" data-orientation-slide="4">
+            <small>Slide 5 of 7</small>
+            <h3>Hazards and Housekeeping</h3>
+            <p>A clean, controlled work area helps prevent injuries and keeps the job moving safely.</p>
+            <ul>
+              <li>Keep walkways, exits, and work areas clear.</li>
+              <li>Control dust, debris, cords, hoses, and trip hazards.</li>
+              <li>Use SDS/HazCom information when working around chemicals or materials.</li>
+            </ul>
+          </div>
+          <div class="orientation-slide" data-orientation-slide="5">
+            <small>Slide 6 of 7</small>
+            <h3>Report Incidents and Near Misses</h3>
+            <p>PAL expects employees to report injuries, near misses, damaged equipment, and unsafe conditions right away.</p>
+            <ul>
+              <li>Notify your foreman/supervisor immediately.</li>
+              <li>Get first aid or medical help when needed.</li>
+              <li>Do not hide hazards or incidents. Reporting helps prevent repeat injuries.</li>
+            </ul>
+          </div>
+          <div class="orientation-slide" data-orientation-slide="6">
+            <small>Slide 7 of 7</small>
+            <h3>Ready to Work Safely</h3>
+            <p>Before reporting to site, PAL must have required documents, certifications, and orientation records on file.</p>
+            <ul>
+              <li>Certifications must be current and readable.</li>
+              <li>Follow PAL policies and site-specific rules.</li>
+              <li>Ask for help before performing work you are not trained or authorized to perform.</li>
+            </ul>
+          </div>
+          <div class="orientation-controls">
+            <span class="step-label" id="orientation-step-label">Slide 1 / 7</span>
+            <div class="orientation-actions">
+              <button type="button" class="btn-secondary" onclick="moveOrientationSlide(-1)">Back</button>
+              <button type="button" class="btn-save" onclick="moveOrientationSlide(1)">Next</button>
+            </div>
+          </div>
+          <label class="orientation-ack">
+            <input id="nh-orient-module-complete" type="checkbox" />
+            <span>I reviewed the temporary PAL Safety Orientation module above. I understand final approved orientation requirements may be updated by PAL safety leadership.</span>
+          </label>
+        </div>
         <div class="doc-review-box">
           <h4>Employee Review</h4>
           <p class="helper-text" style="margin-bottom:8px;">Please read and acknowledge the basic PAL orientation items below before signing.</p>
@@ -1953,6 +2059,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.setNewHireStatus = setNewHireStatus;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
+  window.moveOrientationSlide = moveOrientationSlide;
   window.openPublicNewHireOrientationForm = openPublicNewHireOrientationForm;
   window.openNewHireDrugConsentForm = openNewHireDrugConsentForm;
   window.saveNewHireDrugConsentForm = saveNewHireDrugConsentForm;
@@ -4876,6 +4983,25 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
+  function moveOrientationSlide(direction) {
+    const slides = Array.from(document.querySelectorAll('#pal-orientation-module .orientation-slide'));
+    if (!slides.length) return;
+    const current = slides.findIndex(slide => slide.classList.contains('active'));
+    const next = Math.max(0, Math.min(slides.length - 1, (current < 0 ? 0 : current) + direction));
+    slides.forEach((slide, index) => slide.classList.toggle('active', index === next));
+    const label = document.getElementById('orientation-step-label');
+    if (label) label.textContent = `Slide ${next + 1} / ${slides.length}`;
+  }
+
+  function resetOrientationModule(complete = false) {
+    const slides = Array.from(document.querySelectorAll('#pal-orientation-module .orientation-slide'));
+    slides.forEach((slide, index) => slide.classList.toggle('active', index === 0));
+    const label = document.getElementById('orientation-step-label');
+    if (label) label.textContent = `Slide 1 / ${slides.length || 7}`;
+    const ack = document.getElementById('nh-orient-module-complete');
+    if (ack) ack.checked = !!complete;
+  }
+
   function openNewHireOrientationForm(id) {
     const x = allNewHireIntakes.find(i => i.id === id) || (currentPublicNewHireIntake?.id === id ? currentPublicNewHireIntake : null);
     if (!x) return toast('Intake request not found.');
@@ -4888,6 +5014,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     set('nh-orient-notes', form.notes || '');
     set('nh-orient-signature', form.signature || x.name || '');
     set('nh-orient-date-signed', form.dateSigned || todayISO());
+    resetOrientationModule(!!form.orientationModuleReviewed);
     const btn = document.getElementById('save-newhire-orientation-btn');
     if (btn) { btn.disabled = false; btn.textContent = 'Save Orientation Form'; }
     document.getElementById('modal-newhire-orientation-form')?.classList.add('open');
@@ -4908,6 +5035,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       notes: val('nh-orient-notes'),
       signature,
       dateSigned: val('nh-orient-date-signed'),
+      orientationModuleReviewed: !!document.getElementById('nh-orient-module-complete')?.checked,
+      orientationModuleVersion: 'draft-review-2026-06-08',
       savedAt: new Date().toISOString(),
       savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
     };
