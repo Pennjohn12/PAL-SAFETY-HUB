@@ -209,6 +209,19 @@
       padding:16px;
       margin-top:16px;
     }
+    .foreman-tool-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 16px; }
+    .foreman-tool-tab {
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--navy);
+      border-radius:8px;
+      padding:10px 14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .foreman-tool-tab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+    .foreman-tool-pane { display:none; }
+    .foreman-tool-pane.active { display:block; }
     .ai-safety-panel h3 { margin:0 0 6px; color:var(--navy); }
     .ai-safety-panel p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
     .ai-safety-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
@@ -1149,11 +1162,18 @@
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Create project-linked field documents from one place. AI assisted text is a draft only and must be reviewed by the foreman before the crew signs or work begins.</div>
 
+      <div class="foreman-tool-tabs">
+        <button class="foreman-tool-tab active" type="button" onclick="switchForemanToolTab('foreman-tool-shortcuts', this)">Tool Shortcuts</button>
+        <button class="foreman-tool-tab" type="button" onclick="switchForemanToolTab('foreman-tool-manual-safety', this)">Manual Daily Safety Sheet</button>
+        <button class="foreman-tool-tab" type="button" onclick="switchForemanToolTab('foreman-tool-ai-safety', this)">AI Assisted Daily Safety Sheet</button>
+      </div>
+
+      <div class="foreman-tool-pane active" id="foreman-tool-shortcuts">
       <div class="foreman-tools-grid">
         <div class="foreman-tool-card">
           <h3>Daily Safety Sheet</h3>
           <p>Use the standard daily safety meeting form when the foreman wants to write the sheet manually.</p>
-          <button class="btn-outline" type="button" onclick="toast('Manual Daily Safety form will be moved into this tools area next.')">Open Manual Safety Sheet</button>
+          <button class="btn-outline" type="button" onclick="switchForemanToolTab('foreman-tool-manual-safety')">Open Manual Safety Sheet</button>
         </div>
         <div class="foreman-tool-card">
           <h3>Daily Report</h3>
@@ -1171,7 +1191,69 @@
           <button class="btn-outline" type="button" onclick="toast('Future foreman tools area is ready.')">Ready</button>
         </div>
       </div>
+      </div>
 
+      <div class="foreman-tool-pane" id="foreman-tool-manual-safety">
+      <div class="ai-safety-panel">
+        <h3>Manual Daily Safety Sheet</h3>
+        <p>Fill out the daily safety meeting sheet manually. Saving sends it to the selected project's Safety Forms tab.</p>
+        <div class="ai-safety-grid">
+          <div class="field"><label>Project</label><select id="manual-safety-project-select"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Project Name</label><input id="manual-sheet-project-name" /></div>
+          <div class="field"><label>Date</label><input id="manual-sheet-date" type="date" /></div>
+          <div class="field"><label>Trade</label><input id="manual-sheet-trade" value="Fireproofing / SOFP" /></div>
+          <div class="field"><label>Supervisor / Foreman</label><input id="manual-sheet-foreman" /></div>
+          <div class="field span-2"><label>Items Discussed During Meeting</label><textarea id="manual-sheet-items" rows="3"></textarea></div>
+          <div class="field span-2"><label>Tasks and Locations</label><textarea id="manual-sheet-tasks" rows="3"></textarea></div>
+          <div class="field span-2"><label>Hazard 1</label><textarea id="manual-sheet-hazard1" rows="2"></textarea></div>
+          <div class="field span-2"><label>Control 1</label><textarea id="manual-sheet-control1" rows="2"></textarea></div>
+          <div class="field span-2"><label>Hazard 2</label><textarea id="manual-sheet-hazard2" rows="2"></textarea></div>
+          <div class="field span-2"><label>Control 2</label><textarea id="manual-sheet-control2" rows="2"></textarea></div>
+          <div class="field span-2"><label>360 Inspection - Additional Hazards</label><textarea id="manual-sheet-inspection" rows="3">Please notify foreman with any and all issues or injuries immediately.</textarea></div>
+        </div>
+        <h3 style="margin-top:16px;">Crew Sign-In</h3>
+        <div class="ticket-table-wrap">
+          <table class="ticket-table">
+            <thead><tr><th>#</th><th>Print Name</th><th>Signature / Typed Name</th></tr></thead>
+            <tbody id="manual-safety-sign-rows">
+              <tr><td>1</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>2</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>3</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>4</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>5</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>6</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>7</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>8</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>9</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>10</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>11</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="ai-safety-grid" style="margin-top:14px;">
+          <div class="field span-2"><label>Language</label>
+            <div class="language-line">
+              <label><input type="checkbox" id="manual-lang-english" checked /> English</label>
+              <label><input type="checkbox" id="manual-lang-spanish" /> Spanish</label>
+              <label><input type="checkbox" id="manual-lang-polish" /> Polish</label>
+              <label><input type="checkbox" id="manual-lang-ukrainian" /> Ukrainian</label>
+              <label><input type="checkbox" id="manual-lang-russian" /> Russian</label>
+              <label><input type="checkbox" id="manual-lang-other" /> Other</label>
+            </div>
+          </div>
+          <div class="field"><label>Time</label><input id="manual-sheet-time" placeholder="7:00 AM" /></div>
+          <div class="field"><label>Speaker (Print Name)</label><input id="manual-sheet-speaker" /></div>
+          <div class="field"><label>Supervisor Printed Name</label><input id="manual-sheet-supervisor-print" /></div>
+          <div class="field"><label>Date</label><input id="manual-sheet-supervisor-date" type="date" /></div>
+          <div class="field span-2"><label>Supervisor Signature</label><input id="manual-sheet-supervisor-signature" class="ai-signature-input" /></div>
+        </div>
+        <div class="ai-safety-actions">
+          <button class="btn-save" type="button" id="save-manual-safety-btn" onclick="saveManualDailySafetySheet()">Save Manual Safety Sheet</button>
+        </div>
+      </div>
+      </div>
+
+      <div class="foreman-tool-pane" id="foreman-tool-ai-safety">
       <div class="ai-safety-panel">
         <h3>AI Assisted Daily Safety Sheet</h3>
         <p>Select the project, type or paste the day's work plan, then generate a draft safety sheet. Saving sends it to that project's Safety Forms tab.</p>
@@ -1245,6 +1327,7 @@
           <button class="btn-save" type="button" id="save-ai-safety-btn" onclick="saveProjectAiSafetySheet()">Save to Project Safety Forms</button>
         </div>
         <div class="ai-safety-note">Foreman must review and edit the generated text before presenting it to the crew. Employee phone sign-in links can be added in a later patch.</div>
+      </div>
       </div>
     </div>
 
@@ -2243,6 +2326,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.fillAiSafetyExample = fillAiSafetyExample;
   window.generateProjectAiSafetySheet = generateProjectAiSafetySheet;
   window.saveProjectAiSafetySheet = saveProjectAiSafetySheet;
+  window.switchForemanToolTab = switchForemanToolTab;
+  window.saveManualDailySafetySheet = saveManualDailySafetySheet;
   window.openEmployeeModal = openEmployeeModal;
   window.editEmployee = editEmployee;
   window.deleteEmployee = deleteEmployee;
@@ -2758,21 +2843,54 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function refreshAiSafetyProjectOptions() {
     const select = document.getElementById('ai-safety-project-select');
-    if (!select) return;
     const projects = allProjects || [];
-    select.innerHTML = '<option value="">Select a project...</option>' + projects.map(p =>
+    const optionHTML = '<option value="">Select a project...</option>' + projects.map(p =>
       `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' - ' + esc(p.jobNumber) : ''}</option>`
     ).join('');
-    if (currentProject?.id) select.value = currentProject.id;
+    if (select) {
+      select.innerHTML = optionHTML;
+      if (currentProject?.id) select.value = currentProject.id;
+    }
+    const manualSelect = document.getElementById('manual-safety-project-select');
+    if (manualSelect) {
+      manualSelect.innerHTML = optionHTML;
+      if (currentProject?.id) manualSelect.value = currentProject.id;
+    }
     const date = document.getElementById('ai-safety-date');
     if (date && !date.value) date.value = new Date().toISOString().slice(0, 10);
     const foreman = document.getElementById('ai-safety-foreman');
     if (foreman && !foreman.value) foreman.value = currentUser?.displayName || currentUser?.email || '';
+    const manualDate = document.getElementById('manual-sheet-date');
+    if (manualDate && !manualDate.value) manualDate.value = new Date().toISOString().slice(0, 10);
+    const manualSupervisorDate = document.getElementById('manual-sheet-supervisor-date');
+    if (manualSupervisorDate && !manualSupervisorDate.value) manualSupervisorDate.value = new Date().toISOString().slice(0, 10);
+    const manualForeman = document.getElementById('manual-sheet-foreman');
+    const manualSpeaker = document.getElementById('manual-sheet-speaker');
+    const manualPrint = document.getElementById('manual-sheet-supervisor-print');
+    const name = currentUser?.displayName || currentUser?.email || '';
+    if (manualForeman && !manualForeman.value) manualForeman.value = name;
+    if (manualSpeaker && !manualSpeaker.value) manualSpeaker.value = name;
+    if (manualPrint && !manualPrint.value) manualPrint.value = name;
   }
 
   function selectedAiSafetyProject() {
     const id = document.getElementById('ai-safety-project-select')?.value || currentProject?.id || '';
     return (allProjects || []).find(p => p.id === id) || (currentProject?.id === id ? currentProject : null);
+  }
+
+  function selectedManualSafetyProject() {
+    const id = document.getElementById('manual-safety-project-select')?.value || currentProject?.id || '';
+    return (allProjects || []).find(p => p.id === id) || (currentProject?.id === id ? currentProject : null);
+  }
+
+  function switchForemanToolTab(tabId, btn) {
+    document.querySelectorAll('#main-foreman-tools .foreman-tool-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#main-foreman-tools .foreman-tool-pane').forEach(p => p.classList.remove('active'));
+    const pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+    const tab = btn || document.querySelector(`#main-foreman-tools .foreman-tool-tab[onclick*="${tabId}"]`);
+    if (tab) tab.classList.add('active');
+    refreshAiSafetyProjectOptions();
   }
 
   function fillAiSafetyExample() {
@@ -2801,12 +2919,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const otherTrades = lower.includes('other trade') || lower.includes('trades') || lower.includes('congested') || lower.includes('busy');
     const nearEdge = lower.includes('edge') || lower.includes('perimeter') || lower.includes('opening') || lower.includes('fall');
     const weatherFine = lower.includes('weather') && (lower.includes('fine') || lower.includes('good') || lower.includes('clear'));
-    const hotWeather = lower.includes('heat') || lower.includes('hot');
+    const hotWeather = lower.includes('heat') || lower.includes('hot') || lower.includes('high temp') || lower.includes('humid') || lower.includes('sun');
     const coldWeather = lower.includes('cold') || lower.includes('winter');
     const silica = lower.includes('silica') || lower.includes('airborne') || lower.includes('dust');
     const eyeProtection = lower.includes('eye') || lower.includes('glass') || lower.includes('goggle');
-    const lifting = lower.includes('lifting') || lower.includes('material handling') || lower.includes('carry');
+    const lifting = lower.includes('lifting') || lower.includes('material handling') || lower.includes('carry') || lower.includes('heavy') || lower.includes('move material');
     const ppeFocus = lower.includes('ppe') || lower.includes('proper ppe');
+    const delivery = lower.includes('delivery') || lower.includes('loading dock') || lower.includes('truck') || lower.includes('tailgate') || lower.includes('unload');
     const taskParts = [];
     if (isSOFP) taskParts.push('SOFP / spray-on fireproofing');
     if (isTarping) taskParts.push('hanging tarps and containment setup');
@@ -2830,14 +2949,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       lifting ? 'Discuss proper lifting technique, team lifts, material staging, and keeping access routes clear.' : '',
       ppeFocus ? 'Review required PPE at all times and correct missing or damaged PPE before starting work.' : '',
       otherTrades ? 'Coordinate with GC and other trades. Keep non-essential workers out of PAL work zones and stop work if trade stacking creates unsafe conditions.' : '',
-      nearEdge ? 'Review fall protection, floor openings, guardrails, covers, edges, shafts, and approved tie-off requirements.' : ''
+      nearEdge ? 'Review fall protection, floor openings, guardrails, covers, edges, shafts, and approved tie-off requirements.' : '',
+      hotWeather ? 'Review heat illness prevention, water breaks, rest breaks, shade, and crew monitoring.' : '',
+      delivery ? 'Review delivery route, loading dock controls, truck backing, spotters/flaggers, and material unloading hazards.' : ''
     ].filter(Boolean);
     const hazardLibrary = [
       {
         active: nearEdge,
-        key: 'fall protection leading edges openings heights',
-        hazard: 'Fall exposure from working near leading edges, floor openings, shafts, incomplete guardrails, or elevated work areas above 6 feet.',
-        control: 'Inspect the area for openings and edge exposure before work starts. Maintain guardrails/covers, use approved fall protection where required, inspect harnesses/lanyards/retractables before use, and tie off only to approved anchorage points.'
+        key: 'fall protection leading edges openings heights shaft scissor lift boom lift mobile lift harness retractable anchor',
+        hazard: 'Fall exposure from working above 6 feet, near shafts, floor openings, leading edges, building edges, or while operating mobile lifts at elevation.',
+        control: 'Use proper fall protection at all required times. Inspect harnesses, retractables, lanyards, and related equipment before use, adjust harnesses for proper fit with the D-ring between the shoulder blades, complete required inspection checklists, and tie off only to approved anchor points. Use column straps, beam clamps, and 5,000 lb rated anchorage where required. Use leading-edge retractables when working near building edges or leading-edge exposure.'
       },
       {
         active: usesLift,
@@ -2878,14 +2999,26 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       {
         active: lifting,
         key: 'proper lifting material handling strain ergonomics',
-        hazard: 'Material handling hazards including strains, awkward lifting, carrying materials through congested areas, and poor staging.',
-        control: 'Use team lifts or mechanical help when needed, keep loads close to the body, avoid twisting, stage materials to reduce carrying distance, and keep access routes clear.'
+        hazard: 'Material handling hazards including muscle strains, back injuries, awkward lifting, carrying material through congested areas, and attempting to lift material or equipment that is too heavy for one person.',
+        control: 'Stretch before work begins and use proper lifting technique. Lift with the legs, not the back, keep loads close, avoid twisting, and know personal limits. Use additional crew members for team lifts or mechanical equipment when material or equipment is too heavy. Do not attempt to lift loads that cannot be handled safely.'
       },
       {
         active: ppeFocus,
         key: 'ppe hard hat gloves boots high visibility',
         hazard: 'Injury exposure from missing, damaged, or incorrect PPE for the task or jobsite conditions.',
         control: 'Verify required PPE before starting work, including hard hat, safety glasses, gloves, work boots, high visibility clothing when required, and task-specific PPE. Correct missing or damaged PPE immediately.'
+      },
+      {
+        active: hotWeather,
+        key: 'heat high temp hot humid dehydration heat stroke sun',
+        hazard: 'Heat-related illness exposure from working in high temperatures, humid conditions, direct sun, or poorly ventilated areas. Workers may be at risk for dehydration, dizziness, heat exhaustion, or heat stroke.',
+        control: 'Drink water frequently, even when not thirsty, and take breaks as needed to prevent overheating. Avoid direct sun when possible, monitor crew members for signs of heat illness, and stop work immediately if a worker feels dizzy, lightheaded, stops sweating, or appears unwell. Do not work alone in high heat conditions; watch out for each other and notify the foreman immediately.'
+      },
+      {
+        active: delivery,
+        key: 'delivery loading dock truck tailgate unload material flagger hi vis struck by',
+        hazard: 'Delivery and unloading hazards including struck-by exposure from moving trucks, backing vehicles, pedestrians in the delivery area, and falling material or equipment from the tailgate during unloading.',
+        control: 'Use flaggers or spotters to guide trucks safely into the loading dock or designated delivery area. Wear high-visibility clothing, keep pedestrians clear of the unloading zone, never use headphones while receiving deliveries, and stand clear of the tailgate while material or equipment is being unloaded. If material begins to fall, do not try to catch it; let it fall, stop the operation, and reassess the safest way to move or lift it.'
       }
     ];
     const focusWords = String(focus || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
@@ -2917,6 +3050,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       otherTrades ? 'Coordinate with other trades and keep unauthorized workers out of the immediate work zone.' : '',
       weatherFine ? 'Weather reported acceptable; continue monitoring conditions during the shift.' : '',
       hotWeather ? 'Monitor workers for heat illness and take water/rest breaks as needed.' : '',
+      delivery ? 'Confirm delivery unloading area, spotters/flaggers, pedestrian controls, tailgate clearance, and high-visibility PPE before unloading begins.' : '',
       coldWeather ? 'Monitor slippery surfaces, cold stress, gloves, and winter access conditions.' : '',
       'Please notify foreman with any and all issues or injuries immediately.'
     ].filter(Boolean);
@@ -2992,6 +3126,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     ].filter(([, id]) => document.getElementById(id)?.checked).map(([label]) => label);
   }
 
+  function getManualSafetyLanguages() {
+    return [
+      ['English', 'manual-lang-english'],
+      ['Spanish', 'manual-lang-spanish'],
+      ['Polish', 'manual-lang-polish'],
+      ['Ukrainian', 'manual-lang-ukrainian'],
+      ['Russian', 'manual-lang-russian'],
+      ['Other', 'manual-lang-other']
+    ].filter(([, id]) => document.getElementById(id)?.checked).map(([label]) => label);
+  }
+
   function getAiSafetySignIns() {
     return Array.from(document.querySelectorAll('#ai-safety-sign-rows tr')).map((row, index) => {
       const inputs = row.querySelectorAll('input');
@@ -3001,6 +3146,74 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         signature: inputs[1]?.value.trim() || ''
       };
     }).filter(r => r.printName || r.signature);
+  }
+
+  function getManualSafetySignIns() {
+    return Array.from(document.querySelectorAll('#manual-safety-sign-rows tr')).map((row, index) => {
+      const inputs = row.querySelectorAll('input');
+      return {
+        row: index + 1,
+        printName: inputs[0]?.value.trim() || '',
+        signature: inputs[1]?.value.trim() || ''
+      };
+    }).filter(r => r.printName || r.signature);
+  }
+
+  function getManualSafetySheetData() {
+    return {
+      project_name: document.getElementById('manual-sheet-project-name')?.value.trim() || '',
+      date: document.getElementById('manual-sheet-date')?.value || '',
+      trade: document.getElementById('manual-sheet-trade')?.value.trim() || '',
+      foreman: document.getElementById('manual-sheet-foreman')?.value.trim() || '',
+      items_discussed: document.getElementById('manual-sheet-items')?.value.trim() || '',
+      tasks_locations: document.getElementById('manual-sheet-tasks')?.value.trim() || '',
+      hazard1: document.getElementById('manual-sheet-hazard1')?.value.trim() || '',
+      control1: document.getElementById('manual-sheet-control1')?.value.trim() || '',
+      hazard2: document.getElementById('manual-sheet-hazard2')?.value.trim() || '',
+      control2: document.getElementById('manual-sheet-control2')?.value.trim() || '',
+      inspection_hazards: document.getElementById('manual-sheet-inspection')?.value.trim() || '',
+      meeting_time: document.getElementById('manual-sheet-time')?.value.trim() || '',
+      speaker_print_name: document.getElementById('manual-sheet-speaker')?.value.trim() || '',
+      supervisor_printed_name: document.getElementById('manual-sheet-supervisor-print')?.value.trim() || '',
+      supervisor_date: document.getElementById('manual-sheet-supervisor-date')?.value || '',
+      supervisor_signature: document.getElementById('manual-sheet-supervisor-signature')?.value.trim() || '',
+      languages: getManualSafetyLanguages()
+    };
+  }
+
+  async function saveManualDailySafetySheet() {
+    const project = selectedManualSafetyProject();
+    if (!project) return toast('Select a project first.');
+    const sheet = getManualSafetySheetData();
+    if (!sheet.items_discussed && !sheet.tasks_locations) return toast('Fill the manual safety sheet before saving.');
+    const btn = document.getElementById('save-manual-safety-btn');
+    const signIns = getManualSafetySignIns();
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+        formKey: 'daily-safety-meeting',
+        formTitle: 'Daily Safety Meeting',
+        projectId: project.id,
+        projectName: project.name || '',
+        jobNumber: project.jobNumber || '',
+        localSubmittedAt: new Date().toISOString(),
+        submittedAt: serverTimestamp(),
+        submittedBy: currentUser?.uid || '',
+        submittedByName: currentUser?.displayName || currentUser?.email || '',
+        documentData: {
+          ...sheet,
+          signIns,
+          notes: sheet.items_discussed || sheet.tasks_locations
+        }
+      });
+      toast('Manual daily safety sheet saved to project Safety Forms.');
+      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+    } catch (e) {
+      console.error(e);
+      toast('Could not save manual safety sheet.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Manual Safety Sheet'; }
+    }
   }
 
   function generateProjectAiSafetySheet() {
