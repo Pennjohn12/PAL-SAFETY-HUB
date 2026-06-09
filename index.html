@@ -239,6 +239,8 @@
     .ai-helper-panel p { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
     .ai-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
     .ai-form-grid .span-2 { grid-column: span 2; }
+    .ai-prompt-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .ai-voice-status { color:var(--muted); font-size:12px; font-weight:700; margin-top:8px; }
     .ai-output-note {
       background: #fff8e8;
       border: 1px solid #f3d28a;
@@ -1339,7 +1341,7 @@
           </div>
           <div class="ai-helper-panel">
             <h3>Daily Safety AI Helper</h3>
-            <p>Type what the crews are doing, where they are working, equipment being used, and any special conditions. The helper will fill in safety topics, hazards, and controls. Foreman must review before using.</p>
+            <p>Type or speak the day's work plan in normal foreman language. The helper will draft the safety topics, hazards, controls, and 360 inspection notes. Foreman must review before using.</p>
             <div class="ai-form-grid">
               <div class="field"><label>Project / Job Name</label><input id="ai-project-name" placeholder="e.g. Weill Cornell"></div>
               <div class="field"><label>Job Number</label><input id="ai-job-number" class="job-number-field" oninput="syncJobNumber(this.value)" placeholder="Job #"></div>
@@ -1349,7 +1351,13 @@
               <div class="field"><label>Work Type</label><select id="ai-work-type"><option value="SOFP">SOFP / Spray-on Fireproofing</option><option value="fireproofing patching">Fireproofing patching</option><option value="scaffold work">Scaffold work</option><option value="lift work">Lift work</option><option value="demo / cleanup">Demo / cleanup</option><option value="material handling">Material handling</option><option value="general construction">General construction</option></select></div>
               <div class="field"><label>Equipment Used</label><input id="ai-equipment" placeholder="Scissor lifts, boom lifts, hoses, spray machine..."></div>
               <div class="field"><label>Conditions / Other Trades</label><input id="ai-conditions" placeholder="Near edge, other trades nearby, tight area, weather..."></div>
-              <div class="field span-2"><label>Work Plan Notes</label><textarea id="ai-work-notes" rows="3" placeholder="Example: 2 crews working on 14th and 21st floor applying SOFP using lifts, near edge of building, other trades in area."></textarea></div>
+              <div class="field span-2"><label>Work Plan Notes</label><textarea id="ai-work-notes" rows="5" placeholder="Example: We are working the 12th floor doing SOFP, hanging tarps on 13 and 14 ahead of spray crew, cleaning previous sprayed area on 11, patching damaged fireproofing on 4, using scissor lifts, weather is fine, other trades are in the area."></textarea>
+                <div class="ai-prompt-actions">
+                  <button class="btn secondary" type="button" onclick="startAiDailySafetyVoice()">Speak Work Plan</button>
+                  <button class="btn secondary" type="button" onclick="fillAiDailySafetyExample()">Use Example</button>
+                </div>
+                <div class="ai-voice-status" id="ai-voice-status">Voice input works on supported browsers.</div>
+              </div>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
               <button class="btn gold" type="button" onclick="generateAiDailySafety()">Generate Safety Sheet</button>
@@ -4450,6 +4458,48 @@ function closeTalk() {
   document.getElementById('talk-grid-view').classList.remove('hidden');
   document.getElementById('talk-detail-view').classList.add('hidden');
 }
+    function fillAiDailySafetyExample() {
+      const notes = document.getElementById('ai-work-notes');
+      if (notes) notes.value = 'We are working the 12th floor doing SOFP, working on the 13th and 14th floor hanging tarps ahead of the spray crew, on the 11th floor cleaning previous sprayed area, and on the 4th floor patching damaged fireproofing. We will be using scissor lifts. Weather conditions are fine and there are other trades in the area.';
+      const areas = document.getElementById('ai-areas');
+      if (areas && !areas.value.trim()) areas.value = '12th, 13th, 14th, 11th, and 4th floors';
+      const equipment = document.getElementById('ai-equipment');
+      if (equipment && !equipment.value.trim()) equipment.value = 'Scissor lifts, spray equipment, hoses, tarps, hand tools';
+      const conditions = document.getElementById('ai-conditions');
+      if (conditions && !conditions.value.trim()) conditions.value = 'Weather fine, other trades in area';
+    }
+
+    function startAiDailySafetyVoice() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const status = document.getElementById('ai-voice-status');
+      const notes = document.getElementById('ai-work-notes');
+      if (!SpeechRecognition || !notes) {
+        if (status) status.textContent = 'Voice input is not available in this browser. Type the work plan instead.';
+        return;
+      }
+      const rec = new SpeechRecognition();
+      rec.lang = 'en-US';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      if (status) status.textContent = 'Listening... speak the work plan now.';
+      rec.onresult = event => {
+        const text = event.results?.[0]?.[0]?.transcript || '';
+        notes.value = [notes.value.trim(), text].filter(Boolean).join(notes.value.trim() ? ' ' : '');
+        if (status) status.textContent = 'Voice note added. Review it, then generate the sheet.';
+      };
+      rec.onerror = () => {
+        if (status) status.textContent = 'Voice input stopped. You can type or try again.';
+      };
+      rec.onend = () => {
+        if (status && status.textContent === 'Listening... speak the work plan now.') status.textContent = 'Voice input ended.';
+      };
+      rec.start();
+    }
+
+    function joinSafetyItems(items) {
+      return items.filter(Boolean).join(' ');
+    }
+
     function generateAiDailySafety() {
       const project = document.getElementById('ai-project-name')?.value.trim() || '';
       const job = document.getElementById('ai-job-number')?.value.trim() || '';
@@ -4460,24 +4510,37 @@ function closeTalk() {
       const equipment = document.getElementById('ai-equipment')?.value.trim() || '';
       const conditions = document.getElementById('ai-conditions')?.value.trim() || '';
       const notes = document.getElementById('ai-work-notes')?.value.trim() || '';
-      const lower = (workType + ' ' + equipment + ' ' + conditions + ' ' + notes).toLowerCase();
+      const fullPlan = [areas, workType, equipment, conditions, notes].filter(Boolean).join(' ');
+      const lower = fullPlan.toLowerCase();
       const isSOFP = lower.includes('sofp') || lower.includes('spray') || lower.includes('fireproof');
+      const isPatching = lower.includes('patch') || lower.includes('damaged fireproof');
+      const isTarping = lower.includes('tarp') || lower.includes('hang') || lower.includes('containment');
+      const isCleanup = lower.includes('clean') || lower.includes('sweep') || lower.includes('previous sprayed');
       const usesLift = lower.includes('lift') || lower.includes('scissor') || lower.includes('boom');
       const nearEdge = lower.includes('edge') || lower.includes('perimeter') || lower.includes('opening') || lower.includes('fall');
       const otherTrades = lower.includes('other trade') || lower.includes('trades') || lower.includes('congested') || lower.includes('busy');
+      const weatherFine = lower.includes('weather') && (lower.includes('fine') || lower.includes('good') || lower.includes('clear'));
       const hotWeather = lower.includes('heat') || lower.includes('hot');
       const coldWeather = lower.includes('cold') || lower.includes('winter');
-      const taskLine =
-  workType.toUpperCase() +
-  ' work in ' +
-  areas +
-  (equipment ? ' using ' + equipment : '') +
-  (conditions ? '. Conditions: ' + conditions : '');
+      const floorMatches = fullPlan.match(/\b\d+(?:st|nd|rd|th)?(?:\s*(?:floor|fl))?\b/gi) || [];
+      const uniqueFloors = Array.from(new Set(floorMatches.map(x => x.trim())));
+      const workAreas = uniqueFloors.length ? uniqueFloors.join(', ') : areas;
+      const taskParts = [];
+      if (isSOFP) taskParts.push('SOFP / spray-on fireproofing work');
+      if (isTarping) taskParts.push('hanging tarps and setting containment ahead of spray work');
+      if (isCleanup) taskParts.push('cleaning previous sprayed areas and controlling debris');
+      if (isPatching) taskParts.push('patching damaged fireproofing');
+      if (!taskParts.length) taskParts.push(workType);
+      const taskLine = taskParts.join('; ') + ' in ' + workAreas + (equipment ? '. Equipment/materials: ' + equipment : '') + (conditions ? '. Conditions: ' + conditions : '') + (notes ? '. Work plan: ' + notes : '');
       const items = [
-        "Review today\'s work locations, crew assignments, access routes, and site-specific hazards.",
+        "Review today's work locations, crew assignments, access routes, and site-specific hazards.",
         'Confirm required PPE is being worn and that all workers understand the task before starting.',
         usesLift ? 'Review lift pre-use inspection, safe operation, travel path, and struck-by/crush hazards.' : 'Review safe access, housekeeping, and equipment/material handling.',
         isSOFP ? 'Discuss overspray control, respiratory protection, eye protection, gloves, hose management, and restricted spray zones.' : 'Discuss task-specific PPE, tools, materials, and communication with nearby workers.',
+        isTarping ? 'Review tarp setup, pinch points, overhead work, material handling, and keeping containment secure.' : '',
+        isCleanup ? 'Review cleanup routes, dust/debris control, slips/trips, and proper disposal/staging of material.' : '',
+        isPatching ? 'Review patching area prep, dust control, overhead exposure, and protection of nearby workers/materials.' : '',
+        otherTrades ? 'Coordinate with other trades before starting and keep non-essential workers out of PAL work zones.' : '',
         nearEdge ? 'Review fall protection, guardrails, floor openings, perimeter edges, and 100% tie-off where required.' : 'Review walking/working surface hazards and keeping clear access paths.'
       ];
       let hazard1 = usesLift
@@ -4496,15 +4559,31 @@ function closeTalk() {
         : otherTrades
           ? 'Coordinate with GC/other trades, barricade or mark work areas, maintain communication, avoid stacking work in the same space, and stop work if conditions become unsafe.'
           : 'Use required PPE, keep work area organized, communicate changes to the crew, inspect tools/equipment, and stop to correct unsafe conditions.';
+      if (isTarping) {
+        hazard2 += ' Tarping adds overhead work, pinch points, dropped material, restricted visibility, and trip hazards from loose containment materials.';
+        control2 += ' Secure tarps properly, keep tie-off/fastening points controlled, maintain clear walking paths, and communicate with workers below or nearby.';
+      }
+      if (isCleanup) {
+        hazard2 += ' Cleanup adds dust, debris piles, hose/cord trips, sharp material, and possible exposure from disturbed fireproofing residue.';
+        control2 += ' Use dust control, required PPE, good housekeeping, proper disposal, and keep hoses/cords/materials staged out of walkways.';
+      }
+      if (isPatching) {
+        hazard2 += ' Patching damaged fireproofing may create overhead exposure, falling material, dust, and contact with wet material.';
+        control2 += ' Barricade patching areas as needed, protect workers below, wear required PPE, and inspect the patch area before starting.';
+      }
       if (nearEdge) {
         hazard2 += ' Additional fall exposure may exist near building edges, floor openings, shafts, or incomplete guardrails.';
         control2 += ' Verify guardrails/covers are in place and secure, use approved fall protection where required, and do not work near unprotected edges without controls.';
       }
       const inspection = [
-        `360 inspection required before starting in ${areas}.`,
+        `360 inspection required before starting in ${workAreas}.`,
         nearEdge ? 'Verify edge protection, floor openings, guardrails, covers, and anchor points before work starts.' : 'Check walking surfaces, access paths, lighting, housekeeping, and material staging.',
         usesLift ? 'Confirm lift inspection, ground conditions, overhead hazards, battery/fuel status, and safe setup area.' : 'Confirm tools/equipment are inspected and safe for use.',
+        isSOFP ? 'Confirm spray zones, hose routing, overspray protection, PPE, and respiratory protection requirements before spraying.' : '',
+        isTarping ? 'Check tarp anchorage, overhead conditions, pinch points, and clear communication before hanging containment.' : '',
+        isCleanup ? 'Check cleanup paths, debris staging, dust control, and disposal area before cleanup begins.' : '',
         otherTrades ? 'Coordinate with other trades and keep unauthorized workers out of the immediate work zone.' : 'Communicate any changes in work conditions to the foreman immediately.',
+        weatherFine ? 'Weather reported acceptable; continue monitoring conditions during the shift.' : '',
         hotWeather ? 'Monitor workers for heat illness and take water/rest breaks as needed.' : '',
         coldWeather ? 'Monitor slippery surfaces, cold stress, gloves, and winter access conditions.' : ''
       ].filter(Boolean).join(' ');
@@ -4513,7 +4592,7 @@ function closeTalk() {
       document.getElementById('ai-out-date').value = date;
       document.getElementById('ai-out-foreman').value = foreman;
       document.getElementById('ai-out-trade').value = isSOFP ? 'Fireproofing / SOFP' : workType;
-      document.getElementById('ai-out-items').value = items.join(' ');
+      document.getElementById('ai-out-items').value = joinSafetyItems(items);
       document.getElementById('ai-out-tasks').value = taskLine;
       document.getElementById('ai-out-hazard1').value = hazard1;
       document.getElementById('ai-out-control1').value = control1;

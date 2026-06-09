@@ -186,6 +186,100 @@
     }
     .daily-report-form-grid .span-2 { grid-column: span 2; }
     .daily-report-form-grid .span-4 { grid-column: 1 / -1; }
+    .foreman-tools-grid {
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:14px;
+      align-items:start;
+    }
+    .foreman-tool-card {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:16px;
+      box-shadow:0 4px 14px rgba(16,24,40,.05);
+    }
+    .foreman-tool-card h3 { margin:0 0 6px; color:var(--navy); font-size:16px; }
+    .foreman-tool-card p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
+    .ai-safety-panel {
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-left:6px solid var(--green);
+      border-radius:8px;
+      padding:16px;
+      margin-top:16px;
+    }
+    .ai-safety-panel h3 { margin:0 0 6px; color:var(--navy); }
+    .ai-safety-panel p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
+    .ai-safety-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
+    .ai-safety-grid .span-2 { grid-column: 1 / -1; }
+    .ai-signature-input,
+    .signature-script {
+      font-family:"Brush Script MT","Segoe Script","Lucida Handwriting",cursive;
+      color:var(--navy);
+      font-size:24px;
+      font-weight:700;
+      line-height:1.1;
+    }
+    .daily-safety-paper {
+      grid-column:1/-1;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      overflow:hidden;
+    }
+    .daily-safety-head {
+      background:var(--navy);
+      color:#fff;
+      display:grid;
+      grid-template-columns:180px 1fr 180px;
+      gap:14px;
+      align-items:center;
+      padding:14px 18px;
+    }
+    .daily-safety-head .logo { color:var(--green); font-weight:900; font-size:24px; line-height:1; }
+    .daily-safety-head .logo small { display:block; color:#fff; font-size:9px; letter-spacing:.6px; margin-top:3px; }
+    .daily-safety-head h3 { margin:0; color:#fff; text-align:center; font-size:20px; }
+    .daily-safety-head p { margin:3px 0 0; color:rgba(255,255,255,.78); text-align:center; }
+    .daily-safety-meta { color:rgba(255,255,255,.82); text-align:right; line-height:1.45; }
+    .daily-safety-body { padding:14px 18px; }
+    .daily-safety-field-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 18px; }
+    .daily-safety-field { border-bottom:1px solid #9fb3c8; min-height:34px; padding-bottom:5px; }
+    .daily-safety-field.full { grid-column:1/-1; }
+    .daily-safety-field label,
+    .daily-safety-block-title { display:block; color:var(--navy); font-weight:900; font-size:13px; margin-bottom:5px; }
+    .daily-safety-value { white-space:pre-line; font-size:14px; line-height:1.35; color:var(--text); }
+    .daily-safety-sign-table { width:100%; border-collapse:collapse; font-size:14px; margin-top:6px; }
+    .daily-safety-sign-table th { background:#eef4fa; color:var(--navy); text-align:left; padding:7px 8px; border:1px solid #cbd7e4; }
+    .daily-safety-sign-table td { padding:8px; border:1px solid #d8e1ec; height:42px; }
+    .daily-safety-footer { border:1px solid var(--green); border-radius:8px; padding:12px 14px; margin-top:14px; }
+    .language-line { display:flex; gap:14px; flex-wrap:wrap; color:#1f2937; font-size:14px; margin-bottom:10px; }
+    @media(max-width:800px){
+      .daily-safety-head { grid-template-columns:1fr; text-align:left; }
+      .daily-safety-head h3,
+      .daily-safety-head p,
+      .daily-safety-meta { text-align:left; }
+      .daily-safety-field-grid { grid-template-columns:1fr; }
+    }
+    @media print {
+      .daily-safety-paper { border-radius:0; }
+      .daily-safety-head { padding:10px 14px; }
+      .daily-safety-body { padding:10px 14px; }
+      .daily-safety-value { font-size:12px; line-height:1.25; }
+      .daily-safety-sign-table td { height:32px; padding:5px 6px; }
+      .signature-script { font-size:20px; }
+    }
+    .ai-safety-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .ai-safety-note {
+      background:#fff8e8;
+      border:1px solid #f3d28a;
+      border-radius:8px;
+      color:#6b4a00;
+      font-size:12px;
+      font-weight:800;
+      padding:10px 12px;
+      margin-top:12px;
+    }
     .report-photo-list {
       display:flex;
       gap:8px;
@@ -223,6 +317,9 @@
     @media(max-width:850px){
       .daily-dashboard { grid-template-columns:1fr; }
       .daily-report-form-grid { grid-template-columns:1fr; }
+      .foreman-tools-grid { grid-template-columns:1fr; }
+      .ai-safety-grid { grid-template-columns:1fr; }
+      .ai-safety-grid .span-2 { grid-column:auto; }
       .daily-report-form-grid .span-2,
       .daily-report-form-grid .span-4 { grid-column: auto; }
     }
@@ -1021,6 +1118,7 @@
   <div class="page-wrap">
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
       <button class="tab active" onclick="switchMainTab('main-projects', this)">Projects</button>
+      <button class="tab" onclick="switchMainTab('main-foreman-tools', this)">Foreman / Supervisor Tools</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">Workforce</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
@@ -1039,6 +1137,114 @@
           <h3>No projects yet</h3>
           <p>Tap "New Project" to get started</p><button class="btn-add" onclick="openNewProjectModal()" style="margin-top:14px;">＋ New Project</button>
         </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="main-foreman-tools">
+      <div class="page-header">
+        <h2>Foreman / Supervisor Tools</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="refreshAiSafetyProjectOptions()">Refresh Projects</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Create project-linked field documents from one place. AI assisted text is a draft only and must be reviewed by the foreman before the crew signs or work begins.</div>
+
+      <div class="foreman-tools-grid">
+        <div class="foreman-tool-card">
+          <h3>Daily Safety Sheet</h3>
+          <p>Use the standard daily safety meeting form when the foreman wants to write the sheet manually.</p>
+          <button class="btn-outline" type="button" onclick="toast('Manual Daily Safety form will be moved into this tools area next.')">Open Manual Safety Sheet</button>
+        </div>
+        <div class="foreman-tool-card">
+          <h3>Daily Report</h3>
+          <p>Create a daily field report from inside a selected project. The AI assisted daily report will be added after the safety sheet flow is stable.</p>
+          <button class="btn-outline" type="button" onclick="toast('Open a project first, then use Create Daily Report from the project dashboard.')">Create Daily Report</button>
+        </div>
+        <div class="foreman-tool-card">
+          <h3>Extra Work Ticket</h3>
+          <p>Open a blank ticket, choose the project inside the ticket, and submit it to that project.</p>
+          <button class="btn-save" type="button" onclick="openExtraWorkTicketModal()">Open Blank Ticket</button>
+        </div>
+        <div class="foreman-tool-card">
+          <h3>Future Tools</h3>
+          <p>Good place for AI assisted daily reports, QR crew sign-in links, project-specific toolbox talks, and foreman-only shortcuts.</p>
+          <button class="btn-outline" type="button" onclick="toast('Future foreman tools area is ready.')">Ready</button>
+        </div>
+      </div>
+
+      <div class="ai-safety-panel">
+        <h3>AI Assisted Daily Safety Sheet</h3>
+        <p>Select the project, type or paste the day's work plan, then generate a draft safety sheet. Saving sends it to that project's Safety Forms tab.</p>
+        <div class="ai-safety-grid">
+          <div class="field"><label>Project</label><select id="ai-safety-project-select"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Date</label><input id="ai-safety-date" type="date" /></div>
+          <div class="field"><label>Foreman / Supervisor</label><input id="ai-safety-foreman" placeholder="Foreman name" /></div>
+          <div class="field"><label>Equipment Used</label><input id="ai-safety-equipment" placeholder="Scissor lifts, spray machine, hoses, tarps..." /></div>
+          <div class="field"><label>Floors / Work Areas</label><input id="ai-safety-areas" placeholder="12th, 13th, 14th, 11th, 4th floors" /></div>
+          <div class="field"><label>Conditions / Other Trades</label><input id="ai-safety-conditions" placeholder="Weather fine, other trades in area..." /></div>
+          <div class="field span-2"><label>Foreman Hazard Focus (Optional)</label><input id="ai-safety-focus" placeholder="Example: silica exposure, fall protection, other trades, eye protection, proper lifting..." /></div>
+          <div class="field span-2"><label>Work Plan Notes</label><textarea id="ai-safety-notes" rows="5" placeholder="Example: We are working the 12th floor doing SOFP, hanging tarps on 13 and 14 ahead of the spray crew, cleaning previous sprayed area on 11, patching damaged fireproofing on 4, using scissor lifts, weather is fine, other trades are in the area."></textarea></div>
+        </div>
+
+        <div class="foreman-tool-card" style="margin-top:14px;">
+          <h3>Daily Safety Meeting Sheet</h3>
+          <div class="ai-safety-grid">
+            <div class="field"><label>Project Name</label><input id="ai-sheet-project-name" /></div>
+            <div class="field"><label>Date</label><input id="ai-sheet-date" type="date" /></div>
+            <div class="field"><label>Trade</label><input id="ai-sheet-trade" value="Fireproofing / SOFP" /></div>
+            <div class="field"><label>Supervisor / Foreman</label><input id="ai-sheet-foreman" /></div>
+            <div class="field span-2"><label>Items Discussed During Meeting</label><textarea id="ai-sheet-items" rows="3"></textarea></div>
+            <div class="field span-2"><label>Tasks and Locations</label><textarea id="ai-sheet-tasks" rows="3"></textarea></div>
+            <div class="field span-2"><label>Hazard 1</label><textarea id="ai-sheet-hazard1" rows="2"></textarea></div>
+            <div class="field span-2"><label>Control 1</label><textarea id="ai-sheet-control1" rows="2"></textarea></div>
+            <div class="field span-2"><label>Hazard 2</label><textarea id="ai-sheet-hazard2" rows="2"></textarea></div>
+            <div class="field span-2"><label>Control 2</label><textarea id="ai-sheet-control2" rows="2"></textarea></div>
+            <div class="field span-2"><label>360 Inspection - Additional Hazards</label><textarea id="ai-sheet-inspection" rows="3"></textarea></div>
+          </div>
+          <h3 style="margin-top:16px;">Crew Sign-In</h3>
+          <div class="ticket-table-wrap">
+            <table class="ticket-table">
+              <thead><tr><th>#</th><th>Print Name</th><th>Signature / Typed Name</th></tr></thead>
+              <tbody id="ai-safety-sign-rows">
+                <tr><td>1</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>2</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>3</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>4</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>5</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>6</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>7</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>8</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>9</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>10</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+                <tr><td>11</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="ai-safety-grid" style="margin-top:14px;">
+            <div class="field span-2"><label>Language</label>
+              <div class="language-line">
+                <label><input type="checkbox" id="ai-lang-english" checked /> English</label>
+                <label><input type="checkbox" id="ai-lang-spanish" /> Spanish</label>
+                <label><input type="checkbox" id="ai-lang-polish" /> Polish</label>
+                <label><input type="checkbox" id="ai-lang-ukrainian" /> Ukrainian</label>
+                <label><input type="checkbox" id="ai-lang-russian" /> Russian</label>
+                <label><input type="checkbox" id="ai-lang-other" /> Other</label>
+              </div>
+            </div>
+            <div class="field"><label>Time</label><input id="ai-sheet-time" placeholder="7:00 AM" /></div>
+            <div class="field"><label>Speaker (Print Name)</label><input id="ai-sheet-speaker" /></div>
+            <div class="field"><label>Supervisor Printed Name</label><input id="ai-sheet-supervisor-print" /></div>
+            <div class="field"><label>Date</label><input id="ai-sheet-supervisor-date" type="date" /></div>
+            <div class="field span-2"><label>Supervisor Signature</label><input id="ai-sheet-supervisor-signature" class="ai-signature-input" /></div>
+          </div>
+        </div>
+
+        <div class="ai-safety-actions">
+          <button class="btn-outline" type="button" onclick="fillAiSafetyExample()">Use Example</button>
+          <button class="btn-save" type="button" onclick="generateProjectAiSafetySheet()">Fill Safety Sheet</button>
+          <button class="btn-save" type="button" id="save-ai-safety-btn" onclick="saveProjectAiSafetySheet()">Save to Project Safety Forms</button>
+        </div>
+        <div class="ai-safety-note">Foreman must review and edit the generated text before presenting it to the crew. Employee phone sign-in links can be added in a later patch.</div>
       </div>
     </div>
 
@@ -2033,6 +2239,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openReportDetail = openReportDetail;
   window.loadProjectFieldForms = loadProjectFieldForms;
   window.openFieldFormDetail = openFieldFormDetail;
+  window.refreshAiSafetyProjectOptions = refreshAiSafetyProjectOptions;
+  window.fillAiSafetyExample = fillAiSafetyExample;
+  window.generateProjectAiSafetySheet = generateProjectAiSafetySheet;
+  window.saveProjectAiSafetySheet = saveProjectAiSafetySheet;
   window.openEmployeeModal = openEmployeeModal;
   window.editEmployee = editEmployee;
   window.deleteEmployee = deleteEmployee;
@@ -2283,6 +2493,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       });
       allProjects = filtered;
       refreshTicketProjectOptions();
+      refreshAiSafetyProjectOptions();
       if (!filtered.length) {
         list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No projects available</h3><p>${isOfficeRole() ? 'Tap "New Project" to get started' : 'You do not have any assigned projects yet.'}</p></div>`;
         return;
@@ -2542,6 +2753,316 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Daily report save failed: ' + e.message);
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Daily Report'; }
+    }
+  }
+
+  function refreshAiSafetyProjectOptions() {
+    const select = document.getElementById('ai-safety-project-select');
+    if (!select) return;
+    const projects = allProjects || [];
+    select.innerHTML = '<option value="">Select a project...</option>' + projects.map(p =>
+      `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' - ' + esc(p.jobNumber) : ''}</option>`
+    ).join('');
+    if (currentProject?.id) select.value = currentProject.id;
+    const date = document.getElementById('ai-safety-date');
+    if (date && !date.value) date.value = new Date().toISOString().slice(0, 10);
+    const foreman = document.getElementById('ai-safety-foreman');
+    if (foreman && !foreman.value) foreman.value = currentUser?.displayName || currentUser?.email || '';
+  }
+
+  function selectedAiSafetyProject() {
+    const id = document.getElementById('ai-safety-project-select')?.value || currentProject?.id || '';
+    return (allProjects || []).find(p => p.id === id) || (currentProject?.id === id ? currentProject : null);
+  }
+
+  function fillAiSafetyExample() {
+    const fields = {
+      'ai-safety-areas': '12th, 13th, 14th, 11th, and 4th floors',
+      'ai-safety-equipment': 'Scissor lifts, spray equipment, hoses, tarps, hand tools',
+      'ai-safety-conditions': 'Weather fine, other trades in area',
+      'ai-safety-focus': 'Silica/airborne material exposure, scissor lift operation, other trades in area, eye protection, proper PPE',
+      'ai-safety-notes': 'We are working the 12th floor doing SOFP, working on the 13th and 14th floor hanging tarps ahead of the spray crew, on the 11th floor cleaning previous sprayed area, and on the 4th floor patching damaged fireproofing. We will be using scissor lifts. Weather conditions are fine and there are other trades in the area.'
+    };
+    Object.entries(fields).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value;
+    });
+    generateProjectAiSafetySheet();
+  }
+
+  function buildAiSafetyContent({ project, date, foreman, areas, equipment, conditions, focus, notes }) {
+    const fullPlan = [areas, equipment, conditions, focus, notes].filter(Boolean).join(' ');
+    const lower = fullPlan.toLowerCase();
+    const isSOFP = lower.includes('sofp') || lower.includes('spray') || lower.includes('fireproof');
+    const isPatching = lower.includes('patch') || lower.includes('damaged fireproof');
+    const isTarping = lower.includes('tarp') || lower.includes('hang') || lower.includes('containment');
+    const isCleanup = lower.includes('clean') || lower.includes('sweep') || lower.includes('previous sprayed');
+    const usesLift = lower.includes('lift') || lower.includes('scissor') || lower.includes('boom');
+    const otherTrades = lower.includes('other trade') || lower.includes('trades') || lower.includes('congested') || lower.includes('busy');
+    const nearEdge = lower.includes('edge') || lower.includes('perimeter') || lower.includes('opening') || lower.includes('fall');
+    const weatherFine = lower.includes('weather') && (lower.includes('fine') || lower.includes('good') || lower.includes('clear'));
+    const hotWeather = lower.includes('heat') || lower.includes('hot');
+    const coldWeather = lower.includes('cold') || lower.includes('winter');
+    const silica = lower.includes('silica') || lower.includes('airborne') || lower.includes('dust');
+    const eyeProtection = lower.includes('eye') || lower.includes('glass') || lower.includes('goggle');
+    const lifting = lower.includes('lifting') || lower.includes('material handling') || lower.includes('carry');
+    const ppeFocus = lower.includes('ppe') || lower.includes('proper ppe');
+    const taskParts = [];
+    if (isSOFP) taskParts.push('SOFP / spray-on fireproofing');
+    if (isTarping) taskParts.push('hanging tarps and containment setup');
+    if (isCleanup) taskParts.push('cleanup of previously sprayed areas');
+    if (isPatching) taskParts.push('patching damaged fireproofing');
+    if (!taskParts.length) taskParts.push('planned construction work');
+    const professionalTaskLine = `${taskParts.join('; ')} in ${areas || 'assigned work areas'}. ${equipment ? 'Equipment/materials: ' + equipment + '. ' : ''}${conditions ? 'Conditions: ' + conditions + '. ' : ''}${notes ? 'Foreman work plan summary: ' + notes : ''}`.trim()
+      .replace(/\bwe are\b/gi, 'PAL crews are')
+      .replace(/\bwe will\b/gi, 'PAL crews will')
+      .replace(/\bwe\b/gi, 'PAL crews');
+    const items = [
+      'Review crew assignments, work areas, access routes, and the daily work plan before starting.',
+      'Confirm required PPE is worn, including hard hat, safety glasses, gloves, work boots, high visibility clothing when required, and task-specific respiratory protection when required.',
+      usesLift ? 'Review scissor lift pre-use inspection, trained operator requirements, travel path, overhead hazards, crush points, and keeping workers clear of lift movement.' : 'Review safe access, housekeeping, material staging, and tool/equipment inspection.',
+      isSOFP ? 'Discuss overspray control, restricted spray areas, hose management, airborne material exposure, eye/skin protection, and nearby trade coordination.' : '',
+      isTarping ? 'Discuss tarp handling, overhead work, pinch points, dropped objects, secure fastening, and clear walking paths.' : '',
+      isCleanup ? 'Discuss dust/debris control, cleanup routes, disposal/staging areas, hose/cord trip hazards, and protection from disturbed material.' : '',
+      isPatching ? 'Discuss patching area setup, overhead exposure, falling material, wet material contact, and protection of workers below.' : '',
+      silica ? 'Discuss silica/airborne material exposure, dust control, respiratory protection, and housekeeping.' : '',
+      eyeProtection ? 'Discuss eye protection requirements for spray work, patching, cleanup, dust, and nearby work activities.' : '',
+      lifting ? 'Discuss proper lifting technique, team lifts, material staging, and keeping access routes clear.' : '',
+      ppeFocus ? 'Review required PPE at all times and correct missing or damaged PPE before starting work.' : '',
+      otherTrades ? 'Coordinate with GC and other trades. Keep non-essential workers out of PAL work zones and stop work if trade stacking creates unsafe conditions.' : '',
+      nearEdge ? 'Review fall protection, floor openings, guardrails, covers, edges, shafts, and approved tie-off requirements.' : ''
+    ].filter(Boolean);
+    const hazardLibrary = [
+      {
+        active: nearEdge,
+        key: 'fall protection leading edges openings heights',
+        hazard: 'Fall exposure from working near leading edges, floor openings, shafts, incomplete guardrails, or elevated work areas above 6 feet.',
+        control: 'Inspect the area for openings and edge exposure before work starts. Maintain guardrails/covers, use approved fall protection where required, inspect harnesses/lanyards/retractables before use, and tie off only to approved anchorage points.'
+      },
+      {
+        active: usesLift,
+        key: 'scissor lift boom lift aerial lift equipment',
+        hazard: 'Scissor lift operation hazards including tip-over, struck-by/crush points, overhead obstructions, uneven floor conditions, and workers entering the lift travel path.',
+        control: 'Complete the pre-use lift inspection, operate only by trained and authorized employees, keep the travel path clear, use a spotter when needed, avoid overhead obstructions, and keep workers clear of moving equipment.'
+      },
+      {
+        active: silica || isSOFP || isCleanup,
+        key: 'silica dust airborne respiratory spray fireproofing cleanup',
+        hazard: 'Airborne material, dust, or silica exposure during spray fireproofing, cleanup of sprayed areas, disturbed material, or dusty work conditions.',
+        control: 'Use required respiratory protection and dust-control methods, keep non-essential workers out of dusty or spray areas, maintain good housekeeping, control overspray, and follow SDS/HazCom requirements for materials in use.'
+      },
+      {
+        active: isSOFP,
+        key: 'sofp spray fireproofing overspray hose pressure',
+        hazard: 'SOFP hazards including overspray, wet material contact, eye/skin irritation, hose trip hazards, spray equipment pressure, and nearby workers entering the spray zone.',
+        control: 'Set barricades or signage when needed, control overspray, route hoses neatly, wear required PPE, communicate with nearby trades, and keep unauthorized workers out of active spray areas.'
+      },
+      {
+        active: isTarping,
+        key: 'tarps containment hanging overhead dropped material',
+        hazard: 'Tarping and containment setup hazards including overhead work, pinch points, dropped materials, restricted visibility, and loose materials creating trip hazards.',
+        control: 'Secure tarps and fastening points, maintain clear walking paths, use proper access equipment, communicate with workers below or nearby, and stop work if containment becomes loose or unsafe.'
+      },
+      {
+        active: otherTrades,
+        key: 'other trades trade stacking coordination congested area',
+        hazard: 'Coordination hazards from other trades working in the same area, blocked access routes, conflicting tasks, and workers entering PAL work zones.',
+        control: 'Coordinate with the GC and other trades before starting, avoid stacking work in the same area, maintain clear communication, mark or barricade PAL work zones as needed, and stop work if conditions become unsafe.'
+      },
+      {
+        active: eyeProtection,
+        key: 'eye protection safety glasses goggles face shield',
+        hazard: 'Eye injury exposure from overspray, dust, falling material, wet material, hand tools, and nearby trade activity.',
+        control: 'Wear required safety glasses, goggles, or face protection for the task. Replace damaged eye protection immediately and stop work if workers are missing required eye protection.'
+      },
+      {
+        active: lifting,
+        key: 'proper lifting material handling strain ergonomics',
+        hazard: 'Material handling hazards including strains, awkward lifting, carrying materials through congested areas, and poor staging.',
+        control: 'Use team lifts or mechanical help when needed, keep loads close to the body, avoid twisting, stage materials to reduce carrying distance, and keep access routes clear.'
+      },
+      {
+        active: ppeFocus,
+        key: 'ppe hard hat gloves boots high visibility',
+        hazard: 'Injury exposure from missing, damaged, or incorrect PPE for the task or jobsite conditions.',
+        control: 'Verify required PPE before starting work, including hard hat, safety glasses, gloves, work boots, high visibility clothing when required, and task-specific PPE. Correct missing or damaged PPE immediately.'
+      }
+    ];
+    const focusWords = String(focus || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    const selectedHazards = hazardLibrary
+      .filter(item => item.active || focusWords.some(word => item.key.includes(word)))
+      .sort((a, b) => Number(focusWords.some(word => b.key.includes(word))) - Number(focusWords.some(word => a.key.includes(word))));
+    const fallbackHazards = [
+      {
+        hazard: 'General work area hazards including slips, trips, housekeeping, tools/equipment, changing conditions, and limited access.',
+        control: 'Inspect the work area before starting, keep access paths clear, stage materials safely, inspect tools/equipment, communicate changes, and correct or report hazards immediately.'
+      },
+      {
+        hazard: 'Communication hazards from changing work locations, multiple crews, moving equipment, and nearby work activities.',
+        control: 'Review the daily plan with all workers, confirm crew assignments, maintain communication with the foreman, and stop work if conditions change or become unclear.'
+      }
+    ];
+    const pickedHazards = selectedHazards.concat(fallbackHazards);
+    const hazard1 = pickedHazards[0].hazard;
+    const control1 = pickedHazards[0].control;
+    const hazard2 = pickedHazards[1].hazard;
+    const control2 = pickedHazards[1].control;
+    const inspection = [
+      `360 inspection required before starting in ${areas || 'assigned work areas'}.`,
+      usesLift ? 'Confirm lift inspection, ground conditions, overhead hazards, battery/fuel status, and safe setup area.' : 'Check walking surfaces, lighting, housekeeping, access paths, and material staging.',
+      isSOFP ? 'Confirm spray zones, hose routing, overspray protection, PPE, and respiratory protection requirements before spraying.' : '',
+      isTarping ? 'Check tarp anchorage, overhead conditions, pinch points, and communication before hanging containment.' : '',
+      isCleanup ? 'Check cleanup paths, debris staging, dust control, and disposal area.' : '',
+      silica ? 'Verify dust/airborne exposure controls, respiratory protection requirements, and housekeeping methods.' : '',
+      otherTrades ? 'Coordinate with other trades and keep unauthorized workers out of the immediate work zone.' : '',
+      weatherFine ? 'Weather reported acceptable; continue monitoring conditions during the shift.' : '',
+      hotWeather ? 'Monitor workers for heat illness and take water/rest breaks as needed.' : '',
+      coldWeather ? 'Monitor slippery surfaces, cold stress, gloves, and winter access conditions.' : '',
+      'Please notify foreman with any and all issues or injuries immediately.'
+    ].filter(Boolean);
+    return {
+      project_name: project?.jobNumber ? `${project?.name || 'Selected Project'} - Job ${project.jobNumber}` : (project?.name || 'Selected Project'),
+      date: date || new Date().toISOString().slice(0, 10),
+      trade: isSOFP || isPatching ? 'Fireproofing / SOFP' : 'Construction',
+      foreman: foreman || '',
+      tasks_locations: professionalTaskLine,
+      items_discussed: items.join(' '),
+      hazard1,
+      control1,
+      hazard2,
+      control2,
+      inspection_hazards: inspection.join(' ')
+    };
+  }
+
+  function fillAiSafetySheetFields(sheet) {
+    const map = {
+      'ai-sheet-project-name': sheet.project_name,
+      'ai-sheet-date': sheet.date,
+      'ai-sheet-trade': sheet.trade,
+      'ai-sheet-foreman': sheet.foreman,
+      'ai-sheet-speaker': sheet.foreman,
+      'ai-sheet-supervisor-print': sheet.foreman,
+      'ai-sheet-supervisor-date': sheet.date,
+      'ai-sheet-supervisor-signature': sheet.foreman,
+      'ai-sheet-items': sheet.items_discussed,
+      'ai-sheet-tasks': sheet.tasks_locations,
+      'ai-sheet-hazard1': sheet.hazard1,
+      'ai-sheet-control1': sheet.control1,
+      'ai-sheet-hazard2': sheet.hazard2,
+      'ai-sheet-control2': sheet.control2,
+      'ai-sheet-inspection': sheet.inspection_hazards
+    };
+    Object.entries(map).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value || '';
+    });
+  }
+
+  function getAiSafetySheetData() {
+    return {
+      project_name: document.getElementById('ai-sheet-project-name')?.value.trim() || '',
+      date: document.getElementById('ai-sheet-date')?.value || '',
+      trade: document.getElementById('ai-sheet-trade')?.value.trim() || '',
+      foreman: document.getElementById('ai-sheet-foreman')?.value.trim() || '',
+      items_discussed: document.getElementById('ai-sheet-items')?.value.trim() || '',
+      tasks_locations: document.getElementById('ai-sheet-tasks')?.value.trim() || '',
+      hazard1: document.getElementById('ai-sheet-hazard1')?.value.trim() || '',
+      control1: document.getElementById('ai-sheet-control1')?.value.trim() || '',
+      hazard2: document.getElementById('ai-sheet-hazard2')?.value.trim() || '',
+      control2: document.getElementById('ai-sheet-control2')?.value.trim() || '',
+      inspection_hazards: document.getElementById('ai-sheet-inspection')?.value.trim() || '',
+      meeting_time: document.getElementById('ai-sheet-time')?.value.trim() || '',
+      speaker_print_name: document.getElementById('ai-sheet-speaker')?.value.trim() || '',
+      supervisor_printed_name: document.getElementById('ai-sheet-supervisor-print')?.value.trim() || '',
+      supervisor_date: document.getElementById('ai-sheet-supervisor-date')?.value || '',
+      supervisor_signature: document.getElementById('ai-sheet-supervisor-signature')?.value.trim() || '',
+      languages: getAiSafetyLanguages()
+    };
+  }
+
+  function getAiSafetyLanguages() {
+    return [
+      ['English', 'ai-lang-english'],
+      ['Spanish', 'ai-lang-spanish'],
+      ['Polish', 'ai-lang-polish'],
+      ['Ukrainian', 'ai-lang-ukrainian'],
+      ['Russian', 'ai-lang-russian'],
+      ['Other', 'ai-lang-other']
+    ].filter(([, id]) => document.getElementById(id)?.checked).map(([label]) => label);
+  }
+
+  function getAiSafetySignIns() {
+    return Array.from(document.querySelectorAll('#ai-safety-sign-rows tr')).map((row, index) => {
+      const inputs = row.querySelectorAll('input');
+      return {
+        row: index + 1,
+        printName: inputs[0]?.value.trim() || '',
+        signature: inputs[1]?.value.trim() || ''
+      };
+    }).filter(r => r.printName || r.signature);
+  }
+
+  function generateProjectAiSafetySheet() {
+    const project = selectedAiSafetyProject();
+    const data = {
+      project,
+      date: document.getElementById('ai-safety-date')?.value || new Date().toISOString().slice(0, 10),
+      foreman: document.getElementById('ai-safety-foreman')?.value.trim() || '',
+      areas: document.getElementById('ai-safety-areas')?.value.trim() || '',
+      equipment: document.getElementById('ai-safety-equipment')?.value.trim() || '',
+      conditions: document.getElementById('ai-safety-conditions')?.value.trim() || '',
+      focus: document.getElementById('ai-safety-focus')?.value.trim() || '',
+      notes: document.getElementById('ai-safety-notes')?.value.trim() || ''
+    };
+    if (!project) return toast('Select a project first.');
+    if (!data.notes && !data.areas) return toast('Add the work plan or work areas first.');
+    fillAiSafetySheetFields(buildAiSafetyContent(data));
+    toast('AI assisted safety sheet filled. Review before saving.');
+  }
+
+  async function saveProjectAiSafetySheet() {
+    const project = selectedAiSafetyProject();
+    if (!project) return toast('Select a project first.');
+    const btn = document.getElementById('save-ai-safety-btn');
+    const sheet = getAiSafetySheetData();
+    if (!sheet.items_discussed && !sheet.tasks_locations) return toast('Fill the safety sheet before saving.');
+    const signIns = getAiSafetySignIns();
+    const date = sheet.date || document.getElementById('ai-safety-date')?.value || new Date().toISOString().slice(0, 10);
+    const foreman = sheet.foreman || document.getElementById('ai-safety-foreman')?.value.trim() || currentUser?.displayName || currentUser?.email || '';
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+        formKey: 'daily-safety-meeting',
+        formTitle: 'Daily Safety Meeting',
+        projectId: project.id,
+        projectName: project.name || '',
+        jobNumber: project.jobNumber || '',
+        localSubmittedAt: new Date().toISOString(),
+        submittedAt: serverTimestamp(),
+        submittedBy: currentUser?.uid || '',
+        submittedByName: currentUser?.displayName || currentUser?.email || '',
+        documentData: {
+          date,
+          foreman,
+          tasks_locations: document.getElementById('ai-safety-areas')?.value.trim() || '',
+          equipment: document.getElementById('ai-safety-equipment')?.value.trim() || '',
+          conditions: document.getElementById('ai-safety-conditions')?.value.trim() || '',
+          foreman_hazard_focus: document.getElementById('ai-safety-focus')?.value.trim() || '',
+          work_description: document.getElementById('ai-safety-notes')?.value.trim() || '',
+          ...sheet,
+          ai_assisted: 'Yes',
+          signIns,
+          notes: sheet.items_discussed || sheet.tasks_locations
+        }
+      });
+      toast('AI safety sheet saved to project Safety Forms.');
+      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+    } catch (e) {
+      console.error(e);
+      toast('Could not save AI safety sheet.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save to Project Safety Forms'; }
     }
   }
 
@@ -2872,6 +3393,68 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       .replace(/\b\w/g, c => c.toUpperCase());
   }
 
+  function dailySafetySheetDetailHTML(form) {
+    const data = form.documentData || {};
+    const signIns = Array.isArray(data.signIns) ? data.signIns : [];
+    const rows = signIns.length ? signIns : Array.from({ length: 11 }, (_, i) => ({ row: i + 1, printName: '', signature: '' }));
+    const rowHTML = rows.map((r, index) => `
+      <tr>
+        <td>${esc(r.row || index + 1)}</td>
+        <td>${esc(r.printName || '')}</td>
+        <td><span class="signature-script">${esc(r.signature || '')}</span></td>
+      </tr>`).join('');
+    const lang = Array.isArray(data.languages) ? data.languages : [];
+    const langMark = label => lang.includes(label) ? '[x]' : '[ ]';
+    return `
+      <div class="daily-safety-paper">
+        <div class="daily-safety-head">
+          <div class="logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+          <div>
+            <h3>Daily Safety Meeting</h3>
+            <p>Hazards, tasks, locations + crew sign-in</p>
+          </div>
+          <div class="daily-safety-meta">Form: PAL-DSM-001<br>Rev: 1.1<br>Date: 2026</div>
+        </div>
+        <div class="daily-safety-body">
+          <div class="daily-safety-field-grid">
+            <div class="daily-safety-field"><label>Project Name</label><div class="daily-safety-value">${esc(data.project_name || form.projectName || currentProject?.name || '')}</div></div>
+            <div class="daily-safety-field"><label>Date</label><div class="daily-safety-value">${esc(data.date || '')}</div></div>
+            <div class="daily-safety-field"><label>Trade</label><div class="daily-safety-value">${esc(data.trade || 'Fireproofing')}</div></div>
+            <div class="daily-safety-field"><label>Supervisor / Foreman</label><div class="daily-safety-value">${esc(data.foreman || form.submittedByName || '')}</div></div>
+            <div class="daily-safety-field full"><label>Items Discussed During Meeting</label><div class="daily-safety-value">${esc(data.items_discussed || '')}</div></div>
+            <div class="daily-safety-field full"><label>Tasks and Locations</label><div class="daily-safety-value">${esc(data.tasks_locations || '')}</div></div>
+            <div class="daily-safety-field full"><label>Hazard 1</label><div class="daily-safety-value">${esc(data.hazard1 || '')}</div></div>
+            <div class="daily-safety-field full"><label>Control 1</label><div class="daily-safety-value">${esc(data.control1 || '')}</div></div>
+            <div class="daily-safety-field full"><label>Hazard 2</label><div class="daily-safety-value">${esc(data.hazard2 || '')}</div></div>
+            <div class="daily-safety-field full"><label>Control 2</label><div class="daily-safety-value">${esc(data.control2 || '')}</div></div>
+            <div class="daily-safety-field full"><label>360 Inspection - Additional Hazards</label><div class="daily-safety-value">${esc(data.inspection_hazards || '')}</div></div>
+          </div>
+          <div class="daily-safety-block-title" style="margin-top:12px;">Sign-In - Page 1 (Front) <span style="font-weight:500;color:var(--muted);">Rows 1-11</span></div>
+          <table class="daily-safety-sign-table">
+            <thead><tr><th style="width:48px;">#</th><th>Print Name</th><th>Signature</th></tr></thead>
+            <tbody>${rowHTML}</tbody>
+          </table>
+          <div class="daily-safety-footer">
+            <div class="language-line">
+              <span>${langMark('English')} English</span>
+              <span>${langMark('Spanish')} Spanish</span>
+              <span>${langMark('Polish')} Polish</span>
+              <span>${langMark('Ukrainian')} Ukrainian</span>
+              <span>${langMark('Russian')} Russian</span>
+              <span>${langMark('Other')} Other ________</span>
+            </div>
+            <div class="daily-safety-field-grid">
+              <div class="daily-safety-field"><label>Time</label><div class="daily-safety-value">${esc(data.meeting_time || '')}</div></div>
+              <div class="daily-safety-field"><label>Speaker (Print Name)</label><div class="daily-safety-value">${esc(data.speaker_print_name || '')}</div></div>
+              <div class="daily-safety-field"><label>Supervisor Printed Name</label><div class="daily-safety-value">${esc(data.supervisor_printed_name || '')}</div></div>
+              <div class="daily-safety-field"><label>Date</label><div class="daily-safety-value">${esc(data.supervisor_date || data.date || '')}</div></div>
+              <div class="daily-safety-field full"><label>Supervisor Signature</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.supervisor_signature || '')}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
   function openFieldFormDetail(formId) {
     const list = document.getElementById('field-forms-list');
     const rows = JSON.parse(list?.dataset.fieldFormMap || '[]');
@@ -2884,6 +3467,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (action) action.style.display = 'none';
     const grid = document.getElementById('report-detail-grid');
     const data = form.documentData || {};
+    if (form.formKey === 'daily-safety-meeting' || form.formKey === 'ai-daily-safety') {
+      if (heading) heading.textContent = 'Daily Safety Meeting';
+      grid.innerHTML = dailySafetySheetDetailHTML(form);
+      document.getElementById('modal-report-detail').classList.add('open');
+      return;
+    }
     const topFields = [
       ['Document', form.formTitle],
       ['Project', form.projectName || currentProject?.name],
@@ -5308,6 +5897,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
     if (tabId === 'main-employees') loadEmployees(true);
+    if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
     if (tabId === 'main-new-hires') loadNewHireIntakes(true);
     if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
     if (tabId === 'main-tickets') {
