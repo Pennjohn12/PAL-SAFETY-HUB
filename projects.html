@@ -698,6 +698,29 @@
     .cert-warning-sub { font-size:12px; color:var(--muted); margin-top:2px; }
     @media(max-width:700px){ .cert-alert-summary { grid-template-columns: 1fr; } .cert-warning-row{align-items:flex-start; flex-direction:column;} }
 
+    .workforce-overview-grid {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin:14px 0 18px;
+    }
+    .workforce-overview-card {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 4px 12px rgba(16,24,40,.04);
+      border-left:5px solid var(--navy);
+    }
+    .workforce-overview-card strong { display:block; font-size:26px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .workforce-overview-card span { color:var(--muted); font-size:12px; font-weight:800; }
+    .workforce-overview-card.good { border-left-color:#16a34a; }
+    .workforce-overview-card.warn { border-left-color:#d97706; }
+    .workforce-overview-card.hold { border-left-color:#dc2626; }
+    .workforce-overview-card.info { border-left-color:#2563eb; }
+    @media(max-width:900px){ .workforce-overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:560px){ .workforce-overview-grid { grid-template-columns:1fr; } }
+
     .employee-card { cursor:pointer; }
     .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
     .cert-preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:12px; }
@@ -1193,7 +1216,7 @@
       <button class="tab active" onclick="switchMainTab('main-projects', this)">Projects</button>
       <button class="tab" onclick="switchMainTab('main-foreman-tools', this)">Foreman / Supervisor Tools</button>
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
-      <button class="tab" onclick="switchMainTab('main-employees', this)">Workforce</button>
+      <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Workforce</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
     </div>
@@ -1564,6 +1587,25 @@
       </div>
     </div>
 
+    <div class="tab-pane" id="main-workforce-overview">
+      <div class="page-header">
+        <h2>Workforce</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadWorkforceOverview(true)">Refresh</button>
+          <button class="btn-add" onclick="openNewHireIntakeModal()">Create Intake Request</button>
+        </div>
+      </div>
+      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
+        <button class="tab active" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
+        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Office snapshot of onboarding, employee records, and certification risk.</div>
+      <div id="workforce-overview-summary">
+        <div class="empty-state"><div class="icon">Workforce</div><h3>Workforce overview ready</h3><p>Click Refresh or open this tab to load the latest overview.</p></div>
+      </div>
+    </div>
+
     <div class="tab-pane" id="main-employees">
       <div class="page-header">
         <h2>Workforce</h2>
@@ -1573,10 +1615,9 @@
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
+        <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
         <button class="tab active" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
-        <button class="tab" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
-        <button class="tab" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
+        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Existing employee files and certification records live here so the office can track expired, expiring, missing, and valid certs.</div>
       <div id="cert-alert-summary-main"></div>
@@ -1596,81 +1637,67 @@
     </div>
 
 
-    <div class="tab-pane" id="main-new-hires">
+    <div class="tab-pane" id="main-employee-onboarding">
       <div class="page-header">
-        <h2>Workforce</h2>
+        <h2>Employee Onboarding</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="loadNewHireIntakes(true)">↻ Refresh</button>
+          <button class="btn-outline" onclick="loadEmployeeOnboarding(true)">Refresh</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
+        <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
         <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab active" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
-        <button class="tab" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
-        <button class="tab" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
+        <button class="tab active" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Create a pre-site onboarding request, copy a text message to send to the employee, upload cert photos when they come back, and mark the worker Good To Work before they arrive.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Track each new hire from intake sent, to office review, to Good To Work approval, then keep a searchable new-hire history.</div>
+      <div class="tabs" style="margin-bottom:14px;">
+        <button class="tab active" data-onboarding-tab="pending" onclick="switchOnboardingTab('pending')">Intake Pending</button>
+        <button class="tab" data-onboarding-tab="review" onclick="switchOnboardingTab('review')">Awaiting Review</button>
+        <button class="tab" data-onboarding-tab="good" onclick="switchOnboardingTab('good')">Good To Work</button>
+        <button class="tab" data-onboarding-tab="history" onclick="switchOnboardingTab('history')">New Hires</button>
+      </div>
+      <div id="onboarding-intake-section">
+      <div class="helper-text" id="onboarding-intake-helper" style="margin-bottom:14px;">Intake requests that have been sent and are still pending completion.</div>
       <div id="newhire-dashboard-main"></div>
       <div class="search-row">
         <input class="search-input" id="newhire-search" placeholder="Search by employee, project, trade, foreman, status..." oninput="renderNewHireIntakes()" />
         <select id="newhire-status-filter" class="inline-select" onchange="renderNewHireIntakes()">
           <option value="all">All Statuses</option>
-          <option value="Pending">Pending</option>
+          <option value="Pending" selected>Pending</option>
           <option value="Ready for Review">Ready for Review</option>
           <option value="Good To Work">Good To Work</option>
           <option value="Missing Info">Missing Info</option>
         </select>
       </div>
-      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Click New Hire Intake to load requests.</p></div>
-    </div>
+      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Open Employee Onboarding or click Refresh to load requests.</p></div>
+      </div>
 
-    <div class="tab-pane" id="main-recent-hires">
-      <div class="page-header">
-        <h2>Workforce</h2>
-        <div class="header-actions">
-          <button class="btn-outline" onclick="loadNewHireIntakes(true)">Refresh</button>
-          <button class="btn-add" onclick="openNewHireIntakeModal()">Create Intake Request</button>
-        </div>
-      </div>
-      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
-        <button class="tab active" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
-        <button class="tab" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
-      </div>
+      <div id="onboarding-history-section" style="display:none;">
       <div class="helper-text" style="margin-bottom:14px;">Quick view of new hire intake activity by date range for office follow-up.</div>
       <div class="search-row">
         <select id="recent-hire-range" class="inline-select" onchange="renderRecentHires()">
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
           <option value="7">Last 7 Days</option>
           <option value="14">Last 14 Days</option>
           <option value="30" selected>Last 30 Days</option>
           <option value="180">Last 6 Months</option>
+          <option value="365">Last 1 Year</option>
         </select>
         <input class="search-input" id="recent-hire-search" placeholder="Search recent hires by name, project, trade, status..." oninput="renderRecentHires()" />
       </div>
-      <div id="recent-hire-list-main"><p style="color:var(--muted);font-size:14px;">Open Recent Hires or click Refresh to load intake activity.</p></div>
+      <div id="recent-hire-list-main"><p style="color:var(--muted);font-size:14px;">Open New Hires or click Refresh to load intake activity.</p></div>
     </div>
 
 
-    <div class="tab-pane" id="main-workforce-status">
-      <div class="page-header">
-        <h2>Workforce</h2>
-        <div class="header-actions">
-          <button class="btn-outline" onclick="loadWorkforceStatusDashboard(true)">↻ Refresh</button>
-        </div>
-      </div>
-      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
-        <button class="tab" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
-        <button class="tab active" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
-      </div>
+      <div id="onboarding-good-section" style="display:none;">
       <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
       <div id="workforce-status-summary">
         <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
       </div>
       <div id="workforce-status-board"></div>
+    </div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -2630,6 +2657,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.loadEmployees = loadEmployees;
   window.searchEmployees = searchEmployees;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
+  window.loadWorkforceOverview = loadWorkforceOverview;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
   window.editCertification = editCertification;
@@ -2640,6 +2668,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openNewHireIntakeModal = openNewHireIntakeModal;
   window.saveNewHireIntake = saveNewHireIntake;
   window.loadNewHireIntakes = loadNewHireIntakes;
+  window.loadEmployeeOnboarding = loadEmployeeOnboarding;
+  window.switchOnboardingTab = switchOnboardingTab;
   window.renderNewHireIntakes = renderNewHireIntakes;
   window.renderRecentHires = renderRecentHires;
   window.copyNewHireIntakeText = copyNewHireIntakeText;
@@ -4440,6 +4470,48 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function searchEmployees(value = '') {
     renderEmployeesList(value);
+  }
+
+  async function loadWorkforceOverview(force = false) {
+    const el = document.getElementById('workforce-overview-summary');
+    if (el) el.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading workforce overview...</p>';
+    try {
+      const empSnap = await getDocs(collection(db, 'employees'));
+      allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+      const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
+      allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderWorkforceOverview();
+    } catch (e) {
+      console.error(e);
+      if (el) el.innerHTML = '<div class="empty-state"><div class="icon">Warning</div><h3>Could not load workforce overview</h3><p>Check connection and refresh.</p></div>';
+    }
+  }
+
+  function renderWorkforceOverview() {
+    const el = document.getElementById('workforce-overview-summary');
+    if (!el) return;
+    const certData = getCertAlertData();
+    const noCerts = (allEmployees || []).filter(emp => !(Array.isArray(emp.certifications) && emp.certifications.length)).length;
+    const intakeCounts = { pending: 0, review: 0, good: 0, missing: 0 };
+    (allNewHireIntakes || []).forEach(x => {
+      const s = String(x.status || 'Pending');
+      if (s === 'Good To Work') intakeCounts.good++;
+      else if (s === 'Ready for Review') intakeCounts.review++;
+      else if (s === 'Missing Info') intakeCounts.missing++;
+      else intakeCounts.pending++;
+    });
+    el.innerHTML = `<div class="workforce-overview-grid">
+      <div class="workforce-overview-card info"><strong>${(allEmployees || []).length}</strong><span>Existing Employees</span></div>
+      <div class="workforce-overview-card warn"><strong>${intakeCounts.pending}</strong><span>New Hires Pending</span></div>
+      <div class="workforce-overview-card info"><strong>${intakeCounts.review}</strong><span>Ready for Review</span></div>
+      <div class="workforce-overview-card good"><strong>${intakeCounts.good}</strong><span>Good To Work</span></div>
+      <div class="workforce-overview-card warn"><strong>${intakeCounts.missing}</strong><span>Missing Info</span></div>
+      <div class="workforce-overview-card hold"><strong>${certData.expired.length}</strong><span>Expired Certs</span></div>
+      <div class="workforce-overview-card warn"><strong>${certData.soon.length}</strong><span>Expiring in 30 Days</span></div>
+      <div class="workforce-overview-card hold"><strong>${noCerts}</strong><span>Employees With No Certs</span></div>
+    </div>
+    <div class="helper-text">This overview is read-only for now. Use Existing Employees, New Hires, Recent Hires, and Good To Work for follow-up actions.</div>`;
   }
 
 
@@ -6272,6 +6344,40 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }
   }
 
+  async function loadEmployeeOnboarding(force = false) {
+    await loadNewHireIntakes(force);
+    switchOnboardingTab(document.querySelector('[data-onboarding-tab].active')?.dataset.onboardingTab || 'pending', false);
+  }
+
+  function switchOnboardingTab(tab, shouldLoad = true) {
+    document.querySelectorAll('[data-onboarding-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.onboardingTab === tab);
+    });
+    const intake = document.getElementById('onboarding-intake-section');
+    const good = document.getElementById('onboarding-good-section');
+    const history = document.getElementById('onboarding-history-section');
+    if (intake) intake.style.display = (tab === 'pending' || tab === 'review') ? '' : 'none';
+    if (good) good.style.display = tab === 'good' ? '' : 'none';
+    if (history) history.style.display = tab === 'history' ? '' : 'none';
+
+    const statusFilter = document.getElementById('newhire-status-filter');
+    const helper = document.getElementById('onboarding-intake-helper');
+    if (tab === 'pending') {
+      if (statusFilter) statusFilter.value = 'Pending';
+      if (helper) helper.textContent = 'Intake requests that have been sent and are still pending completion.';
+      renderNewHireIntakes();
+    } else if (tab === 'review') {
+      if (statusFilter) statusFilter.value = 'Ready for Review';
+      if (helper) helper.textContent = 'Completed onboarding packets waiting for office or foreman review.';
+      renderNewHireIntakes();
+    } else if (tab === 'good') {
+      loadWorkforceStatusDashboard(shouldLoad);
+    } else if (tab === 'history') {
+      if (shouldLoad) loadNewHireIntakes(true);
+      else renderRecentHires();
+    }
+  }
+
   function renderNewHireDashboard(items) {
     const el = document.getElementById('newhire-dashboard-main');
     if (!el) return;
@@ -6348,14 +6454,22 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function renderRecentHires() {
     const list = document.getElementById('recent-hire-list-main');
     if (!list) return;
-    const days = Number(document.getElementById('recent-hire-range')?.value || 30);
+    const range = document.getElementById('recent-hire-range')?.value || '30';
     const search = (document.getElementById('recent-hire-search')?.value || '').toLowerCase().trim();
-    const cutoff = new Date();
-    cutoff.setHours(0,0,0,0);
-    cutoff.setDate(cutoff.getDate() - days);
+    const start = new Date();
+    start.setHours(0,0,0,0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+    if (range === 'yesterday') {
+      start.setDate(start.getDate() - 1);
+      end.setDate(end.getDate() - 1);
+    } else if (range !== 'today') {
+      start.setDate(start.getDate() - Number(range || 30));
+      end.setFullYear(9999);
+    }
     const items = (allNewHireIntakes || []).filter(x => {
       const created = getNewHireCreatedDate(x);
-      if (!created || created < cutoff) return false;
+      if (!created || created < start || created >= end) return false;
       if (!search) return true;
       return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status]
         .some(v => String(v || '').toLowerCase().includes(search));
@@ -6825,8 +6939,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-    const topTarget = ['main-employees', 'main-new-hires', 'main-recent-hires', 'main-workforce-status'].includes(tabId)
-      ? 'main-employees'
+    const topTarget = ['main-workforce-overview', 'main-employees', 'main-employee-onboarding'].includes(tabId)
+      ? 'main-workforce-overview'
       : tabId;
     const topTab = document.querySelector(`#main-dashboard-tabs .tab[onclick*="${topTarget}"]`);
     if (topTab) topTab.classList.add('active');
@@ -6834,11 +6948,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
+    if (tabId === 'main-workforce-overview') loadWorkforceOverview(true);
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
-    if (tabId === 'main-new-hires') loadNewHireIntakes(true);
-    if (tabId === 'main-recent-hires') loadNewHireIntakes(true);
-    if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
+    if (tabId === 'main-employee-onboarding') loadEmployeeOnboarding(true);
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();
       setTimeout(() => openExtraWorkTicketModal(), 0);
