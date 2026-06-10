@@ -1573,18 +1573,26 @@
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab active" onclick="switchMainTab('main-employees', this)">Employee Certs</button>
+        <button class="tab active" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
         <button class="tab" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
+        <button class="tab" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
         <button class="tab" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Employee certifications and worker information live here so they stay available across all projects.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Existing employee files and certification records live here so the office can track expired, expiring, missing, and valid certs.</div>
       <div id="cert-alert-summary-main"></div>
       <div id="cert-alert-list-main"></div>
-      <div class="field" style="max-width:460px;margin-bottom:16px;">
-        <label>Search Employees</label>
-        <input id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
+      <div class="search-row">
+        <input class="search-input" id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
+        <select id="cert-watch-filter" class="inline-select" onchange="renderEmployeesList()">
+          <option value="all">All Cert Statuses</option>
+          <option value="expired">Expired</option>
+          <option value="soon">Expiring 30 Days</option>
+          <option value="missing">Missing Certs</option>
+          <option value="no-expiration">No Expiration Date</option>
+          <option value="valid">Valid</option>
+        </select>
       </div>
-      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Employee Certs to load employee records.</p></div>
+      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Existing Employees to load employee records.</p></div>
     </div>
 
 
@@ -1597,8 +1605,9 @@
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Employee Certs</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
         <button class="tab active" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
+        <button class="tab" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
         <button class="tab" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Create a pre-site onboarding request, copy a text message to send to the employee, upload cert photos when they come back, and mark the worker Good To Work before they arrive.</div>
@@ -1616,6 +1625,33 @@
       <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Click New Hire Intake to load requests.</p></div>
     </div>
 
+    <div class="tab-pane" id="main-recent-hires">
+      <div class="page-header">
+        <h2>Workforce</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadNewHireIntakes(true)">Refresh</button>
+          <button class="btn-add" onclick="openNewHireIntakeModal()">Create Intake Request</button>
+        </div>
+      </div>
+      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
+        <button class="tab" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
+        <button class="tab active" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
+        <button class="tab" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Quick view of new hire intake activity by date range for office follow-up.</div>
+      <div class="search-row">
+        <select id="recent-hire-range" class="inline-select" onchange="renderRecentHires()">
+          <option value="7">Last 7 Days</option>
+          <option value="14">Last 14 Days</option>
+          <option value="30" selected>Last 30 Days</option>
+          <option value="180">Last 6 Months</option>
+        </select>
+        <input class="search-input" id="recent-hire-search" placeholder="Search recent hires by name, project, trade, status..." oninput="renderRecentHires()" />
+      </div>
+      <div id="recent-hire-list-main"><p style="color:var(--muted);font-size:14px;">Open Recent Hires or click Refresh to load intake activity.</p></div>
+    </div>
+
 
     <div class="tab-pane" id="main-workforce-status">
       <div class="page-header">
@@ -1625,8 +1661,9 @@
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Employee Certs</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
         <button class="tab" onclick="switchMainTab('main-new-hires', this)">New Hires</button>
+        <button class="tab" onclick="switchMainTab('main-recent-hires', this)">Recent Hires</button>
         <button class="tab active" onclick="switchMainTab('main-workforce-status', this)">Good To Work</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
@@ -2013,7 +2050,7 @@
     <div class="mini-note" id="newhire-cert-upload-label" style="margin-bottom:14px;">Upload employee certification cards/photos.</div>
     <div class="detail-card" style="background:#f8fafc;margin-bottom:12px;">
       <h3 style="margin-bottom:6px;">Required Certification Files</h3>
-      <div class="helper-text">Upload clear photos or PDFs. These save back to the new hire packet and can be reviewed from Employee Certs / New Hire Intake.</div>
+      <div class="helper-text">Upload clear photos or PDFs. These save back to the new hire packet and can be reviewed from Existing Employees / New Hires.</div>
     </div>
     <div class="report-grid">
       <div class="field"><label>OSHA 30 / OSHA 10</label><input id="newhire-cert-osha" type="file" accept=".pdf,image/*" /></div>
@@ -2604,6 +2641,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveNewHireIntake = saveNewHireIntake;
   window.loadNewHireIntakes = loadNewHireIntakes;
   window.renderNewHireIntakes = renderNewHireIntakes;
+  window.renderRecentHires = renderRecentHires;
   window.copyNewHireIntakeText = copyNewHireIntakeText;
   window.copyNewHireIntakeTextById = copyNewHireIntakeTextById;
   window.openNewHireReview = openNewHireReview;
@@ -4492,13 +4530,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
     if (!list) return;
     const q = String(filterText || document.getElementById('employee-search')?.value || '').trim().toLowerCase();
+    const certFilter = document.getElementById('cert-watch-filter')?.value || 'all';
     const employees = allEmployees.filter(emp => {
       const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
       const haystack = [
         emp.name, emp.trade, emp.email, emp.phone, emp.notes,
         ...certs.flatMap(c => [c.title, c.type, c.fileName, c.expirationDate])
       ].filter(Boolean).join(' ').toLowerCase();
-      return !q || haystack.includes(q);
+      const matchesSearch = !q || haystack.includes(q);
+      if (!matchesSearch) return false;
+      if (certFilter === 'missing') return !certs.length;
+      if (certFilter === 'expired') return certs.some(c => getCertStatusKey(c.expirationDate) === 'expired');
+      if (certFilter === 'soon') return certs.some(c => getCertStatusKey(c.expirationDate) === 'warn');
+      if (certFilter === 'no-expiration') return certs.some(c => !c.expirationDate);
+      if (certFilter === 'valid') return certs.length && certs.every(c => getCertStatusKey(c.expirationDate) === 'active');
+      return true;
     });
 
     if (!employees.length) {
@@ -4559,7 +4605,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const main = document.getElementById('employees-list-main');
     const detail = document.getElementById('employees-list');
     if (main && detail && main !== detail) {
-      // Keep the Project Detail Employees tab in sync with the main Employee Certs tab.
+      // Keep the Project Detail Employees tab in sync with the main Existing Employees tab.
       detail.innerHTML = main.innerHTML;
     }
   }
@@ -6218,6 +6264,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       const snap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
       allNewHireIntakes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderNewHireIntakes();
+      renderRecentHires();
     } catch (e) {
       console.error(e);
       const list = document.getElementById('newhire-list-main');
@@ -6281,6 +6328,65 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
       </div>
     </div>`).join('');
+  }
+
+  function getNewHireCreatedDate(x) {
+    const raw = x?.createdAt;
+    if (raw?.toDate) return raw.toDate();
+    if (raw?.seconds) return new Date(raw.seconds * 1000);
+    if (typeof raw === 'string') {
+      const d = new Date(raw);
+      if (!Number.isNaN(d.getTime())) return d;
+    }
+    if (x?.startDate) {
+      const d = new Date(x.startDate + 'T00:00:00');
+      if (!Number.isNaN(d.getTime())) return d;
+    }
+    return null;
+  }
+
+  function renderRecentHires() {
+    const list = document.getElementById('recent-hire-list-main');
+    if (!list) return;
+    const days = Number(document.getElementById('recent-hire-range')?.value || 30);
+    const search = (document.getElementById('recent-hire-search')?.value || '').toLowerCase().trim();
+    const cutoff = new Date();
+    cutoff.setHours(0,0,0,0);
+    cutoff.setDate(cutoff.getDate() - days);
+    const items = (allNewHireIntakes || []).filter(x => {
+      const created = getNewHireCreatedDate(x);
+      if (!created || created < cutoff) return false;
+      if (!search) return true;
+      return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status]
+        .some(v => String(v || '').toLowerCase().includes(search));
+    });
+    if (!items.length) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">Recent</div><h3>No recent hires found</h3><p>Try a longer date range or create a new intake request.</p></div>`;
+      return;
+    }
+    list.innerHTML = items.map(x => {
+      const created = getNewHireCreatedDate(x);
+      const createdLabel = created ? created.toLocaleDateString() : 'Date not saved';
+      return `<div class="newhire-card">
+        <div class="newhire-card-header">
+          <div>
+            <h4>${esc(x.name || 'New Hire')}</h4>
+            <div class="newhire-meta">
+              <span>Created ${esc(createdLabel)}</span>
+              ${x.trade ? `<span>${esc(x.trade)}</span>` : ''}
+              ${x.projectName ? `<span>${esc(x.projectName)}</span>` : ''}
+              ${x.projectJobNumber ? `<span>Job ${esc(x.projectJobNumber)}</span>` : ''}
+              ${(x.certFiles || []).length ? `<span>${(x.certFiles || []).length} cert file(s)</span>` : ''}
+            </div>
+          </div>
+          <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
+        </div>
+        <div class="newhire-actions">
+          <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
+          <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
+        </div>
+      </div>`;
+    }).join('');
   }
 
   function copyNewHireIntakeText() {
@@ -6719,7 +6825,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-    const topTarget = ['main-employees', 'main-new-hires', 'main-workforce-status'].includes(tabId)
+    const topTarget = ['main-employees', 'main-new-hires', 'main-recent-hires', 'main-workforce-status'].includes(tabId)
       ? 'main-employees'
       : tabId;
     const topTab = document.querySelector(`#main-dashboard-tabs .tab[onclick*="${topTarget}"]`);
@@ -6731,6 +6837,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
     if (tabId === 'main-new-hires') loadNewHireIntakes(true);
+    if (tabId === 'main-recent-hires') loadNewHireIntakes(true);
     if (tabId === 'main-workforce-status') loadWorkforceStatusDashboard(true);
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();
