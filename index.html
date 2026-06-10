@@ -1502,7 +1502,8 @@
           </form>
           <h3 class="subhead">Attendee Sign-In</h3>
           <table><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="toolbox-signin-rows"></tbody></table>
-          <p class="save-note">Print front and back (double-sided) for additional sign-in rows.</p>
+          <p style="margin-top:8px;"><button class="btn secondary" type="button" onclick="addSignatureRow('toolbox-signin-rows')">+ Add Crew Row</button></p>
+          <p class="save-note">Start with 3 rows and add more crew members as needed.</p>
           <div style="margin-top:24px;border-top:2px solid var(--line);padding-top:16px;">
             <div class="form-grid">
               <div class="field"><label>Supervisor / Foreman Printed Name</label><input name="sup_name" form="toolbox-signin-form"></div>
@@ -3473,14 +3474,23 @@
   if (!tbody) return;
   tbody.innerHTML = '';
   for (let i = start; i <= end; i++) {
-    const row = document.createElement('tr');
-    row.innerHTML =
-      '<td style="width:28px;vertical-align:bottom;padding:0 4px 4px;">' + i + '</td>' +
-      '<td style="vertical-align:bottom;padding:0 4px 0;"><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:4px 2px;font:inherit;background:transparent;"></td>' +
-      '<td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>';
-    tbody.appendChild(row);
+    addSignatureRow(targetId);
   }
-  tbody.querySelectorAll('canvas').forEach(initSigPad);
+}
+function addSignatureRow(targetId) {
+  const tbody = document.getElementById(targetId);
+  if (!tbody) return;
+  const i = tbody.children.length + 1;
+  const row = document.createElement('tr');
+  row.innerHTML =
+    '<td style="width:28px;vertical-align:bottom;padding:0 4px 4px;">' + i + '</td>' +
+    '<td style="vertical-align:bottom;padding:0 4px 0;"><input style="width:100%;border:none;border-bottom:2px solid #a9b8c8;padding:4px 2px;font:inherit;background:transparent;"></td>' +
+    '<td style="vertical-align:bottom;padding:0 4px 0;min-width:160px;"><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td>';
+  tbody.appendChild(row);
+  row.querySelectorAll('canvas').forEach(initSigPad);
+}
+    function createSignRows(targetId, start, end) {
+  addSignRows(targetId, start, end);
 }
     function initSigPad(canvas) {
       if (!canvas) return;
@@ -3692,6 +3702,8 @@
       if (wkRows) { wkRows.innerHTML = ''; addWeeklyFpRow(); }
       const workerRows = page.querySelector('#worker-rows');
       if (workerRows) { workerRows.innerHTML = ''; }
+      const toolboxRows = page.querySelector('#toolbox-signin-rows');
+      if (toolboxRows) { toolboxRows.innerHTML = ''; createSignRows('toolbox-signin-rows', 1, 3); }
     }
     function checkAllTopics() {
       const boxes = document.querySelectorAll('#new-hire-orientation input[type="checkbox"]');
@@ -4417,7 +4429,7 @@ function syncJobNumber(value) {
   const container = document.getElementById('talk-detail-view');
   document.getElementById('talk-grid-view').classList.add('hidden');
   container.classList.remove('hidden');
-  const rows = Array.from({length: 10}, function(_, i) {
+  const rows = Array.from({length: 3}, function(_, i) {
     return '<tr><td>' + (i + 1) + '</td><td><input name="attendee_' + (i + 1) + '" style="width:100%"></td><td><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>';
   }).join('');
   container.innerHTML =
@@ -4439,7 +4451,8 @@ function syncJobNumber(value) {
           '<div class="field"><label>PAL Job No.</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" inputmode="numeric"></div>' +
           '<div class="field"><label>Conducted By</label><input name="submitted_by"></div>' +
         '</div>' +
-        '<table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody>' + rows + '</tbody></table>' +
+        '<table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="toolbox-talk-detail-rows">' + rows + '</tbody></table>' +
+        '<p style="margin-top:8px;"><button class="btn secondary" type="button" onclick="addSignatureRow(\'toolbox-talk-detail-rows\')">+ Add Crew Row</button></p>' +
         '<div style="margin-top:24px;border-top:2px solid #dde3ea;padding-top:16px;">' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">' +
             '<div class="field"><label>Supervisor / Foreman Printed Name</label><input name="sup_name" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
@@ -4630,7 +4643,7 @@ function closeTalk() {
       createSignRows('dsm-back', 12, 26);
       createSignRows('ai-dsm-front', 1, 11);
       createSignRows('ai-dsm-back', 12, 26);
-      createSignRows('toolbox-signin-rows', 1, 20);
+      createSignRows('toolbox-signin-rows', 1, 3);
       for (let i = 0; i < 3; i++) addWorkerRow();
       for (let i = 0; i < 5; i++) addTimesheetRow();
       for (let i = 0; i < 26; i++) addWeeklyFpRow();
