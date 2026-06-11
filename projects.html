@@ -1472,6 +1472,21 @@
           <p>Open a blank ticket, choose the project inside the ticket, and submit it to that project.</p>
           <button class="btn-save" type="button" onclick="event.stopPropagation(); openExtraWorkTicketModal()">Open Blank Ticket</button>
         </div>
+        <div class="foreman-tool-card tool-launch" role="button" tabindex="0" data-foreman-target="foreman-tool-daily-payroll" onclick="openForemanToolModal('foreman-tool-daily-payroll')" onkeydown="handleForemanToolCardKey(event, 'foreman-tool-daily-payroll')">
+          <h3>Daily Payroll</h3>
+          <p>Daily worker time sheet with regular and overtime hour totals.</p>
+          <button class="btn-outline" type="button" onclick="event.stopPropagation(); openForemanToolModal('foreman-tool-daily-payroll')">Open Daily Payroll</button>
+        </div>
+        <div class="foreman-tool-card tool-launch" role="button" tabindex="0" data-foreman-target="foreman-tool-weekly-payroll" onclick="openForemanToolModal('foreman-tool-weekly-payroll')" onkeydown="handleForemanToolCardKey(event, 'foreman-tool-weekly-payroll')">
+          <h3>Weekly Payroll</h3>
+          <p>Weekly fireproofing payroll sheet with cost codes and daily hours.</p>
+          <button class="btn-outline" type="button" onclick="event.stopPropagation(); openForemanToolModal('foreman-tool-weekly-payroll')">Open Weekly Payroll</button>
+        </div>
+        <div class="foreman-tool-card tool-launch" role="button" tabindex="0" data-foreman-target="foreman-tool-expense-report" onclick="openForemanToolModal('foreman-tool-expense-report')" onkeydown="handleForemanToolCardKey(event, 'foreman-tool-expense-report')">
+          <h3>Expense Report</h3>
+          <p>Expense entry sheet with categories, totals, cash advance, and amount due.</p>
+          <button class="btn-outline" type="button" onclick="event.stopPropagation(); openForemanToolModal('foreman-tool-expense-report')">Open Expense Report</button>
+        </div>
         <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="toast('Future foreman tools area is ready.')" onkeydown="handleForemanToolCardKey(event, 'future-tools')">
           <h3>Future Tools</h3>
           <p>Good place for QR crew sign-in links, project-specific toolbox talks, photo shortcuts, and foreman-only tools.</p>
@@ -1679,6 +1694,106 @@
           <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
         </div>
         <div class="ai-safety-note">AI assisted report text is a starting point only. Foreman must review and edit before saving.</div>
+      </div>
+      </div>
+
+      <div class="foreman-tool-pane" id="foreman-tool-daily-payroll">
+      <div class="ai-safety-panel">
+        <h3>Daily Payroll</h3>
+        <p>Daily worker hours log. Regular and overtime totals calculate from time in/time out.</p>
+        <div class="daily-report-form-grid">
+          <div class="field span-2"><label>Project</label><select id="daily-payroll-project-select"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Job Number</label><input id="daily-payroll-job-number" /></div>
+          <div class="field"><label>Date</label><input id="daily-payroll-date" type="date" /></div>
+          <div class="field"><label>Foreman / Supervisor</label><input id="daily-payroll-foreman" /></div>
+          <div class="field"><label>Week Of</label><input id="daily-payroll-week-of" /></div>
+          <div class="field span-2"><label>Job Address</label><input id="daily-payroll-address" /></div>
+        </div>
+        <div class="ticket-table-wrap">
+          <table class="ticket-table">
+            <thead><tr><th>#</th><th>Worker Name</th><th>LU #</th><th>Trade / Role</th><th>Time In</th><th>Time Out</th><th>Reg Hrs</th><th>OT Hrs</th><th>Total</th><th></th></tr></thead>
+            <tbody id="daily-payroll-rows"></tbody>
+          </table>
+        </div>
+        <div class="ai-safety-actions"><button class="btn-outline" type="button" onclick="addDailyPayrollRow()">Add Worker</button><button class="btn-outline" type="button" onclick="clearDailyPayroll()">Clear Sheet</button></div>
+        <div class="ai-safety-grid" style="margin-top:14px;">
+          <div class="field"><label>Foreman / Supervisor Printed Name</label><input id="daily-payroll-print-name" /></div>
+          <div class="field"><label>Date Signed</label><input id="daily-payroll-date-signed" type="date" /></div>
+          <div class="field span-2"><label>Foreman / Supervisor Signature</label><input id="daily-payroll-signature" class="ai-signature-input" /></div>
+        </div>
+        <div class="foreman-form-actions">
+          <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+        </div>
+      </div>
+      </div>
+
+      <div class="foreman-tool-pane" id="foreman-tool-weekly-payroll">
+      <div class="ai-safety-panel">
+        <h3>Weekly Payroll</h3>
+        <p>Weekly fireproofing payroll sheet. Weekday OT starts after 8 hours; Saturday and Sunday count as OT.</p>
+        <div class="daily-report-form-grid">
+          <div class="field span-2"><label>Project</label><select id="weekly-payroll-project-select"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Page #</label><input id="weekly-payroll-page" /></div>
+          <div class="field"><label>Date</label><input id="weekly-payroll-date" type="date" /></div>
+          <div class="field"><label>Job Number</label><input id="weekly-payroll-job-number" /></div>
+          <div class="field"><label>Supervisor</label><input id="weekly-payroll-supervisor" /></div>
+          <div class="field"><label>Week Of</label><input id="weekly-payroll-week-of" /></div>
+          <div class="field span-2"><label>Job Address / Location</label><input id="weekly-payroll-location" /></div>
+        </div>
+        <div class="ticket-table-wrap">
+          <table class="ticket-table">
+            <thead><tr><th>LU #</th><th>Name</th><th>Cost Code</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th><th>Reg</th><th>OT</th><th>Total</th><th></th></tr></thead>
+            <tbody id="weekly-payroll-rows"></tbody>
+          </table>
+        </div>
+        <div class="ai-safety-actions"><button class="btn-outline" type="button" onclick="addWeeklyPayrollRow()">Add Row</button><button class="btn-outline" type="button" onclick="clearWeeklyPayroll()">Clear Sheet</button></div>
+        <div class="doc-review-box" style="margin-top:14px;">
+          <h4>Common Fireproofing Cost Codes</h4>
+          <p>Supervisor FP 35-0001 | Operating Engineer FP 35-0002 | Sprayer FP 35-0003 | Labor FP 35-0004 | Project Manager FP 35-0005 | Firewatch FP 35-0006 | Cleanup FP 35-0009</p>
+        </div>
+        <div class="foreman-form-actions">
+          <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+        </div>
+      </div>
+      </div>
+
+      <div class="foreman-tool-pane" id="foreman-tool-expense-report">
+      <div class="ai-safety-panel">
+        <h3>Expense Report</h3>
+        <p>Expense report with category rows, grand total, cash advance, and total due employee.</p>
+        <div class="daily-report-form-grid">
+          <div class="field span-2"><label>Project</label><select id="expense-report-project-select"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Employee Name</label><input id="expense-employee-name" /></div>
+          <div class="field"><label>Report Date</label><input id="expense-report-date" type="date" /></div>
+          <div class="field"><label>Department / Purpose</label><input id="expense-purpose" /></div>
+          <div class="field"><label>Account #</label><input id="expense-account" value="23-5245" /></div>
+          <div class="field"><label>Trip Start</label><input id="expense-trip-start" type="date" /></div>
+          <div class="field"><label>Trip End</label><input id="expense-trip-end" type="date" /></div>
+        </div>
+        <div class="ticket-table-wrap">
+          <table class="ticket-table">
+            <thead><tr><th>Description</th><th>Date</th><th>Category</th><th>Amount</th><th></th></tr></thead>
+            <tbody id="foreman-expense-rows"></tbody>
+          </table>
+        </div>
+        <div class="ai-safety-actions"><button class="btn-outline" type="button" onclick="addForemanExpenseRow()">Add Expense Row</button><button class="btn-outline" type="button" onclick="clearForemanExpenseReport()">Clear Sheet</button></div>
+        <div class="daily-report-form-grid" style="margin-top:14px;">
+          <div class="field"><label>Total Reported</label><input id="foreman-expense-total-reported" readonly value="0.00" /></div>
+          <div class="field"><label>Less Cash Advance</label><input id="foreman-expense-cash-advance" type="number" step="0.01" oninput="updateForemanExpenseTotals()" /></div>
+          <div class="field"><label>Total Due Employee</label><input id="foreman-expense-total-due" readonly value="0.00" /></div>
+          <div class="field"><label>Approver Printed Name</label><input id="foreman-expense-approver" /></div>
+          <div class="field"><label>Date Signed</label><input id="foreman-expense-date-signed" type="date" /></div>
+          <div class="field span-2"><label>Approver Signature</label><input id="foreman-expense-signature" class="ai-signature-input" /></div>
+        </div>
+        <div class="foreman-form-actions">
+          <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+        </div>
       </div>
       </div>
     </div>
@@ -2771,6 +2886,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.handleForemanToolCardKey = handleForemanToolCardKey;
   window.addManualSafetySignRow = addManualSafetySignRow;
   window.addAiSafetySignRow = addAiSafetySignRow;
+  window.addDailyPayrollRow = addDailyPayrollRow;
+  window.calcDailyPayrollRow = calcDailyPayrollRow;
+  window.renumberDailyPayrollRows = renumberDailyPayrollRows;
+  window.clearDailyPayroll = clearDailyPayroll;
+  window.addWeeklyPayrollRow = addWeeklyPayrollRow;
+  window.calcWeeklyPayrollRow = calcWeeklyPayrollRow;
+  window.clearWeeklyPayroll = clearWeeklyPayroll;
+  window.addForemanExpenseRow = addForemanExpenseRow;
+  window.updateForemanExpenseTotals = updateForemanExpenseTotals;
+  window.clearForemanExpenseReport = clearForemanExpenseReport;
   window.submitForemanToolToProject = submitForemanToolToProject;
   window.printForemanTool = printForemanTool;
   window.saveForemanToolPdf = saveForemanToolPdf;
@@ -3319,7 +3444,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       manualSelect.innerHTML = optionHTML;
       if (currentProject?.id) manualSelect.value = currentProject.id;
     }
-    ['manual-report-project-select','ai-report-project-select'].forEach(id => {
+    ['manual-report-project-select','ai-report-project-select','daily-payroll-project-select','weekly-payroll-project-select','expense-report-project-select'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         el.innerHTML = optionHTML;
@@ -3341,11 +3466,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (manualForeman && !manualForeman.value) manualForeman.value = name;
     if (manualSpeaker && !manualSpeaker.value) manualSpeaker.value = name;
     if (manualPrint && !manualPrint.value) manualPrint.value = name;
-    ['manual-report-date','ai-report-date'].forEach(id => {
+    ['manual-report-date','ai-report-date','daily-payroll-date','weekly-payroll-date','expense-report-date','daily-payroll-date-signed','foreman-expense-date-signed'].forEach(id => {
       const el = document.getElementById(id);
       if (el && !el.value) el.value = new Date().toISOString().slice(0, 10);
     });
-    ['manual-report-supervisor','ai-report-supervisor'].forEach(id => {
+    ['manual-report-supervisor','ai-report-supervisor','daily-payroll-foreman','daily-payroll-print-name','weekly-payroll-supervisor','expense-employee-name'].forEach(id => {
       const el = document.getElementById(id);
       if (el && !el.value) el.value = name;
     });
@@ -3373,7 +3498,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     'foreman-tool-manual-safety': 'Manual Daily Safety Sheet',
     'foreman-tool-ai-safety': 'AI Assisted Daily Safety Sheet',
     'foreman-tool-manual-report': 'Manual Daily Report',
-    'foreman-tool-ai-report': 'AI Assisted Daily Report'
+    'foreman-tool-ai-report': 'AI Assisted Daily Report',
+    'foreman-tool-daily-payroll': 'Daily Payroll',
+    'foreman-tool-weekly-payroll': 'Weekly Payroll',
+    'foreman-tool-expense-report': 'Expense Report'
   };
 
   function openForemanToolModal(tabId, editingExisting = false) {
@@ -3398,6 +3526,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const card = document.querySelector(`#main-foreman-tools .tool-launch[data-foreman-target="${tabId}"]`);
     if (card) card.classList.add('is-active');
     refreshAiSafetyProjectOptions();
+    initForemanPayrollExpenseTool(tabId);
     document.getElementById('modal-foreman-tool')?.classList.add('open');
   }
 
@@ -3420,6 +3549,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const card = document.querySelector(`#main-foreman-tools .tool-launch[data-foreman-target="${tabId}"]`);
     if (card) card.classList.add('is-active');
     refreshAiSafetyProjectOptions();
+    initForemanPayrollExpenseTool(tabId);
     if (pane) setTimeout(() => pane.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 
@@ -3459,6 +3589,146 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function addAiSafetySignRow() {
     addSafetySignRow('ai-safety-sign-rows');
+  }
+
+  function initForemanPayrollExpenseTool(tabId) {
+    if (tabId === 'foreman-tool-daily-payroll' && !document.querySelector('#daily-payroll-rows tr')) {
+      for (let i = 0; i < 5; i++) addDailyPayrollRow();
+    }
+    if (tabId === 'foreman-tool-weekly-payroll' && !document.querySelector('#weekly-payroll-rows tr')) {
+      for (let i = 0; i < 8; i++) addWeeklyPayrollRow();
+    }
+    if (tabId === 'foreman-tool-expense-report' && !document.querySelector('#foreman-expense-rows tr')) {
+      for (let i = 0; i < 3; i++) addForemanExpenseRow();
+    }
+  }
+
+  function calcDailyPayrollRow(tr) {
+    if (!tr) return;
+    const start = tr.querySelector('.daily-payroll-in')?.value;
+    const end = tr.querySelector('.daily-payroll-out')?.value;
+    const regEl = tr.querySelector('.daily-payroll-reg');
+    const otEl = tr.querySelector('.daily-payroll-ot');
+    const totalEl = tr.querySelector('.daily-payroll-total');
+    if (!start || !end) {
+      if (regEl) regEl.value = '';
+      if (otEl) otEl.value = '';
+      if (totalEl) totalEl.value = '';
+      return;
+    }
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+    let mins = (eh * 60 + em) - (sh * 60 + sm) - 30;
+    if (mins < 0) mins = 0;
+    const total = mins / 60;
+    const reg = Math.min(total, 8);
+    const ot = Math.max(total - 8, 0);
+    if (regEl) regEl.value = reg ? reg.toFixed(2) : '';
+    if (otEl) otEl.value = ot ? ot.toFixed(2) : '';
+    if (totalEl) totalEl.value = total ? total.toFixed(2) : '';
+  }
+
+  function addDailyPayrollRow() {
+    const tbody = document.getElementById('daily-payroll-rows');
+    if (!tbody) return;
+    const rowNum = tbody.querySelectorAll('tr').length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${rowNum}</td>
+      <td><input /></td>
+      <td><input /></td>
+      <td><input /></td>
+      <td><input type="time" class="daily-payroll-in" oninput="calcDailyPayrollRow(this.closest('tr'))" /></td>
+      <td><input type="time" class="daily-payroll-out" oninput="calcDailyPayrollRow(this.closest('tr'))" /></td>
+      <td><input class="daily-payroll-reg" readonly /></td>
+      <td><input class="daily-payroll-ot" readonly /></td>
+      <td><input class="daily-payroll-total" readonly /></td>
+      <td><button class="btn-sm danger" type="button" onclick="this.closest('tr').remove(); renumberDailyPayrollRows()">Remove</button></td>`;
+    tbody.appendChild(tr);
+  }
+
+  function renumberDailyPayrollRows() {
+    document.querySelectorAll('#daily-payroll-rows tr').forEach((tr, index) => { tr.cells[0].textContent = index + 1; });
+  }
+
+  function clearDailyPayroll() {
+    if (!confirm('Clear all daily payroll rows?')) return;
+    const tbody = document.getElementById('daily-payroll-rows');
+    if (tbody) tbody.innerHTML = '';
+    for (let i = 0; i < 5; i++) addDailyPayrollRow();
+  }
+
+  function calcWeeklyPayrollRow(tr) {
+    if (!tr) return;
+    const weekdays = ['mon','tue','wed','thu','fri'];
+    const weekends = ['sat','sun'];
+    let reg = 0;
+    let ot = 0;
+    weekdays.forEach(day => {
+      const hrs = parseFloat(tr.querySelector(`.weekly-payroll-${day}`)?.value || 0);
+      reg += Math.min(hrs, 8);
+      ot += Math.max(hrs - 8, 0);
+    });
+    weekends.forEach(day => { ot += parseFloat(tr.querySelector(`.weekly-payroll-${day}`)?.value || 0); });
+    const total = reg + ot;
+    tr.querySelector('.weekly-payroll-reg').value = reg ? reg.toFixed(2) : '';
+    tr.querySelector('.weekly-payroll-ot').value = ot ? ot.toFixed(2) : '';
+    tr.querySelector('.weekly-payroll-total').value = total ? total.toFixed(2) : '';
+  }
+
+  function addWeeklyPayrollRow() {
+    const tbody = document.getElementById('weekly-payroll-rows');
+    if (!tbody) return;
+    const dayInput = day => `<td><input type="number" min="0" max="24" step="0.5" class="weekly-payroll-${day}" oninput="calcWeeklyPayrollRow(this.closest('tr'))" /></td>`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input /></td><td><input /></td><td><input /></td>
+      ${['mon','tue','wed','thu','fri','sat','sun'].map(dayInput).join('')}
+      <td><input class="weekly-payroll-reg" readonly /></td>
+      <td><input class="weekly-payroll-ot" readonly /></td>
+      <td><input class="weekly-payroll-total" readonly /></td>
+      <td><button class="btn-sm danger" type="button" onclick="this.closest('tr').remove()">Remove</button></td>`;
+    tbody.appendChild(tr);
+  }
+
+  function clearWeeklyPayroll() {
+    if (!confirm('Clear all weekly payroll rows?')) return;
+    const tbody = document.getElementById('weekly-payroll-rows');
+    if (tbody) tbody.innerHTML = '';
+    for (let i = 0; i < 8; i++) addWeeklyPayrollRow();
+  }
+
+  function addForemanExpenseRow() {
+    const tbody = document.getElementById('foreman-expense-rows');
+    if (!tbody) return;
+    const categories = ['Air/Rail','Car Rental','Auto Expenses','Taxi/Toll','Lodging','Breakfast','Lunch','Dinner','Entertainment','Misc'];
+    const options = categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input /></td>
+      <td><input type="date" /></td>
+      <td><select>${options}</select></td>
+      <td><input type="number" min="0" step="0.01" class="foreman-expense-amount" oninput="updateForemanExpenseTotals()" /></td>
+      <td><button class="btn-sm danger" type="button" onclick="this.closest('tr').remove(); updateForemanExpenseTotals()">Remove</button></td>`;
+    tbody.appendChild(tr);
+    updateForemanExpenseTotals();
+  }
+
+  function updateForemanExpenseTotals() {
+    const amounts = Array.from(document.querySelectorAll('#foreman-expense-rows .foreman-expense-amount')).map(input => parseFloat(input.value || 0));
+    const total = amounts.reduce((sum, value) => sum + value, 0);
+    const advance = parseFloat(document.getElementById('foreman-expense-cash-advance')?.value || 0);
+    const totalReported = document.getElementById('foreman-expense-total-reported');
+    const totalDue = document.getElementById('foreman-expense-total-due');
+    if (totalReported) totalReported.value = total.toFixed(2);
+    if (totalDue) totalDue.value = (total - advance).toFixed(2);
+  }
+
+  function clearForemanExpenseReport() {
+    if (!confirm('Clear all expense rows?')) return;
+    const tbody = document.getElementById('foreman-expense-rows');
+    if (tbody) tbody.innerHTML = '';
+    for (let i = 0; i < 3; i++) addForemanExpenseRow();
+    const advance = document.getElementById('foreman-expense-cash-advance');
+    if (advance) advance.value = '';
+    updateForemanExpenseTotals();
   }
 
   async function submitForemanToolToProject() {
