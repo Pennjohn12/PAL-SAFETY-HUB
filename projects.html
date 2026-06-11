@@ -719,6 +719,7 @@
     .workforce-overview-card.hold { border-left-color:#dc2626; }
     .workforce-overview-card.info { border-left-color:#2563eb; }
     .workforce-overview-actions { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 18px; }
+    .workforce-overview-actions .btn-sm, .cert-email-actions .btn-save, .cert-email-actions .btn-outline { min-height:42px; }
     .workforce-overview-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:8px 0 10px; }
     .workforce-overview-heading h3 { margin:0; color:var(--navy); font-size:18px; }
     .workforce-overview-heading span { color:var(--muted); font-size:12px; font-weight:800; }
@@ -736,8 +737,15 @@
     .cert-email-actions { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 0; }
     .loaded-stamp { color:var(--muted); font-size:12px; font-weight:800; margin-bottom:10px; }
     @media(max-width:900px){ .workforce-overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media(max-width:700px){ .cert-email-meta { grid-template-columns:1fr; } .workforce-attention-row{align-items:flex-start; flex-direction:column;} }
-    @media(max-width:560px){ .workforce-overview-grid { grid-template-columns:1fr; } }
+    @media(max-width:700px){
+      .cert-email-meta { grid-template-columns:1fr; }
+      .workforce-attention-row{align-items:stretch; flex-direction:column;}
+      .workforce-attention-row .btn-sm, .workforce-overview-actions .btn-sm, .cert-email-actions .btn-save, .cert-email-actions .btn-outline { width:100%; justify-content:center; min-height:44px; }
+      .workforce-filter-row, .workforce-filter-row .search-row { display:block; width:100%; min-width:0; }
+      .workforce-filter-row .inline-select { width:100%; min-height:44px; }
+      .workforce-overview-heading { align-items:flex-start; flex-direction:column; gap:4px; }
+    }
+    @media(max-width:560px){ .workforce-overview-grid { grid-template-columns:1fr; } .cert-email-preview { min-height:280px; font-size:12px; } }
 
     .employee-card { cursor:pointer; }
     .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
@@ -981,7 +989,9 @@
     .workforce-person h4 { margin:0 0 4px; color:var(--text); font-size:15px; }
     .workforce-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
     .workforce-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .workforce-actions .btn-sm { min-height:38px; }
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
+    @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
 
   </style>
 
@@ -1747,6 +1757,7 @@
         <div class="cert-email-actions">
           <button class="btn-save" type="button" onclick="copyCertEmailPreview()">Copy Email Body</button>
           <button class="btn-outline" type="button" onclick="openCertEmailDraft()">Open Email Draft</button>
+          <button class="btn-outline" type="button" onclick="downloadCertEmailPreview()">Download Text</button>
         </div>
       </div>
     </div>
@@ -2714,6 +2725,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.renderCertEmailPreview = renderCertEmailPreview;
   window.copyCertEmailPreview = copyCertEmailPreview;
   window.openCertEmailDraft = openCertEmailDraft;
+  window.downloadCertEmailPreview = downloadCertEmailPreview;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
   window.editCertification = editCertification;
@@ -4752,6 +4764,19 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const subject = document.getElementById('cert-email-subject')?.value.trim() || 'PAL Certification Watch - Expired and 30-Day Certs';
     const body = document.getElementById('cert-email-body')?.value || buildCertEmailText();
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  function downloadCertEmailPreview() {
+    const body = document.getElementById('cert-email-body')?.value || buildCertEmailText();
+    const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pal-cert-watch-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 
 
@@ -6989,6 +7014,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       await updateDoc(doc(db, 'newHireIntakes', id), { status, updatedAt: serverTimestamp() });
       toast(`Status updated: ${status}`);
       await loadNewHireIntakes(true);
+      if (document.getElementById('workforce-overview-status-board')) {
+        renderWorkforceAttention();
+        renderWorkforceStatusDashboardEnhanced('workforce-overview-status-summary', 'workforce-overview-status-board', 'workforce-status-filter');
+      }
+      if (document.getElementById('workforce-status-board')) renderWorkforceStatusDashboardEnhanced();
       if (document.getElementById('modal-newhire-review')?.classList.contains('open')) openNewHireReview(id);
     } catch (e) { console.error(e); toast('Could not update status.'); }
   }
@@ -7126,7 +7156,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div class="workforce-person">
         <h4>${esc(x.name)}</h4>
         <p>${x.trade ? `Trade: ${esc(x.trade)}<br>` : ''}${x.project ? `Project: ${esc(x.project)}<br>` : ''}${esc(x.detail || '')}</p>
-        <div class="workforce-actions"><button class="btn-sm" onclick="${x.action}">Open</button></div>
+        <div class="workforce-actions">${Array.isArray(x.actions) && x.actions.length
+          ? x.actions.map(a => `<button class="btn-sm ${a.tone === 'danger' ? 'danger' : ''}" type="button" onclick="${a.action}">${esc(a.label)}</button>`).join('')
+          : `<button class="btn-sm" type="button" onclick="${x.action}">Open</button>`}</div>
       </div>`).join('') : `<p style="color:var(--muted);font-size:13px;">${emptyText}</p>`}</div>`;
   }
 
@@ -7149,7 +7181,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           ? `Cleared intake packet. Cert files: ${certCount}. Payroll/ID files: ${payrollCount}.`
           : `${status}. Cert files: ${certCount}. Payroll/ID files: ${payrollCount}.`,
         statusKey: status === 'Good To Work' ? 'good' : 'missing',
-        action: `openNewHireReview('${esc(x.id)}')`
+        action: `openNewHireReview('${esc(x.id)}')`,
+        actions: [
+          { label: 'Open', action: `openNewHireReview('${esc(x.id)}')` },
+          { label: 'Text Link', action: `copyNewHireIntakeTextById('${esc(x.id)}')` },
+          ...(status === 'Good To Work'
+            ? [{ label: 'Mark Missing', action: `setNewHireStatus('${esc(x.id)}','Missing Info')`, tone: 'danger' }]
+            : [
+                { label: 'Ready Review', action: `setNewHireStatus('${esc(x.id)}','Ready for Review')` },
+                { label: 'Good To Work', action: `setNewHireStatus('${esc(x.id)}','Good To Work')` },
+                { label: 'Missing Info', action: `setNewHireStatus('${esc(x.id)}','Missing Info')`, tone: 'danger' }
+              ])
+        ]
       };
       if (status === 'Good To Work') good.push(base);
       else missing.push(base);
@@ -7168,7 +7211,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           : !p.total ? 'No certs uploaded yet.'
           : `All ${p.total} cert${p.total === 1 ? '' : 's'} currently valid.`,
         statusKey: p.expired.length ? 'expired' : (p.soon.length || !p.total ? 'missing' : 'good'),
-        action: `openEmployeeDetail('${esc(emp.id)}')`
+        action: `openEmployeeDetail('${esc(emp.id)}')`,
+        actions: [
+          { label: 'Open', action: `openEmployeeDetail('${esc(emp.id)}')` },
+          { label: 'Upload Cert', action: `openCertificationModal('${esc(emp.id)}')` }
+        ]
       };
       if (p.expired.length) hold.push(row);
       else if (p.soon.length || !p.total) missing.push(row);
