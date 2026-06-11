@@ -711,6 +711,15 @@
       padding:14px;
       box-shadow:0 4px 12px rgba(16,24,40,.04);
       border-left:5px solid var(--navy);
+      cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .workforce-overview-card:hover,
+    .workforce-overview-card:focus {
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(16,24,40,.08);
+      outline:none;
+      border-color:#cbd5e1;
     }
     .workforce-overview-card strong { display:block; font-size:26px; color:var(--navy); line-height:1; margin-bottom:6px; }
     .workforce-overview-card span { color:var(--muted); font-size:12px; font-weight:800; }
@@ -2734,6 +2743,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.searchEmployees = searchEmployees;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.loadWorkforceOverview = loadWorkforceOverview;
+  window.openWorkforceOverviewTarget = openWorkforceOverviewTarget;
+  window.handleWorkforceOverviewCardKey = handleWorkforceOverviewCardKey;
   window.renderWorkforceStatusDashboardEnhanced = renderWorkforceStatusDashboardEnhanced;
   window.loadCertEmailPreview = loadCertEmailPreview;
   window.renderCertEmailPreview = renderCertEmailPreview;
@@ -4584,14 +4595,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       else intakeCounts.pending++;
     });
     el.innerHTML = `<div class="workforce-overview-grid">
-      <div class="workforce-overview-card info"><strong>${(allEmployees || []).length}</strong><span>Employees</span></div>
-      <div class="workforce-overview-card warn"><strong>${intakeCounts.pending}</strong><span>New Hires Pending</span></div>
-      <div class="workforce-overview-card info"><strong>${intakeCounts.review}</strong><span>Ready for Review</span></div>
-      <div class="workforce-overview-card good"><strong>${intakeCounts.good}</strong><span>Good To Work</span></div>
-      <div class="workforce-overview-card warn"><strong>${intakeCounts.missing}</strong><span>Missing Info</span></div>
-      <div class="workforce-overview-card hold"><strong>${certData.expired.length}</strong><span>Expired Certs</span></div>
-      <div class="workforce-overview-card warn"><strong>${certData.soon.length}</strong><span>Expiring in 30 Days</span></div>
-      <div class="workforce-overview-card hold"><strong>${noCerts}</strong><span>Employees With No Certs</span></div>
+      <div class="workforce-overview-card info" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('employees')" onkeydown="handleWorkforceOverviewCardKey(event, 'employees')"><strong>${(allEmployees || []).length}</strong><span>Employees</span></div>
+      <div class="workforce-overview-card warn" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('pending')" onkeydown="handleWorkforceOverviewCardKey(event, 'pending')"><strong>${intakeCounts.pending}</strong><span>New Hires Pending</span></div>
+      <div class="workforce-overview-card info" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('review')" onkeydown="handleWorkforceOverviewCardKey(event, 'review')"><strong>${intakeCounts.review}</strong><span>Ready for Review</span></div>
+      <div class="workforce-overview-card good" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('good')" onkeydown="handleWorkforceOverviewCardKey(event, 'good')"><strong>${intakeCounts.good}</strong><span>Good To Work</span></div>
+      <div class="workforce-overview-card warn" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('missing-info')" onkeydown="handleWorkforceOverviewCardKey(event, 'missing-info')"><strong>${intakeCounts.missing}</strong><span>Missing Info</span></div>
+      <div class="workforce-overview-card hold" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('expired')" onkeydown="handleWorkforceOverviewCardKey(event, 'expired')"><strong>${certData.expired.length}</strong><span>Expired Certs</span></div>
+      <div class="workforce-overview-card warn" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('soon')" onkeydown="handleWorkforceOverviewCardKey(event, 'soon')"><strong>${certData.soon.length}</strong><span>Expiring in 30 Days</span></div>
+      <div class="workforce-overview-card hold" role="button" tabindex="0" onclick="openWorkforceOverviewTarget('no-certs')" onkeydown="handleWorkforceOverviewCardKey(event, 'no-certs')"><strong>${noCerts}</strong><span>Employees With No Certs</span></div>
     </div>
     <div class="workforce-overview-actions">
       <button class="btn-sm" type="button" onclick="switchMainTab('main-employees')">Open Employees</button>
@@ -4624,6 +4635,56 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     <div id="workforce-overview-status-board"></div>`;
     renderWorkforceAttention();
     renderWorkforceStatusDashboardEnhanced('workforce-overview-status-summary', 'workforce-overview-status-board', 'workforce-status-filter');
+  }
+
+  function handleWorkforceOverviewCardKey(event, target) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openWorkforceOverviewTarget(target);
+    }
+  }
+
+  function openWorkforceOverviewTarget(target) {
+    const applyEmployeeFilter = value => {
+      const filter = document.getElementById('cert-watch-filter');
+      if (filter) filter.value = value;
+      renderEmployeesList();
+    };
+    const applyNewHireFilter = (value, activeTab = '') => {
+      const intake = document.getElementById('onboarding-intake-section');
+      const good = document.getElementById('onboarding-good-section');
+      const history = document.getElementById('onboarding-history-section');
+      if (intake) intake.style.display = '';
+      if (good) good.style.display = 'none';
+      if (history) history.style.display = 'none';
+      document.querySelectorAll('[data-onboarding-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.onboardingTab === activeTab));
+      const filter = document.getElementById('newhire-status-filter');
+      if (filter) filter.value = value;
+      renderNewHireIntakes();
+    };
+
+    if (target === 'employees') {
+      switchMainTab('main-employees');
+      setTimeout(() => applyEmployeeFilter('all'), 0);
+      return;
+    }
+    if (target === 'expired' || target === 'soon' || target === 'no-certs') {
+      switchMainTab('main-employees');
+      const filterMap = { expired: 'expired', soon: 'soon', 'no-certs': 'missing' };
+      setTimeout(() => applyEmployeeFilter(filterMap[target]), 0);
+      return;
+    }
+    if (target === 'pending' || target === 'review' || target === 'missing-info' || target === 'good') {
+      switchMainTab('main-employee-onboarding');
+      const statusMap = {
+        pending: 'Pending',
+        review: 'Ready for Review',
+        'missing-info': 'Missing Info',
+        good: 'Good To Work'
+      };
+      const activeTabMap = { pending: 'pending', review: 'review', 'missing-info': '', good: '' };
+      setTimeout(() => applyNewHireFilter(statusMap[target], activeTabMap[target]), 0);
+    }
   }
 
 
