@@ -718,7 +718,25 @@
     .workforce-overview-card.warn { border-left-color:#d97706; }
     .workforce-overview-card.hold { border-left-color:#dc2626; }
     .workforce-overview-card.info { border-left-color:#2563eb; }
+    .workforce-overview-actions { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 18px; }
+    .workforce-overview-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:8px 0 10px; }
+    .workforce-overview-heading h3 { margin:0; color:var(--navy); font-size:18px; }
+    .workforce-overview-heading span { color:var(--muted); font-size:12px; font-weight:800; }
+    .workforce-attention-list { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; margin:0 0 18px; }
+    .workforce-attention-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 12px; border-top:1px solid var(--line); }
+    .workforce-attention-row:first-child { border-top:0; }
+    .workforce-attention-main { font-weight:900; color:var(--text); }
+    .workforce-attention-sub { color:var(--muted); font-size:12px; margin-top:2px; line-height:1.4; }
+    .workforce-filter-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin:0 0 12px; }
+    .workforce-filter-row .search-row { margin:0; flex:1; min-width:260px; }
+    .cert-email-panel { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 4px 14px rgba(16,24,40,.04); }
+    .cert-email-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0 0 14px; }
+    .cert-email-meta .field { margin-bottom:0; }
+    .cert-email-preview { width:100%; min-height:340px; resize:vertical; border:1.5px solid var(--line); border-radius:12px; padding:14px; font:13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:var(--text); background:#f8fafc; }
+    .cert-email-actions { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 0; }
+    .loaded-stamp { color:var(--muted); font-size:12px; font-weight:800; margin-bottom:10px; }
     @media(max-width:900px){ .workforce-overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:700px){ .cert-email-meta { grid-template-columns:1fr; } .workforce-attention-row{align-items:flex-start; flex-direction:column;} }
     @media(max-width:560px){ .workforce-overview-grid { grid-template-columns:1fr; } }
 
     .employee-card { cursor:pointer; }
@@ -1599,6 +1617,7 @@
         <button class="tab active" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
         <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
         <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
+        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Office snapshot of onboarding, employee records, and certification risk.</div>
       <div id="workforce-overview-summary">
@@ -1618,6 +1637,7 @@
         <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
         <button class="tab active" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
         <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
+        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Existing employee files and certification records live here so the office can track expired, expiring, missing, and valid certs.</div>
       <div id="cert-alert-summary-main"></div>
@@ -1649,6 +1669,7 @@
         <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
         <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
         <button class="tab active" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
+        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Track each new hire from intake sent, to office review, to Good To Work approval, then keep a searchable new-hire history.</div>
       <div class="tabs" style="margin-bottom:14px;">
@@ -1698,6 +1719,36 @@
       </div>
       <div id="workforce-status-board"></div>
     </div>
+    </div>
+
+    <div class="tab-pane" id="main-cert-email-preview">
+      <div class="page-header">
+        <h2>Cert Email Preview</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadCertEmailPreview(true)">Refresh</button>
+          <button class="btn-add" onclick="copyCertEmailPreview()">Copy Email</button>
+        </div>
+      </div>
+      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
+        <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
+        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
+        <button class="tab active" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Preview the expired and 30-day certification email before this becomes an automatic weekly or monthly send.</div>
+      <div id="cert-email-summary"></div>
+      <div class="cert-email-panel">
+        <div class="cert-email-meta">
+          <div class="field"><label>To</label><input id="cert-email-to" placeholder="office@palcorp.com" oninput="renderCertEmailPreview()" /></div>
+          <div class="field"><label>Frequency</label><select id="cert-email-frequency" onchange="renderCertEmailPreview()"><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+          <div class="field"><label>Subject</label><input id="cert-email-subject" oninput="renderCertEmailPreview()" /></div>
+        </div>
+        <textarea id="cert-email-body" class="cert-email-preview" readonly></textarea>
+        <div class="cert-email-actions">
+          <button class="btn-save" type="button" onclick="copyCertEmailPreview()">Copy Email Body</button>
+          <button class="btn-outline" type="button" onclick="openCertEmailDraft()">Open Email Draft</button>
+        </div>
+      </div>
     </div>
 
     <div class="tab-pane" id="main-tickets">
@@ -2658,6 +2709,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.searchEmployees = searchEmployees;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.loadWorkforceOverview = loadWorkforceOverview;
+  window.renderWorkforceStatusDashboardEnhanced = renderWorkforceStatusDashboardEnhanced;
+  window.loadCertEmailPreview = loadCertEmailPreview;
+  window.renderCertEmailPreview = renderCertEmailPreview;
+  window.copyCertEmailPreview = copyCertEmailPreview;
+  window.openCertEmailDraft = openCertEmailDraft;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
   window.editCertification = editCertification;
@@ -4511,7 +4567,37 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       <div class="workforce-overview-card warn"><strong>${certData.soon.length}</strong><span>Expiring in 30 Days</span></div>
       <div class="workforce-overview-card hold"><strong>${noCerts}</strong><span>Employees With No Certs</span></div>
     </div>
-    <div class="helper-text">This overview is read-only for now. Use Existing Employees, New Hires, Recent Hires, and Good To Work for follow-up actions.</div>`;
+    <div class="workforce-overview-actions">
+      <button class="btn-sm" type="button" onclick="switchMainTab('main-employees')">Open Existing Employees</button>
+      <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('review')">Review New Hires</button>
+      <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('good')">Open Good To Work</button>
+    </div>
+    <div class="workforce-overview-heading">
+      <h3>Needs Attention</h3>
+      <span>Highest priority follow-up</span>
+    </div>
+    <div id="workforce-attention-list"></div>
+    <div class="workforce-overview-heading">
+      <h3>Worker Status</h3>
+      <span>Employees and intake packets</span>
+    </div>
+    <div class="workforce-filter-row">
+      <div class="search-row">
+        <select id="workforce-status-filter" class="inline-select" onchange="renderWorkforceStatusDashboardEnhanced('workforce-overview-status-summary', 'workforce-overview-status-board', 'workforce-status-filter')">
+          <option value="all">All Worker Status</option>
+          <option value="employees">Employees Only</option>
+          <option value="intakes">New Hires Only</option>
+          <option value="expired">Expired Certs / Hold</option>
+          <option value="missing">Missing / Needs Review</option>
+          <option value="good">Good To Work</option>
+        </select>
+      </div>
+      <div id="workforce-overview-loaded" class="loaded-stamp"></div>
+    </div>
+    <div id="workforce-overview-status-summary"></div>
+    <div id="workforce-overview-status-board"></div>`;
+    renderWorkforceAttention();
+    renderWorkforceStatusDashboardEnhanced('workforce-overview-status-summary', 'workforce-overview-status-board', 'workforce-status-filter');
   }
 
 
@@ -4594,6 +4680,78 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const el = document.getElementById(id);
       if (el) el.innerHTML = warningHTML;
     });
+  }
+
+  function buildCertEmailText() {
+    const data = getCertAlertData();
+    const frequency = document.getElementById('cert-email-frequency')?.value || 'weekly';
+    const warnings = data.warnings;
+    const lines = [];
+    lines.push(`PAL Certification Watch - ${frequency === 'monthly' ? 'Monthly' : 'Weekly'} Update`);
+    lines.push('');
+    lines.push(`Expired certifications: ${data.expired.length}`);
+    lines.push(`Expiring within 30 days: ${data.soon.length}`);
+    lines.push('');
+    if (!warnings.length) {
+      lines.push('No expired certifications or certifications expiring within 30 days were found.');
+    } else {
+      lines.push('Please review the workers below and follow up with the supervisor/foreman before these employees continue work that requires the listed certification.');
+      lines.push('');
+      data.expired.forEach(c => {
+        lines.push(`EXPIRED - ${c.employeeName} - ${c.certTitle}${c.expirationDate ? ` - expired ${c.expirationDate}` : ''}`);
+      });
+      if (data.expired.length && data.soon.length) lines.push('');
+      data.soon.forEach(c => {
+        lines.push(`30 DAY NOTICE - ${c.employeeName} - ${c.certTitle}${c.expirationDate ? ` - expires ${c.expirationDate}` : ''}${Number.isFinite(c.days) ? ` (${c.days} day${c.days === 1 ? '' : 's'} left)` : ''}`);
+      });
+    }
+    lines.push('');
+    lines.push('Generated from PAL Safety Hub. Office should verify records before forwarding.');
+    return lines.join('\n');
+  }
+
+  async function loadCertEmailPreview(force = false) {
+    const summary = document.getElementById('cert-email-summary');
+    if (summary) summary.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading certification email preview...</p>';
+    try {
+      if (force || !allEmployees || !allEmployees.length) {
+        const empSnap = await getDocs(collection(db, 'employees'));
+        allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+      }
+      const subject = document.getElementById('cert-email-subject');
+      if (subject && !subject.value) subject.value = 'PAL Certification Watch - Expired and 30-Day Certs';
+      renderCertEmailPreview();
+    } catch (e) {
+      console.error('Cert email preview failed', e);
+      if (summary) summary.innerHTML = '<div class="empty-state"><div class="icon">Warning</div><h3>Could not load cert email preview</h3><p>Check connection and refresh.</p></div>';
+    }
+  }
+
+  function renderCertEmailPreview() {
+    const data = getCertAlertData();
+    const summary = document.getElementById('cert-email-summary');
+    const body = document.getElementById('cert-email-body');
+    if (summary) summary.innerHTML = `<div class="cert-alert-summary">
+      <div class="cert-alert-box expired"><strong>${data.expired.length}</strong><span>Expired Certs</span></div>
+      <div class="cert-alert-box soon"><strong>${data.soon.length}</strong><span>Expiring Within 30 Days</span></div>
+      <div class="cert-alert-box valid"><strong>${data.valid.length}</strong><span>Valid Certs</span></div>
+    </div>`;
+    if (body) body.value = buildCertEmailText();
+  }
+
+  function copyCertEmailPreview() {
+    const body = document.getElementById('cert-email-body')?.value || buildCertEmailText();
+    navigator.clipboard?.writeText(body)
+      .then(() => toast('Certification email copied.'))
+      .catch(() => toast('Could not copy certification email.'));
+  }
+
+  function openCertEmailDraft() {
+    const to = document.getElementById('cert-email-to')?.value.trim() || '';
+    const subject = document.getElementById('cert-email-subject')?.value.trim() || 'PAL Certification Watch - Expired and 30-Day Certs';
+    const body = document.getElementById('cert-email-body')?.value || buildCertEmailText();
+    window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
 
@@ -6855,7 +7013,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         } catch (e) { console.warn('Employee status load warning', e); }
       }
-      renderWorkforceStatusDashboard();
+      renderWorkforceStatusDashboardEnhanced();
     } catch (e) {
       console.error('Workforce status dashboard failed', e);
       if (summary) summary.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Could not load workforce status</h3><p>Check connection and refresh.</p></div>';
@@ -6869,7 +7027,59 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return { expired, soon, total: certs.length };
   }
 
-  function buildWorkforceRows() {
+  function buildWorkforceAttentionRows() {
+    const rows = [];
+    const certData = getCertAlertData();
+    certData.warnings.forEach(c => {
+      rows.push({
+        priority: c.status === 'expired' ? 1 : 2,
+        title: `${c.employeeName} - ${c.certTitle}`,
+        detail: c.status === 'expired'
+          ? `Expired${c.expirationDate ? ' on ' + c.expirationDate : ''}`
+          : `Expires in ${c.days} day${c.days === 1 ? '' : 's'}${c.expirationDate ? ' on ' + c.expirationDate : ''}`,
+        action: `openEmployeeDetail('${esc(c.employeeId)}')`,
+        label: c.status === 'expired' ? 'Expired' : '30 Day'
+      });
+    });
+    (allNewHireIntakes || []).forEach(x => {
+      const status = String(x.status || 'Pending');
+      if (status === 'Good To Work') return;
+      const missing = [];
+      if (!x.orientationForm?.completed) missing.push('orientation');
+      if (!x.drugConsentForm?.completed) missing.push('drug consent');
+      if (!x.safetyAgreementForm?.completed) missing.push('safety agreement');
+      if (!((x.certFiles || []).length || x.certUploadsCompleted)) missing.push('certs');
+      if (!((x.payrollIdFiles || []).length || x.payrollIdUploadsCompleted)) missing.push('payroll/ID');
+      rows.push({
+        priority: status === 'Ready for Review' ? 3 : 4,
+        title: x.name || 'New Hire',
+        detail: status === 'Ready for Review' ? 'Ready for office review' : `Missing: ${missing.length ? missing.join(', ') : status}`,
+        action: `openNewHireReview('${esc(x.id)}')`,
+        label: status
+      });
+    });
+    return rows.sort((a, b) => a.priority - b.priority).slice(0, 10);
+  }
+
+  function renderWorkforceAttention() {
+    const el = document.getElementById('workforce-attention-list');
+    if (!el) return;
+    const rows = buildWorkforceAttentionRows();
+    el.innerHTML = rows.length ? `<div class="workforce-attention-list">
+      ${rows.map(r => `<div class="workforce-attention-row">
+        <div>
+          <div class="workforce-attention-main">${esc(r.title)}</div>
+          <div class="workforce-attention-sub">${esc(r.detail)}</div>
+        </div>
+        <button class="btn-sm" type="button" onclick="${r.action}">${esc(r.label)}</button>
+      </div>`).join('')}
+    </div>` : `<div class="workforce-attention-list"><div class="workforce-attention-row">
+      <div><div class="workforce-attention-main">Nothing urgent right now</div><div class="workforce-attention-sub">Expired certs, 30-day certs, and incomplete onboarding items will show here.</div></div>
+      <span class="cert-status-pill active">Clear</span>
+    </div></div>`;
+  }
+
+  function buildWorkforceRowsEnhanced() {
     const good = [];
     const missing = [];
     const hold = [];
@@ -6920,9 +7130,57 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       </div>`).join('') : `<p style="color:var(--muted);font-size:13px;">${emptyText}</p>`}</div>`;
   }
 
-  function renderWorkforceStatusDashboard() {
-    const summary = document.getElementById('workforce-status-summary');
-    const board = document.getElementById('workforce-status-board');
+  function buildWorkforceRows() {
+    const good = [];
+    const missing = [];
+    const hold = [];
+
+    (allNewHireIntakes || []).forEach(x => {
+      const status = String(x.status || 'Pending');
+      const certCount = (x.certFiles || []).length;
+      const payrollCount = (x.payrollIdFiles || []).length;
+      const base = {
+        id: x.id,
+        type: 'intake',
+        name: x.name || 'New Hire',
+        project: x.projectName || '',
+        trade: x.trade || '',
+        detail: status === 'Good To Work'
+          ? `Cleared intake packet. Cert files: ${certCount}. Payroll/ID files: ${payrollCount}.`
+          : `${status}. Cert files: ${certCount}. Payroll/ID files: ${payrollCount}.`,
+        statusKey: status === 'Good To Work' ? 'good' : 'missing',
+        action: `openNewHireReview('${esc(x.id)}')`
+      };
+      if (status === 'Good To Work') good.push(base);
+      else missing.push(base);
+    });
+
+    (allEmployees || []).forEach(emp => {
+      const p = getEmployeeCertProblem(emp);
+      const row = {
+        id: emp.id,
+        type: 'employee',
+        name: emp.name || 'Employee',
+        project: '',
+        trade: emp.trade || '',
+        detail: p.expired.length ? `${p.expired.length} expired cert${p.expired.length === 1 ? '' : 's'} - hold until updated.`
+          : p.soon.length ? `${p.soon.length} cert${p.soon.length === 1 ? '' : 's'} expiring within 30 days.`
+          : !p.total ? 'No certs uploaded yet.'
+          : `All ${p.total} cert${p.total === 1 ? '' : 's'} currently valid.`,
+        statusKey: p.expired.length ? 'expired' : (p.soon.length || !p.total ? 'missing' : 'good'),
+        action: `openEmployeeDetail('${esc(emp.id)}')`
+      };
+      if (p.expired.length) hold.push(row);
+      else if (p.soon.length || !p.total) missing.push(row);
+      else good.push(row);
+    });
+
+    return { good, missing, hold };
+  }
+
+  function renderWorkforceStatusDashboard(summaryId = 'workforce-status-summary', boardId = 'workforce-status-board') {
+    const summary = document.getElementById(summaryId);
+    const board = document.getElementById(boardId);
     if (!summary || !board) return;
     const rows = buildWorkforceRows();
     summary.innerHTML = `<div class="workforce-status-grid">
@@ -6937,9 +7195,42 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>`;
   }
 
+  function renderWorkforceStatusDashboardEnhanced(summaryId = 'workforce-status-summary', boardId = 'workforce-status-board', filterId = '') {
+    const summary = document.getElementById(summaryId);
+    const board = document.getElementById(boardId);
+    if (!summary || !board) return;
+    const rows = buildWorkforceRows();
+    const filter = filterId ? (document.getElementById(filterId)?.value || 'all') : 'all';
+    const keep = x => {
+      if (filter === 'employees') return x.type === 'employee';
+      if (filter === 'intakes') return x.type === 'intake';
+      if (filter === 'expired') return x.statusKey === 'expired';
+      if (filter === 'missing') return x.statusKey === 'missing';
+      if (filter === 'good') return x.statusKey === 'good';
+      return true;
+    };
+    const visibleRows = {
+      good: rows.good.filter(keep),
+      missing: rows.missing.filter(keep),
+      hold: rows.hold.filter(keep)
+    };
+    summary.innerHTML = `<div class="workforce-status-grid">
+      <div class="workforce-status-card good"><strong>${visibleRows.good.length}</strong><span>Good To Work</span></div>
+      <div class="workforce-status-card missing"><strong>${visibleRows.missing.length}</strong><span>Missing / Needs Review</span></div>
+      <div class="workforce-status-card hold"><strong>${visibleRows.hold.length}</strong><span>Expired / Hold</span></div>
+    </div>`;
+    board.innerHTML = `<div class="workforce-board">
+      ${renderWorkforceColumn('Good To Work', visibleRows.good, 'No cleared workers match this filter.')}
+      ${renderWorkforceColumn('Missing / Needs Review', visibleRows.missing, 'No missing items match this filter.')}
+      ${renderWorkforceColumn('Expired / Hold', visibleRows.hold, 'No expired/hold items match this filter.')}
+    </div>`;
+    const stamp = document.getElementById('workforce-overview-loaded');
+    if (stamp) stamp.textContent = `Loaded ${(allEmployees || []).length} employees and ${(allNewHireIntakes || []).length} intake packets at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-    const topTarget = ['main-workforce-overview', 'main-employees', 'main-employee-onboarding'].includes(tabId)
+    const topTarget = ['main-workforce-overview', 'main-employees', 'main-employee-onboarding', 'main-cert-email-preview'].includes(tabId)
       ? 'main-workforce-overview'
       : tabId;
     const topTab = document.querySelector(`#main-dashboard-tabs .tab[onclick*="${topTarget}"]`);
@@ -6952,6 +7243,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
     if (tabId === 'main-employee-onboarding') loadEmployeeOnboarding(true);
+    if (tabId === 'main-cert-email-preview') loadCertEmailPreview(true);
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();
       setTimeout(() => openExtraWorkTicketModal(), 0);
