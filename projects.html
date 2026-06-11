@@ -830,6 +830,13 @@
 
 
     .header-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .header-actions .btn-add,
+    .header-actions .btn-outline,
+    .header-actions .btn-save,
+    .header-actions .btn-secondary {
+      min-height:42px;
+      white-space:nowrap;
+    }
     #main-tickets .btn-outline,
     #main-tickets #ticket-dashboard-summary,
     #main-tickets #ticket-dashboard-by-project,
@@ -919,9 +926,10 @@
       .project-header-card h2 { font-size: 20px; }
       .photo-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
       .project-summary-grid, .detail-grid, .report-grid { grid-template-columns: 1fr; }
-      .page-header { align-items: stretch; }
-      .header-actions { width:100%; }
-      .header-actions .btn-add, .header-actions .btn-outline { flex:1; justify-content:center; }
+      .page-header { align-items: stretch; display:block; }
+      .page-header h2 { font-size:22px; margin-bottom:10px; }
+      .header-actions { width:100%; display:grid; grid-template-columns:1fr; gap:8px; }
+      .header-actions .btn-add, .header-actions .btn-outline, .header-actions .btn-save, .header-actions .btn-secondary { width:100%; justify-content:center; min-height:44px; }
       .sticky-upload { flex-direction: column; }
       .sticky-upload .btn-upload { width:100%; }
     }
@@ -952,6 +960,42 @@
     .newhire-card h4 { color:var(--navy); font-size:16px; margin-bottom:4px; }
     .newhire-meta { font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
     .newhire-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .newhire-completion {
+      margin:12px 0 4px;
+      display:grid;
+      gap:7px;
+    }
+    .newhire-completion-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      color:var(--navy);
+      font-size:12px;
+      font-weight:900;
+    }
+    .newhire-progress-track {
+      height:9px;
+      border-radius:999px;
+      overflow:hidden;
+      background:#e5e7eb;
+      border:1px solid var(--line);
+    }
+    .newhire-progress-fill {
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:#d97706;
+      transition:width .2s ease;
+    }
+    .newhire-progress-fill.review { background:#2563eb; }
+    .newhire-progress-fill.good { background:#16a34a; }
+    .newhire-progress-fill.hold { background:#dc2626; }
+    .newhire-completion-missing {
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
     .newhire-share-box {
       background:#f8fafc; border:1px solid var(--line); border-radius:14px;
       padding:12px; margin-top:14px; white-space:pre-line; color:var(--text); font-size:13px; line-height:1.45;
@@ -959,6 +1003,7 @@
     .newhire-upload-list { display:grid; gap:8px; margin-top:10px; }
     .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
     @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
+    @media(max-width:600px){ .newhire-card-header { display:block; } .newhire-card-header .pill { margin-top:8px; } .newhire-actions .btn-sm { flex:1 1 100%; min-height:44px; } }
 
     /* FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 */
     .packet-form-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:12px; }
@@ -6655,6 +6700,35 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>`;
   }
 
+  function getNewHireCompletion(x) {
+    const checks = [
+      { key: 'orientation', label: 'Orientation', done: !!x.orientationForm?.completed },
+      { key: 'drug', label: 'Drug Consent', done: !!x.drugConsentForm?.completed },
+      { key: 'safety', label: 'Safety Agreement', done: !!x.safetyAgreementForm?.completed },
+      { key: 'certs', label: 'Certs', done: !!(x.certUploadsCompleted || (x.certFiles || []).length) },
+      { key: 'payroll', label: 'Payroll/ID', done: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length) },
+      { key: 'submitted', label: 'Final Submit', done: !!x.packetSubmitted }
+    ];
+    const done = checks.filter(c => c.done).length;
+    const percent = Math.round((done / checks.length) * 100);
+    const missing = checks.filter(c => !c.done).map(c => c.label);
+    const fillClass = String(x.status || '') === 'Good To Work' || percent === 100 ? 'good'
+      : String(x.status || '') === 'Missing Info' ? 'hold'
+      : String(x.status || '') === 'Ready for Review' ? 'review'
+      : '';
+    return { checks, done, total: checks.length, percent, missing, fillClass };
+  }
+
+  function renderNewHireCompletion(x) {
+    const c = getNewHireCompletion(x);
+    const missingText = c.missing.length ? `Missing: ${c.missing.join(', ')}` : 'All packet items complete';
+    return `<div class="newhire-completion">
+      <div class="newhire-completion-top"><span>Packet ${c.percent}% complete</span><span>${c.done}/${c.total}</span></div>
+      <div class="newhire-progress-track" aria-label="New hire packet ${c.percent}% complete"><div class="newhire-progress-fill ${c.fillClass}" style="width:${c.percent}%;"></div></div>
+      <div class="newhire-completion-missing">${esc(missingText)}</div>
+    </div>`;
+  }
+
   function renderNewHireIntakes() {
     const list = document.getElementById('newhire-list-main');
     if (!list) return;
@@ -6685,6 +6759,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         </div>
         <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
       </div>
+      ${renderNewHireCompletion(x)}
       <div class="newhire-actions">
         <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
         <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
@@ -6753,6 +6828,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           </div>
           <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
         </div>
+        ${renderNewHireCompletion(x)}
         <div class="newhire-actions">
           <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
           <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
