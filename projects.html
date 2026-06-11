@@ -876,6 +876,20 @@
       border:1.5px solid var(--line); border-radius:10px; padding:11px 14px; font:inherit; font-size:14px; outline:none; background:white;
       min-width:180px;
     }
+    .workforce-tabs {
+      gap:8px;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+    }
+    .workforce-tabs .tab {
+      min-height:42px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+    .pipeline-tabs .tab {
+      min-height:42px;
+    }
     .photo-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
     .photo-section-title { font-size:13px; font-weight:800; letter-spacing:.35px; text-transform:uppercase; color:var(--navy); margin:18px 0 10px; }
     .cert-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
@@ -1625,11 +1639,11 @@
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
         <button class="tab active" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
-        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
+        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
+        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Office snapshot of onboarding, employee records, and certification risk.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Office snapshot of new hires, employee records, and certification risk.</div>
       <div id="workforce-overview-summary">
         <div class="empty-state"><div class="icon">Workforce</div><h3>Workforce overview ready</h3><p>Click Refresh or open this tab to load the latest overview.</p></div>
       </div>
@@ -1645,9 +1659,9 @@
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
         <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab active" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
-        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
+        <button class="tab active" onclick="switchMainTab('main-employees', this)">Employees</button>
+        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
+        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Existing employee files and certification records live here so the office can track expired, expiring, missing, and valid certs.</div>
       <div id="cert-alert-summary-main"></div>
@@ -1663,13 +1677,13 @@
           <option value="valid">Valid</option>
         </select>
       </div>
-      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Existing Employees to load employee records.</p></div>
+      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Employees to load employee records.</p></div>
     </div>
 
 
     <div class="tab-pane" id="main-employee-onboarding">
       <div class="page-header">
-        <h2>Employee Onboarding</h2>
+        <h2>New Hire Pipeline</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadEmployeeOnboarding(true)">Refresh</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
@@ -1677,16 +1691,16 @@
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
         <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab active" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
-        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
+        <button class="tab active" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
+        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Track each new hire from intake sent, to office review, to Good To Work approval, then keep a searchable new-hire history.</div>
-      <div class="tabs" style="margin-bottom:14px;">
-        <button class="tab active" data-onboarding-tab="pending" onclick="switchOnboardingTab('pending')">Intake Pending</button>
-        <button class="tab" data-onboarding-tab="review" onclick="switchOnboardingTab('review')">Awaiting Review</button>
+      <div class="helper-text" style="margin-bottom:14px;">Track new hires from intake sent, to review, to Good To Work, with history kept in one place.</div>
+      <div class="tabs pipeline-tabs" style="margin-bottom:14px;">
+        <button class="tab active" data-onboarding-tab="pending" onclick="switchOnboardingTab('pending')">Pending</button>
+        <button class="tab" data-onboarding-tab="review" onclick="switchOnboardingTab('review')">Review</button>
         <button class="tab" data-onboarding-tab="good" onclick="switchOnboardingTab('good')">Good To Work</button>
-        <button class="tab" data-onboarding-tab="history" onclick="switchOnboardingTab('history')">New Hires</button>
+        <button class="tab" data-onboarding-tab="history" onclick="switchOnboardingTab('history')">History</button>
       </div>
       <div id="onboarding-intake-section">
       <div class="helper-text" id="onboarding-intake-helper" style="margin-bottom:14px;">Intake requests that have been sent and are still pending completion.</div>
@@ -1701,7 +1715,7 @@
           <option value="Missing Info">Missing Info</option>
         </select>
       </div>
-      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Open Employee Onboarding or click Refresh to load requests.</p></div>
+      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Open New Hire Pipeline or click Refresh to load requests.</p></div>
       </div>
 
       <div id="onboarding-history-section" style="display:none;">
@@ -1718,7 +1732,7 @@
         </select>
         <input class="search-input" id="recent-hire-search" placeholder="Search recent hires by name, project, trade, status..." oninput="renderRecentHires()" />
       </div>
-      <div id="recent-hire-list-main"><p style="color:var(--muted);font-size:14px;">Open New Hires or click Refresh to load intake activity.</p></div>
+      <div id="recent-hire-list-main"><p style="color:var(--muted);font-size:14px;">Open History or click Refresh to load intake activity.</p></div>
     </div>
 
 
@@ -1741,9 +1755,9 @@
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
         <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Existing Employees</button>
-        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Employee Onboarding</button>
-        <button class="tab active" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email Preview</button>
+        <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
+        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
+        <button class="tab active" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Preview the expired and 30-day certification email before this becomes an automatic weekly or monthly send.</div>
       <div id="cert-email-summary"></div>
@@ -2139,7 +2153,7 @@
     <div class="mini-note" id="newhire-cert-upload-label" style="margin-bottom:14px;">Upload employee certification cards/photos.</div>
     <div class="detail-card" style="background:#f8fafc;margin-bottom:12px;">
       <h3 style="margin-bottom:6px;">Required Certification Files</h3>
-      <div class="helper-text">Upload clear photos or PDFs. These save back to the new hire packet and can be reviewed from Existing Employees / New Hires.</div>
+      <div class="helper-text">Upload clear photos or PDFs. These save back to the new hire packet and can be reviewed from Employees / History.</div>
     </div>
     <div class="report-grid">
       <div class="field"><label>OSHA 30 / OSHA 10</label><input id="newhire-cert-osha" type="file" accept=".pdf,image/*" /></div>
@@ -4570,7 +4584,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       else intakeCounts.pending++;
     });
     el.innerHTML = `<div class="workforce-overview-grid">
-      <div class="workforce-overview-card info"><strong>${(allEmployees || []).length}</strong><span>Existing Employees</span></div>
+      <div class="workforce-overview-card info"><strong>${(allEmployees || []).length}</strong><span>Employees</span></div>
       <div class="workforce-overview-card warn"><strong>${intakeCounts.pending}</strong><span>New Hires Pending</span></div>
       <div class="workforce-overview-card info"><strong>${intakeCounts.review}</strong><span>Ready for Review</span></div>
       <div class="workforce-overview-card good"><strong>${intakeCounts.good}</strong><span>Good To Work</span></div>
@@ -4580,7 +4594,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       <div class="workforce-overview-card hold"><strong>${noCerts}</strong><span>Employees With No Certs</span></div>
     </div>
     <div class="workforce-overview-actions">
-      <button class="btn-sm" type="button" onclick="switchMainTab('main-employees')">Open Existing Employees</button>
+      <button class="btn-sm" type="button" onclick="switchMainTab('main-employees')">Open Employees</button>
       <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('review')">Review New Hires</button>
       <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('good')">Open Good To Work</button>
     </div>
