@@ -681,6 +681,46 @@
 
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
+    #view-detail .tab-pane.project-section-window {
+      position: fixed;
+      inset: 0;
+      z-index: 1700;
+      display: block;
+      overflow-y: auto;
+      background: #f5f7fb;
+      padding: 76px 18px 96px;
+    }
+    .project-section-window-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1710;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 6px 18px rgba(16,24,40,.08);
+    }
+    .project-section-window-bar h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 17px;
+    }
+    .project-section-window-bar .meta {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    @media (max-width: 700px) {
+      #view-detail .tab-pane.project-section-window { padding: 72px 12px 110px; }
+      .project-section-window-bar { padding: 10px 12px; }
+      .project-section-window-bar h3 { font-size: 15px; }
+    }
 
     /* Upload area */
     .upload-zone {
@@ -699,6 +739,22 @@
       background: white; border: 1px solid var(--line); border-radius: 14px;
       padding: 14px 16px; margin-bottom: 10px;
       display: flex; align-items: center; gap: 14px;
+    }
+    .project-record-tab {
+      cursor:pointer;
+      border-radius:8px;
+      transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+    .project-record-tab:hover,
+    .project-record-tab:focus {
+      border-color:var(--green);
+      box-shadow:0 10px 20px rgba(16,24,40,.10);
+      transform:translateY(-1px);
+      outline:none;
+    }
+    .project-record-tab .report-snippet,
+    .project-record-tab .file-clean-note {
+      display:none;
     }
     .file-icon { font-size: 28px; flex-shrink: 0; }
     .file-info { flex: 1; min-width: 0; }
@@ -2136,7 +2192,7 @@
     </div>
 
     <div class="project-summary-grid" id="project-access-cards">
-      <div class="summary-card project-access-card active" role="button" tabindex="0" data-project-section="tab-docs" onclick="openProjectAccessSection('tab-docs')" onkeydown="handleProjectAccessCardKey(event, 'tab-docs')"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-docs" onclick="openProjectAccessSection('tab-docs')" onkeydown="handleProjectAccessCardKey(event, 'tab-docs')"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-photos" onclick="openProjectAccessSection('tab-photos')" onkeydown="handleProjectAccessCardKey(event, 'tab-photos')"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Camera and library uploads</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-reports" onclick="openProjectAccessSection('tab-reports')" onkeydown="handleProjectAccessCardKey(event, 'tab-reports')"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="safety" onclick="openProjectAccessSection('tab-field-forms', 'safety')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'safety')"><div class="label">Safety Sheets</div><div class="value" id="summary-safety-forms">0</div><div class="sub">Crew safety sign-ins</div></div>
@@ -2161,7 +2217,11 @@
       </div>
       <div class="detail-card">
         <h3>Project Notes</h3>
-        <p id="detail-project-notes">No notes added for this project yet.</p>
+        <div class="field" style="margin-bottom:10px;">
+          <label>Notes</label>
+          <textarea id="detail-project-notes" rows="5" placeholder="Add project notes, office reminders, foreman updates, access notes, or anything important for this job."></textarea>
+        </div>
+        <button class="btn-outline" type="button" id="save-project-notes-btn" onclick="saveProjectNotes()">Save Notes</button>
         <div class="mini-note">Daily reports, photos, and documents stay attached to this project.</div>
       </div>
     </div>
@@ -2178,7 +2238,7 @@
     </div>
 
     <!-- DOCUMENTS TAB -->
-    <div class="tab-pane active" id="tab-docs">
+    <div class="tab-pane" id="tab-docs">
       <div class="action-row">
         <div>
           <div class="section-label">Uploaded Documents</div>
@@ -2186,12 +2246,11 @@
         </div>
         <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">Upload Documents</button>
       </div>
-      
       <div class="detail-card" style="margin:12px 0;">
         <h3 style="margin-bottom:6px;">Signature Workflow</h3>
-        <div class="helper-text">Best field method: open or download the document, sign it using the device markup/signature tool, then upload the signed copy back into this project. We can later add an in-app “Send for Signature / Sign & Save” workflow if you want it built directly into PAL Safety Hub.</div>
+        <div class="helper-text">Best field method: open or download the document, sign it using the device markup/signature tool, then upload the signed copy back into this project. We can later add an in-app Send for Signature / Sign & Save workflow if you want it built directly into PAL Safety Hub.</div>
       </div>
-
+      <div id="docs-history-filter"></div>
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
       <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
     </div>
@@ -2217,6 +2276,7 @@
           <button class="btn-outline" onclick="document.getElementById('photo-library-input').click()">Upload from Photos</button>
         </div>
       </div>
+      <div id="photos-history-filter"></div>
       <div id="photos-sections"></div>
       <div class="photo-grid" id="photos-grid"></div>
       <p id="no-photos-msg" style="color:var(--muted);font-size:14px;">No photos yet.</p>
@@ -2234,9 +2294,9 @@
         </div>
         <button class="btn-save" onclick="openDailyReportForm()">New Daily Report</button>
       </div>
+      <div id="reports-history-filter"></div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
     </div>
-
 
     <!-- FIELD FORMS TAB -->
     <div class="tab-pane" id="tab-field-forms">
@@ -2247,6 +2307,7 @@
         </div>
         <button class="btn-outline" type="button" onclick="loadProjectFieldForms()">Refresh</button>
       </div>
+      <div id="fieldForms-history-filter"></div>
       <div id="field-forms-list"><p style="color:var(--muted);font-size:14px;">No submitted field forms yet.</p></div>
     </div>
 
@@ -2259,10 +2320,10 @@
         </div>
         <button class="btn-save" type="button" onclick="openProjectTicketModal()">New Ticket for This Project</button>
       </div>
+      <div id="tickets-history-filter"></div>
       <div id="project-ticket-dashboard-summary"></div>
       <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
     </div>
-
 
     <!-- WAREHOUSE / EQUIPMENT TAB -->
     <div class="tab-pane" id="tab-project-warehouse">
@@ -2273,6 +2334,7 @@
         </div>
         <button class="btn-save" onclick="openWarehouseItemModal(currentProject?.id || '')">Add Item for This Project</button>
       </div>
+      <div id="warehouse-history-filter"></div>
       <div id="warehouse-dashboard-project"></div>
       <div id="warehouse-list-project"><p style="color:var(--muted);font-size:14px;">No warehouse records for this project yet.</p></div>
     </div>
@@ -3061,6 +3123,9 @@
   let allProjects = [];
   let projectAlphaFilter = 'all';
   let currentProjectFieldForms = [];
+  let currentProjectDocs = [];
+  let currentProjectPhotos = [];
+  let currentProjectReports = [];
   let activeProjectFieldFormFilter = 'all';
   let allTickets = [];
   let allNewHireIntakes = [];
@@ -3105,6 +3170,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.closeModal = closeModal;
   window.saveNewProject = saveNewProject;
   window.openProject = openProject;
+  window.saveProjectNotes = saveProjectNotes;
   window.renderProjectsList = renderProjectsList;
   window.setProjectAlphaFilter = setProjectAlphaFilter;
   window.clearProjectFilters = clearProjectFilters;
@@ -3118,7 +3184,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.previewDailyReportPhotos = previewDailyReportPhotos;
   window.copyProjectLink = copyProjectLink;
   window.openProjectAccessSection = openProjectAccessSection;
+  window.closeProjectSectionWindow = closeProjectSectionWindow;
   window.handleProjectAccessCardKey = handleProjectAccessCardKey;
+  window.updateProjectHistoryWeekOptions = updateProjectHistoryWeekOptions;
+  window.applyProjectHistoryFilter = applyProjectHistoryFilter;
+  window.clearProjectHistoryFilter = clearProjectHistoryFilter;
   window.openProjectFieldFormsMenu = openProjectFieldFormsMenu;
   window.openProjectForemanTool = openProjectForemanTool;
   window.openProjectExtraWorkTicket = openProjectExtraWorkTicket;
@@ -3621,6 +3691,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     currentProject = { id, ...data };
     currentProjectFieldForms = [];
+    currentProjectDocs = [];
+    currentProjectPhotos = [];
+    currentProjectReports = [];
     activeProjectFieldFormFilter = 'all';
     updateProjectFieldFormSummary([]);
     const url = new URL(window.location.href);
@@ -3644,9 +3717,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.getElementById('detail-info-location').textContent = data.location || '—';
     document.getElementById('detail-info-status').textContent = capitalize(data.status || 'active');
     document.getElementById('detail-info-created-by').textContent = data.createdByName || '—';
-    document.getElementById('detail-project-notes').textContent = data.notes || 'No notes added for this project yet.';
+    const notesEl = document.getElementById('detail-project-notes');
+    if (notesEl) notesEl.value = data.notes || '';
     showView('view-detail');
-    openProjectAccessSection('tab-docs');
+    closeProjectSectionWindow(false);
     await refreshProjectDetail(id);
     if (unsubProjectDetail) unsubProjectDetail();
     unsubProjectDetail = onSnapshot(doc(db, 'projects', id), async snap => {
@@ -3658,6 +3732,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         return;
       }
       currentProject = { id, ...snap.data() };
+      const notesEl = document.getElementById('detail-project-notes');
+      if (notesEl && document.activeElement !== notesEl) notesEl.value = currentProject.notes || '';
       updateProjectSummary(currentProjectDoc);
       loadProjectDocs(id);
       loadProjectPhotos(id);
@@ -3668,6 +3744,28 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
       if (document.getElementById('tab-project-warehouse')?.classList.contains('active')) renderProjectWarehouseTab();
     });
+  }
+
+  async function saveProjectNotes() {
+    if (!currentProject?.id) return toast('Open a project first.');
+    const btn = document.getElementById('save-project-notes-btn');
+    const notes = document.getElementById('detail-project-notes')?.value.trim() || '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+    try {
+      await updateDoc(doc(db, 'projects', currentProject.id), {
+        notes,
+        notesUpdatedAt: new Date().toISOString(),
+        notesUpdatedBy: currentUser?.email || currentUser?.uid || ''
+      });
+      currentProject.notes = notes;
+      currentProjectDoc = { ...(currentProjectDoc || {}), notes };
+      toast('Project notes saved.');
+    } catch (e) {
+      console.error(e);
+      toast('Could not save project notes: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Notes'; }
+    }
   }
 
   function backToProjects() {
@@ -3729,7 +3827,54 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     switchTab(tabId);
     setProjectAccessActive(tabId, tabId === 'tab-field-forms' ? activeProjectFieldFormFilter : '');
     const pane = document.getElementById(tabId);
-    if (pane) setTimeout(() => pane.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    if (pane) openProjectSectionWindow(pane, tabId);
+  }
+
+  function getProjectSectionTitle(tabId) {
+    if (tabId === 'tab-docs') return 'Documents';
+    if (tabId === 'tab-photos') return 'Photos';
+    if (tabId === 'tab-reports') return 'Daily Reports';
+    if (tabId === 'tab-project-tickets') return 'Tickets';
+    if (tabId === 'tab-project-warehouse') return 'Warehouse / Equipment';
+    if (tabId === 'tab-foremen') return 'Assigned Foremen';
+    if (tabId === 'tab-employees') return 'Employee Records';
+    if (tabId === 'tab-field-forms') {
+      const labels = { all:'Field Forms', safety:'Safety Sheets', payroll:'Payroll', expense:'Expense Reports', jha:'JHA / Checklist', other:'Other Field Forms' };
+      return labels[activeProjectFieldFormFilter] || 'Field Forms';
+    }
+    return 'Project Section';
+  }
+
+  function openProjectSectionWindow(pane, tabId) {
+    closeProjectSectionWindow(false);
+    let bar = pane.querySelector(':scope > .project-section-window-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'project-section-window-bar';
+      pane.prepend(bar);
+    }
+    bar.innerHTML = `
+      <div>
+        <h3>${esc(getProjectSectionTitle(tabId))}</h3>
+        <div class="meta">${esc(currentProject?.name || 'Project')}${currentProject?.jobNumber ? ' · Job ' + esc(currentProject.jobNumber) : ''}</div>
+      </div>
+      <button class="btn-secondary" type="button" onclick="closeProjectSectionWindow()">Back to Project</button>`;
+    pane.classList.add('project-section-window');
+    pane.classList.add('active');
+    const su = document.getElementById('sticky-upload');
+    if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
+    pane.scrollTop = 0;
+  }
+
+  function closeProjectSectionWindow(restoreScroll = true) {
+    document.querySelectorAll('#view-detail .tab-pane.project-section-window').forEach(pane => {
+      pane.classList.remove('project-section-window');
+      pane.classList.remove('active');
+    });
+    document.querySelectorAll('#project-access-cards .project-access-card').forEach(card => card.classList.remove('active'));
+    const su = document.getElementById('sticky-upload');
+    if (su) su.style.display = 'none';
+    if (restoreScroll) document.getElementById('project-access-cards')?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function handleProjectAccessCardKey(event, tabId, fieldFilter = 'all') {
@@ -5016,6 +5161,166 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       .trim() || 'PAL-Project-File';
   }
 
+  const projectHistoryLabels = {
+    docs: 'Documents',
+    photos: 'Photos',
+    reports: 'Daily Reports',
+    fieldForms: 'Field Forms',
+    tickets: 'Tickets',
+    warehouse: 'Warehouse'
+  };
+
+  function setupProjectHistoryFilter(kind) {
+    const host = document.getElementById(`${kind}-history-filter`);
+    if (!host || host.dataset.ready === '1') return;
+    host.dataset.ready = '1';
+    host.innerHTML = `
+      <div class="project-history-filter">
+        <div class="field">
+          <label>Month</label>
+          <input id="${kind}-filter-month" type="month" onchange="updateProjectHistoryWeekOptions('${kind}'); applyProjectHistoryFilter('${kind}')" />
+        </div>
+        <div class="field">
+          <label>Week</label>
+          <select id="${kind}-filter-week" onchange="applyProjectHistoryFilter('${kind}')">
+            <option value="all">All weeks</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Search</label>
+          <input id="${kind}-filter-search" type="search" placeholder="Search ${projectHistoryLabels[kind] || 'records'}..." oninput="applyProjectHistoryFilter('${kind}')" />
+        </div>
+        <div class="filter-actions">
+          <button class="btn-outline" type="button" onclick="clearProjectHistoryFilter('${kind}')">Clear</button>
+          <span class="project-history-count" id="${kind}-filter-count"></span>
+        </div>
+      </div>`;
+    updateProjectHistoryWeekOptions(kind);
+  }
+
+  function updateProjectHistoryWeekOptions(kind) {
+    const monthEl = document.getElementById(`${kind}-filter-month`);
+    const weekEl = document.getElementById(`${kind}-filter-week`);
+    if (!weekEl) return;
+    const current = weekEl.value;
+    weekEl.innerHTML = '<option value="all">All weeks</option>';
+    const month = monthEl?.value || '';
+    if (!month) return;
+    getMonthWeekRanges(month).forEach((range, index) => {
+      const opt = document.createElement('option');
+      opt.value = `${range.start}|${range.end}`;
+      opt.textContent = `Week ${index + 1}: ${formatShortDate(range.start)} - ${formatShortDate(addDays(range.end, -1))}`;
+      weekEl.appendChild(opt);
+    });
+    if ([...weekEl.options].some(opt => opt.value === current)) weekEl.value = current;
+  }
+
+  function applyProjectHistoryFilter(kind) {
+    if (kind === 'docs') return renderProjectDocsList();
+    if (kind === 'photos') return renderProjectPhotosList();
+    if (kind === 'reports') return renderProjectReportsList();
+    if (kind === 'fieldForms') return renderProjectFieldFormsList();
+    if (kind === 'tickets') return renderProjectTicketsTab();
+    if (kind === 'warehouse') return renderProjectWarehouseTab();
+  }
+
+  function clearProjectHistoryFilter(kind) {
+    ['month','search'].forEach(part => {
+      const el = document.getElementById(`${kind}-filter-${part}`);
+      if (el) el.value = '';
+    });
+    const week = document.getElementById(`${kind}-filter-week`);
+    if (week) week.innerHTML = '<option value="all">All weeks</option>';
+    applyProjectHistoryFilter(kind);
+  }
+
+  function getMonthWeekRanges(monthValue) {
+    const [year, month] = String(monthValue || '').split('-').map(Number);
+    if (!year || !month) return [];
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 1);
+    const ranges = [];
+    let start = startOfWeek(monthStart);
+    while (start < monthEnd) {
+      const end = addDays(start, 7);
+      ranges.push({ start: toDateInput(start < monthStart ? monthStart : start), end: toDateInput(end > monthEnd ? monthEnd : end) });
+      start = end;
+    }
+    return ranges;
+  }
+
+  function startOfWeek(date) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const day = d.getDay();
+    d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+    return d;
+  }
+
+  function addDays(value, days) {
+    const d = typeof value === 'string' ? new Date(value + 'T00:00:00') : new Date(value);
+    d.setDate(d.getDate() + days);
+    return d;
+  }
+
+  function toDateInput(date) {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function formatShortDate(value) {
+    try { return new Date(value + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
+    catch { return value; }
+  }
+
+  function projectRecordDate(item = {}, kind = '') {
+    const data = item.documentData || {};
+    const value = kind === 'fieldForms'
+      ? (data.date || data.reportDate || data.inspection_date || data.sup_date || data.week_start || item.localSubmittedAt || item.submittedAt)
+      : kind === 'docs'
+        ? (item.uploadedAt || item.createdAt)
+        : kind === 'photos'
+          ? (item.uploadedAt || item.createdAt)
+          : kind === 'reports'
+            ? (item.date || item.submittedAt || item.createdAt)
+            : kind === 'tickets'
+              ? (item.date || item.createdAt)
+              : (item.date || item.movedAt || item.createdAt || item.updatedAt);
+    return normalizeProjectDate(value);
+  }
+
+  function normalizeProjectDate(value) {
+    if (!value) return null;
+    if (value.toDate) return value.toDate();
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(value + 'T00:00:00');
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  function projectHistoryMatches(item, kind) {
+    setupProjectHistoryFilter(kind);
+    const month = document.getElementById(`${kind}-filter-month`)?.value || '';
+    const week = document.getElementById(`${kind}-filter-week`)?.value || 'all';
+    const search = (document.getElementById(`${kind}-filter-search`)?.value || '').trim().toLowerCase();
+    const d = projectRecordDate(item, kind);
+    if (month) {
+      if (!d) return false;
+      const itemMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}`;
+      if (itemMonth !== month) return false;
+    }
+    if (week && week !== 'all') {
+      if (!d) return false;
+      const [start, end] = week.split('|').map(v => new Date(v + 'T00:00:00'));
+      if (d < start || d >= end) return false;
+    }
+    if (search && !JSON.stringify(item).toLowerCase().includes(search)) return false;
+    return true;
+  }
+
+  function setProjectHistoryCount(kind, showing, total) {
+    const el = document.getElementById(`${kind}-filter-count`);
+    if (el) el.textContent = total ? `${showing} of ${total}` : '';
+  }
+
   async function downloadProjectFile(url, fileName = 'PAL-Project-File') {
     const cleanName = getCleanFileName(fileName);
     try {
@@ -5072,13 +5377,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function loadProjectDocs(projectId) {
     const snap = await getDoc(doc(db, 'projects', projectId));
     const data = snap.data();
-    const docs = data.documents || [];
+    currentProjectDocs = data.documents || [];
+    renderProjectDocsList();
+  }
+
+  function renderProjectDocsList() {
+    setupProjectHistoryFilter('docs');
+    const docs = currentProjectDocs.filter(d => projectHistoryMatches(d, 'docs'));
     const list = document.getElementById('docs-list');
-    if (!docs.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No documents yet.</p>'; return; }
+    setProjectHistoryCount('docs', docs.length, currentProjectDocs.length);
+    if (!docs.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No documents found for this filter.</p>'; return; }
     list.innerHTML = '';
     docs.forEach(d => {
       const row = document.createElement('div');
-      row.className = 'file-item';
+      row.className = 'file-item project-record-tab';
+      row.tabIndex = 0;
+      row.onclick = () => window.open(safeFileUrl(d.url), '_blank');
+      row.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); row.click(); } };
       row.innerHTML = `
         <div class="file-icon">${docIcon(d.name)}</div>
         <div class="file-info">
@@ -5086,8 +5401,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <p>${d.uploadedBy} · ${formatDate(d.uploadedAt)}</p>
         </div>
         <div class="file-actions">
-          <button class="btn-sm" data-url="${esc(safeFileUrl(d.url))}" data-name="${esc(d.name || 'Project document')}" onclick="downloadProjectFile(this.dataset.url, this.dataset.name)">Download</button>
-          <a href="${esc(safeFileUrl(d.url))}" target="_blank" rel="noopener" class="btn-sm">Open Backup</a>
+          <button class="btn-sm" data-url="${esc(safeFileUrl(d.url))}" data-name="${esc(d.name || 'Project document')}" onclick="event.stopPropagation(); downloadProjectFile(this.dataset.url, this.dataset.name)">Download</button>
+          <a href="${esc(safeFileUrl(d.url))}" target="_blank" rel="noopener" class="btn-sm" onclick="event.stopPropagation()">Open</a>
         </div>
         <div class="file-clean-note">Use Download for the cleanest save/share flow. On laptop, choose where to save when prompted.</div>`;
       list.appendChild(row);
@@ -5126,13 +5441,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function loadProjectPhotos(projectId) {
     const snap = await getDoc(doc(db, 'projects', projectId));
     const data = snap.data();
-    const photos = data.photos || [];
+    currentProjectPhotos = data.photos || [];
+    renderProjectPhotosList();
+  }
+
+  function renderProjectPhotosList() {
+    setupProjectHistoryFilter('photos');
+    const photos = currentProjectPhotos.filter(p => projectHistoryMatches(p, 'photos'));
     const grid = document.getElementById('photos-grid');
     const sections = document.getElementById('photos-sections');
     const msg = document.getElementById('no-photos-msg');
     grid.innerHTML = '';
     sections.innerHTML = '';
-    if (!photos.length) { msg.style.display = ''; return; }
+    setProjectHistoryCount('photos', photos.length, currentProjectPhotos.length);
+    if (!photos.length) { msg.textContent = 'No photos found for this filter.'; msg.style.display = ''; return; }
     msg.style.display = 'none';
     const grouped = {};
     photos.forEach(p => {
@@ -5220,6 +5542,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const snap = await getDocs(q);
       const rows = [];
       snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
+      currentProjectReports = rows;
       document.getElementById('summary-reports').textContent = rows.length;
       renderDailyReportDashboard(rows);
       if (currentProject) {
@@ -5228,40 +5551,51 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           updateDoc(projectRef, { reportCount: rows.length }).catch(() => {});
         }
       }
-      if (!rows.length) { renderDailyReportDashboard([]); list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p>'; return; }
-      list.innerHTML = '';
-      rows.forEach(r => {
-        const row = document.createElement('div');
-        row.className = 'report-card';
-        row.innerHTML = `
-          <div class="report-card-header">
-            <div>
-              <h4>${esc(r.date || 'Daily Report')}</h4>
-              <div class="report-meta">
-                <span>👷 ${esc(r.supervisor || r.foreman || r.submittedByName || 'Unknown')}</span>
-                ${r.job_number ? `<span>📋 ${esc(r.job_number)}</span>` : ''}
-                ${r.conditions ? `<span>☁️ ${esc(r.conditions)}</span>` : ''}
-                ${r.crew_total ? `<span>👥 ${esc(r.crew_total)} workers</span>` : ''}
-                ${r.man_hours ? `<span>⏱️ ${esc(r.man_hours)} hrs</span>` : ''}
-                ${r.photoCount ? `<span>📷 ${esc(r.photoCount)} photos</span>` : ''}
-              </div>
-            </div>
-            <span class="pill blue">${esc(r.status || 'Report')}</span>
-          </div>
-          <div class="report-snippet">${esc((r.work_description || r.notes || 'No details entered').slice(0, 220))}${(r.work_description || r.notes || '').length > 220 ? '…' : ''}</div>
-          <div class="report-actions">
-            <button class="btn-sm" onclick="openReportDetail('${r.id}')">Open Details</button>
-            <button class="btn-sm" onclick="openDailyReportForm()">New Report</button>
-          </div>`;
-        list.appendChild(row);
-      });
-      list.dataset.reportMap = JSON.stringify(rows);
+      renderProjectReportsList();
     } catch(e) {
       console.error(e);
-      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports yet.</p>';
+      if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports yet.</p>';
     }
   }
 
+  function renderProjectReportsList() {
+    setupProjectHistoryFilter('reports');
+    const list = document.getElementById('reports-list');
+    if (!list) return;
+    const rows = currentProjectReports.filter(r => projectHistoryMatches(r, 'reports'));
+    setProjectHistoryCount('reports', rows.length, currentProjectReports.length);
+    list.dataset.reportMap = JSON.stringify(currentProjectReports);
+    if (!currentProjectReports.length) { renderDailyReportDashboard([]); list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p>'; return; }
+    if (!rows.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No daily reports found for this filter.</p>'; return; }
+    list.innerHTML = '';
+    rows.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'report-card project-record-tab';
+      row.tabIndex = 0;
+      row.onclick = () => openReportDetail(r.id);
+      row.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); row.click(); } };
+      row.innerHTML = `
+        <div class="report-card-header">
+          <div>
+            <h4>${esc(r.date || 'Daily Report')}</h4>
+            <div class="report-meta">
+              <span>Foreman ${esc(r.supervisor || r.foreman || r.submittedByName || 'Unknown')}</span>
+              ${r.job_number ? `<span>Job ${esc(r.job_number)}</span>` : ''}
+              ${r.conditions ? `<span>${esc(r.conditions)}</span>` : ''}
+              ${r.crew_total ? `<span>${esc(r.crew_total)} workers</span>` : ''}
+              ${r.man_hours ? `<span>${esc(r.man_hours)} hrs</span>` : ''}
+              ${r.photoCount ? `<span>${esc(r.photoCount)} photos</span>` : ''}
+            </div>
+          </div>
+          <span class="pill blue">${esc(r.status || 'Report')}</span>
+        </div>
+        <div class="report-actions">
+          <button class="btn-sm" onclick="event.stopPropagation(); openReportDetail('${r.id}')">Open Details</button>
+          <button class="btn-sm" onclick="event.stopPropagation(); openDailyReportForm()">New Report</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
   // ── FOREMEN ──
   function getProjectFieldFormType(form = {}) {
     const key = String(form.formKey || '').toLowerCase();
@@ -5286,11 +5620,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function renderProjectFieldFormsList() {
+    setupProjectHistoryFilter('fieldForms');
     const list = document.getElementById('field-forms-list');
     if (!list) return;
-    const rows = activeProjectFieldFormFilter === 'all'
+    const typeRows = activeProjectFieldFormFilter === 'all'
       ? currentProjectFieldForms
       : currentProjectFieldForms.filter(form => getProjectFieldFormType(form) === activeProjectFieldFormFilter);
+    const rows = typeRows.filter(form => projectHistoryMatches(form, 'fieldForms'));
+    setProjectHistoryCount('fieldForms', rows.length, typeRows.length);
     const labels = { all:'Submitted Field Forms', safety:'Safety Sheets', payroll:'Payroll Forms', expense:'Expense Reports', jha:'JHA / Checklist Forms', other:'Other Field Forms' };
     const section = document.getElementById('field-forms-section-label');
     const helper = document.getElementById('field-forms-helper');
@@ -5307,7 +5644,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     rows.forEach(form => {
       const data = form.documentData || {};
       const row = document.createElement('div');
-      row.className = 'report-card';
+      row.className = 'report-card project-record-tab';
+      row.tabIndex = 0;
+      row.onclick = () => openFieldFormDetail(form.id);
+      row.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); row.click(); } };
       row.innerHTML = `
         <div class="report-card-header">
           <div>
@@ -5321,9 +5661,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           </div>
           <span class="pill blue">${esc(form.formKey || 'Form')}</span>
         </div>
-        <div class="report-snippet">${esc(getFieldFormSnippet(form))}</div>
         <div class="report-actions">
-          <button class="btn-sm" onclick="openFieldFormDetail('${form.id}')">Open Details</button>
+          <button class="btn-sm" onclick="event.stopPropagation(); openFieldFormDetail('${form.id}')">Open Details</button>
         </div>`;
       list.appendChild(row);
     });
@@ -6568,7 +6907,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function warehouseCardHTML(item) {
     const status = item.status || 'sent';
     return `
-      <div class="warehouse-card" onclick="openWarehouseItemDetail('${item.projectId}','${item.id}')">
+      <div class="warehouse-card project-record-tab" tabindex="0" onclick="openWarehouseItemDetail('${item.projectId}','${item.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
         <div class="warehouse-card-head">
           <div>
             <h4>${esc(item.itemName || 'Unnamed Item')}</h4>
@@ -6579,7 +6918,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
               ${item.date ? `<span>📅 ${esc(item.date)}</span>` : ''}
               ${item.handledBy ? `<span>👤 ${esc(item.handledBy)}</span>` : ''}
             </div>
-            ${item.notes ? `<p style="margin-top:8px;color:var(--muted);font-size:13px;line-height:1.4;">${esc(item.notes)}</p>` : ''}
           </div>
           <span class="warehouse-status ${status}">${warehouseStatusLabel(status)}</span>
         </div>
@@ -6613,16 +6951,19 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function renderProjectWarehouseTab() {
+    setupProjectHistoryFilter('warehouse');
     const summaryEl = document.getElementById('warehouse-dashboard-project');
     const listEl = document.getElementById('warehouse-list-project');
     if (!summaryEl && !listEl) return;
 
-    const items = Array.isArray(currentProject?.warehouseItems) ? currentProject.warehouseItems.map(item => ({
+    const allItems = Array.isArray(currentProject?.warehouseItems) ? currentProject.warehouseItems.map(item => ({
       ...item,
       projectId: currentProject.id,
       projectName: currentProject.name || '',
       projectJobNumber: currentProject.jobNumber || ''
     })) : [];
+    const items = allItems.filter(item => projectHistoryMatches(item, 'warehouse'));
+    setProjectHistoryCount('warehouse', items.length, allItems.length);
 
     if (summaryEl) summaryEl.innerHTML = warehouseDashboardHTML(items);
 
@@ -6739,8 +7080,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
 
   function getCurrentProjectTicketsData() {
+    setupProjectHistoryFilter('tickets');
     const project = currentProject || {};
-    const tickets = Array.isArray(project.extraTickets) ? project.extraTickets : [];
+    const all = Array.isArray(project.extraTickets) ? project.extraTickets : [];
+    const tickets = all.filter(t => projectHistoryMatches(t, 'tickets'));
+    setProjectHistoryCount('tickets', tickets.length, all.length);
 
     const totals = tickets.reduce((acc, t) => {
       acc.count += 1;
@@ -6791,7 +7135,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         .slice()
         .sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')))
         .map(t => `
-          <div class="ticket-card" onclick="openTicketDetail('${currentProject.id}','${t.id}')">
+          <div class="ticket-card project-record-tab" tabindex="0" onclick="openTicketDetail('${currentProject.id}','${t.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="ticket-card-head">
               <div>
                 <h4>${esc(t.ticketNo || 'Extra Work Ticket')}</h4>
@@ -6803,7 +7147,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
               </div>
               <div class="ticket-total">${money(t.grandTotal || 0)}</div>
             </div>
-            ${t.description ? `<p style="margin-top:10px;color:var(--text);font-size:14px;line-height:1.45;">${esc(t.description).slice(0,180)}${String(t.description).length > 180 ? '…' : ''}</p>` : ''}
           </div>
         `).join('');
     }
