@@ -12,7 +12,6 @@
   <meta name="theme-color" content="#1b3a5c" />
   <title>PAL Safety Hub</title>
   <!-- LOGIN_RESTORE_NEWHIRE_PHASE2_STABLE_ROLLBACK_2026_05_14 -->
-  <!-- LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14 -->
 
   <!-- EMPLOYEE_CERT_EDIT_DELETE_FINAL_V2 -->
   <!-- STABLE_LOGIN_RESCUE_RESTORE_USE_THIS_2026_05_14 -->
@@ -1656,11 +1655,6 @@
           <h3>Expense Report</h3>
           <p>Expense entry sheet with categories, totals, cash advance, and amount due.</p>
           <button class="btn-outline" type="button" onclick="event.stopPropagation(); openForemanToolModal('foreman-tool-expense-report')">Open Expense Report</button>
-        </div>
-        <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="toast('Future foreman tools area is ready.')" onkeydown="handleForemanToolCardKey(event, 'future-tools')">
-          <h3>Future Tools</h3>
-          <p>Good place for QR crew sign-in links, project-specific toolbox talks, photo shortcuts, and foreman-only tools.</p>
-          <button class="btn-outline" type="button" onclick="event.stopPropagation(); toast('Future foreman tools area is ready.')">Ready</button>
         </div>
       </div>
 
@@ -3374,7 +3368,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   // ── AUTH FUNCTIONS ──
-  // LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14
   async function doLogin() {
     if (loginInProgress) return;
     const emailEl = document.getElementById('login-email');
@@ -3498,7 +3491,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function canUserAccessProject(project) {
     if (!project || !currentUser) return false;
     if (isOfficeRole()) return true;
-    if (!currentUserProfile?.id && currentUser?.email) return true;
     const foremen = Array.isArray(project.foremen) ? project.foremen : [];
     const email = (currentUser.email || '').toLowerCase();
     return project.createdBy === currentUser.uid
@@ -4132,7 +4124,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     if (target === 'extra-ticket') return openExtraWorkTicketModal();
-    if (target === 'future-tools') return toast('Future foreman tools area is ready.');
     if (target) openForemanToolModal(target);
   }
 
@@ -5125,6 +5116,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   window.addEventListener('message', event => {
+    if (event.origin !== 'null' && event.origin !== window.location.origin) return;
     if (event.data?.type === 'pal-close-official-project-form') {
       closeOfficialProjectForm();
     }
@@ -5392,7 +5384,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const row = document.createElement('div');
       row.className = 'file-item project-record-tab';
       row.tabIndex = 0;
-      row.onclick = () => window.open(safeFileUrl(d.url), '_blank');
+      row.onclick = () => {
+        const fileUrl = safeFileUrl(d.url);
+        if (fileUrl !== '#') window.open(fileUrl, '_blank', 'noopener');
+      };
       row.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); row.click(); } };
       row.innerHTML = `
         <div class="file-icon">${docIcon(d.name)}</div>
@@ -5472,8 +5467,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       grouped[category].forEach(p => {
         const thumb = document.createElement('div');
         thumb.className = 'photo-thumb';
-        thumb.innerHTML = `<img src="${p.url}" loading="lazy" /><div class="photo-label">${esc(p.name)}</div>`;
-        thumb.onclick = () => window.open(p.url, '_blank');
+        const photoUrl = safeFileUrl(p.url);
+        thumb.innerHTML = `<img src="${esc(photoUrl)}" loading="lazy" /><div class="photo-label">${esc(p.name)}</div>`;
+        thumb.onclick = () => {
+          if (photoUrl !== '#') window.open(photoUrl, '_blank', 'noopener');
+        };
         wrap.appendChild(thumb);
       });
       sections.appendChild(wrap);
@@ -8932,7 +8930,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!value) return '#';
     try {
       const parsed = new URL(value, window.location.origin);
-      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') return parsed.href;
+      if (parsed.protocol === 'https:') return parsed.href;
     } catch (e) {}
     return '#';
   }

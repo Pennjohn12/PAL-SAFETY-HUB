@@ -3449,7 +3449,8 @@
     function returnToProjectFieldForms() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('embeddedProjectForm') === '1' && window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: 'pal-close-official-project-form' }, '*');
+        const targetOrigin = window.location.origin === 'null' ? '*' : window.location.origin;
+        window.parent.postMessage({ type: 'pal-close-official-project-form' }, targetOrigin);
         return;
       }
       const returnUrl = params.get('return') || 'projects.html';
