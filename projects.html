@@ -122,6 +122,34 @@
     .field textarea:focus, .field select:focus, .inline-select:focus, .search-input:focus { border-color: var(--navy); }
     .search-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
     .search-row .search-input { flex: 1; min-width: 220px; }
+    .project-filter-panel {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      margin:0 0 16px;
+      box-shadow:0 4px 14px rgba(16,24,40,.04);
+    }
+    .project-filter-panel .search-row { margin-bottom:10px; }
+    .project-alpha-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+    .project-alpha-btn {
+      border:1px solid var(--line);
+      background:#f8fafc;
+      color:var(--navy);
+      border-radius:8px;
+      min-width:34px;
+      min-height:34px;
+      padding:0 8px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .project-alpha-btn:hover,
+    .project-alpha-btn.active {
+      background:var(--navy);
+      border-color:var(--navy);
+      color:#fff;
+    }
+    .project-filter-count { color:var(--muted); font-size:12px; font-weight:800; margin-top:10px; }
 
     .ticket-status-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; }
     .ticket-office-note { background:#eef4fa; border:1px solid var(--line); border-radius:12px; padding:10px 12px; color:var(--navy); font-size:13px; font-weight:700; margin-bottom:10px; }
@@ -530,7 +558,8 @@
     .project-icon {
       width: 54px; height: 54px; border-radius: 14px; flex-shrink: 0;
       background: linear-gradient(135deg, var(--navy), var(--navy-light));
-      display: grid; place-items: center; font-size: 24px;
+      display: grid; place-items: center; font-size: 13px; font-weight:900;
+      color:#fff; letter-spacing:0;
     }
     .project-info { flex: 1; min-width: 0; }
     .project-info h3 { font-size: 17px; color: var(--navy); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -851,11 +880,27 @@
     }
     .btn-outline:hover { border-color: var(--navy); }
     .project-summary-grid {
-      display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin: 0 0 20px;
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap:12px; margin: 0 0 20px;
     }
     .summary-card {
       background:white; border:1px solid var(--line); border-radius:16px; padding:16px;
       box-shadow: 0 4px 14px rgba(16,24,40,.05);
+    }
+    .summary-card.project-access-card {
+      cursor:pointer;
+      transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+      min-height:126px;
+    }
+    .summary-card.project-access-card:hover,
+    .summary-card.project-access-card:focus {
+      border-color:var(--green);
+      box-shadow:0 12px 24px rgba(16,24,40,.12);
+      outline:none;
+      transform:translateY(-1px);
+    }
+    .summary-card.project-access-card.active {
+      border-color:var(--green);
+      box-shadow:0 0 0 2px rgba(111,207,55,.22), 0 12px 24px rgba(16,24,40,.12);
     }
     .summary-card .label { font-size:12px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
     .summary-card .value { font-size:28px; font-weight:800; color:var(--navy); line-height:1; }
@@ -1134,7 +1179,7 @@
         <label>Password</label>
         <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
       </div>
-      <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
+      <button class="btn-primary" id="login-btn" type="button" onclick="doLogin()">Sign In</button>
       <div class="login-footer">
         Don't have an account? <button class="link-btn" onclick="showRegister()">Create one</button>
       </div>
@@ -1324,6 +1369,14 @@
           <button class="btn-add" onclick="openNewProjectModal()">＋ New Project</button>
         </div>
       </div>
+      <div class="project-filter-panel">
+        <div class="search-row">
+          <input class="search-input" id="project-search" type="search" placeholder="Search projects by name, job number, location, or foreman..." oninput="renderProjectsList()" />
+          <button class="btn-outline" type="button" onclick="clearProjectFilters()">Clear</button>
+        </div>
+        <div class="project-alpha-row" id="project-alpha-row"></div>
+        <div class="project-filter-count" id="project-filter-count">Projects will load here.</div>
+      </div>
       <div id="projects-list">
         <div class="empty-state">
           <div class="icon">🏗️</div>
@@ -1497,7 +1550,7 @@
       <div class="foreman-tool-pane" id="foreman-tool-manual-safety">
       <div class="ai-safety-panel">
         <h3>Manual Daily Safety Sheet</h3>
-        <p>Fill out the daily safety meeting sheet manually. Saving sends it to the selected project's Safety Forms tab.</p>
+        <p>Fill out the daily safety meeting sheet manually. Saving sends it to the selected project's Field Forms tab.</p>
         <div class="ai-safety-grid">
           <div class="field"><label>Project</label><select id="manual-safety-project-select"><option value="">Select a project...</option></select></div>
           <div class="field"><label>Project Name</label><input id="manual-sheet-project-name" /></div>
@@ -1555,7 +1608,7 @@
       <div class="foreman-tool-pane" id="foreman-tool-ai-safety">
       <div class="ai-safety-panel">
         <h3>AI Assisted Daily Safety Sheet</h3>
-        <p>Select the project, type or paste the day's work plan, then generate a draft safety sheet. Saving sends it to that project's Safety Forms tab.</p>
+        <p>Select the project, type or paste the day's work plan, then generate a draft safety sheet. Saving sends it to that project's Field Forms tab.</p>
         <div class="ai-safety-grid">
           <div class="field"><label>Project</label><select id="ai-safety-project-select"><option value="">Select a project...</option></select></div>
           <div class="field"><label>Date</label><input id="ai-safety-date" type="date" /></div>
@@ -1722,6 +1775,7 @@
           <div class="field span-2"><label>Foreman / Supervisor Signature</label><input id="daily-payroll-signature" class="ai-signature-input" /></div>
         </div>
         <div class="foreman-form-actions">
+          <button class="btn-save" type="button" id="save-daily-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
           <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
@@ -1754,6 +1808,7 @@
           <p>Supervisor FP 35-0001 | Operating Engineer FP 35-0002 | Sprayer FP 35-0003 | Labor FP 35-0004 | Project Manager FP 35-0005 | Firewatch FP 35-0006 | Cleanup FP 35-0009</p>
         </div>
         <div class="foreman-form-actions">
+          <button class="btn-save" type="button" id="save-weekly-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
           <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
@@ -1790,6 +1845,7 @@
           <div class="field span-2"><label>Approver Signature</label><input id="foreman-expense-signature" class="ai-signature-input" /></div>
         </div>
         <div class="foreman-form-actions">
+          <button class="btn-save" type="button" id="save-expense-report-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
           <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
@@ -1822,7 +1878,7 @@
       <div class="page-header">
         <h2>Workforce</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
+          <button class="btn-outline" onclick="loadEmployees(true)">Refresh</button>
           <button class="btn-add" onclick="openEmployeeModal()">＋ Add Employee</button>
         </div>
       </div>
@@ -2012,16 +2068,23 @@
       <h2 id="detail-project-name">Project Name</h2>
       <div class="meta" id="detail-project-meta"></div>
       <div class="detail-actions">
-        <button class="btn-outline" onclick="openDailyReportForm()">📝 Create Daily Report</button>
-        <button class="btn-outline" onclick="copyProjectLink()">🔗 Copy Project Link</button>
+        <button class="btn-outline" onclick="openDailyReportForm()">Create Daily Report</button>
+        <button class="btn-outline" onclick="openProjectFieldFormsMenu()">Field Forms</button>
+        <button class="btn-outline" onclick="copyProjectLink()">Copy Project Link</button>
       </div>
     </div>
 
-    <div class="project-summary-grid">
-      <div class="summary-card"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
-      <div class="summary-card"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Organized by category</div></div>
-      <div class="summary-card"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
-      <div class="summary-card"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
+    <div class="project-summary-grid" id="project-access-cards">
+      <div class="summary-card project-access-card active" role="button" tabindex="0" data-project-section="tab-docs" onclick="openProjectAccessSection('tab-docs')" onkeydown="handleProjectAccessCardKey(event, 'tab-docs')"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-photos" onclick="openProjectAccessSection('tab-photos')" onkeydown="handleProjectAccessCardKey(event, 'tab-photos')"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Camera and library uploads</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-reports" onclick="openProjectAccessSection('tab-reports')" onkeydown="handleProjectAccessCardKey(event, 'tab-reports')"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="safety" onclick="openProjectAccessSection('tab-field-forms', 'safety')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'safety')"><div class="label">Safety Sheets</div><div class="value" id="summary-safety-forms">0</div><div class="sub">Crew safety sign-ins</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="payroll" onclick="openProjectAccessSection('tab-field-forms', 'payroll')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'payroll')"><div class="label">Payroll</div><div class="value" id="summary-payroll-forms">0</div><div class="sub">Daily and weekly payroll</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="expense" onclick="openProjectAccessSection('tab-field-forms', 'expense')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'expense')"><div class="label">Expense Reports</div><div class="value" id="summary-expense-forms">0</div><div class="sub">Submitted expense forms</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-project-tickets" onclick="openProjectAccessSection('tab-project-tickets')" onkeydown="handleProjectAccessCardKey(event, 'tab-project-tickets')"><div class="label">Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Extra work tickets</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="jha-checklist" onclick="openProjectJhaChecklist()" onkeydown="handleProjectAccessCardKey(event, 'jha-checklist')"><div class="label">JHA / Checklist</div><div class="value" id="summary-jha-forms">0</div><div class="sub">Open blank checklist</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-project-warehouse" onclick="openProjectAccessSection('tab-project-warehouse')" onkeydown="handleProjectAccessCardKey(event, 'tab-project-warehouse')"><div class="label">Warehouse</div><div class="value" id="summary-warehouse">0</div><div class="sub">Equipment and material</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-foremen" onclick="openProjectAccessSection('tab-foremen')" onkeydown="handleProjectAccessCardKey(event, 'tab-foremen')"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
     </div>
 
     <div class="detail-grid">
@@ -2042,8 +2105,8 @@
       </div>
     </div>
 
-    <div class="tabs">
-      <button class="tab" onclick="switchTab('tab-field-forms', this)">Safety Forms</button>
+    <div class="tabs project-detail-tabs" style="display:none;">
+      <button class="tab" onclick="switchTab('tab-field-forms', this)">Field Forms</button>
       <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
       <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
       <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
@@ -2060,7 +2123,7 @@
           <div class="section-label">Uploaded Documents</div>
           <div class="helper-text">Project-specific files stored with this job.</div>
         </div>
-        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">📎 Upload Documents</button>
+        <button class="btn-save" onclick="document.getElementById('doc-file-input').click()">Upload Documents</button>
       </div>
       
       <div class="detail-card" style="margin:12px 0;">
@@ -2089,8 +2152,8 @@
             <option value="Incident">Incident</option>
             <option value="Inspection">Inspection</option>
           </select>
-          <button class="btn-save" onclick="document.getElementById('photo-camera-input').click()">📸 Take Photo</button>
-          <button class="btn-outline" onclick="document.getElementById('photo-library-input').click()">🖼️ Upload from Photos</button>
+          <button class="btn-save" onclick="document.getElementById('photo-camera-input').click()">Take Photo</button>
+          <button class="btn-outline" onclick="document.getElementById('photo-library-input').click()">Upload from Photos</button>
         </div>
       </div>
       <div id="photos-sections"></div>
@@ -2108,22 +2171,22 @@
           <div class="helper-text">Create a new report from this project or open past reports with full details.</div>
           <div id="daily-report-dashboard"></div>
         </div>
-        <button class="btn-save" onclick="openDailyReportForm()">📝 New Daily Report</button>
+        <button class="btn-save" onclick="openDailyReportForm()">New Daily Report</button>
       </div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
     </div>
 
 
-    <!-- SAFETY FORMS TAB -->
+    <!-- FIELD FORMS TAB -->
     <div class="tab-pane" id="tab-field-forms">
       <div class="action-row">
         <div>
-          <div class="section-label">Submitted Safety Forms</div>
-          <div class="helper-text">Checklists, toolbox talks, and other app documents submitted to this project.</div>
+          <div class="section-label" id="field-forms-section-label">Submitted Field Forms</div>
+          <div class="helper-text" id="field-forms-helper">Safety sheets, payroll forms, expense reports, and other app documents submitted to this project.</div>
         </div>
         <button class="btn-outline" type="button" onclick="loadProjectFieldForms()">Refresh</button>
       </div>
-      <div id="field-forms-list"><p style="color:var(--muted);font-size:14px;">No submitted safety forms yet.</p></div>
+      <div id="field-forms-list"><p style="color:var(--muted);font-size:14px;">No submitted field forms yet.</p></div>
     </div>
 
     <!-- EXTRA WORK TICKETS TAB -->
@@ -2133,7 +2196,7 @@
           <div class="section-label">Project Tickets</div>
           <div class="helper-text">Tickets tied to this project only. Office can open, price, edit, print, and track totals here.</div>
         </div>
-        <button class="btn-save" type="button" onclick="openProjectTicketModal()">＋ New Ticket for This Project</button>
+        <button class="btn-save" type="button" onclick="openProjectTicketModal()">New Ticket for This Project</button>
       </div>
       <div id="project-ticket-dashboard-summary"></div>
       <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
@@ -2147,7 +2210,7 @@
           <div class="section-label">Warehouse / Equipment</div>
           <div class="helper-text">Equipment and materials tied to this project only. QR scanning can be added later; Phase 1 is manual and QR-ready.</div>
         </div>
-        <button class="btn-save" onclick="openWarehouseItemModal(currentProject?.id || '')">＋ Add Item for This Project</button>
+        <button class="btn-save" onclick="openWarehouseItemModal(currentProject?.id || '')">Add Item for This Project</button>
       </div>
       <div id="warehouse-dashboard-project"></div>
       <div id="warehouse-list-project"><p style="color:var(--muted);font-size:14px;">No warehouse records for this project yet.</p></div>
@@ -2180,7 +2243,7 @@
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
-          <button class="btn-save" onclick="openEmployeeModal()">＋ New Employee</button>
+          <button class="btn-save" onclick="openEmployeeModal()">New Employee</button>
         </div>
       </div>
       <div id="employees-list"><p style="color:var(--muted);font-size:14px;">No employee records yet.</p></div>
@@ -2188,8 +2251,8 @@
 
     <!-- Sticky upload bar (shown on docs/photos tabs) -->
     <div class="sticky-upload" id="sticky-upload">
-      <button class="btn-upload" onclick="document.getElementById('doc-file-input').click()">📎 Upload Docs</button>
-      <button class="btn-upload green" onclick="document.getElementById('photo-camera-input').click()">📸 Take Photo</button><button class="btn-upload" onclick="document.getElementById('photo-library-input').click()">🖼️ Photo Library</button>
+      <button class="btn-upload" onclick="document.getElementById('doc-file-input').click()">Upload Docs</button>
+      <button class="btn-upload green" onclick="document.getElementById('photo-camera-input').click()">Take Photo</button><button class="btn-upload" onclick="document.getElementById('photo-library-input').click()">Photo Library</button>
     </div>
   </div>
 </div>
@@ -2252,6 +2315,64 @@
       <button class="btn-secondary" type="button" onclick="closeForemanToolModal()">Close</button>
     </div>
     <div id="foreman-tool-modal-body"></div>
+  </div>
+</div>
+
+<!-- PROJECT FIELD FORMS MENU -->
+<div class="modal-overlay" id="modal-project-field-forms">
+  <div class="modal" style="max-width:980px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">
+      <h3 style="margin:0;">Project Field Forms</h3>
+      <button class="btn-secondary" type="button" onclick="closeModal('modal-project-field-forms')">Close</button>
+    </div>
+    <div class="helper-text" style="margin-bottom:14px;">Open a blank form for this project. Forms can be printed, shared, or submitted back to the project record.</div>
+    <div class="foreman-tools-grid">
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-manual-safety')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-manual-safety')">
+        <h3>Daily Safety Sheet</h3>
+        <p>Blank daily safety meeting sheet with crew sign-in rows.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-manual-safety')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-ai-safety')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-ai-safety')">
+        <h3>AI Safety Sheet</h3>
+        <p>Draft a daily safety sheet from the foreman's work notes.</p>
+        <button class="btn-save" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-ai-safety')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-manual-report')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-manual-report')">
+        <h3>Daily Report</h3>
+        <p>Blank daily field report tied to this project.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-manual-report')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-ai-report')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-ai-report')">
+        <h3>AI Daily Report</h3>
+        <p>Turn quick job notes into a cleaner daily report draft.</p>
+        <button class="btn-save" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-ai-report')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectExtraWorkTicket()" onkeydown="handleProjectFieldFormCardKey(event, 'extra-ticket')">
+        <h3>Extra Work Ticket</h3>
+        <p>Open a blank extra work ticket already pointed at this project.</p>
+        <button class="btn-save" type="button" onclick="event.stopPropagation(); openProjectExtraWorkTicket()">Open Ticket</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-daily-payroll')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-daily-payroll')">
+        <h3>Daily Payroll</h3>
+        <p>Daily worker time sheet with regular and overtime totals.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-daily-payroll')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-weekly-payroll')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-weekly-payroll')">
+        <h3>Weekly Payroll</h3>
+        <p>Weekly payroll sheet with cost code and day-by-day hours.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-weekly-payroll')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-expense-report')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-expense-report')">
+        <h3>Expense Report</h3>
+        <p>Blank expense report with totals and approver signature.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-expense-report')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectJhaChecklist()" onkeydown="handleProjectFieldFormCardKey(event, 'jha-checklist')">
+        <h3>JHA / Checklist</h3>
+        <p>Open the blank PAL fireproofing JHA/checklist for print or review.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectJhaChecklist()">Open Checklist</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2821,6 +2942,9 @@
   let currentCertificationUploadedAt = null;
   let allEmployees = [];
   let allProjects = [];
+  let projectAlphaFilter = 'all';
+  let currentProjectFieldForms = [];
+  let activeProjectFieldFormFilter = 'all';
   let allTickets = [];
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
@@ -2834,6 +2958,7 @@
   let editingTicketProjectId = null;
   let editingTicketId = null;
   let editingTicketOriginal = null;
+  let loginInProgress = false;
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
@@ -2862,6 +2987,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.closeModal = closeModal;
   window.saveNewProject = saveNewProject;
   window.openProject = openProject;
+  window.renderProjectsList = renderProjectsList;
+  window.setProjectAlphaFilter = setProjectAlphaFilter;
+  window.clearProjectFilters = clearProjectFilters;
   window.backToProjects = backToProjects;
   window.switchTab = switchTab;
   window.handleDocUpload = handleDocUpload;
@@ -2871,6 +2999,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveDailyReportV2 = saveDailyReportV2;
   window.previewDailyReportPhotos = previewDailyReportPhotos;
   window.copyProjectLink = copyProjectLink;
+  window.openProjectAccessSection = openProjectAccessSection;
+  window.handleProjectAccessCardKey = handleProjectAccessCardKey;
+  window.openProjectFieldFormsMenu = openProjectFieldFormsMenu;
+  window.openProjectForemanTool = openProjectForemanTool;
+  window.openProjectExtraWorkTicket = openProjectExtraWorkTicket;
+  window.handleProjectFieldFormCardKey = handleProjectFieldFormCardKey;
+  window.openProjectJhaChecklist = openProjectJhaChecklist;
   window.downloadProjectFile = downloadProjectFile;
   window.openReportDetail = openReportDetail;
   window.loadProjectFieldForms = loadProjectFieldForms;
@@ -2896,6 +3031,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.addForemanExpenseRow = addForemanExpenseRow;
   window.updateForemanExpenseTotals = updateForemanExpenseTotals;
   window.clearForemanExpenseReport = clearForemanExpenseReport;
+  window.saveDailyPayrollToProject = saveDailyPayrollToProject;
+  window.saveWeeklyPayrollToProject = saveWeeklyPayrollToProject;
+  window.saveExpenseReportToProject = saveExpenseReportToProject;
   window.submitForemanToolToProject = submitForemanToolToProject;
   window.printForemanTool = printForemanTool;
   window.saveForemanToolPdf = saveForemanToolPdf;
@@ -2989,15 +3127,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       currentUser = user || null;
       showView('view-public-newhire-intake');
       if (!publicNewHireIntakeLoaded) loadPublicNewHireIntake();
-      return;
     }
     if (user) {
       currentUser = user;
       updateUserUI(user);
-      showView('view-projects');
       currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
-      applyRoleUI();
-      loadProjects();
       try {
         const profile = await loadUserProfile(user);
         if (profile) currentUserProfile = profile;
@@ -3005,6 +3139,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
+      showView('view-projects');
       loadProjects();
     } else {
       currentUser = null;
@@ -3051,6 +3186,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   // ── AUTH FUNCTIONS ──
   // LOGIN_LAPTOP_RESCUE_DEBUG_PATCH_2026_05_14
   async function doLogin() {
+    if (loginInProgress) return;
     const emailEl = document.getElementById('login-email');
     const passEl = document.getElementById('login-password');
     const btn = document.getElementById('login-btn');
@@ -3067,6 +3203,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       return;
     }
 
+    loginInProgress = true;
     if (btn) {
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Signing in…';
@@ -3086,23 +3223,24 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       currentUser = cred.user;
       updateUserUI(cred.user);
       currentUserProfile = { uid: cred.user.uid, email: cred.user.email, name: cred.user.displayName || cred.user.email, role: 'foreman' };
+      try {
+        const profile = await Promise.race([
+          loadUserProfile(cred.user),
+          new Promise(resolve => setTimeout(() => resolve(null), 5000))
+        ]);
+        if (profile) currentUserProfile = profile;
+      } catch (profileErr) {
+        console.warn('Login worked, profile load failed. Continuing with basic profile.', profileErr);
+      }
       applyRoleUI();
       showView('view-projects');
       loadProjects();
-
-      // Then try to improve role/profile after the screen has already moved forward.
-      loadUserProfile(cred.user).then(profile => {
-        if (profile) currentUserProfile = profile;
-        applyRoleUI();
-        loadProjects();
-      }).catch(profileErr => {
-        console.warn('Login worked, profile load failed. Continuing with basic profile.', profileErr);
-      });
 
       if (btn) {
         btn.disabled = false;
         btn.textContent = 'Sign In';
       }
+      loginInProgress = false;
     } catch(e) {
       console.error('PAL login failed:', e);
       const code = e?.code || '';
@@ -3115,6 +3253,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         btn.disabled = false;
         btn.textContent = 'Sign In';
       }
+      loginInProgress = false;
     }
   }
 
@@ -3149,60 +3288,166 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   // ── PROJECTS ──
+  function projectForemanText(project) {
+    const foremen = Array.isArray(project?.foremen) ? project.foremen : [];
+    return foremen.map(f => [f.name, f.email].filter(Boolean).join(' ')).filter(Boolean).join(' ');
+  }
+
+  function projectSearchText(project) {
+    return [
+      project?.name,
+      project?.jobNumber,
+      project?.location,
+      project?.status,
+      project?.notes,
+      project?.createdByName,
+      projectForemanText(project)
+    ].filter(Boolean).join(' ').toLowerCase();
+  }
+
+  function canUserAccessProject(project) {
+    if (!project || !currentUser) return false;
+    if (isOfficeRole()) return true;
+    if (!currentUserProfile?.id && currentUser?.email) return true;
+    const foremen = Array.isArray(project.foremen) ? project.foremen : [];
+    const email = (currentUser.email || '').toLowerCase();
+    return project.createdBy === currentUser.uid
+      || foremen.some(f => f.uid && f.uid === currentUser.uid)
+      || foremen.some(f => (f.email || '').toLowerCase() === email);
+  }
+
+  function setProjectAlphaFilter(letter) {
+    projectAlphaFilter = letter || 'all';
+    renderProjectsList();
+  }
+
+  function clearProjectFilters() {
+    const search = document.getElementById('project-search');
+    if (search) search.value = '';
+    projectAlphaFilter = 'all';
+    renderProjectsList();
+  }
+
+  function renderProjectAlphaRow(projects = allProjects) {
+    const row = document.getElementById('project-alpha-row');
+    if (!row) return;
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const available = new Set((projects || []).map(p => String(p.name || '').trim().charAt(0).toUpperCase()).filter(ch => /[A-Z]/.test(ch)));
+    const hasNumbered = (projects || []).some(p => /^[^A-Z]/i.test(String(p.name || '').trim().charAt(0)));
+    const button = (value, label, disabled = false) => `<button class="project-alpha-btn ${projectAlphaFilter === value ? 'active' : ''}" type="button" ${disabled ? 'disabled' : ''} onclick="setProjectAlphaFilter('${value}')">${label}</button>`;
+    row.innerHTML = button('all', 'All') + button('#', '#', !hasNumbered) + letters.map(letter => button(letter, letter, !available.has(letter))).join('');
+  }
+
+  function renderProjectsList() {
+    const list = document.getElementById('projects-list');
+    if (!list) return;
+    const search = String(document.getElementById('project-search')?.value || '').trim().toLowerCase();
+    renderProjectAlphaRow(allProjects);
+    const sorted = [...(allProjects || [])].sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+    const filtered = sorted.filter(project => {
+      const first = String(project.name || '').trim().charAt(0).toUpperCase();
+      const matchesAlpha = projectAlphaFilter === 'all'
+        || (projectAlphaFilter === '#' ? !/[A-Z]/.test(first) : first === projectAlphaFilter);
+      const matchesSearch = !search || projectSearchText(project).includes(search);
+      return matchesAlpha && matchesSearch;
+    });
+    const count = document.getElementById('project-filter-count');
+    if (count) {
+      const parts = [`Showing ${filtered.length} of ${allProjects.length} project${allProjects.length === 1 ? '' : 's'}`];
+      if (projectAlphaFilter !== 'all') parts.push(`Letter: ${projectAlphaFilter}`);
+      if (search) parts.push('Search active');
+      count.textContent = parts.join(' | ');
+    }
+    if (!allProjects.length) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">Projects</div><h3>No projects available</h3><p>${isOfficeRole() ? 'Tap "New Project" to get started' : 'You do not have any assigned projects yet.'}</p></div>`;
+      return;
+    }
+    if (!filtered.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">Search</div><h3>No matching projects</h3><p>Try another project name, job number, location, or foreman.</p></div>';
+      return;
+    }
+    list.innerHTML = '';
+    filtered.forEach(p => {
+      const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
+      const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
+      const foremen = Array.isArray(p.foremen) ? p.foremen : [];
+      const foremanCount = foremen.length;
+      const foremanNames = foremen.map(f => f.name || f.email).filter(Boolean).slice(0, 2).join(', ');
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.innerHTML = `
+        <div class="project-icon">PAL</div>
+        <div class="project-info">
+          <h3>${esc(p.name)}</h3>
+          <div class="project-meta">
+            <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
+            ${p.jobNumber ? `<span>Job ${esc(p.jobNumber)}</span>` : ''}
+            ${p.location ? `<span>${esc(p.location)}</span>` : ''}
+            <span>Docs ${docCount}</span>
+            <span>Photos ${photoCount}</span>
+            <span>Foremen ${foremanCount}${foremanNames ? ` - ${esc(foremanNames)}${foremanCount > 2 ? ' +' + (foremanCount - 2) : ''}` : ''}</span>
+          </div>
+        </div>
+        <span class="chevron">&gt;</span>`;
+      card.onclick = () => openProject(p.id, p);
+      list.appendChild(card);
+    });
+  }
+
+  function getVisibleProjects(projects = allProjects) {
+    const search = String(document.getElementById('project-search')?.value || '').trim().toLowerCase();
+    renderProjectAlphaRow(projects);
+    const sorted = [...(projects || [])].sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+    const visible = sorted.filter(project => {
+      const first = String(project.name || '').trim().charAt(0).toUpperCase();
+      const matchesAlpha = projectAlphaFilter === 'all'
+        || (projectAlphaFilter === '#' ? !/[A-Z]/.test(first) : first === projectAlphaFilter);
+      const matchesSearch = !search || projectSearchText(project).includes(search);
+      return matchesAlpha && matchesSearch;
+    });
+    const count = document.getElementById('project-filter-count');
+    if (count) {
+      const parts = [`Showing ${visible.length} of ${projects.length} project${projects.length === 1 ? '' : 's'}`];
+      if (projectAlphaFilter !== 'all') parts.push(`Letter: ${projectAlphaFilter}`);
+      if (search) parts.push('Search active');
+      count.textContent = parts.join(' | ');
+    }
+    return visible;
+  }
+
   function loadProjects() {
     const list = document.getElementById('projects-list');
-    list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects…</p>';
+    if (list) list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects...</p>';
     const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
     if (unsubProjects) unsubProjects();
     unsubProjects = onSnapshot(q, snap => {
       const docs = [];
       snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
       const filtered = docs.filter(p => {
-        if (isOfficeRole()) return true;
-        const foremen = Array.isArray(p.foremen) ? p.foremen : [];
-        const emailMatch = foremen.some(f => (f.email || '').toLowerCase() === (currentUser?.email || '').toLowerCase());
-        const uidMatch = foremen.some(f => f.uid && f.uid === currentUser?.uid);
-        return emailMatch || uidMatch || p.createdBy === currentUser?.uid;
+        return canUserAccessProject(p);
       });
       allProjects = filtered;
       refreshTicketProjectOptions();
       refreshAiSafetyProjectOptions();
-      if (!filtered.length) {
-        list.innerHTML = `<div class="empty-state"><div class="icon">🏗️</div><h3>No projects available</h3><p>${isOfficeRole() ? 'Tap "New Project" to get started' : 'You do not have any assigned projects yet.'}</p></div>`;
-        return;
-      }
-      list.innerHTML = '';
-      filtered.forEach(p => {
-        const docCount = Array.isArray(p.documents) ? p.documents.length : 0;
-        const photoCount = Array.isArray(p.photos) ? p.photos.length : 0;
-        const foremanCount = Array.isArray(p.foremen) ? p.foremen.length : 0;
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.innerHTML = `
-          <div class="project-icon">🏗️</div>
-          <div class="project-info">
-            <h3>${esc(p.name)}</h3>
-            <div class="project-meta">
-              <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
-              ${p.jobNumber ? `<span>📋 ${esc(p.jobNumber)}</span>` : ''}
-              ${p.location ? `<span>📍 ${esc(p.location)}</span>` : ''}
-              <span>📄 ${docCount}</span>
-              <span>📸 ${photoCount}</span>
-              <span>👷 ${foremanCount}</span>
-            </div>
-          </div>
-          <span class="chevron">›</span>`;
-        card.onclick = () => openProject(p.id, p);
-        list.appendChild(card);
-      });
+      renderProjectsList();
       if (requestedProjectId) {
         const target = filtered.find(p => p.id === requestedProjectId);
         if (target) {
           const id = requestedProjectId;
           requestedProjectId = null;
           openProject(id, target);
+        } else {
+          requestedProjectId = null;
+          const url = new URL(window.location.href);
+          url.searchParams.delete('projectId');
+          history.replaceState({}, '', url.toString());
+          toast('That project is not available for your account.');
         }
       }
+    }, err => {
+      console.error('Project load failed:', err);
+      if (list) list.innerHTML = '<p style="color:var(--red);padding:20px 0;text-align:center;">Could not load projects. Check account access or Firebase permissions.</p>';
+      toast('Could not load projects.');
     });
   }
 
@@ -3237,7 +3482,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   // ── PROJECT DETAIL ──
   async function openProject(id, data) {
+    if (!canUserAccessProject(data)) {
+      requestedProjectId = null;
+      toast('You do not have access to that project.');
+      backToProjects();
+      return;
+    }
     currentProject = { id, ...data };
+    currentProjectFieldForms = [];
+    activeProjectFieldFormFilter = 'all';
+    updateProjectFieldFormSummary([]);
     const url = new URL(window.location.href);
     url.searchParams.set('projectId', id);
     history.replaceState({}, '', url.toString());
@@ -3250,8 +3504,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }));
     document.getElementById('detail-project-name').textContent = data.name;
     document.getElementById('detail-project-meta').innerHTML = `
-      ${data.jobNumber ? `<span>📋 ${esc(data.jobNumber)}</span>` : ''}
-      ${data.location ? `<span>📍 ${esc(data.location)}</span>` : ''}
+      ${data.jobNumber ? `<span>Job ${esc(data.jobNumber)}</span>` : ''}
+      ${data.location ? `<span>${esc(data.location)}</span>` : ''}
       <span>Status: ${capitalize(data.status || 'active')}</span>
     `;
     document.getElementById('detail-info-name').textContent = data.name || '—';
@@ -3261,12 +3515,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.getElementById('detail-info-created-by').textContent = data.createdByName || '—';
     document.getElementById('detail-project-notes').textContent = data.notes || 'No notes added for this project yet.';
     showView('view-detail');
-    switchTab('tab-docs', document.querySelector('.tab'));
+    openProjectAccessSection('tab-docs');
     await refreshProjectDetail(id);
     if (unsubProjectDetail) unsubProjectDetail();
     unsubProjectDetail = onSnapshot(doc(db, 'projects', id), async snap => {
       if (!snap.exists()) return;
       currentProjectDoc = snap.data();
+      if (!canUserAccessProject(currentProjectDoc)) {
+        toast('Project access changed. Returning to Projects.');
+        backToProjects();
+        return;
+      }
       currentProject = { id, ...snap.data() };
       updateProjectSummary(currentProjectDoc);
       loadProjectDocs(id);
@@ -3294,6 +3553,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const snap = await getDoc(doc(db, 'projects', projectId));
     if (!snap.exists()) return;
     currentProjectDoc = snap.data();
+    if (!canUserAccessProject(currentProjectDoc)) {
+      toast('You do not have access to that project.');
+      backToProjects();
+      return;
+    }
     updateProjectSummary(currentProjectDoc);
     loadProjectDocs(projectId);
     loadProjectPhotos(projectId);
@@ -3308,10 +3572,40 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const photos = Array.isArray(data?.photos) ? data.photos.length : 0;
     const foremen = Array.isArray(data?.foremen) ? data.foremen.length : 0;
     const reportCount = Number(data?.reportCount || 0);
+    const tickets = Array.isArray(data?.extraTickets) ? data.extraTickets.length : 0;
+    const warehouse = Array.isArray(data?.warehouseItems) ? data.warehouseItems.length : 0;
     document.getElementById('summary-docs').textContent = docs;
     document.getElementById('summary-photos').textContent = photos;
     document.getElementById('summary-foremen').textContent = foremen;
     document.getElementById('summary-reports').textContent = reportCount;
+    const ticketEl = document.getElementById('summary-tickets');
+    const warehouseEl = document.getElementById('summary-warehouse');
+    if (ticketEl) ticketEl.textContent = tickets;
+    if (warehouseEl) warehouseEl.textContent = warehouse;
+  }
+
+  function setProjectAccessActive(tabId, fieldFilter = '') {
+    document.querySelectorAll('#project-access-cards .project-access-card').forEach(card => {
+      const sameTab = card.dataset.projectSection === tabId;
+      const sameFilter = !fieldFilter || card.dataset.fieldFilter === fieldFilter;
+      card.classList.toggle('active', sameTab && sameFilter);
+    });
+  }
+
+  function openProjectAccessSection(tabId, fieldFilter = 'all') {
+    if (!currentProject) return toast('Open a project first.');
+    if (tabId === 'tab-field-forms') activeProjectFieldFormFilter = fieldFilter || 'all';
+    switchTab(tabId);
+    setProjectAccessActive(tabId, tabId === 'tab-field-forms' ? activeProjectFieldFormFilter : '');
+    const pane = document.getElementById(tabId);
+    if (pane) setTimeout(() => pane.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  function handleProjectAccessCardKey(event, tabId, fieldFilter = 'all') {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    if (tabId === 'jha-checklist') return openProjectJhaChecklist();
+    openProjectAccessSection(tabId, fieldFilter);
   }
 
   function openDailyReportForm() {
@@ -3488,6 +3782,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function selectedForemanReportProject(mode) {
     const id = document.getElementById(`${mode}-report-project-select`)?.value || currentProject?.id || '';
+    return (allProjects || []).find(p => p.id === id) || (currentProject?.id === id ? currentProject : null);
+  }
+
+  function selectedForemanProject(selectId) {
+    const id = document.getElementById(selectId)?.value || currentProject?.id || '';
     return (allProjects || []).find(p => p.id === id) || (currentProject?.id === id ? currentProject : null);
   }
 
@@ -3731,11 +4030,176 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     updateForemanExpenseTotals();
   }
 
+  function getDailyPayrollData() {
+    const rows = Array.from(document.querySelectorAll('#daily-payroll-rows tr')).map((tr, index) => {
+      const inputs = tr.querySelectorAll('input');
+      return {
+        row: index + 1,
+        workerName: inputs[0]?.value.trim() || '',
+        luNumber: inputs[1]?.value.trim() || '',
+        role: inputs[2]?.value.trim() || '',
+        timeIn: inputs[3]?.value || '',
+        timeOut: inputs[4]?.value || '',
+        regularHours: inputs[5]?.value || '',
+        overtimeHours: inputs[6]?.value || '',
+        totalHours: inputs[7]?.value || ''
+      };
+    }).filter(r => r.workerName || r.luNumber || r.role || r.timeIn || r.timeOut || r.totalHours);
+    const totals = rows.reduce((acc, row) => {
+      acc.regularHours += parseFloat(row.regularHours || 0);
+      acc.overtimeHours += parseFloat(row.overtimeHours || 0);
+      acc.totalHours += parseFloat(row.totalHours || 0);
+      return acc;
+    }, { regularHours: 0, overtimeHours: 0, totalHours: 0 });
+    return {
+      date: document.getElementById('daily-payroll-date')?.value || new Date().toISOString().slice(0,10),
+      jobNumber: document.getElementById('daily-payroll-job-number')?.value.trim() || '',
+      foreman: document.getElementById('daily-payroll-foreman')?.value.trim() || '',
+      weekOf: document.getElementById('daily-payroll-week-of')?.value.trim() || '',
+      address: document.getElementById('daily-payroll-address')?.value.trim() || '',
+      printedName: document.getElementById('daily-payroll-print-name')?.value.trim() || '',
+      dateSigned: document.getElementById('daily-payroll-date-signed')?.value || '',
+      signature: document.getElementById('daily-payroll-signature')?.value.trim() || '',
+      rows,
+      totals
+    };
+  }
+
+  function getWeeklyPayrollData() {
+    const days = ['mon','tue','wed','thu','fri','sat','sun'];
+    const rows = Array.from(document.querySelectorAll('#weekly-payroll-rows tr')).map(tr => {
+      const inputs = tr.querySelectorAll('input');
+      const dayHours = {};
+      days.forEach((day, index) => { dayHours[day] = inputs[index + 3]?.value || ''; });
+      return {
+        luNumber: inputs[0]?.value.trim() || '',
+        workerName: inputs[1]?.value.trim() || '',
+        costCode: inputs[2]?.value.trim() || '',
+        ...dayHours,
+        regularHours: inputs[10]?.value || '',
+        overtimeHours: inputs[11]?.value || '',
+        totalHours: inputs[12]?.value || ''
+      };
+    }).filter(r => r.luNumber || r.workerName || r.costCode || days.some(day => r[day]) || r.totalHours);
+    const totals = rows.reduce((acc, row) => {
+      acc.regularHours += parseFloat(row.regularHours || 0);
+      acc.overtimeHours += parseFloat(row.overtimeHours || 0);
+      acc.totalHours += parseFloat(row.totalHours || 0);
+      return acc;
+    }, { regularHours: 0, overtimeHours: 0, totalHours: 0 });
+    return {
+      date: document.getElementById('weekly-payroll-date')?.value || new Date().toISOString().slice(0,10),
+      page: document.getElementById('weekly-payroll-page')?.value.trim() || '',
+      jobNumber: document.getElementById('weekly-payroll-job-number')?.value.trim() || '',
+      supervisor: document.getElementById('weekly-payroll-supervisor')?.value.trim() || '',
+      weekOf: document.getElementById('weekly-payroll-week-of')?.value.trim() || '',
+      location: document.getElementById('weekly-payroll-location')?.value.trim() || '',
+      rows,
+      totals
+    };
+  }
+
+  function getForemanExpenseReportData() {
+    updateForemanExpenseTotals();
+    const rows = Array.from(document.querySelectorAll('#foreman-expense-rows tr')).map(tr => {
+      const inputs = tr.querySelectorAll('input');
+      const category = tr.querySelector('select')?.value || '';
+      return {
+        description: inputs[0]?.value.trim() || '',
+        date: inputs[1]?.value || '',
+        category,
+        amount: inputs[2]?.value || ''
+      };
+    }).filter(r => r.description || r.date || r.amount);
+    return {
+      employeeName: document.getElementById('expense-employee-name')?.value.trim() || '',
+      reportDate: document.getElementById('expense-report-date')?.value || new Date().toISOString().slice(0,10),
+      purpose: document.getElementById('expense-purpose')?.value.trim() || '',
+      account: document.getElementById('expense-account')?.value.trim() || '',
+      tripStart: document.getElementById('expense-trip-start')?.value || '',
+      tripEnd: document.getElementById('expense-trip-end')?.value || '',
+      totalReported: document.getElementById('foreman-expense-total-reported')?.value || '0.00',
+      cashAdvance: document.getElementById('foreman-expense-cash-advance')?.value || '0.00',
+      totalDue: document.getElementById('foreman-expense-total-due')?.value || '0.00',
+      approver: document.getElementById('foreman-expense-approver')?.value.trim() || '',
+      dateSigned: document.getElementById('foreman-expense-date-signed')?.value || '',
+      signature: document.getElementById('foreman-expense-signature')?.value.trim() || '',
+      rows
+    };
+  }
+
+  async function saveForemanFieldForm({ project, formKey, formTitle, data, buttonId, emptyMessage }) {
+    if (!project) return toast('Select a project first.');
+    if (!data?.rows?.length) return toast(emptyMessage || 'Add at least one row before saving.');
+    const btn = document.getElementById(buttonId);
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+        formKey,
+        formTitle,
+        projectId: project.id,
+        projectName: project.name || '',
+        jobNumber: data.jobNumber || project.jobNumber || '',
+        localSubmittedAt: new Date().toISOString(),
+        submittedAt: serverTimestamp(),
+        submittedBy: currentUser?.uid || '',
+        submittedByName: currentUser?.displayName || currentUser?.email || '',
+        documentData: {
+          ...data,
+          notes: `${formTitle} submitted with ${data.rows.length} row${data.rows.length === 1 ? '' : 's'}.`
+        }
+      });
+      toast(`${formTitle} saved to project Field Forms.`);
+      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+    } catch (e) {
+      console.error(e);
+      toast(`Could not save ${formTitle.toLowerCase()}.`);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit to Project'; }
+    }
+  }
+
+  function saveDailyPayrollToProject() {
+    return saveForemanFieldForm({
+      project: selectedForemanProject('daily-payroll-project-select'),
+      formKey: 'daily-payroll',
+      formTitle: 'Daily Payroll',
+      data: getDailyPayrollData(),
+      buttonId: 'save-daily-payroll-btn',
+      emptyMessage: 'Add at least one worker before saving daily payroll.'
+    });
+  }
+
+  function saveWeeklyPayrollToProject() {
+    return saveForemanFieldForm({
+      project: selectedForemanProject('weekly-payroll-project-select'),
+      formKey: 'weekly-payroll',
+      formTitle: 'Weekly Payroll',
+      data: getWeeklyPayrollData(),
+      buttonId: 'save-weekly-payroll-btn',
+      emptyMessage: 'Add at least one worker before saving weekly payroll.'
+    });
+  }
+
+  function saveExpenseReportToProject() {
+    return saveForemanFieldForm({
+      project: selectedForemanProject('expense-report-project-select'),
+      formKey: 'expense-report',
+      formTitle: 'Expense Report',
+      data: getForemanExpenseReportData(),
+      buttonId: 'save-expense-report-btn',
+      emptyMessage: 'Add at least one expense before saving.'
+    });
+  }
+
   async function submitForemanToolToProject() {
     if (activeForemanToolId === 'foreman-tool-manual-safety') return saveManualDailySafetySheet();
     if (activeForemanToolId === 'foreman-tool-ai-safety') return saveProjectAiSafetySheet();
     if (activeForemanToolId === 'foreman-tool-manual-report') return saveForemanDailyReport('manual');
     if (activeForemanToolId === 'foreman-tool-ai-report') return saveForemanDailyReport('ai');
+    if (activeForemanToolId === 'foreman-tool-daily-payroll') return saveDailyPayrollToProject();
+    if (activeForemanToolId === 'foreman-tool-weekly-payroll') return saveWeeklyPayrollToProject();
+    if (activeForemanToolId === 'foreman-tool-expense-report') return saveExpenseReportToProject();
     toast('Open a foreman tool first.');
   }
 
@@ -4124,7 +4588,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           localSubmittedAt: new Date().toISOString(),
           submittedAt: serverTimestamp()
         });
-        toast('Manual daily safety sheet saved to project Safety Forms.');
+        toast('Manual daily safety sheet saved to project Field Forms.');
       }
       if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
     } catch (e) {
@@ -4306,7 +4770,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           notes: sheet.items_discussed || sheet.tasks_locations
         }
       });
-      toast('AI safety sheet saved to project Safety Forms.');
+      toast('AI safety sheet saved to project Field Forms.');
       if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
     } catch (e) {
       console.error(e);
@@ -4328,6 +4792,47 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   // ── DOCUMENTS ──
+
+  function openProjectFieldFormsMenu() {
+    if (!currentProject) return toast('Open a project first.');
+    refreshAiSafetyProjectOptions();
+    document.getElementById('modal-project-field-forms')?.classList.add('open');
+  }
+
+  function openProjectForemanTool(tabId) {
+    if (!currentProject) return toast('Open a project first.');
+    closeModal('modal-project-field-forms');
+    openForemanToolModal(tabId);
+  }
+
+  function openProjectExtraWorkTicket() {
+    if (!currentProject?.id) return toast('Open a project first.');
+    closeModal('modal-project-field-forms');
+    openExtraWorkTicketModal(currentProject.id);
+  }
+
+  function handleProjectFieldFormCardKey(event, target) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    if (target === 'extra-ticket') return openProjectExtraWorkTicket();
+    if (target === 'jha-checklist') return openProjectJhaChecklist();
+    if (target) openProjectForemanTool(target);
+  }
+
+  function openProjectJhaChecklist() {
+    const paper = document.querySelector('.jha-paper');
+    if (!paper) return toast('JHA checklist not found.');
+    closeModal('modal-project-field-forms');
+    const clone = paper.cloneNode(true);
+    if (currentProject) {
+      clone.querySelector('.jha-meta')?.insertAdjacentHTML('beforeend', `<br>Project: ${esc(currentProject.name || '')}${currentProject.jobNumber ? '<br>Job: ' + esc(currentProject.jobNumber) : ''}`);
+    }
+    const w = window.open('', '_blank');
+    if (!w) return toast('Popup blocked. Allow popups to open the checklist.');
+    const styles = document.querySelector('style')?.innerHTML || '';
+    w.document.write(`<!doctype html><html><head><title>PAL JHA Checklist</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions{display:none!important}.jha-paper{max-width:980px;margin:0 auto}</style></head><body>${clone.outerHTML}<p style="text-align:center;margin-top:16px;"><button onclick="window.print()">Print / Save as PDF</button></p></body></html>`);
+    w.document.close();
+  }
 
   function getCleanFileName(name = 'PAL-Project-File') {
     return String(name || 'PAL-Project-File')
@@ -4583,51 +5088,90 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   // ── FOREMEN ──
+  function getProjectFieldFormType(form = {}) {
+    const key = String(form.formKey || '').toLowerCase();
+    if (key.includes('payroll')) return 'payroll';
+    if (key.includes('expense')) return 'expense';
+    if (key.includes('jha') || key.includes('checklist')) return 'jha';
+    if (key.includes('safety')) return 'safety';
+    return 'other';
+  }
+
+  function updateProjectFieldFormSummary(rows = currentProjectFieldForms) {
+    const counts = rows.reduce((acc, form) => {
+      const type = getProjectFieldFormType(form);
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, { safety:0, payroll:0, expense:0, jha:0, other:0 });
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    set('summary-safety-forms', counts.safety || 0);
+    set('summary-payroll-forms', counts.payroll || 0);
+    set('summary-expense-forms', counts.expense || 0);
+    set('summary-jha-forms', counts.jha || 0);
+  }
+
+  function renderProjectFieldFormsList() {
+    const list = document.getElementById('field-forms-list');
+    if (!list) return;
+    const rows = activeProjectFieldFormFilter === 'all'
+      ? currentProjectFieldForms
+      : currentProjectFieldForms.filter(form => getProjectFieldFormType(form) === activeProjectFieldFormFilter);
+    const labels = { all:'Submitted Field Forms', safety:'Safety Sheets', payroll:'Payroll Forms', expense:'Expense Reports', jha:'JHA / Checklist Forms', other:'Other Field Forms' };
+    const section = document.getElementById('field-forms-section-label');
+    const helper = document.getElementById('field-forms-helper');
+    if (section) section.textContent = labels[activeProjectFieldFormFilter] || 'Submitted Field Forms';
+    if (helper) helper.textContent = activeProjectFieldFormFilter === 'all'
+      ? 'Safety sheets, payroll forms, expense reports, and other app documents submitted to this project.'
+      : `Showing ${labels[activeProjectFieldFormFilter] || 'Field Forms'} for this project.`;
+    list.dataset.fieldFormMap = JSON.stringify(currentProjectFieldForms);
+    if (!rows.length) {
+      list.innerHTML = `<p style="color:var(--muted);font-size:14px;">No ${String(labels[activeProjectFieldFormFilter] || 'field forms').toLowerCase()} submitted yet.</p>`;
+      return;
+    }
+    list.innerHTML = '';
+    rows.forEach(form => {
+      const data = form.documentData || {};
+      const row = document.createElement('div');
+      row.className = 'report-card';
+      row.innerHTML = `
+        <div class="report-card-header">
+          <div>
+            <h4>${esc(form.formTitle || 'Field Form')}</h4>
+            <div class="report-meta">
+              ${form.jobNumber ? `<span>Job ${esc(form.jobNumber)}</span>` : ''}
+              ${form.submittedByName ? `<span>By ${esc(form.submittedByName)}</span>` : ''}
+              ${data.date || data.reportDate || data.inspection_date || data.sup_date ? `<span>${esc(data.date || data.reportDate || data.inspection_date || data.sup_date)}</span>` : ''}
+              ${form.localSubmittedAt ? `<span>${esc(formatDate(form.localSubmittedAt))}</span>` : ''}
+            </div>
+          </div>
+          <span class="pill blue">${esc(form.formKey || 'Form')}</span>
+        </div>
+        <div class="report-snippet">${esc(getFieldFormSnippet(form))}</div>
+        <div class="report-actions">
+          <button class="btn-sm" onclick="openFieldFormDetail('${form.id}')">Open Details</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+
   async function loadProjectFieldForms(projectId = currentProject?.id) {
     const list = document.getElementById('field-forms-list');
     if (!list || !projectId) return;
-    list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading submitted safety forms...</p>';
+    list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading submitted field forms...</p>';
     try {
       const q = query(collection(db, 'projects', projectId, 'fieldForms'), orderBy('submittedAt', 'desc'));
       const snap = await getDocs(q);
       const rows = [];
       snap.forEach(docSnap => rows.push({ id: docSnap.id, ...docSnap.data() }));
-      if (!rows.length) {
-        list.dataset.fieldFormMap = '[]';
-        list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No submitted safety forms yet.</p>';
-        return;
-      }
-      list.dataset.fieldFormMap = JSON.stringify(rows.map(row => ({
+      currentProjectFieldForms = rows.map(row => ({
         ...row,
         submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : row.submittedAt
-      })));
-      list.innerHTML = '';
-      rows.forEach(form => {
-        const data = form.documentData || {};
-        const row = document.createElement('div');
-        row.className = 'report-card';
-        row.innerHTML = `
-          <div class="report-card-header">
-            <div>
-              <h4>${esc(form.formTitle || 'Safety Form')}</h4>
-              <div class="report-meta">
-                ${form.jobNumber ? `<span>Job ${esc(form.jobNumber)}</span>` : ''}
-                ${form.submittedByName ? `<span>By ${esc(form.submittedByName)}</span>` : ''}
-                ${data.date || data.inspection_date || data.sup_date ? `<span>${esc(data.date || data.inspection_date || data.sup_date)}</span>` : ''}
-                ${form.localSubmittedAt ? `<span>${esc(formatDate(form.localSubmittedAt))}</span>` : ''}
-              </div>
-            </div>
-            <span class="pill blue">${esc(form.formKey || 'Form')}</span>
-          </div>
-          <div class="report-snippet">${esc(getFieldFormSnippet(form))}</div>
-          <div class="report-actions">
-            <button class="btn-sm" onclick="openFieldFormDetail('${form.id}')">Open Details</button>
-          </div>`;
-        list.appendChild(row);
-      });
+      }));
+      updateProjectFieldFormSummary(currentProjectFieldForms);
+      renderProjectFieldFormsList();
     } catch(e) {
       console.error(e);
-      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load submitted safety forms.</p>';
+      list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load submitted field forms.</p>';
     }
   }
 
@@ -4705,6 +5249,76 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       </div>`;
   }
 
+  function fieldFormTableHTML(headers, rows, columns) {
+    if (!Array.isArray(rows) || !rows.length) return '<p style="color:var(--muted);font-size:14px;">No rows saved with this form.</p>';
+    return `
+      <div class="ticket-table-wrap" style="grid-column:1/-1;">
+        <table class="ticket-table">
+          <thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${rows.map(row => `<tr>${columns.map(col => `<td>${esc(row[col] || '')}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  function payrollTotalsHTML(totals = {}) {
+    return `
+      <div class="daily-dashboard" style="grid-column:1/-1;">
+        <div class="daily-box crew"><strong>${esc(totals.regularHours ? Number(totals.regularHours).toFixed(2) : '0.00')}</strong><span>Regular Hours</span></div>
+        <div class="daily-box delays"><strong>${esc(totals.overtimeHours ? Number(totals.overtimeHours).toFixed(2) : '0.00')}</strong><span>Overtime Hours</span></div>
+        <div class="daily-box hours"><strong>${esc(totals.totalHours ? Number(totals.totalHours).toFixed(2) : '0.00')}</strong><span>Total Hours</span></div>
+      </div>`;
+  }
+
+  function payrollExpenseDetailHTML(form) {
+    const data = form.documentData || {};
+    if (form.formKey === 'daily-payroll') {
+      return `
+        ${payrollTotalsHTML(data.totals)}
+        <div class="report-field"><span class="k">Project</span><div class="v">${esc(form.projectName || currentProject?.name || '')}</div></div>
+        <div class="report-field"><span class="k">Job Number</span><div class="v">${esc(data.jobNumber || form.jobNumber || '')}</div></div>
+        <div class="report-field"><span class="k">Date</span><div class="v">${esc(data.date || '')}</div></div>
+        <div class="report-field"><span class="k">Foreman / Supervisor</span><div class="v">${esc(data.foreman || '')}</div></div>
+        <div class="report-field"><span class="k">Week Of</span><div class="v">${esc(data.weekOf || '')}</div></div>
+        <div class="report-field"><span class="k">Address</span><div class="v">${esc(data.address || '')}</div></div>
+        ${fieldFormTableHTML(['#','Worker','LU #','Role','Time In','Time Out','Reg','OT','Total'], data.rows, ['row','workerName','luNumber','role','timeIn','timeOut','regularHours','overtimeHours','totalHours'])}
+        <div class="report-field"><span class="k">Printed Name</span><div class="v">${esc(data.printedName || '')}</div></div>
+        <div class="report-field"><span class="k">Date Signed</span><div class="v">${esc(data.dateSigned || '')}</div></div>
+        <div class="report-field span-2"><span class="k">Signature</span><div class="v signature-script">${esc(data.signature || '')}</div></div>`;
+    }
+    if (form.formKey === 'weekly-payroll') {
+      return `
+        ${payrollTotalsHTML(data.totals)}
+        <div class="report-field"><span class="k">Project</span><div class="v">${esc(form.projectName || currentProject?.name || '')}</div></div>
+        <div class="report-field"><span class="k">Job Number</span><div class="v">${esc(data.jobNumber || form.jobNumber || '')}</div></div>
+        <div class="report-field"><span class="k">Date</span><div class="v">${esc(data.date || '')}</div></div>
+        <div class="report-field"><span class="k">Supervisor</span><div class="v">${esc(data.supervisor || '')}</div></div>
+        <div class="report-field"><span class="k">Week Of</span><div class="v">${esc(data.weekOf || '')}</div></div>
+        <div class="report-field"><span class="k">Location</span><div class="v">${esc(data.location || '')}</div></div>
+        ${fieldFormTableHTML(['LU #','Worker','Cost Code','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Reg','OT','Total'], data.rows, ['luNumber','workerName','costCode','mon','tue','wed','thu','fri','sat','sun','regularHours','overtimeHours','totalHours'])}`;
+    }
+    if (form.formKey === 'expense-report') {
+      return `
+        <div class="daily-dashboard" style="grid-column:1/-1;">
+          <div class="daily-box hours"><strong>$${esc(data.totalReported || '0.00')}</strong><span>Total Reported</span></div>
+          <div class="daily-box delays"><strong>$${esc(data.cashAdvance || '0.00')}</strong><span>Cash Advance</span></div>
+          <div class="daily-box crew"><strong>$${esc(data.totalDue || '0.00')}</strong><span>Total Due</span></div>
+        </div>
+        <div class="report-field"><span class="k">Employee</span><div class="v">${esc(data.employeeName || '')}</div></div>
+        <div class="report-field"><span class="k">Report Date</span><div class="v">${esc(data.reportDate || '')}</div></div>
+        <div class="report-field"><span class="k">Purpose</span><div class="v">${esc(data.purpose || '')}</div></div>
+        <div class="report-field"><span class="k">Account</span><div class="v">${esc(data.account || '')}</div></div>
+        <div class="report-field"><span class="k">Trip Start</span><div class="v">${esc(data.tripStart || '')}</div></div>
+        <div class="report-field"><span class="k">Trip End</span><div class="v">${esc(data.tripEnd || '')}</div></div>
+        ${fieldFormTableHTML(['Description','Date','Category','Amount'], data.rows, ['description','date','category','amount'])}
+        <div class="report-field"><span class="k">Approver</span><div class="v">${esc(data.approver || '')}</div></div>
+        <div class="report-field"><span class="k">Date Signed</span><div class="v">${esc(data.dateSigned || '')}</div></div>
+        <div class="report-field span-2"><span class="k">Signature</span><div class="v signature-script">${esc(data.signature || '')}</div></div>`;
+    }
+    return '';
+  }
+
   function openFieldFormDetail(formId) {
     const list = document.getElementById('field-forms-list');
     const rows = JSON.parse(list?.dataset.fieldFormMap || '[]');
@@ -4713,7 +5327,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const modal = document.getElementById('modal-report-detail');
     const heading = modal?.querySelector('h3');
     const action = modal?.querySelector('.btn-save');
-    if (heading) heading.textContent = 'Safety Form Details';
+    if (heading) heading.textContent = 'Field Form Details';
     if (action) action.style.display = 'none';
     const grid = document.getElementById('report-detail-grid');
     const data = form.documentData || {};
@@ -4724,6 +5338,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <button class="btn-save" type="button" onclick="editFieldFormDailySafety('${form.id}')">Edit / Add Signatures</button>
         </div>
         ${dailySafetySheetDetailHTML(form)}`;
+      document.getElementById('modal-report-detail').classList.add('open');
+      return;
+    }
+    if (['daily-payroll','weekly-payroll','expense-report'].includes(form.formKey)) {
+      if (heading) heading.textContent = form.formTitle || 'Field Form Details';
+      grid.innerHTML = payrollExpenseDetailHTML(form);
       document.getElementById('modal-report-detail').classList.add('open');
       return;
     }
@@ -6355,6 +6975,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       editingTicketProjectId=null; editingTicketId=null; editingTicketOriginal=null;
       const ps = document.getElementById('ticket-project-select'); if (ps) ps.disabled = false;
       closeModal('modal-extra-ticket');
+      if (currentProject?.id === projectId) {
+        const freshSnap = await getDoc(doc(db, 'projects', projectId));
+        if (freshSnap.exists()) {
+          currentProjectDoc = freshSnap.data();
+          currentProject = { id: projectId, ...currentProjectDoc };
+          updateProjectSummary(currentProjectDoc);
+        }
+      }
       loadProjects(); loadMainTickets(); renderProjectTicketsTab();
     } catch(e){
       console.error(e); toast('Ticket save failed: '+e.message);
@@ -7728,7 +8356,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const su = document.getElementById('sticky-upload');
     if (su) su.style.display = (tabId === 'tab-docs' || tabId === 'tab-photos') ? 'flex' : 'none';
     if (tabId === 'tab-employees') loadEmployees(true);
-    if (tabId === 'tab-field-forms') loadProjectFieldForms(currentProject?.id);
+    if (tabId === 'tab-field-forms') {
+      if (currentProjectFieldForms.length) renderProjectFieldFormsList();
+      else loadProjectFieldForms(currentProject?.id);
+    }
     if (tabId === 'tab-project-tickets') renderProjectTicketsTab();
     if (tabId === 'tab-project-warehouse') renderProjectWarehouseTab();
   }
@@ -7741,6 +8372,23 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) loginBtn.addEventListener('click', event => {
+      event.preventDefault();
+      doLogin();
+    });
+    ['login-email','login-password'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          doLogin();
+        }
+      });
+    });
+  });
 
   function friendlyError(code) {
     const map = {
@@ -7790,7 +8438,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-foreman-tool','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-foreman-tool','modal-project-field-forms','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
