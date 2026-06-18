@@ -3416,7 +3416,8 @@
     }
     function showPage(id) {
       const restrictedPublicPages = new Set(['foreman-kit','daily-safety-meeting','toolbox-signin','daily-report','daily-timesheet','weekly-timesheet-fp','expense-report','new-hire-orientation','new-hire-drug-consent','new-hire-scaffold','new-hire-w4']);
-      if (restrictedPublicPages.has(id)) {
+      const openedFromProtectedProject = new URLSearchParams(window.location.search).get('palProjectForm') === '1';
+      if (restrictedPublicPages.has(id) && !openedFromProtectedProject) {
         palNotice('This form is for foreman, supervisor, or office access. Please sign in through the protected dashboard.');
         window.location.href = 'projects.html';
         return;
@@ -3435,6 +3436,39 @@
           }
         });
       }
+    }
+    function openRequestedProjectForm() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('palProjectForm') !== '1') return;
+      const requestedForm = params.get('form');
+      if (requestedForm && document.getElementById(requestedForm)) {
+        showPage(requestedForm);
+      }
+      configureProjectFormReturn();
+    }
+    function returnToProjectFieldForms() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embeddedProjectForm') === '1' && window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'pal-close-official-project-form' }, '*');
+        return;
+      }
+      const returnUrl = params.get('return') || 'projects.html';
+      window.location.href = returnUrl;
+    }
+    function configureProjectFormReturn() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('palProjectForm') !== '1') return;
+      document.querySelectorAll('.page .toolbar button').forEach(btn => {
+        const action = btn.getAttribute('onclick') || '';
+        if (!action.includes("showPage('employee-safety')") && !action.includes("showPage('foreman-kit')")) return;
+        btn.textContent = 'Back to Project Field Forms';
+        btn.setAttribute('onclick', 'returnToProjectFieldForms()');
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', openRequestedProjectForm);
+    } else {
+      openRequestedProjectForm();
     }
     function clearSigById(canvasId) {
       const el = document.getElementById(canvasId);

@@ -591,6 +591,50 @@
       max-width: 1080px;
       padding: 22px;
     }
+    #modal-official-project-form {
+      z-index: 2600;
+      padding: 0;
+    }
+    #modal-official-project-form .modal {
+      width: min(1180px, 100vw);
+      max-width: 1180px;
+      height: min(94vh, 980px);
+      max-height: 94vh;
+      border-radius: 12px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .official-form-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .official-form-bar h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--navy);
+    }
+    .official-form-frame {
+      width: 100%;
+      flex: 1;
+      border: 0;
+      background: #fff;
+    }
+    @media (max-width: 700px) {
+      #modal-official-project-form .modal {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+      .official-form-bar { padding: 10px 12px; }
+    }
     #modal-foreman-tool .foreman-tool-pane.active {
       display:block;
     }
@@ -918,6 +962,23 @@
     .detail-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
     .action-row { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
     .helper-text { color:var(--muted); font-size:13px; }
+    .project-history-filter {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:12px;
+      margin:0 0 14px;
+      display:grid;
+      grid-template-columns: minmax(170px, .8fr) minmax(190px, 1fr) minmax(220px, 1.4fr) auto;
+      gap:10px;
+      align-items:end;
+    }
+    .project-history-filter .field { margin-bottom:0; }
+    .project-history-filter .filter-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .project-history-count { color:var(--muted); font-size:12px; font-weight:700; align-self:center; }
+    @media (max-width: 860px) {
+      .project-history-filter { grid-template-columns:1fr; }
+    }
     .report-card, .employee-card {
       background:white; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;
       box-shadow: 0 4px 12px rgba(16,24,40,.04);
@@ -2372,7 +2433,63 @@
         <p>Open the blank PAL fireproofing JHA/checklist for print or review.</p>
         <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectJhaChecklist()">Open Checklist</button>
       </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('toolbox-signin')" onkeydown="handleProjectFieldFormCardKey(event, 'official:toolbox-signin')">
+        <h3>Toolbox Talk Sign-In</h3>
+        <p>Official blank weekly toolbox talk sign-in sheet.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('toolbox-signin')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('incident-report')" onkeydown="handleProjectFieldFormCardKey(event, 'official:incident-report')">
+        <h3>Incident Report</h3>
+        <p>Blank incident report for injuries, near misses, or site events.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('incident-report')">Open Form</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('scissor-lift-inspection')" onkeydown="handleProjectFieldFormCardKey(event, 'official:scissor-lift-inspection')">
+        <h3>Scissor Lift Inspection</h3>
+        <p>Pre-use lift inspection checklist for field crews.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('scissor-lift-inspection')">Open Checklist</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('scaffold-checklist')" onkeydown="handleProjectFieldFormCardKey(event, 'official:scaffold-checklist')">
+        <h3>Scaffold Checklist</h3>
+        <p>Official pre-use scaffold safety checklist.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('scaffold-checklist')">Open Checklist</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('harness-checklist')" onkeydown="handleProjectFieldFormCardKey(event, 'official:harness-checklist')">
+        <h3>Harness Checklist</h3>
+        <p>Full-body harness and fall protection inspection checklist.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('harness-checklist')">Open Checklist</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('decon-setup-checklist')" onkeydown="handleProjectFieldFormCardKey(event, 'official:decon-setup-checklist')">
+        <h3>Decon Setup Checklist</h3>
+        <p>Blank containment and decontamination setup checklist.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('decon-setup-checklist')">Open Checklist</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('ppe-inspection-checklist')" onkeydown="handleProjectFieldFormCardKey(event, 'official:ppe-inspection-checklist')">
+        <h3>PPE Inspection Checklist</h3>
+        <p>Blank PPE inspection checklist for field use.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('ppe-inspection-checklist')">Open Checklist</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('respirator-checklist')" onkeydown="handleProjectFieldFormCardKey(event, 'official:respirator-checklist')">
+        <h3>Respirator Checklist</h3>
+        <p>Respiratory protection pre-use checklist.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('respirator-checklist')">Open Checklist</button>
+      </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('demolition-safety-checklist')" onkeydown="handleProjectFieldFormCardKey(event, 'official:demolition-safety-checklist')">
+        <h3>Demolition Safety Checklist</h3>
+        <p>Blank pre-task demolition safety review checklist.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('demolition-safety-checklist')">Open Checklist</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- OFFICIAL PROJECT FORM VIEWER -->
+<div class="modal-overlay" id="modal-official-project-form">
+  <div class="modal">
+    <div class="official-form-bar">
+      <h3 id="official-project-form-title">Project Form</h3>
+      <button class="btn-secondary" type="button" onclick="closeOfficialProjectForm()">Back to Field Forms</button>
+    </div>
+    <iframe class="official-form-frame" id="official-project-form-frame" title="Official project form"></iframe>
   </div>
 </div>
 
@@ -2962,6 +3079,7 @@
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
+  let requestedFieldFormsMenu = new URLSearchParams(window.location.search).get('openFieldForms') === '1';
   let publicNewHireIntakeId = new URLSearchParams(window.location.search).get('intake') || new URLSearchParams(window.location.search).get('newhire');
 // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
@@ -3004,6 +3122,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openProjectFieldFormsMenu = openProjectFieldFormsMenu;
   window.openProjectForemanTool = openProjectForemanTool;
   window.openProjectExtraWorkTicket = openProjectExtraWorkTicket;
+  window.openOfficialBlankForm = openOfficialBlankForm;
+  window.closeOfficialProjectForm = closeOfficialProjectForm;
   window.handleProjectFieldFormCardKey = handleProjectFieldFormCardKey;
   window.openProjectJhaChecklist = openProjectJhaChecklist;
   window.downloadProjectFile = downloadProjectFile;
@@ -3434,12 +3554,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const target = filtered.find(p => p.id === requestedProjectId);
         if (target) {
           const id = requestedProjectId;
+          const shouldOpenFieldForms = requestedFieldFormsMenu;
           requestedProjectId = null;
-          openProject(id, target);
+          requestedFieldFormsMenu = false;
+          openProject(id, target).then(() => {
+            if (shouldOpenFieldForms) {
+              const url = new URL(window.location.href);
+              url.searchParams.delete('openFieldForms');
+              history.replaceState({}, '', url.toString());
+              openProjectFieldFormsMenu();
+            }
+          });
         } else {
           requestedProjectId = null;
+          requestedFieldFormsMenu = false;
           const url = new URL(window.location.href);
           url.searchParams.delete('projectId');
+          url.searchParams.delete('openFieldForms');
           history.replaceState({}, '', url.toString());
           toast('That project is not available for your account.');
         }
@@ -4811,11 +4942,55 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     openExtraWorkTicketModal(currentProject.id);
   }
 
+  function openOfficialBlankForm(formId) {
+    if (!formId) return;
+    closeModal('modal-project-field-forms');
+    const url = new URL('index.html', window.location.href);
+    url.searchParams.set('palProjectForm', '1');
+    url.searchParams.set('embeddedProjectForm', '1');
+    url.searchParams.set('form', formId);
+    const frame = document.getElementById('official-project-form-frame');
+    const title = document.getElementById('official-project-form-title');
+    if (title) title.textContent = getOfficialBlankFormTitle(formId);
+    if (frame) frame.src = url.toString();
+    document.getElementById('modal-official-project-form')?.classList.add('open');
+  }
+
+  function getOfficialBlankFormTitle(formId) {
+    const titles = {
+      'toolbox-signin': 'Toolbox Talk Sign-In',
+      'incident-report': 'Incident Report',
+      'scissor-lift-inspection': 'Scissor Lift Inspection',
+      'scaffold-checklist': 'Scaffold Checklist',
+      'harness-checklist': 'Harness Checklist',
+      'decon-setup-checklist': 'Decon Setup Checklist',
+      'ppe-inspection-checklist': 'PPE Inspection Checklist',
+      'respirator-checklist': 'Respirator Checklist',
+      'demolition-safety-checklist': 'Demolition Safety Checklist'
+    };
+    return titles[formId] || 'Project Form';
+  }
+
+  function closeOfficialProjectForm() {
+    const modal = document.getElementById('modal-official-project-form');
+    const frame = document.getElementById('official-project-form-frame');
+    if (frame) frame.src = 'about:blank';
+    modal?.classList.remove('open');
+    openProjectFieldFormsMenu();
+  }
+
+  window.addEventListener('message', event => {
+    if (event.data?.type === 'pal-close-official-project-form') {
+      closeOfficialProjectForm();
+    }
+  });
+
   function handleProjectFieldFormCardKey(event, target) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     if (target === 'extra-ticket') return openProjectExtraWorkTicket();
     if (target === 'jha-checklist') return openProjectJhaChecklist();
+    if (String(target || '').startsWith('official:')) return openOfficialBlankForm(String(target).slice(9));
     if (target) openProjectForemanTool(target);
   }
 
@@ -8438,11 +8613,16 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-foreman-tool','modal-project-field-forms','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-foreman-tool','modal-project-field-forms','modal-official-project-form','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
-      if (e.target === this) closeModal(modalId);
+      if (e.target !== this) return;
+      if (modalId === 'modal-official-project-form') {
+        closeOfficialProjectForm();
+      } else {
+        closeModal(modalId);
+      }
     });
   });
 
