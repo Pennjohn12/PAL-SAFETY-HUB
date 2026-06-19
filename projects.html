@@ -294,6 +294,32 @@
     .foreman-tool-pane { display:none; }
     .foreman-tool-pane.active { display:block; }
     .ai-safety-panel h3 { margin:0 0 6px; color:var(--navy); }
+    .foreman-paper-title {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .foreman-paper-title h3 { margin:0; }
+    .foreman-paper-logo {
+      background:var(--navy);
+      color:#fff;
+      border-radius:6px;
+      padding:8px 10px;
+      min-width:74px;
+      text-align:center;
+      font-weight:900;
+      line-height:1;
+      letter-spacing:.4px;
+    }
+    .foreman-paper-logo small {
+      display:block;
+      color:var(--green);
+      font-size:8px;
+      letter-spacing:.6px;
+      margin-top:3px;
+    }
     .ai-safety-panel p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
     .ai-safety-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
     .ai-safety-grid .span-2 { grid-column: 1 / -1; }
@@ -352,6 +378,23 @@
       .daily-safety-value { font-size:12px; line-height:1.25; }
       .daily-safety-sign-table td { height:32px; padding:5px 6px; }
       .signature-script { font-size:20px; }
+      .foreman-paper-title { margin-bottom:6px; }
+      .foreman-paper-logo { padding:6px 8px; }
+      .ai-safety-panel { border:0; padding:0; margin:0; background:#fff; }
+      .ai-safety-panel p { display:none; }
+      .ai-safety-grid { gap:6px 10px; }
+      .field label { font-size:10px; margin-bottom:2px; }
+      .field input,
+      .field textarea,
+      .field select {
+        font-size:11px;
+        padding:4px 5px;
+        min-height:24px;
+      }
+      .field textarea { min-height:38px; }
+      .ticket-table th,
+      .ticket-table td { padding:3px 4px; }
+      .ticket-table input { font-size:11px; padding:3px 2px; }
     }
     .ai-safety-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
     .ai-safety-note {
@@ -637,6 +680,14 @@
     #modal-foreman-tool .foreman-tool-pane.active {
       display:block;
     }
+    #modal-foreman-tool .modal > div:first-child {
+      position: sticky;
+      top: -22px;
+      z-index: 5;
+      background: #fff;
+      padding: 0 0 12px;
+      border-bottom: 1px solid var(--line);
+    }
     .foreman-form-actions {
       display:flex;
       gap:10px;
@@ -645,6 +696,18 @@
       margin-top:18px;
       padding-top:14px;
       border-top:1px solid var(--line);
+      position: sticky;
+      bottom: -22px;
+      z-index: 6;
+      background: rgba(255,255,255,.96);
+      padding: 12px 0 0;
+      box-shadow: 0 -10px 18px rgba(16,24,40,.08);
+    }
+    @media(max-width:700px){
+      .foreman-form-actions button {
+        flex: 1 1 145px;
+        min-height: 44px;
+      }
     }
     .modal h3 { font-size: 20px; color: var(--navy); margin-bottom: 20px; }
     .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
@@ -1660,10 +1723,13 @@
 
       <div class="foreman-tool-pane" id="foreman-tool-manual-safety">
       <div class="ai-safety-panel">
-        <h3>Manual Daily Safety Sheet</h3>
+        <div class="foreman-paper-title">
+          <div class="foreman-paper-logo">PAL<small>SAFETY</small></div>
+          <h3>PAL Daily Safety</h3>
+        </div>
         <p>Fill out the daily safety meeting sheet manually. Saving sends it to the selected project's Field Forms tab.</p>
         <div class="ai-safety-grid">
-          <div class="field"><label>Project</label><select id="manual-safety-project-select"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Project</label><select id="manual-safety-project-select" onchange="syncManualSafetyProjectFields()"><option value="">Select a project...</option></select></div>
           <div class="field"><label>Project Name</label><input id="manual-sheet-project-name" /></div>
           <div class="field"><label>Date</label><input id="manual-sheet-date" type="date" /></div>
           <div class="field"><label>Trade</label><input id="manual-sheet-trade" value="Fireproofing / SOFP" /></div>
@@ -1708,6 +1774,7 @@
           <div class="field span-2"><label>Supervisor Signature</label><input id="manual-sheet-supervisor-signature" class="ai-signature-input" /></div>
         </div>
         <div class="foreman-form-actions">
+          <button class="btn-secondary" type="button" onclick="closeForemanToolAndReturn()">Back / Close</button>
           <button class="btn-save" type="button" id="save-manual-safety-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
@@ -2429,7 +2496,7 @@
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">
       <h3 id="foreman-tool-modal-title" style="margin:0;">Foreman Tool</h3>
-      <button class="btn-secondary" type="button" onclick="closeForemanToolModal()">Close</button>
+      <button class="btn-secondary" type="button" onclick="closeForemanToolAndReturn()">Back / Close</button>
     </div>
     <div id="foreman-tool-modal-body"></div>
   </div>
@@ -3195,12 +3262,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.loadProjectFieldForms = loadProjectFieldForms;
   window.openFieldFormDetail = openFieldFormDetail;
   window.editFieldFormDailySafety = editFieldFormDailySafety;
+  window.printFieldFormSafetySheet = printFieldFormSafetySheet;
   window.refreshAiSafetyProjectOptions = refreshAiSafetyProjectOptions;
+  window.syncManualSafetyProjectFields = syncManualSafetyProjectFields;
   window.fillAiSafetyExample = fillAiSafetyExample;
   window.generateProjectAiSafetySheet = generateProjectAiSafetySheet;
   window.saveProjectAiSafetySheet = saveProjectAiSafetySheet;
   window.openForemanToolModal = openForemanToolModal;
   window.closeForemanToolModal = closeForemanToolModal;
+  window.closeForemanToolAndReturn = closeForemanToolAndReturn;
   window.switchForemanToolTab = switchForemanToolTab;
   window.handleForemanToolCardKey = handleForemanToolCardKey;
   window.addManualSafetySignRow = addManualSafetySignRow;
@@ -4038,6 +4108,66 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
   }
 
+  function manualSafetyForemanName(project) {
+    const foremen = Array.isArray(project?.foremen) ? project.foremen : [];
+    const currentEmail = (currentUser?.email || '').toLowerCase();
+    const currentMatch = foremen.find(f =>
+      (f.uid && f.uid === currentUser?.uid) || ((f.email || '').toLowerCase() === currentEmail)
+    );
+    const assignedForeman = currentMatch || (foremen.length === 1 ? foremen[0] : null);
+    return assignedForeman?.name || assignedForeman?.displayName || assignedForeman?.email || currentUser?.displayName || currentUser?.email || '';
+  }
+
+  function setManualSafetyField(id, value = '') {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+  }
+
+  function syncManualSafetyProjectFields() {
+    const project = selectedManualSafetyProject();
+    setManualSafetyField('manual-sheet-project-name', project?.name || '');
+    const foremanName = manualSafetyForemanName(project);
+    setManualSafetyField('manual-sheet-foreman', foremanName);
+    setManualSafetyField('manual-sheet-speaker', foremanName);
+    setManualSafetyField('manual-sheet-supervisor-print', foremanName);
+  }
+
+  function resetManualDailySafetySheet() {
+    const today = new Date().toISOString().slice(0, 10);
+    [
+      'manual-sheet-project-name',
+      'manual-sheet-items',
+      'manual-sheet-tasks',
+      'manual-sheet-hazard1',
+      'manual-sheet-control1',
+      'manual-sheet-hazard2',
+      'manual-sheet-control2',
+      'manual-sheet-time',
+      'manual-sheet-supervisor-signature'
+    ].forEach(id => setManualSafetyField(id, ''));
+    setManualSafetyField('manual-sheet-date', today);
+    setManualSafetyField('manual-sheet-supervisor-date', today);
+    setManualSafetyField('manual-sheet-trade', 'Fireproofing / SOFP');
+    setManualSafetyField('manual-sheet-inspection', 'Please notify foreman with any and all issues or injuries immediately.');
+    [
+      ['manual-lang-english', true],
+      ['manual-lang-spanish', false],
+      ['manual-lang-polish', false],
+      ['manual-lang-ukrainian', false],
+      ['manual-lang-russian', false],
+      ['manual-lang-other', false]
+    ].forEach(([id, checked]) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = checked;
+    });
+    setSafetySignRows('manual-safety-sign-rows', [], 3);
+    const select = document.getElementById('manual-safety-project-select');
+    if (select && currentProject?.id) select.value = currentProject.id;
+    syncManualSafetyProjectFields();
+    const btn = document.getElementById('save-manual-safety-btn');
+    if (btn) btn.textContent = 'Submit to Project';
+  }
+
   function selectedAiSafetyProject() {
     const id = document.getElementById('ai-safety-project-select')?.value || currentProject?.id || '';
     return (allProjects || []).find(p => p.id === id) || (currentProject?.id === id ? currentProject : null);
@@ -4061,6 +4191,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let activeForemanToolId = '';
   let editingFieldFormProjectId = '';
   let editingFieldFormId = '';
+  let foremanToolReturnToFieldForms = false;
   const foremanToolTitles = {
     'foreman-tool-manual-safety': 'Manual Daily Safety Sheet',
     'foreman-tool-ai-safety': 'AI Assisted Daily Safety Sheet',
@@ -4071,8 +4202,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     'foreman-tool-expense-report': 'Expense Report'
   };
 
-  function openForemanToolModal(tabId, editingExisting = false) {
+  function openForemanToolModal(tabId, editingExisting = false, returnToFieldForms = false) {
     activeForemanToolId = tabId;
+    foremanToolReturnToFieldForms = !!returnToFieldForms;
     if (tabId === 'foreman-tool-manual-safety' && !editingExisting) {
       editingFieldFormProjectId = '';
       editingFieldFormId = '';
@@ -4093,12 +4225,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const card = document.querySelector(`#main-foreman-tools .tool-launch[data-foreman-target="${tabId}"]`);
     if (card) card.classList.add('is-active');
     refreshAiSafetyProjectOptions();
+    if (tabId === 'foreman-tool-manual-safety' && !editingExisting) {
+      resetManualDailySafetySheet();
+    }
     initForemanPayrollExpenseTool(tabId);
     document.getElementById('modal-foreman-tool')?.classList.add('open');
   }
 
   function closeForemanToolModal() {
     document.getElementById('modal-foreman-tool')?.classList.remove('open');
+  }
+
+  function closeForemanToolAndReturn() {
+    closeForemanToolModal();
+    if (foremanToolReturnToFieldForms && currentProject?.id) {
+      setTimeout(() => openProjectFieldFormsMenu(), 80);
+    }
+    foremanToolReturnToFieldForms = false;
   }
 
   function switchForemanToolTab(tabId) {
@@ -4501,19 +4644,39 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const clone = cloneForemanToolForExport();
     if (!clone) return toast('Open a foreman tool first.');
     const title = foremanToolTitles[activeForemanToolId] || 'PAL Foreman Tool';
+    const isManualSafety = activeForemanToolId === 'foreman-tool-manual-safety';
     const w = window.open('', '_blank');
     if (!w) {
       toast('Popup blocked. Allow popups to print or save.');
       return;
     }
     const styles = document.querySelector('style')?.innerHTML || '';
-    w.document.write(`<!doctype html><html><head><title>${esc(title)}</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions,.ai-safety-actions,.foreman-form-actions,button{display:none!important}.ai-safety-panel{max-width:980px;margin:0 auto}.foreman-tool-pane{display:block!important}</style></head><body>${clone.innerHTML}</body></html>`);
+    const printButton = '<div class="print-fallback"><button onclick="window.focus();window.print()">Open Print Dialog</button></div>';
+    const manualSafetyPrint = isManualSafety ? `
+      @page{size:letter landscape;margin:.25in}
+      body{padding:10px}
+      .ai-safety-panel{max-width:980px}
+      .ai-safety-grid{gap:6px 10px}
+      .field label{font-size:10px;margin-bottom:2px}
+      .field input,.field textarea,.field select{font-size:11px;padding:4px 5px;min-height:24px}
+      .field textarea{height:38px!important;min-height:38px;resize:none}
+      .ticket-table{min-width:0}
+      .ticket-table th,.ticket-table td{padding:3px 4px;font-size:10px}
+      .ticket-table input{font-size:11px;padding:3px 2px}
+      .language-line{gap:8px;font-size:11px;margin-bottom:4px}
+      h3{font-size:18px}
+      .foreman-paper-logo{padding:6px 8px}
+      .print-fallback{display:flex;justify-content:center;margin:0 0 10px}
+      .print-fallback button{display:inline-block!important;border:1px solid #173a5e;border-radius:6px;background:#173a5e;color:#fff;padding:8px 12px;font-weight:800}
+      @media print{.print-fallback{display:none!important} body{padding:0} .ai-safety-panel{max-width:100%}}
+    ` : '';
+    w.document.write(`<!doctype html><html><head><title>${esc(title)}</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions,.ai-safety-actions,.foreman-form-actions,button{display:none!important}.ai-safety-panel{max-width:980px;margin:0 auto}.foreman-tool-pane{display:block!important}${manualSafetyPrint}</style></head><body>${printButton}${clone.innerHTML}</body></html>`);
     w.document.close();
     if (autoPrint) setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 350);
   }
 
   function printForemanTool() {
-    openForemanToolPrintWindow(false);
+    openForemanToolPrintWindow(true);
   }
 
   function saveForemanToolPdf() {
@@ -5069,7 +5232,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function openProjectForemanTool(tabId) {
     if (!currentProject) return toast('Open a project first.');
     closeModal('modal-project-field-forms');
-    openForemanToolModal(tabId);
+    openForemanToolModal(tabId, false, true);
   }
 
   function openProjectExtraWorkTicket() {
@@ -5831,10 +5994,49 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return '';
   }
 
-  function openFieldFormDetail(formId) {
+  function findProjectFieldForm(formId) {
     const list = document.getElementById('field-forms-list');
-    const rows = JSON.parse(list?.dataset.fieldFormMap || '[]');
-    const form = rows.find(r => r.id === formId);
+    const rows = currentProjectFieldForms?.length ? currentProjectFieldForms : JSON.parse(list?.dataset.fieldFormMap || '[]');
+    return rows.find(r => r.id === formId);
+  }
+
+  function fieldFormSafetyPrintCSS() {
+    return `
+      @page{size:letter landscape;margin:.25in}
+      body{background:#fff;padding:10px;font-family:Arial,sans-serif}
+      .print-fallback{display:flex;justify-content:center;margin:0 0 10px}
+      .print-fallback button{border:1px solid #173a5e;border-radius:6px;background:#173a5e;color:#fff;padding:8px 12px;font-weight:800}
+      .daily-safety-paper{max-width:980px;margin:0 auto;border-radius:0}
+      .daily-safety-head{padding:8px 12px;grid-template-columns:140px 1fr 150px}
+      .daily-safety-head h3{font-size:18px}
+      .daily-safety-head p{font-size:11px}
+      .daily-safety-meta{font-size:11px}
+      .daily-safety-body{padding:8px 12px}
+      .daily-safety-field-grid{gap:5px 12px}
+      .daily-safety-field{min-height:26px;padding-bottom:3px}
+      .daily-safety-field label,.daily-safety-block-title{font-size:10px;margin-bottom:2px}
+      .daily-safety-value{font-size:11px;line-height:1.2}
+      .daily-safety-sign-table{font-size:11px}
+      .daily-safety-sign-table th,.daily-safety-sign-table td{padding:3px 5px;height:26px}
+      .daily-safety-footer{padding:7px 9px;margin-top:7px}
+      .language-line{gap:8px;font-size:10px;margin-bottom:5px}
+      .signature-script{font-size:18px}
+      @media print{.print-fallback{display:none!important}body{padding:0}.daily-safety-paper{max-width:100%}}
+    `;
+  }
+
+  function printFieldFormSafetySheet(formId, autoPrint = true) {
+    const form = findProjectFieldForm(formId);
+    if (!form) return toast('Safety sheet not found. Refresh and try again.');
+    const w = window.open('', '_blank');
+    if (!w) return toast('Popup blocked. Allow popups to print or save.');
+    w.document.write(`<!doctype html><html><head><title>${esc(form.formTitle || 'PAL Daily Safety')}</title><style>${fieldFormSafetyPrintCSS()}</style></head><body><div class="print-fallback"><button onclick="window.focus();window.print()">Open Print Dialog</button></div>${dailySafetySheetDetailHTML(form)}</body></html>`);
+    w.document.close();
+    if (autoPrint) setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 350);
+  }
+
+  function openFieldFormDetail(formId) {
+    const form = findProjectFieldForm(formId);
     if (!form) return;
     const modal = document.getElementById('modal-report-detail');
     const heading = modal?.querySelector('h3');
@@ -5848,6 +6050,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       grid.innerHTML = `
         <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
           <button class="btn-save" type="button" onclick="editFieldFormDailySafety('${form.id}')">Edit / Add Signatures</button>
+          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}', true)">Print</button>
+          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}', true)">Save PDF</button>
         </div>
         ${dailySafetySheetDetailHTML(form)}`;
       document.getElementById('modal-report-detail').classList.add('open');
