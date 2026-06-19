@@ -1887,7 +1887,7 @@
           <button class="btn-save" type="button" id="save-manual-report-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
         </div>
       </div>
       </div>
@@ -1957,7 +1957,7 @@
           <button class="btn-save" type="button" id="save-daily-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
         </div>
       </div>
       </div>
@@ -1990,7 +1990,7 @@
           <button class="btn-save" type="button" id="save-weekly-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
         </div>
       </div>
       </div>
@@ -2027,7 +2027,7 @@
           <button class="btn-save" type="button" id="save-expense-report-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
         </div>
       </div>
       </div>
@@ -4814,9 +4814,295 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     toast('Safety sheet file downloaded.');
   }
 
+  const safeForemanExportTools = [
+    'foreman-tool-manual-report',
+    'foreman-tool-daily-payroll',
+    'foreman-tool-weekly-payroll',
+    'foreman-tool-expense-report'
+  ];
+
+  function isSafeForemanExportTool() {
+    return safeForemanExportTools.includes(activeForemanToolId);
+  }
+
+  function exportSlug(value) {
+    return String(value || 'document')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'document';
+  }
+
+  function exportField(label, value = '') {
+    return `
+      <div class="ex-field">
+        <div class="ex-label">${esc(label)}</div>
+        <div class="ex-value">${esc(value || '')}</div>
+      </div>`;
+  }
+
+  function exportNote(label, value = '') {
+    return `
+      <div class="ex-note">
+        <div class="ex-label">${esc(label)}</div>
+        <div class="ex-note-value">${esc(value || '')}</div>
+      </div>`;
+  }
+
+  function exportTable(headers, rows = [], columns = []) {
+    const body = rows.length
+      ? rows.map(row => `<tr>${columns.map(col => `<td>${esc(row[col] || '')}</td>`).join('')}</tr>`).join('')
+      : `<tr><td colspan="${headers.length}">No rows entered.</td></tr>`;
+    return `
+      <table class="ex-table">
+        <thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+        <tbody>${body}</tbody>
+      </table>`;
+  }
+
+  function foremanExportCSS() {
+    return `
+      @page{size:landscape;margin:.25in}
+      *{box-sizing:border-box}
+      html,body{margin:0;min-height:100%;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif}
+      body{padding:16px}
+      .file-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+      .file-actions button{border:1px solid #111;border-radius:8px;background:#fff;color:#111;padding:10px 14px;font-weight:900}
+      .ex-sheet{max-width:10.35in;min-height:7.35in;margin:0 auto;border:1px solid #111;background:#fff;color:#111}
+      .ex-head{display:grid;grid-template-columns:1.35in 1fr 1.8in;gap:.15in;align-items:center;border-bottom:2px solid #111;padding:.13in .16in}
+      .ex-logo{font-weight:900;font-size:22px;line-height:1}.ex-logo small{display:block;font-size:7px;letter-spacing:.6px;margin-top:3px}
+      .ex-title{text-align:center}.ex-title h1{font-size:21px;margin:0 0 3px}.ex-title p{font-size:12px;margin:0}
+      .ex-meta{text-align:right;font-size:10.5px;line-height:1.3}
+      .ex-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.08in .14in;padding:.12in .16in}
+      .ex-field{min-height:.34in;border-bottom:1px solid #555;padding-bottom:2px}
+      .ex-label{font-size:10px;font-weight:900;margin-bottom:3px}
+      .ex-value,.ex-note-value{font-size:11.5px;line-height:1.28;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;min-height:.18in}
+      .ex-note{border-bottom:1px solid #555;margin:.02in .16in .1in;min-height:.42in}
+      .ex-section{font-size:12px;font-weight:900;margin:.1in .16in .04in}
+      .ex-table{width:calc(100% - .32in);margin:0 .16in .12in;border-collapse:collapse;font-size:11px}
+      .ex-table th,.ex-table td{border:1px solid #555;padding:5px 6px;text-align:left;vertical-align:top}
+      .ex-sign{font-family:"Brush Script MT","Segoe Script",cursive;font-size:20px}
+      @media print{body{padding:0}.file-actions{display:none!important}.ex-sheet{max-width:100%}}
+      @media(max-width:700px){body{padding:8px}.ex-sheet{min-width:760px}.file-actions{position:sticky;top:0;background:#fff;padding:8px;z-index:2}}
+    `;
+  }
+
+  function foremanExportDocumentHTML({ title, subtitle = '', meta = '', fields = [], notes = [], tables = [] }) {
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(title)}</title>
+  <style>${foremanExportCSS()}</style>
+</head>
+<body>
+  <div class="file-actions">
+    <button onclick="window.print()">Print / Save as PDF</button>
+    <button onclick="window.close()">Close</button>
+  </div>
+  <section class="ex-sheet">
+    <header class="ex-head">
+      <div class="ex-logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+      <div class="ex-title"><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div>
+      <div class="ex-meta">${meta}</div>
+    </header>
+    <div class="ex-grid">${fields.map(([label, value]) => exportField(label, value)).join('')}</div>
+    ${notes.map(([label, value]) => exportNote(label, value)).join('')}
+    ${tables.map(table => `<div class="ex-section">${esc(table.title || '')}</div>${exportTable(table.headers, table.rows, table.columns)}`).join('')}
+  </section>
+</body>
+</html>`;
+  }
+
+  function currentForemanExportDocument() {
+    if (activeForemanToolId === 'foreman-tool-manual-report') {
+      const project = selectedForemanReportProject('manual');
+      const data = getForemanReportData('manual');
+      const title = 'PAL Daily Report';
+      return {
+        title,
+        fileName: `pal-daily-report-${exportSlug(project?.name || 'project')}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Daily field report',
+          meta: `Project: ${esc(project?.name || '')}<br>Job: ${esc(project?.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project', project?.name || ''],
+            ['Date', data.date],
+            ['Foreman / Supervisor', data.supervisor],
+            ['Crew Total', data.crew_total],
+            ['Man-Hours', data.man_hours],
+            ['Weather / Conditions', data.conditions],
+            ['Temperature', data.temp],
+            ['Status', data.status],
+            ['% Complete', data.percent_complete],
+            ['Floors / Areas', data.floors],
+            ['Toolbox Topic', data.toolbox_topic],
+            ['Toolbox Talk', data.toolbox_yes_no]
+          ],
+          notes: [
+            ['Work Completed Today', data.work_description],
+            ['Deliveries / Materials / Equipment', data.delivery_description],
+            ['Issues / Delays', data.issues],
+            ['Safety Notes / Incidents', data.safety_notes],
+            ['Additional Notes', data.notes]
+          ]
+        })
+      };
+    }
+
+    if (activeForemanToolId === 'foreman-tool-daily-payroll') {
+      const project = selectedForemanProject('daily-payroll-project-select');
+      const data = getDailyPayrollData();
+      const title = 'PAL Daily Payroll';
+      return {
+        title,
+        fileName: `pal-daily-payroll-${exportSlug(project?.name || 'project')}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Daily worker time sheet',
+          meta: `Project: ${esc(project?.name || '')}<br>Job: ${esc(data.jobNumber || project?.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project', project?.name || ''],
+            ['Job Number', data.jobNumber || project?.jobNumber || ''],
+            ['Date', data.date],
+            ['Foreman / Supervisor', data.foreman],
+            ['Week Of', data.weekOf],
+            ['Job Address', data.address],
+            ['Regular Hours', data.totals?.regularHours ? Number(data.totals.regularHours).toFixed(2) : '0.00'],
+            ['Overtime Hours', data.totals?.overtimeHours ? Number(data.totals.overtimeHours).toFixed(2) : '0.00'],
+            ['Total Hours', data.totals?.totalHours ? Number(data.totals.totalHours).toFixed(2) : '0.00'],
+            ['Printed Name', data.printedName],
+            ['Date Signed', data.dateSigned],
+            ['Signature', data.signature]
+          ],
+          tables: [{
+            title: 'Worker Hours',
+            headers: ['#', 'Worker', 'LU #', 'Role', 'Time In', 'Time Out', 'Reg', 'OT', 'Total'],
+            rows: data.rows,
+            columns: ['row', 'workerName', 'luNumber', 'role', 'timeIn', 'timeOut', 'regularHours', 'overtimeHours', 'totalHours']
+          }]
+        })
+      };
+    }
+
+    if (activeForemanToolId === 'foreman-tool-weekly-payroll') {
+      const project = selectedForemanProject('weekly-payroll-project-select');
+      const data = getWeeklyPayrollData();
+      const title = 'PAL Weekly Payroll';
+      return {
+        title,
+        fileName: `pal-weekly-payroll-${exportSlug(project?.name || 'project')}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Weekly fireproofing payroll sheet',
+          meta: `Project: ${esc(project?.name || '')}<br>Job: ${esc(data.jobNumber || project?.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project', project?.name || ''],
+            ['Page #', data.page],
+            ['Date', data.date],
+            ['Job Number', data.jobNumber || project?.jobNumber || ''],
+            ['Supervisor', data.supervisor],
+            ['Week Of', data.weekOf],
+            ['Location', data.location],
+            ['Regular Hours', data.totals?.regularHours ? Number(data.totals.regularHours).toFixed(2) : '0.00'],
+            ['Overtime Hours', data.totals?.overtimeHours ? Number(data.totals.overtimeHours).toFixed(2) : '0.00'],
+            ['Total Hours', data.totals?.totalHours ? Number(data.totals.totalHours).toFixed(2) : '0.00']
+          ],
+          tables: [{
+            title: 'Weekly Hours',
+            headers: ['LU #', 'Worker', 'Cost Code', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Reg', 'OT', 'Total'],
+            rows: data.rows,
+            columns: ['luNumber', 'workerName', 'costCode', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'regularHours', 'overtimeHours', 'totalHours']
+          }]
+        })
+      };
+    }
+
+    if (activeForemanToolId === 'foreman-tool-expense-report') {
+      const project = selectedForemanProject('expense-report-project-select');
+      const data = getForemanExpenseReportData();
+      const title = 'PAL Expense Report';
+      return {
+        title,
+        fileName: `pal-expense-report-${exportSlug(project?.name || data.employeeName || 'project')}-${exportSlug(data.reportDate || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Expense report',
+          meta: `Project: ${esc(project?.name || '')}<br>Employee: ${esc(data.employeeName || '')}<br>Date: ${esc(data.reportDate || '')}`,
+          fields: [
+            ['Project', project?.name || ''],
+            ['Employee', data.employeeName],
+            ['Report Date', data.reportDate],
+            ['Purpose', data.purpose],
+            ['Account #', data.account],
+            ['Trip Start', data.tripStart],
+            ['Trip End', data.tripEnd],
+            ['Total Reported', `$${data.totalReported || '0.00'}`],
+            ['Cash Advance', `$${data.cashAdvance || '0.00'}`],
+            ['Total Due Employee', `$${data.totalDue || '0.00'}`],
+            ['Approver', data.approver],
+            ['Date Signed', data.dateSigned],
+            ['Signature', data.signature]
+          ],
+          tables: [{
+            title: 'Expenses',
+            headers: ['Description', 'Date', 'Category', 'Amount'],
+            rows: data.rows,
+            columns: ['description', 'date', 'category', 'amount']
+          }]
+        })
+      };
+    }
+
+    return null;
+  }
+
+  function openForemanExportFileWindow(doc) {
+    if (!doc) return toast('Open a supported foreman tool first.');
+    const blob = new Blob([doc.html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) {
+      URL.revokeObjectURL(url);
+      toast('Popup blocked. Use Save / Email File instead.');
+      return;
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }
+
+  async function shareOrDownloadForemanExport(doc) {
+    if (!doc) return toast('Open a supported foreman tool first.');
+    const blob = new Blob([doc.html], { type: 'text/html' });
+    try {
+      if (typeof File !== 'undefined') {
+        const file = new File([blob], doc.fileName, { type: 'text/html' });
+        if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+          await navigator.share({ title: doc.title, files: [file] });
+          return;
+        }
+      }
+    } catch (e) {
+      if (e?.name === 'AbortError') return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = doc.fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast('Document file downloaded.');
+  }
+
   function openForemanToolPrintWindow(autoPrint = false) {
     if (activeForemanToolId === 'foreman-tool-manual-safety') {
       openSafetySheetFileWindow(currentManualSafetyPrintForm());
+      return;
+    }
+    if (isSafeForemanExportTool()) {
+      openForemanExportFileWindow(currentForemanExportDocument());
       return;
     }
     const clone = cloneForemanToolForExport();
@@ -4862,12 +5148,19 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       openSafetySheetFileWindow(currentManualSafetyPrintForm(), false);
       return;
     }
+    if (isSafeForemanExportTool()) {
+      openForemanExportFileWindow(currentForemanExportDocument());
+      return;
+    }
     openForemanToolPrintWindow(true);
   }
 
   async function shareForemanTool() {
     if (activeForemanToolId === 'foreman-tool-manual-safety') {
       return shareOrDownloadSafetySheet(currentManualSafetyPrintForm());
+    }
+    if (isSafeForemanExportTool()) {
+      return shareOrDownloadForemanExport(currentForemanExportDocument());
     }
     const title = foremanToolTitles[activeForemanToolId] || 'PAL Foreman Tool';
     if (navigator.share) {
