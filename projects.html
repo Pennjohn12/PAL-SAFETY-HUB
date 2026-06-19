@@ -364,6 +364,7 @@
     .daily-safety-sign-table td { padding:8px; border:1px solid #d8e1ec; height:42px; }
     .daily-safety-footer { border:1px solid var(--green); border-radius:8px; padding:12px 14px; margin-top:14px; }
     .language-line { display:flex; gap:14px; flex-wrap:wrap; color:#1f2937; font-size:14px; margin-bottom:10px; }
+    #print-root { display:none; }
     @media(max-width:800px){
       .daily-safety-head { grid-template-columns:1fr; text-align:left; }
       .daily-safety-head h3,
@@ -372,6 +373,16 @@
       .daily-safety-field-grid { grid-template-columns:1fr; }
     }
     @media print {
+      @page { size: landscape; margin: 0.25in; }
+      body.printing-safety * { visibility:hidden !important; }
+      body.printing-safety #print-root,
+      body.printing-safety #print-root * { visibility:visible !important; }
+      body.printing-safety #print-root {
+        display:block !important;
+        position:absolute;
+        inset:0 auto auto 0;
+        width:100%;
+      }
       .daily-safety-paper { border-radius:0; }
       .daily-safety-head { padding:10px 14px; }
       .daily-safety-body { padding:10px 14px; }
@@ -4640,7 +4651,67 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return clone;
   }
 
+  function currentManualSafetyPrintForm() {
+    const project = selectedManualSafetyProject();
+    const sheet = getManualSafetySheetData();
+    return {
+      id: 'manual-safety-current',
+      formKey: 'daily-safety-meeting',
+      formTitle: 'PAL Daily Safety',
+      projectId: project?.id || currentProject?.id || '',
+      projectName: sheet.project_name || project?.name || currentProject?.name || '',
+      jobNumber: project?.jobNumber || currentProject?.jobNumber || '',
+      submittedByName: sheet.foreman || currentUser?.displayName || currentUser?.email || '',
+      documentData: {
+        ...sheet,
+        signIns: getManualSafetySignIns()
+      }
+    };
+  }
+
+  function prepareSafetySheetPrint(form) {
+    let root = document.getElementById('print-root');
+    if (!root) {
+      root = document.createElement('div');
+      root.id = 'print-root';
+      document.body.appendChild(root);
+    }
+    let style = document.getElementById('safety-print-style');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'safety-print-style';
+      document.head.appendChild(style);
+    }
+    style.textContent = fieldFormSafetyPrintCSS();
+    root.innerHTML = dailySafetySheetDetailHTML(form);
+    document.body.classList.add('printing-safety');
+    const cleanup = () => {
+      document.body.classList.remove('printing-safety');
+      if (root) root.innerHTML = '';
+      document.getElementById('safety-print-style')?.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup, { once: true });
+    setTimeout(cleanup, 120000);
+  }
+
+  function printSafetySheetForm(form) {
+    prepareSafetySheetPrint(form);
+    setTimeout(() => {
+      try {
+        window.focus();
+        window.print();
+      } catch (e) {
+        toast('Could not open print dialog.');
+      }
+    }, 80);
+  }
+
   function openForemanToolPrintWindow(autoPrint = false) {
+    if (activeForemanToolId === 'foreman-tool-manual-safety') {
+      printSafetySheetForm(currentManualSafetyPrintForm());
+      return;
+    }
     const clone = cloneForemanToolForExport();
     if (!clone) return toast('Open a foreman tool first.');
     const title = foremanToolTitles[activeForemanToolId] || 'PAL Foreman Tool';
@@ -6002,37 +6073,39 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function fieldFormSafetyPrintCSS() {
     return `
-      @page{size:letter landscape;margin:.25in}
-      body{background:#fff;padding:10px;font-family:Arial,sans-serif}
+      @page{size:landscape;margin:.22in}
       .print-fallback{display:flex;justify-content:center;margin:0 0 10px}
       .print-fallback button{border:1px solid #173a5e;border-radius:6px;background:#173a5e;color:#fff;padding:8px 12px;font-weight:800}
-      .daily-safety-paper{max-width:980px;margin:0 auto;border-radius:0}
+      #print-root{font-family:Arial,sans-serif;color:#172033;background:#fff}
+      .daily-safety-paper{max-width:10.35in;margin:0 auto;border:1px solid #173a5e;border-radius:0;background:#fff;overflow:hidden}
+      .daily-safety-head{background:#173a5e!important;color:#fff!important;display:grid;grid-template-columns:1.25in 1fr 1.35in;gap:.12in;align-items:center}
+      .daily-safety-head .logo{color:#9bd24a!important;font-weight:900;font-size:20px;line-height:1}
+      .daily-safety-head .logo small{display:block;color:#fff!important;font-size:7px;letter-spacing:.5px;margin-top:2px}
       .daily-safety-head{padding:8px 12px;grid-template-columns:140px 1fr 150px}
-      .daily-safety-head h3{font-size:18px}
-      .daily-safety-head p{font-size:11px}
-      .daily-safety-meta{font-size:11px}
+      .daily-safety-head h3{font-size:18px;margin:0;color:#fff!important;text-align:center}
+      .daily-safety-head p{font-size:11px;margin:2px 0 0;color:#e5edf5!important;text-align:center}
+      .daily-safety-meta{font-size:10px;line-height:1.25;color:#e5edf5!important;text-align:right}
       .daily-safety-body{padding:8px 12px}
-      .daily-safety-field-grid{gap:5px 12px}
-      .daily-safety-field{min-height:26px;padding-bottom:3px}
-      .daily-safety-field label,.daily-safety-block-title{font-size:10px;margin-bottom:2px}
-      .daily-safety-value{font-size:11px;line-height:1.2}
+      .daily-safety-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px}
+      .daily-safety-field{border-bottom:1px solid #8ca4bd;min-height:24px;padding-bottom:3px}
+      .daily-safety-field.full{grid-column:1/-1}
+      .daily-safety-field label,.daily-safety-block-title{display:block;color:#173a5e!important;font-weight:900;font-size:9px;margin-bottom:2px}
+      .daily-safety-value{white-space:pre-line;font-size:10.5px;line-height:1.16;color:#172033!important}
       .daily-safety-sign-table{font-size:11px}
-      .daily-safety-sign-table th,.daily-safety-sign-table td{padding:3px 5px;height:26px}
-      .daily-safety-footer{padding:7px 9px;margin-top:7px}
+      .daily-safety-sign-table{width:100%;border-collapse:collapse;margin-top:4px}
+      .daily-safety-sign-table th{background:#eef4fa!important;color:#173a5e!important;border:1px solid #b7c6d7;padding:3px 5px;text-align:left}
+      .daily-safety-sign-table td{border:1px solid #c5d0dc;padding:3px 5px;height:22px}
+      .daily-safety-footer{border:1px solid #80b84d;border-radius:0;padding:6px 8px;margin-top:6px}
       .language-line{gap:8px;font-size:10px;margin-bottom:5px}
       .signature-script{font-size:18px}
-      @media print{.print-fallback{display:none!important}body{padding:0}.daily-safety-paper{max-width:100%}}
+      @media print{.print-fallback{display:none!important}.daily-safety-paper{max-width:100%}}
     `;
   }
 
   function printFieldFormSafetySheet(formId, autoPrint = true) {
     const form = findProjectFieldForm(formId);
     if (!form) return toast('Safety sheet not found. Refresh and try again.');
-    const w = window.open('', '_blank');
-    if (!w) return toast('Popup blocked. Allow popups to print or save.');
-    w.document.write(`<!doctype html><html><head><title>${esc(form.formTitle || 'PAL Daily Safety')}</title><style>${fieldFormSafetyPrintCSS()}</style></head><body><div class="print-fallback"><button onclick="window.focus();window.print()">Open Print Dialog</button></div>${dailySafetySheetDetailHTML(form)}</body></html>`);
-    w.document.close();
-    if (autoPrint) setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 350);
+    printSafetySheetForm(form);
   }
 
   function openFieldFormDetail(formId) {
