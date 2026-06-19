@@ -4667,6 +4667,89 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return `pal-daily-safety-${project || 'project'}-${date || 'today'}.html`;
   }
 
+  function safetySheetPrintHTML(form) {
+    const data = form?.documentData || {};
+    const signIns = Array.isArray(data.signIns) && data.signIns.length
+      ? data.signIns
+      : Array.from({ length: 3 }, (_, i) => ({ row: i + 1, printName: '', signature: '' }));
+    const lang = Array.isArray(data.languages) ? data.languages : [];
+    const mark = label => lang.includes(label) ? '[x]' : '[ ]';
+    const field = (label, value = '', wide = false) => `
+      <div class="ps-field${wide ? ' ps-wide' : ''}${String(value || '').trim() ? '' : ' ps-empty'}">
+        <div class="ps-label">${esc(label)}</div>
+        <div class="ps-value">${esc(value || '')}</div>
+      </div>`;
+    return `
+      <section class="ps-sheet">
+        <header class="ps-head">
+          <div class="ps-logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+          <div class="ps-title"><h1>Daily Safety Meeting</h1><p>Hazards, tasks, locations + crew sign-in</p></div>
+          <div class="ps-meta">Form: PAL-DSM-001<br>Rev: 1.1<br>Date: 2026</div>
+        </header>
+        <div class="ps-grid">
+          ${field('Project Name', data.project_name || form?.projectName || currentProject?.name || '')}
+          ${field('Date', data.date || '')}
+          ${field('Trade', data.trade || 'Fireproofing / SOFP')}
+          ${field('Supervisor / Foreman', data.foreman || form?.submittedByName || '')}
+          ${field('Items Discussed During Meeting', data.items_discussed || '', true)}
+          ${field('Tasks and Locations', data.tasks_locations || '', true)}
+          ${field('Hazard 1', data.hazard1 || '', true)}
+          ${field('Control 1', data.control1 || '', true)}
+          ${field('Hazard 2', data.hazard2 || '', true)}
+          ${field('Control 2', data.control2 || '', true)}
+          ${field('360 Inspection - Additional Hazards', data.inspection_hazards || '', true)}
+        </div>
+        <div class="ps-section-title">Crew Sign-In <span>Add rows as needed</span></div>
+        <table class="ps-table">
+          <thead><tr><th style="width:.45in;">#</th><th>Print Name</th><th>Signature</th></tr></thead>
+          <tbody>
+            ${signIns.map((r, index) => `<tr><td>${esc(r.row || index + 1)}</td><td>${esc(r.printName || '')}</td><td class="ps-sign">${esc(r.signature || '')}</td></tr>`).join('')}
+          </tbody>
+        </table>
+        <footer class="ps-footer">
+          <div class="ps-langs">${mark('English')} English&nbsp;&nbsp;${mark('Spanish')} Spanish&nbsp;&nbsp;${mark('Polish')} Polish&nbsp;&nbsp;${mark('Ukrainian')} Ukrainian&nbsp;&nbsp;${mark('Russian')} Russian&nbsp;&nbsp;${mark('Other')} Other ________</div>
+          <div class="ps-grid ps-footer-grid">
+            ${field('Time', data.meeting_time || '')}
+            ${field('Speaker (Print Name)', data.speaker_print_name || '')}
+            ${field('Supervisor Printed Name', data.supervisor_printed_name || '')}
+            ${field('Date', data.supervisor_date || data.date || '')}
+            ${field('Supervisor Signature', data.supervisor_signature || '', true)}
+          </div>
+        </footer>
+      </section>`;
+  }
+
+  function safetySheetFileCSS() {
+    return `
+      @page{size:landscape;margin:.25in}
+      *{box-sizing:border-box}
+      html,body{margin:0;min-height:100%;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif}
+      body{padding:16px}
+      .file-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+      .file-actions button{border:1px solid #111;border-radius:8px;background:#fff;color:#111;padding:10px 14px;font-weight:900}
+      .ps-sheet{max-width:10.35in;min-height:7.35in;margin:0 auto;border:1px solid #111;background:#fff;color:#111;padding:0;overflow:visible}
+      .ps-head{display:grid;grid-template-columns:1.4in 1fr 1.45in;gap:.15in;align-items:center;border-bottom:2px solid #111;padding:.13in .16in;color:#111;background:#fff}
+      .ps-logo{font-weight:900;font-size:22px;line-height:1;color:#111}.ps-logo small{display:block;font-size:7px;letter-spacing:.6px;margin-top:3px;color:#111}
+      .ps-title{text-align:center}.ps-title h1{font-size:21px;margin:0 0 3px;color:#111}.ps-title p{font-size:12px;margin:0;color:#111}
+      .ps-meta{text-align:right;font-size:10.5px;line-height:1.3;color:#111}
+      .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:.08in .18in;padding:.12in .16in 0}
+      .ps-field{min-height:.33in;background:transparent;color:#111;padding-bottom:2px}
+      .ps-field.ps-wide{grid-column:1/-1;min-height:.36in}
+      .ps-label{font-size:10px;font-weight:900;color:#111;margin-bottom:3px;background:transparent}
+      .ps-value{font-size:11.5px;line-height:1.28;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;color:#111;background:transparent;min-height:.18in;border-bottom:1px solid #777;padding-bottom:2px}
+      .ps-empty .ps-value{color:transparent;min-height:.2in}
+      .ps-section-title{font-size:10.5px;font-weight:900;color:#111;margin:.11in .16in .04in}.ps-section-title span{font-weight:400}
+      .ps-table{width:calc(100% - .32in);margin:0 .16in;border-collapse:collapse;font-size:12px;color:#111;background:#fff}
+      .ps-table th,.ps-table td{border:1px solid #555;padding:5px 6px;height:.32in;text-align:left;color:#111;background:#fff}
+      .ps-sign{font-family:"Brush Script MT","Segoe Script",cursive;font-size:20px}
+      .ps-footer{border:1px solid #555;margin:.1in .16in .16in;padding:.09in;background:#fff;color:#111}
+      .ps-langs{font-size:11px;margin-bottom:.06in;color:#111}
+      .ps-footer-grid{padding:0;gap:.08in .18in}
+      @media print{body{padding:0}.file-actions{display:none!important}.ps-sheet{max-width:100%;min-height:7.35in}}
+      @media(max-width:700px){body{padding:8px}.ps-sheet{min-width:760px}.file-actions{position:sticky;top:0;background:#fff;padding:8px;z-index:2}}
+    `;
+  }
+
   function safetySheetDocumentHTML(form) {
     const title = esc(form?.formTitle || 'PAL Daily Safety');
     return `<!doctype html>
@@ -4675,21 +4758,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title}</title>
-  <style>
-    html,body{margin:0;min-height:100%;background:#f3f5f8;font-family:Arial,sans-serif}
-    body{padding:16px}
-    .file-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
-    .file-actions button{border:1px solid #173a5e;border-radius:8px;background:#173a5e;color:#fff;padding:10px 14px;font-weight:900}
-    ${fieldFormSafetyPrintCSS()}
-    @media print{body{padding:0;background:#fff}.file-actions{display:none!important}}
-  </style>
+  <style>${safetySheetFileCSS()}</style>
 </head>
 <body>
   <div class="file-actions">
     <button onclick="window.print()">Print / Save as PDF</button>
     <button onclick="window.close()">Close</button>
   </div>
-  <div id="print-root">${dailySafetySheetDetailHTML(form)}</div>
+  ${safetySheetPrintHTML(form)}
 </body>
 </html>`;
   }
