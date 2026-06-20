@@ -37,7 +37,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* ── HEADER ── */
+    /*  HEADER  */
     .header {
       position: sticky; top: 0; z-index: 1000; height: 64px;
       background: var(--navy); color: white;
@@ -74,14 +74,14 @@
       font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;
     }
 
-    /* ── MAIN ── */
+    /*  MAIN  */
     .page-wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 100px; }
 
-    /* ── VIEWS ── */
+    /*  VIEWS  */
     .view { display: none; }
     .view.active { display: block; }
 
-    /* ── LOGIN ── */
+    /*  LOGIN  */
     .login-wrap {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(145deg, var(--navy) 0%, #254d78 100%);
@@ -245,13 +245,55 @@
     .jha-table th { background:#eef4fa; color:var(--navy); text-align:left; border:1px solid #cbd7e4; padding:8px; }
     .jha-table td { border:1px solid #d8e1ec; padding:8px; vertical-align:top; line-height:1.35; }
     .jha-section-title { color:var(--navy); font-weight:900; margin:16px 0 6px; }
+    .jha-tool-layout { display:grid; grid-template-columns:320px minmax(0,1fr); gap:16px; align-items:start; }
+    .jha-workflow-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:16px; }
+    .jha-workflow-card { background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px; cursor:pointer; min-height:130px; display:flex; flex-direction:column; justify-content:space-between; }
+    .jha-workflow-card.disabled { cursor:not-allowed; opacity:.62; background:#f8fafc; }
+    .jha-workflow-card h3 { margin:0 0 7px; color:var(--navy); font-size:18px; }
+    .jha-workflow-card p { margin:0; color:var(--muted); font-size:14px; line-height:1.4; }
+    .jha-mode-panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px; }
+    .jha-template-panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px; position:sticky; top:12px; }
+    .jha-template-list { display:grid; gap:10px; margin-top:10px; }
+    .jha-template-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; cursor:pointer; text-align:left; }
+    .jha-template-card.active { border-color:var(--green); box-shadow:0 0 0 2px rgba(112,193,71,.18); }
+    .jha-template-card h3 { margin:0 0 5px; color:var(--navy); font-size:15px; }
+    .jha-template-card p { margin:0; color:var(--muted); font-size:13px; line-height:1.35; }
+    .jha-editor-panel { min-width:0; }
+    .jha-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin:12px 0; }
+    .jha-project-row { display:grid; grid-template-columns:minmax(220px,1fr) minmax(220px,1fr); gap:12px; margin-bottom:12px; }
+    .jha-input-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 12px; margin:12px 0; }
+    .jha-input-grid .span-2 { grid-column:span 2; }
+    .jha-input-grid .span-3 { grid-column:1/-1; }
+    .jha-edit-table textarea, .jha-sign-table input { width:100%; border:1px solid #cbd7e4; border-radius:6px; padding:8px; font:inherit; font-size:13px; background:#fff; }
+    .jha-edit-table textarea { min-height:88px; resize:vertical; }
+    .jha-sign-table input { min-height:36px; }
+    .jha-disclaimer { font-size:11px; line-height:1.35; color:#111; text-align:center; margin:0 0 8px; }
+    .jha-office-title { text-align:center; color:#111; font-weight:900; letter-spacing:.2px; margin:0; }
+    .jha-office-subtitle { text-align:center; color:#111; font-size:20px; font-weight:900; margin:4px 0 10px; }
+    .jha-office-header { border:1px solid #111; display:grid; grid-template-columns:1.15fr 1.8fr 1.15fr; margin-bottom:10px; }
+    .jha-office-cell { border-right:1px solid #111; border-bottom:1px solid #111; padding:7px; min-height:46px; font-size:12px; line-height:1.25; }
+    .jha-office-cell:nth-child(3n) { border-right:0; }
+    .jha-office-label { display:block; font-weight:900; text-transform:uppercase; font-size:10px; margin-bottom:3px; }
+    .jha-office-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+    .jha-office-table th { background:#e5e7eb; color:#111; border:1px solid #111; padding:6px; text-align:left; }
+    .jha-office-table td { border:1px solid #111; padding:6px; vertical-align:top; line-height:1.28; white-space:pre-wrap; }
+    .jha-ack-title { text-align:center; font-weight:900; margin:18px 0 10px; }
+    .jha-file-actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:0 0 12px; }
+    .jha-file-actions button { border:1px solid #111; border-radius:8px; background:#fff; color:#111; padding:10px 14px; font-weight:900; }
     @media(max-width:850px){
+      .jha-tool-layout { grid-template-columns:1fr; }
+      .jha-workflow-grid { grid-template-columns:1fr; }
+      .jha-template-panel { position:static; }
       .jha-head { grid-template-columns:1fr; }
       .jha-head h3,
       .jha-head p,
       .jha-meta { text-align:left; }
       .jha-info-grid { grid-template-columns:1fr; }
       .jha-field.span-2 { grid-column:auto; }
+      .jha-project-row, .jha-input-grid { grid-template-columns:1fr; }
+      .jha-input-grid .span-2, .jha-input-grid .span-3 { grid-column:auto; }
+      .jha-office-header { grid-template-columns:1fr; }
+      .jha-office-cell { border-right:0; }
     }
     .foreman-tools-grid {
       display:grid;
@@ -580,7 +622,7 @@
     .login-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
     .link-btn { background: none; border: none; color: var(--navy); font-weight: 700; cursor: pointer; font-size: 13px; }
 
-    /* ── PROJECT LIST ── */
+    /*  PROJECT LIST  */
     .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
     .page-header h2 { font-size: 24px; color: var(--navy); }
     .btn-add {
@@ -616,7 +658,7 @@
     .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
     .empty-state h3 { font-size: 18px; color: var(--navy); margin-bottom: 8px; }
 
-    /* ── MODAL ── */
+    /*  MODAL  */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,.5);
       display: none; align-items: center; justify-content: center;
@@ -724,7 +766,7 @@
     }
     .btn-save:disabled { opacity: .6; cursor: not-allowed; }
 
-    /* ── PROJECT DETAIL ── */
+    /*  PROJECT DETAIL  */
     .project-header-card {
       background: linear-gradient(135deg, var(--navy), var(--navy-light));
       color: white; border-radius: 20px; padding: 24px; margin-bottom: 20px;
@@ -1335,9 +1377,9 @@
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      LOGIN VIEW
-══════════════════════════════════════════════ -->
+ -->
 <div class="view active" id="view-login">
   <div class="login-wrap">
     <div class="login-card">
@@ -1349,7 +1391,7 @@
         </div>
       </div>
       <h3>Sign In</h3>
-      <p class="sub">Access your projects — field or office</p>
+      <p class="sub">Access your projects - field or office</p>
       <div class="error-msg" id="login-error"></div>
       <div class="field">
         <label>Email</label>
@@ -1357,7 +1399,7 @@
       </div>
       <div class="field">
         <label>Password</label>
-        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" />
       </div>
       <button class="btn-primary" id="login-btn" type="button" onclick="doLogin()">Sign In</button>
       <div class="login-footer">
@@ -1367,9 +1409,9 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      REGISTER VIEW
-══════════════════════════════════════════════ -->
+ -->
 <div class="view" id="view-register">
   <div class="login-wrap">
     <div class="login-card">
@@ -1392,6 +1434,7 @@
         <select id="reg-role" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:15px;outline:none;width:100%;background:white;">
           <option value="foreman">Foreman / Field</option>
           <option value="office">Office / Project Manager</option>
+          <option value="admin">Admin / Owner</option>
         </select>
       </div>
       <div class="field">
@@ -1411,9 +1454,9 @@
 
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      PUBLIC NEW HIRE INTAKE / FORM LAUNCHER - NO LOGIN REQUIRED
-══════════════════════════════════════════════ -->
+ -->
 <div class="view" id="view-public-newhire-intake">
   <div class="header">
     <a class="brand" href="index.html">
@@ -1426,13 +1469,13 @@
   </div>
   <div class="page-wrap">
     <div class="project-header-card">
-      <h2>🧾 New Hire / Pre-Site Packet</h2>
-      <div class="meta">Employee access only — no login required.</div>
+      <h2>New Hire / Pre-Site Packet</h2>
+      <div class="meta">Employee access only - no login required.</div>
       <div class="meta">Foreman / office dashboard stays protected behind sign-in.</div>
     </div>
 
     <div class="detail-card" id="public-intake-status-card">
-      <h3>Loading Intake Request…</h3>
+      <h3>Loading Intake Request...</h3>
       <p class="helper-text">Please wait while PAL Safety Hub loads your pre-site packet.</p>
     </div>
 
@@ -1511,9 +1554,9 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      PROJECT LIST VIEW
-══════════════════════════════════════════════ -->
+ -->
 <div class="view" id="view-projects">
   <div class="header">
     <a class="brand" href="index.html">
@@ -1528,7 +1571,7 @@
         <div class="avatar" id="user-avatar">?</div>
         <span id="user-name-display">User</span>
       </div>
-      <button class="btn-icon" onclick="doLogout()" title="Sign out">⎋</button>
+      <button class="btn-icon" onclick="doLogout()" title="Sign out">Sign out</button>
     </div>
   </div>
 
@@ -1539,14 +1582,14 @@
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
       <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Workforce</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
-      <button class="tab" onclick="switchMainTab('main-warehouse', this)">📦 Warehouse</button>
+      <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
     </div>
 
     <div class="tab-pane active" id="main-projects">
       <div class="page-header">
         <h2>Projects</h2>
         <div class="header-actions">
-          <button class="btn-add" onclick="openNewProjectModal()">＋ New Project</button>
+          <button class="btn-add" onclick="openNewProjectModal()">+ New Project</button>
         </div>
       </div>
       <div class="project-filter-panel">
@@ -1559,9 +1602,9 @@
       </div>
       <div id="projects-list">
         <div class="empty-state">
-          <div class="icon">🏗️</div>
+          <div class="icon"></div>
           <h3>No projects yet</h3>
-          <p>Tap "New Project" to get started</p><button class="btn-add" onclick="openNewProjectModal()" style="margin-top:14px;">＋ New Project</button>
+          <p>Tap "New Project" to get started</p><button class="btn-add" onclick="openNewProjectModal()" style="margin-top:14px;">+ New Project</button>
         </div>
       </div>
     </div>
@@ -1570,104 +1613,27 @@
       <div class="page-header">
         <h2>Job Hazard Analysis</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="toast('JHA save/copy workflow can be added after this sample is approved.')">Sample Template</button>
+          <button class="btn-outline" onclick="renderJhaTab()">Refresh</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Sample JHA template for PAL fireproofing work. This is a review draft and can be converted into a project-linked saved document after the format is approved.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Office can create, edit, and upload JHAs. Foremen can open approved JHAs, add crew print names/signatures, and submit the signed copy to the project.</div>
 
-      <div class="jha-paper">
-        <div class="jha-head">
-          <div class="jha-logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
-          <div>
-            <h3>Job Hazard Analysis</h3>
-            <p>Fireproofing work - 45 floor high-rise</p>
-          </div>
-          <div class="jha-meta">Form: PAL-JHA-001<br>Rev: Draft<br>Date: 2026</div>
+      <div class="jha-workflow-grid">
+        <div class="jha-workflow-card" role="button" tabindex="0" onclick="showJhaMode('previous')" onkeydown="handleJhaWorkflowKey(event, 'previous')">
+          <div><h3>Previous Worksite JHAs</h3><p>Open approved prior job JHAs, search by project/task, and use them as the field signing copy.</p></div>
+          <button class="btn-outline" type="button" onclick="event.stopPropagation(); showJhaMode('previous')">Open Library</button>
         </div>
-        <div class="jha-body">
-          <div class="jha-info-grid">
-            <div class="jha-field span-2"><label>Job / Task</label><div>Spray-on fireproofing, patching, tarping, material handling, and cleanup</div></div>
-            <div class="jha-field"><label>Project Type</label><div>45-floor high-rise</div></div>
-            <div class="jha-field"><label>Location</label><div>Manhattan, NY</div></div>
-            <div class="jha-field"><label>Trade</label><div>Fireproofing / SOFP</div></div>
-            <div class="jha-field"><label>Prepared By</label><div>PAL Foreman / Supervisor</div></div>
-            <div class="jha-field full"><label>Scope Summary</label><div>PAL crews will perform fireproofing operations on multiple floors of a high-rise building, including spray fireproofing, patching damaged fireproofing, hanging tarps/containment ahead of spray operations, moving material/equipment, operating scissor lifts, coordinating with other trades, and cleaning previously sprayed areas.</div></div>
-          </div>
-
-          <div class="jha-section-title">Required PPE</div>
-          <div class="jha-field full"><div>Hard hat, safety glasses or goggles, gloves, work boots, high-visibility clothing when required, fall protection when exposed to heights or operating lifts, and task-specific respiratory protection when required by material, exposure, SDS, site rules, or PAL supervision.</div></div>
-
-          <div class="jha-section-title">Job Steps, Hazards, and Controls</div>
-          <table class="jha-table">
-            <thead><tr><th style="width:22%;">Job Step</th><th style="width:33%;">Potential Hazards</th><th>Controls / Safe Work Practices</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>Pre-task planning and site coordination</td>
-                <td>Unclear work areas, changing floor conditions, other trades working nearby, missing permits or incomplete communication.</td>
-                <td>Review scope, floor locations, crew assignments, access routes, emergency procedures, SDS/HazCom information, and site-specific rules before starting. Coordinate with GC and other trades. Stop work if the work area is not ready or hazards are not controlled.</td>
-              </tr>
-              <tr>
-                <td>Access floors and move through high-rise work areas</td>
-                <td>Slips, trips, poor lighting, open shafts, leading edges, floor openings, congested access routes, falling object exposure.</td>
-                <td>Inspect walking paths before work begins. Verify guardrails/covers are in place. Maintain housekeeping, keep access routes clear, use proper lighting, and report unsafe openings, missing rails, or edge exposure immediately.</td>
-              </tr>
-              <tr>
-                <td>Operate scissor lifts or mobile elevated work platforms</td>
-                <td>Tip-over, struck-by/crush points, overhead obstructions, uneven floors, workers entering lift travel path, fall exposure.</td>
-                <td>Only trained and authorized employees may operate lifts. Complete pre-use inspection, check floor/ground conditions, maintain clear travel path, use spotter when needed, avoid overhead obstructions, and tie off as required by site/PAL/manufacturer rules.</td>
-              </tr>
-              <tr>
-                <td>Perform spray-on fireproofing</td>
-                <td>Overspray, airborne material exposure, respiratory exposure, eye/skin irritation, hose trip hazards, pressurized spray equipment, nearby trades entering spray area.</td>
-                <td>Control spray zone with barricades/signage when needed. Wear required PPE and respiratory protection when assigned. Manage hoses neatly, control overspray, follow SDS/HazCom requirements, communicate with other trades, and keep unauthorized workers out of active spray areas.</td>
-              </tr>
-              <tr>
-                <td>Hang tarps and set containment</td>
-                <td>Overhead work, pinch points, dropped materials, restricted visibility, trip hazards from loose tarps/cords/fasteners.</td>
-                <td>Secure tarps and fastening points, maintain clear walking paths, use proper access equipment, communicate with workers below or nearby, and stop work if containment becomes loose or unsafe.</td>
-              </tr>
-              <tr>
-                <td>Patch damaged fireproofing</td>
-                <td>Dust, wet material contact, overhead exposure, falling material, nearby workers below the patch area.</td>
-                <td>Inspect damaged area before starting. Barricade or control the patch area as needed, protect workers below, use required PPE, control dust/debris, and follow material/SDS requirements.</td>
-              </tr>
-              <tr>
-                <td>Material handling and equipment movement</td>
-                <td>Muscle strains, back injuries, awkward lifting, dropped material, congested routes, loads too heavy for one person.</td>
-                <td>Stretch before work, lift with legs, keep loads close, avoid twisting, use team lifts or mechanical equipment when needed, stage material to reduce carrying distance, and do not attempt to lift loads that cannot be handled safely.</td>
-              </tr>
-              <tr>
-                <td>Cleanup of sprayed areas</td>
-                <td>Dust, slips/trips, debris piles, hoses/cords, disturbed fireproofing residue, poor housekeeping.</td>
-                <td>Use dust controls and required PPE, keep hoses/cords organized, clean debris regularly, use proper disposal/staging areas, and maintain clear access paths.</td>
-              </tr>
-              <tr>
-                <td>Receiving deliveries / unloading material</td>
-                <td>Struck-by exposure from trucks, backing vehicles, pedestrians in delivery area, falling material from tailgate.</td>
-                <td>Use flaggers/spotters to guide trucks, wear high-visibility clothing, keep pedestrians clear, stand away from tailgates during unloading, and never try to catch falling material. Stop and reassess safe handling if material shifts or falls.</td>
-              </tr>
-              <tr>
-                <td>Heat/high temperature work conditions</td>
-                <td>Dehydration, dizziness, heat exhaustion, heat stroke, fatigue, reduced attention.</td>
-                <td>Drink water frequently, take breaks as needed, avoid direct sun when possible, monitor crew members, do not work alone in high heat conditions, and stop work immediately if a worker feels dizzy, lightheaded, stops sweating, or appears unwell.</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="jha-section-title">Emergency / Reporting Requirements</div>
-          <div class="jha-field full"><div>Report hazards, incidents, injuries, near misses, damaged equipment, missing protection, or unsafe conditions to the foreman immediately. Please notify foreman with any and all issues or injuries immediately.</div></div>
-
-          <div class="jha-section-title">Review / Sign-Off</div>
-          <table class="jha-table">
-            <thead><tr><th>Print Name</th><th>Signature</th><th>Date</th></tr></thead>
-            <tbody>
-              <tr><td>&nbsp;</td><td></td><td></td></tr>
-              <tr><td>&nbsp;</td><td></td><td></td></tr>
-              <tr><td>&nbsp;</td><td></td><td></td></tr>
-            </tbody>
-          </table>
+        <div class="jha-workflow-card admin-only" role="button" tabindex="0" onclick="showJhaMode('create')" onkeydown="handleJhaWorkflowKey(event, 'create')">
+          <div><h3>Create New JHA</h3><p>Office/admin can start from a blank PAL fireproofing template and edit the full document.</p></div>
+          <button class="btn-save" type="button" onclick="event.stopPropagation(); showJhaMode('create')">Create JHA</button>
+        </div>
+        <div class="jha-workflow-card admin-only" role="button" tabindex="0" onclick="openUploadJhaModal()" onkeydown="handleJhaWorkflowKey(event, 'upload')">
+          <div><h3>Upload New JHA</h3><p>Office/admin can upload a PDF or file that already exists and attach it to the selected project.</p></div>
+          <button class="btn-outline" type="button" onclick="event.stopPropagation(); openUploadJhaModal()">Upload JHA</button>
         </div>
       </div>
+
+      <div class="jha-mode-panel" id="jha-mode-panel"></div>
     </div>
 
     <div class="tab-pane" id="main-foreman-tools">
@@ -1793,10 +1759,10 @@
           <div class="field"><label>Date</label><input id="ai-safety-date" type="date" /></div>
           <div class="field"><label>Foreman / Supervisor</label><input id="ai-safety-foreman" placeholder="Foreman name" /></div>
           <div class="field"><label>Equipment Used</label><input id="ai-safety-equipment" placeholder="Scissor lifts, spray machine, hoses, tarps..." /></div>
-          <div class="field"><label>Floors / Work Areas</label><input id="ai-safety-areas" placeholder="12th, 13th, 14th, 11th, 4th floors" /></div>
+          <div class="field"><label>Floors / Work Areas</label><input id="ai-safety-areas" placeholder="Example: 12th floor, 13th/14th floors, 11th floor, 4th floor" /></div>
           <div class="field"><label>Conditions / Other Trades</label><input id="ai-safety-conditions" placeholder="Weather fine, other trades in area..." /></div>
           <div class="field span-2"><label>Foreman Hazard Focus (Optional)</label><input id="ai-safety-focus" placeholder="Example: silica exposure, fall protection, other trades, eye protection, proper lifting..." /></div>
-          <div class="field span-2"><label>Work Plan Notes</label><textarea id="ai-safety-notes" rows="5" placeholder="Example: We are working the 12th floor doing SOFP, hanging tarps on 13 and 14 ahead of the spray crew, cleaning previous sprayed area on 11, patching damaged fireproofing on 4, using scissor lifts, weather is fine, other trades are in the area."></textarea></div>
+          <div class="field span-2"><label>Work Plan Notes</label><textarea id="ai-safety-notes" rows="5" placeholder="Best format: 12th floor spraying SOFP. 13th/14th floors hanging tarps ahead of spray crew. 11th floor cleaning previous sprayed area. 4th floor patching damaged fireproofing. Include equipment, other trades, deliveries, heat/cold, dust, edges, or special hazards."></textarea></div>
         </div>
 
         <div class="foreman-tool-card" style="margin-top:14px;">
@@ -1872,7 +1838,7 @@
           <div class="field"><label>Crew Total</label><input id="manual-report-crew-total" type="number" min="0" placeholder="0" /></div>
           <div class="field"><label>Man-Hours</label><input id="manual-report-man-hours" type="number" min="0" step="0.25" placeholder="0" /></div>
           <div class="field"><label>Weather / Conditions</label><input id="manual-report-weather" placeholder="Clear, rain, cold, windy..." /></div>
-          <div class="field"><label>Temperature</label><input id="manual-report-temp" placeholder="72°F" /></div>
+          <div class="field"><label>Temperature</label><input id="manual-report-temp" placeholder="72 F" /></div>
           <div class="field"><label>Work Status</label><select id="manual-report-status"><option value="On Track">On Track</option><option value="Delayed">Delayed</option><option value="Inspection">Inspection</option><option value="Complete">Complete</option><option value="No Work">No Work</option></select></div>
           <div class="field"><label>% Complete</label><input id="manual-report-percent" type="number" min="0" max="100" placeholder="0" /></div>
           <div class="field span-2"><label>Floors / Areas Worked</label><input id="manual-report-floors" placeholder="Floor 3, stair B, mechanical room..." /></div>
@@ -1903,7 +1869,7 @@
           <div class="field"><label>Crew Total</label><input id="ai-report-crew-total" type="number" min="0" placeholder="0" /></div>
           <div class="field"><label>Man-Hours</label><input id="ai-report-man-hours" type="number" min="0" step="0.25" placeholder="0" /></div>
           <div class="field"><label>Weather / Conditions</label><input id="ai-report-weather" placeholder="Clear, rain, cold, windy..." /></div>
-          <div class="field"><label>Temperature</label><input id="ai-report-temp" placeholder="72°F" /></div>
+          <div class="field"><label>Temperature</label><input id="ai-report-temp" placeholder="72 F" /></div>
           <div class="field"><label>Work Status</label><select id="ai-report-status"><option value="On Track">On Track</option><option value="Delayed">Delayed</option><option value="Inspection">Inspection</option><option value="Complete">Complete</option><option value="No Work">No Work</option></select></div>
           <div class="field"><label>% Complete</label><input id="ai-report-percent" type="number" min="0" max="100" placeholder="0" /></div>
           <div class="field span-4"><label>Quick Foreman Notes</label><textarea id="ai-report-prompt" rows="5" placeholder="Example: Crew worked floors 12 and 13 spraying SOFP, hung tarps on 14, cleaned floor 11, patched damaged fireproofing on 4. Used two scissor lifts and spray machine. No incidents. Other trades in area slowed us down for one hour."></textarea></div>
@@ -2058,7 +2024,7 @@
         <h2>Workforce</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadEmployees(true)">Refresh</button>
-          <button class="btn-add" onclick="openEmployeeModal()">＋ Add Employee</button>
+          <button class="btn-add" onclick="openEmployeeModal()">+ Add Employee</button>
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
@@ -2090,7 +2056,7 @@
         <h2>New Hire Pipeline</h2>
         <div class="header-actions">
           <button class="btn-outline" onclick="loadEmployeeOnboarding(true)">Refresh</button>
-          <button class="btn-add" onclick="openNewHireIntakeModal()">＋ Create Intake Request</button>
+          <button class="btn-add" onclick="openNewHireIntakeModal()">+ Create Intake Request</button>
         </div>
       </div>
       <div class="tabs workforce-tabs" style="margin-bottom:14px;">
@@ -2143,7 +2109,7 @@
       <div id="onboarding-good-section" style="display:none;">
       <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
       <div id="workforce-status-summary">
-        <div class="empty-state"><div class="icon">✅</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
+        <div class="empty-state"><div class="icon">Complete</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
       </div>
       <div id="workforce-status-board"></div>
     </div>
@@ -2184,8 +2150,8 @@
       <div class="page-header">
         <h2>Tickets</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="loadMainTickets()">↻ Refresh</button>
-          <button class="btn-add" onclick="openExtraWorkTicketModal()">＋ New Ticket</button>
+          <button class="btn-outline" onclick="loadMainTickets()">Refresh</button>
+          <button class="btn-add" onclick="openExtraWorkTicketModal()">+ New Ticket</button>
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Start a blank ticket and choose the project/jobsite inside the ticket window. Submitted tickets stay under the project they are linked to.</div>
@@ -2211,8 +2177,8 @@
       <div class="page-header">
         <h2>Warehouse / Equipment</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="loadWarehouse()">↻ Refresh</button>
-          <button class="btn-add" onclick="openWarehouseItemModal()">＋ Add Equipment Movement</button>
+          <button class="btn-outline" onclick="loadWarehouse()">Refresh</button>
+          <button class="btn-add" onclick="openWarehouseItemModal()">+ Add Equipment Movement</button>
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Track equipment and materials leaving the warehouse, arriving at the job, returning from the job, and coming back to the warehouse.</div>
@@ -2228,12 +2194,12 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      PROJECT DETAIL VIEW
-══════════════════════════════════════════════ -->
+ -->
 <div class="view" id="view-detail">
   <div class="header">
-    <button class="back-btn" onclick="backToProjects()">← Projects</button>
+    <button class="back-btn" onclick="backToProjects()"><- Projects</button>
     <div class="header-right">
       <div class="user-chip">
         <div class="avatar" id="detail-avatar">?</div>
@@ -2261,7 +2227,7 @@
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="payroll" onclick="openProjectAccessSection('tab-field-forms', 'payroll')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'payroll')"><div class="label">Payroll</div><div class="value" id="summary-payroll-forms">0</div><div class="sub">Daily and weekly payroll</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="expense" onclick="openProjectAccessSection('tab-field-forms', 'expense')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'expense')"><div class="label">Expense Reports</div><div class="value" id="summary-expense-forms">0</div><div class="sub">Submitted expense forms</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-project-tickets" onclick="openProjectAccessSection('tab-project-tickets')" onkeydown="handleProjectAccessCardKey(event, 'tab-project-tickets')"><div class="label">Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Extra work tickets</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="jha-checklist" onclick="openProjectJhaChecklist()" onkeydown="handleProjectAccessCardKey(event, 'jha-checklist')"><div class="label">JHA / Checklist</div><div class="value" id="summary-jha-forms">0</div><div class="sub">Open blank checklist</div></div>
+      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="jha-checklist" onclick="openProjectJhaChecklist()" onkeydown="handleProjectAccessCardKey(event, 'jha-checklist')"><div class="label">JHA / Checklist</div><div class="value" id="summary-jha-forms">0</div><div class="sub">Open JHA library</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-project-warehouse" onclick="openProjectAccessSection('tab-project-warehouse')" onkeydown="handleProjectAccessCardKey(event, 'tab-project-warehouse')"><div class="label">Warehouse</div><div class="value" id="summary-warehouse">0</div><div class="sub">Equipment and material</div></div>
       <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-foremen" onclick="openProjectAccessSection('tab-foremen')" onkeydown="handleProjectAccessCardKey(event, 'tab-foremen')"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
     </div>
@@ -2270,11 +2236,11 @@
       <div class="detail-card">
         <h3>Project Overview</h3>
         <div class="detail-list">
-          <div class="row"><span>Project Name</span><strong id="detail-info-name">—</strong></div>
-          <div class="row"><span>Job Number</span><strong id="detail-info-job">—</strong></div>
-          <div class="row"><span>Location</span><strong id="detail-info-location">—</strong></div>
-          <div class="row"><span>Status</span><strong id="detail-info-status">—</strong></div>
-          <div class="row"><span>Created By</span><strong id="detail-info-created-by">—</strong></div>
+          <div class="row"><span>Project Name</span><strong id="detail-info-name">-</strong></div>
+          <div class="row"><span>Job Number</span><strong id="detail-info-job">-</strong></div>
+          <div class="row"><span>Location</span><strong id="detail-info-location">-</strong></div>
+          <div class="row"><span>Status</span><strong id="detail-info-status">-</strong></div>
+          <div class="row"><span>Created By</span><strong id="detail-info-created-by">-</strong></div>
         </div>
       </div>
       <div class="detail-card">
@@ -2290,13 +2256,13 @@
 
     <div class="tabs project-detail-tabs" style="display:none;">
       <button class="tab" onclick="switchTab('tab-field-forms', this)">Field Forms</button>
-      <button class="tab active" onclick="switchTab('tab-docs', this)">📄 Documents</button>
-      <button class="tab" onclick="switchTab('tab-photos', this)">📸 Photos</button>
-      <button class="tab" onclick="switchTab('tab-reports', this)">📋 Daily Reports</button>
+      <button class="tab active" onclick="switchTab('tab-docs', this)">Documents</button>
+      <button class="tab" onclick="switchTab('tab-photos', this)">Photos</button>
+      <button class="tab" onclick="switchTab('tab-reports', this)">Daily Reports</button>
       <button class="tab" onclick="switchTab('tab-project-tickets', this)">Project Tickets</button>
-      <button class="tab" onclick="switchTab('tab-project-warehouse', this)">📦 Warehouse / Equipment</button>
-      <button class="tab" onclick="switchTab('tab-foremen', this)">👷 Foremen</button>
-      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">🪪 Employees & Certs</button>
+      <button class="tab" onclick="switchTab('tab-project-warehouse', this)">Warehouse / Equipment</button>
+      <button class="tab" onclick="switchTab('tab-foremen', this)">Foremen</button>
+      <button class="tab admin-only" onclick="switchTab('tab-employees', this)">Employees & Certs</button>
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -2427,7 +2393,7 @@
           <div class="helper-text">Employee files live independently from any one jobsite, so records stay with the employee.</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn-outline" onclick="loadEmployees(true)">↻ Refresh</button>
+          <button class="btn-outline" onclick="loadEmployees(true)">Refresh</button>
           <button class="btn-save" onclick="openEmployeeModal()">New Employee</button>
         </div>
       </div>
@@ -2442,12 +2408,12 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      NEW PROJECT MODAL
-══════════════════════════════════════════════ -->
+ -->
 <div class="modal-overlay" id="modal-new-project">
   <div class="modal">
-    <h3>🏗️ New Project</h3>
+    <h3>New Project</h3>
     <div class="field">
       <label>Project Name</label>
       <input type="text" id="np-name" placeholder="e.g. One Times Square" />
@@ -2483,7 +2449,7 @@
 <!-- REPORT DETAIL MODAL -->
 <div class="modal-overlay" id="modal-report-detail">
   <div class="modal" style="max-width:760px;">
-    <h3>📋 Daily Report Details</h3>
+    <h3>Daily Report Details</h3>
     <div class="report-grid" id="report-detail-grid"></div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-report-detail')">Close</button>
@@ -2554,8 +2520,8 @@
       </div>
       <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectJhaChecklist()" onkeydown="handleProjectFieldFormCardKey(event, 'jha-checklist')">
         <h3>JHA / Checklist</h3>
-        <p>Open the blank PAL fireproofing JHA/checklist for print or review.</p>
-        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectJhaChecklist()">Open Checklist</button>
+        <p>Open approved JHAs, fill crew acknowledgement rows, and submit the signed copy to the project.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectJhaChecklist()">Open JHA Library</button>
       </div>
       <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('toolbox-signin')" onkeydown="handleProjectFieldFormCardKey(event, 'official:toolbox-signin')">
         <h3>Toolbox Talk Sign-In</h3>
@@ -2617,10 +2583,42 @@
   </div>
 </div>
 
+<!-- JHA EDITOR WINDOW -->
+<div class="modal-overlay" id="modal-jha-editor">
+  <div class="modal" style="max-width:1180px;">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px;">
+      <div>
+        <h3 id="jha-editor-title" style="margin-bottom:4px;">JHA</h3>
+        <div class="helper-text" id="jha-editor-helper">Open JHA window.</div>
+      </div>
+      <button class="btn-secondary" type="button" onclick="closeModal('modal-jha-editor')">Close</button>
+    </div>
+    <div id="jha-editor-panel"></div>
+  </div>
+</div>
+
+<!-- JHA UPLOAD WINDOW -->
+<div class="modal-overlay" id="modal-jha-upload">
+  <div class="modal" style="max-width:760px;">
+    <h3>Upload New JHA</h3>
+    <div class="helper-text" style="margin-bottom:14px;">Office/admin only. Upload an existing JHA file and attach it to a project so it lives with that project's records.</div>
+    <div class="report-grid">
+      <div class="field span-2"><label>Project</label><select id="jha-upload-project-select"><option value="">Select project...</option></select></div>
+      <div class="field span-2"><label>JHA Title</label><input id="jha-upload-title" placeholder="Example: 1 Times Square JHA - Fireproofing" /></div>
+      <div class="field span-2"><label>JHA File</label><input id="jha-upload-file" type="file" accept=".pdf,.doc,.docx,image/*" /></div>
+      <div class="field span-2"><label>Notes</label><textarea id="jha-upload-notes" rows="3" placeholder="Optional notes for office/foreman."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-jha-upload')">Cancel</button>
+      <button class="btn-save" id="save-jha-upload-btn" onclick="uploadJhaFile()">Upload JHA</button>
+    </div>
+  </div>
+</div>
+
 <!-- NEW EMPLOYEE MODAL -->
 <div class="modal-overlay" id="modal-new-employee">
   <div class="modal">
-    <h3 id="employee-modal-title">👷 New Employee File</h3>
+    <h3 id="employee-modal-title"> New Employee File</h3>
     <div class="field"><label>Employee Name</label><input type="text" id="emp-name" placeholder="Employee full name" /></div>
     <div class="field"><label>Email (optional)</label><input type="email" id="emp-email" placeholder="employee@email.com" /></div>
     <div class="field"><label>Phone (optional)</label><input type="text" id="emp-phone" placeholder="(555) 555-5555" /></div>
@@ -2649,7 +2647,7 @@
 <!-- CERTIFICATION MODAL -->
 <div class="modal-overlay" id="modal-certification">
   <div class="modal">
-    <h3 id="cert-modal-title">🪪 Upload Certification</h3>
+    <h3 id="cert-modal-title"> Upload Certification</h3>
     <div class="mini-note" id="cert-employee-label" style="margin-bottom:14px;"></div>
     <div class="field">
       <label>Certification Type</label>
@@ -2680,7 +2678,7 @@
 <!-- NEW HIRE CERTIFICATION UPLOAD FORM MODAL -->
 <div class="modal-overlay" id="modal-newhire-cert-upload-form">
   <div class="modal" style="max-width:760px;">
-    <h3>🪪 Certification Uploads</h3>
+    <h3>Certification Uploads</h3>
     <div class="mini-note" id="newhire-cert-upload-label" style="margin-bottom:14px;">Upload employee certification cards/photos.</div>
     <div class="detail-card" style="background:#f8fafc;margin-bottom:12px;">
       <h3 style="margin-bottom:6px;">Required Certification Files</h3>
@@ -2710,7 +2708,7 @@
 <!-- NEW HIRE PAYROLL / ID UPLOAD FORM MODAL -->
 <div class="modal-overlay" id="modal-newhire-payroll-id-form">
   <div class="modal" style="max-width:760px;">
-    <h3>🔒 Payroll / ID Uploads</h3>
+    <h3>Payroll / ID Uploads</h3>
     <div class="mini-note" id="newhire-payroll-id-label" style="margin-bottom:14px;">Office-sensitive payroll/onboarding documents.</div>
     <div class="detail-card" style="background:#fff7ed;margin-bottom:12px;">
       <h3 style="margin-bottom:6px;">Private Payroll / Identity Documents</h3>
@@ -2733,14 +2731,14 @@
 
 
 <!-- EXTRA WORK TICKET MODAL -->
-<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>💵 PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
-<div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>💵 Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
+<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
+<div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
 
 
 
 <div class="modal-overlay" id="modal-daily-report-v2">
   <div class="modal" style="max-width:980px;">
-    <h3>📝 Daily Report 2.0</h3>
+    <h3>Daily Report 2.0</h3>
     <div class="daily-report-form-grid">
       <div class="field">
         <label>Date</label>
@@ -2765,7 +2763,7 @@
       </div>
       <div class="field">
         <label>Temperature</label>
-        <input id="dr-temp" placeholder="72°F" />
+        <input id="dr-temp" placeholder="72 F" />
       </div>
       <div class="field">
         <label>Work Status</label>
@@ -2832,7 +2830,7 @@
 
 <div class="modal-overlay" id="modal-warehouse-item">
   <div class="modal" style="max-width:720px;">
-    <h3>📦 Warehouse / Equipment Movement</h3>
+    <h3>Warehouse / Equipment Movement</h3>
     <div class="form-grid">
       <div class="field span-2">
         <label>Project / Jobsite</label>
@@ -2885,13 +2883,13 @@
 <!-- NEW HIRE INTAKE MODAL - PHASE 2 -->
 <div class="modal-overlay" id="modal-newhire-intake">
   <div class="modal" style="max-width:760px;">
-    <h3>🧾 New Hire / Pre-Site Intake</h3>
+    <h3>New Hire / Pre-Site Intake</h3>
     <div class="form-grid">
       <div class="field"><label>Employee Name</label><input id="nh-name" placeholder="New hire full name" /></div>
       <div class="field"><label>Phone</label><input id="nh-phone" placeholder="Cell phone number" /></div>
       <div class="field"><label>Email (optional)</label><input id="nh-email" type="email" placeholder="employee@email.com" /></div>
       <div class="field"><label>Trade / Role</label><input id="nh-trade" placeholder="Fireproofer / Labor / Fire Watch" /></div>
-      <div class="field"><label>Project / Jobsite</label><select id="nh-project-select"><option value="">Select project…</option></select></div>
+      <div class="field"><label>Project / Jobsite</label><select id="nh-project-select"><option value="">Select project...</option></select></div>
       <div class="field"><label>Foreman / Contact</label><input id="nh-foreman" placeholder="Foreman or office contact" /></div>
       <div class="field"><label>Expected Start Date</label><input id="nh-start-date" type="date" /></div>
       <div class="field"><label>Status</label><select id="nh-status"><option>Pending</option><option>Ready for Review</option><option>Good To Work</option><option>Missing Info</option></select></div>
@@ -3151,9 +3149,9 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════════
+<!-- 
      FIREBASE + APP LOGIC
-══════════════════════════════════════════════ -->
+ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -3173,8 +3171,14 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const storage = getStorage(app);
+  const PAL_ADMIN_EMAILS = [
+    'jpanettiere@palcorp.com',
+    'john.panettiere@palcorp.com',
+    'pennj@palcorp.com'
+  ];
+  const PAL_ADMIN_NAMES = ['john panettiere', 'pennj'];
 
-  // ── State ──
+  //  State 
   let currentUser = null;
   let currentUserProfile = null;
   let currentProject = null;
@@ -3189,6 +3193,7 @@
   let currentProjectPhotos = [];
   let currentProjectReports = [];
   let activeProjectFieldFormFilter = 'all';
+  let activeJhaTemplateId = 'jha-1-times-square';
   let allTickets = [];
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
@@ -3222,7 +3227,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let currentPublicNewHireIntake = null;
   document.title = 'PAL Safety Hub';
 
-  // ── Expose functions to global scope ──
+  //  Expose functions to global scope 
   window.doLogin = doLogin;
   window.doRegister = doRegister;
   window.doLogout = doLogout;
@@ -3258,6 +3263,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.closeOfficialProjectForm = closeOfficialProjectForm;
   window.handleProjectFieldFormCardKey = handleProjectFieldFormCardKey;
   window.openProjectJhaChecklist = openProjectJhaChecklist;
+  window.renderJhaTab = renderJhaTab;
+  window.renderJhaTemplateList = renderJhaTemplateList;
+  window.selectJhaTemplate = selectJhaTemplate;
+  window.addJhaCrewRow = addJhaCrewRow;
+  window.submitJhaToProject = submitJhaToProject;
+  window.printJhaTemplate = printJhaTemplate;
+  window.saveJhaTemplatePdf = saveJhaTemplatePdf;
+  window.shareJhaTemplate = shareJhaTemplate;
+  window.printProjectJha = printProjectJha;
+  window.shareProjectJha = shareProjectJha;
+  window.showJhaMode = showJhaMode;
+  window.handleJhaWorkflowKey = handleJhaWorkflowKey;
+  window.openJhaTemplateWindow = openJhaTemplateWindow;
+  window.openUploadJhaModal = openUploadJhaModal;
+  window.uploadJhaFile = uploadJhaFile;
   window.downloadProjectFile = downloadProjectFile;
   window.openReportDetail = openReportDetail;
   window.loadProjectFieldForms = loadProjectFieldForms;
@@ -3371,7 +3391,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
 
-  // ── Auth state ──
+  //  Auth state 
   onAuthStateChanged(auth, async user => {
     // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
     // If an employee opens any public new-hire route, bypass the foreman/office login wall.
@@ -3421,16 +3441,61 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     try {
       const q = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
       const snap = await getDocs(q);
-      if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+      if (!snap.empty) return await normalizeAccessProfile(user, { id: snap.docs[0].id, ...snap.docs[0].data() });
     } catch (e) {
       console.error('Could not load user profile', e);
     }
-    return { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
+    return await normalizeAccessProfile(user, { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' });
+  }
+
+  function cleanAccessText(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function isKnownAdminProfile(profile = currentUserProfile) {
+    const email = cleanAccessText(profile?.email || currentUser?.email);
+    const name = cleanAccessText(profile?.name || currentUser?.displayName);
+    return PAL_ADMIN_EMAILS.includes(email) || PAL_ADMIN_NAMES.includes(name);
+  }
+
+  async function normalizeAccessProfile(user, profile) {
+    const merged = {
+      uid: profile?.uid || user.uid,
+      email: profile?.email || user.email,
+      name: profile?.name || user.displayName || user.email,
+      role: profile?.role || 'foreman',
+      ...profile
+    };
+    if (!isKnownAdminProfile(merged)) return merged;
+    const adminProfile = { ...merged, role: 'admin', admin: true, accessLevel: 'admin' };
+    try {
+      const payload = { role: 'admin', admin: true, accessLevel: 'admin', updatedAt: serverTimestamp() };
+      if (adminProfile.id) {
+        await updateDoc(doc(db, 'users', adminProfile.id), payload);
+      } else {
+        const created = await addDoc(collection(db, 'users'), {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName || user.email,
+          ...payload,
+          createdAt: serverTimestamp()
+        });
+        adminProfile.id = created.id;
+      }
+    } catch (e) {
+      console.warn('Could not persist admin access profile', e);
+    }
+    return adminProfile;
   }
 
   function isOfficeRole() {
-    const role = (currentUserProfile?.role || '').toLowerCase();
-    return ['office', 'admin', 'administrator', 'project manager', 'project_manager'].includes(role);
+    const role = cleanAccessText(currentUserProfile?.role);
+    const accessLevel = cleanAccessText(currentUserProfile?.accessLevel);
+    return ['office', 'admin', 'administrator', 'owner', 'project manager', 'project_manager'].includes(role)
+      || ['office', 'admin', 'owner'].includes(accessLevel)
+      || currentUserProfile?.admin === true
+      || currentUserProfile?.isAdmin === true
+      || isKnownAdminProfile();
   }
 
   function applyRoleUI() {
@@ -3439,7 +3504,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.querySelectorAll('.foreman-only').forEach(el => el.classList.toggle('hidden-by-role', office));
   }
 
-  // ── AUTH FUNCTIONS ──
+  //  AUTH FUNCTIONS 
   async function doLogin() {
     if (loginInProgress) return;
     const emailEl = document.getElementById('login-email');
@@ -3461,7 +3526,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     loginInProgress = true;
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Signing in…';
+      btn.innerHTML = '<span class="spinner"></span> Signing in...';
     }
 
     try {
@@ -3527,8 +3592,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
       // Save user profile to Firestore
-      await addDoc(collection(db, 'users'), { uid: cred.user.uid, name, email, role, createdAt: serverTimestamp() });
-      toast(`Welcome, ${name}! 🎉`);
+      const adminRole = ['admin', 'administrator', 'owner'].includes(cleanAccessText(role));
+      await addDoc(collection(db, 'users'), {
+        uid: cred.user.uid,
+        name,
+        email,
+        role,
+        admin: adminRole,
+        accessLevel: adminRole ? 'admin' : role,
+        createdAt: serverTimestamp()
+      });
+      toast(`Welcome, ${name}! `);
     } catch(e) {
       showError(errEl, friendlyError(e.code));
       btn.disabled = false;
@@ -3542,7 +3616,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     showView('view-login');
   }
 
-  // ── PROJECTS ──
+  //  PROJECTS 
   function projectForemanText(project) {
     const foremen = Array.isArray(project?.foremen) ? project.foremen : [];
     return foremen.map(f => [f.name, f.email].filter(Boolean).join(' ')).filter(Boolean).join(' ');
@@ -3648,27 +3722,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
   }
 
-  function getVisibleProjects(projects = allProjects) {
-    const search = String(document.getElementById('project-search')?.value || '').trim().toLowerCase();
-    renderProjectAlphaRow(projects);
-    const sorted = [...(projects || [])].sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
-    const visible = sorted.filter(project => {
-      const first = String(project.name || '').trim().charAt(0).toUpperCase();
-      const matchesAlpha = projectAlphaFilter === 'all'
-        || (projectAlphaFilter === '#' ? !/[A-Z]/.test(first) : first === projectAlphaFilter);
-      const matchesSearch = !search || projectSearchText(project).includes(search);
-      return matchesAlpha && matchesSearch;
-    });
-    const count = document.getElementById('project-filter-count');
-    if (count) {
-      const parts = [`Showing ${visible.length} of ${projects.length} project${projects.length === 1 ? '' : 's'}`];
-      if (projectAlphaFilter !== 'all') parts.push(`Letter: ${projectAlphaFilter}`);
-      if (search) parts.push('Search active');
-      count.textContent = parts.join(' | ');
-    }
-    return visible;
-  }
-
   function loadProjects() {
     const list = document.getElementById('projects-list');
     if (list) list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects...</p>';
@@ -3720,7 +3773,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const name = document.getElementById('np-name').value.trim();
     if (!name) { toast('Project name is required'); return; }
     const btn = document.getElementById('save-project-btn');
-    btn.disabled = true; btn.textContent = 'Saving…';
+    btn.disabled = true; btn.textContent = 'Saving...';
     try {
       await addDoc(collection(db, 'projects'), {
         name,
@@ -3738,14 +3791,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       });
       closeModal('modal-new-project');
       clearModal();
-      toast('Project created! 🎉');
+      toast('Project created! ');
     } catch(e) {
       toast('Error creating project: ' + e.message);
     }
     btn.disabled = false; btn.textContent = 'Create Project';
   }
 
-  // ── PROJECT DETAIL ──
+  //  PROJECT DETAIL 
   async function openProject(id, data) {
     if (!canUserAccessProject(data)) {
       requestedProjectId = null;
@@ -3776,11 +3829,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       ${data.location ? `<span>${esc(data.location)}</span>` : ''}
       <span>Status: ${capitalize(data.status || 'active')}</span>
     `;
-    document.getElementById('detail-info-name').textContent = data.name || '—';
-    document.getElementById('detail-info-job').textContent = data.jobNumber || '—';
-    document.getElementById('detail-info-location').textContent = data.location || '—';
+    document.getElementById('detail-info-name').textContent = data.name || '-';
+    document.getElementById('detail-info-job').textContent = data.jobNumber || '-';
+    document.getElementById('detail-info-location').textContent = data.location || '-';
     document.getElementById('detail-info-status').textContent = capitalize(data.status || 'active');
-    document.getElementById('detail-info-created-by').textContent = data.createdByName || '—';
+    document.getElementById('detail-info-created-by').textContent = data.createdByName || '-';
     const notesEl = document.getElementById('detail-project-notes');
     if (notesEl) notesEl.value = data.notes || '';
     showView('view-detail');
@@ -3920,7 +3973,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     bar.innerHTML = `
       <div>
         <h3>${esc(getProjectSectionTitle(tabId))}</h3>
-        <div class="meta">${esc(currentProject?.name || 'Project')}${currentProject?.jobNumber ? ' · Job ' + esc(currentProject.jobNumber) : ''}</div>
+        <div class="meta">${esc(currentProject?.name || 'Project')}${currentProject?.jobNumber ? ' - Job ' + esc(currentProject.jobNumber) : ''}</div>
       </div>
       <button class="btn-secondary" type="button" onclick="closeProjectSectionWindow()">Back to Project</button>`;
     pane.classList.add('project-section-window');
@@ -3984,14 +4037,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!preview) return;
     const files = Array.from(input.files || []);
     preview.innerHTML = files.length
-      ? files.map(f => `<span class="report-photo-chip">📷 ${esc(f.name)}</span>`).join('')
+      ? files.map(f => `<span class="report-photo-chip"> ${esc(f.name)}</span>`).join('')
       : '';
   }
 
   async function saveDailyReportV2() {
     if (!currentProject) return;
     const btn = document.getElementById('save-daily-report-btn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
 
     try {
       const reportIdSeed = `dr_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
@@ -5108,7 +5161,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const clone = cloneForemanToolForExport();
     if (!clone) return toast('Open a foreman tool first.');
     const title = foremanToolTitles[activeForemanToolId] || 'PAL Foreman Tool';
-    const isManualSafety = activeForemanToolId === 'foreman-tool-manual-safety';
     const w = window.open('', '_blank');
     if (!w) {
       toast('Popup blocked. Allow popups to print or save.');
@@ -5116,25 +5168,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     const styles = document.querySelector('style')?.innerHTML || '';
     const printButton = '<div class="print-fallback"><button onclick="window.focus();window.print()">Open Print Dialog</button></div>';
-    const manualSafetyPrint = isManualSafety ? `
-      @page{size:letter landscape;margin:.25in}
-      body{padding:10px}
-      .ai-safety-panel{max-width:980px}
-      .ai-safety-grid{gap:6px 10px}
-      .field label{font-size:10px;margin-bottom:2px}
-      .field input,.field textarea,.field select{font-size:11px;padding:4px 5px;min-height:24px}
-      .field textarea{height:38px!important;min-height:38px;resize:none}
-      .ticket-table{min-width:0}
-      .ticket-table th,.ticket-table td{padding:3px 4px;font-size:10px}
-      .ticket-table input{font-size:11px;padding:3px 2px}
-      .language-line{gap:8px;font-size:11px;margin-bottom:4px}
-      h3{font-size:18px}
-      .foreman-paper-logo{padding:6px 8px}
-      .print-fallback{display:flex;justify-content:center;margin:0 0 10px}
-      .print-fallback button{display:inline-block!important;border:1px solid #173a5e;border-radius:6px;background:#173a5e;color:#fff;padding:8px 12px;font-weight:800}
-      @media print{.print-fallback{display:none!important} body{padding:0} .ai-safety-panel{max-width:100%}}
-    ` : '';
-    w.document.write(`<!doctype html><html><head><title>${esc(title)}</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions,.ai-safety-actions,.foreman-form-actions,button{display:none!important}.ai-safety-panel{max-width:980px;margin:0 auto}.foreman-tool-pane{display:block!important}${manualSafetyPrint}</style></head><body>${printButton}${clone.innerHTML}</body></html>`);
+    w.document.write(`<!doctype html><html><head><title>${esc(title)}</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions,.ai-safety-actions,.foreman-form-actions,button{display:none!important}.ai-safety-panel{max-width:980px;margin:0 auto}.foreman-tool-pane{display:block!important}</style></head><body>${printButton}${clone.innerHTML}</body></html>`);
     w.document.close();
     if (autoPrint) setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 350);
   }
@@ -5145,7 +5179,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function saveForemanToolPdf() {
     if (activeForemanToolId === 'foreman-tool-manual-safety') {
-      openSafetySheetFileWindow(currentManualSafetyPrintForm(), false);
+      openSafetySheetFileWindow(currentManualSafetyPrintForm());
       return;
     }
     if (isSafeForemanExportTool()) {
@@ -5189,6 +5223,79 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     generateProjectAiSafetySheet();
   }
 
+  function normalizeCrewLanguage(text = '') {
+    return String(text || '')
+      .replace(/\bwe are\b/gi, 'PAL crews are')
+      .replace(/\bwe will\b/gi, 'PAL crews will')
+      .replace(/\bwe're\b/gi, 'PAL crews are')
+      .replace(/\bwe\b/gi, 'PAL crews')
+      .replace(/\bour\b/gi, 'PAL crew')
+      .trim();
+  }
+
+  function aiSafetyTaskLabel(text = '') {
+    const lower = String(text || '').toLowerCase();
+    const labels = [];
+    if (lower.includes('spray') || lower.includes('sofp') || lower.includes('fireproof')) labels.push('spray-on fireproofing / SOFP work');
+    if (lower.includes('tarp') || lower.includes('containment') || lower.includes('poly')) labels.push('tarp and containment setup');
+    if (lower.includes('clean') || lower.includes('sweep') || lower.includes('debris')) labels.push('cleanup and housekeeping');
+    if (lower.includes('patch') || lower.includes('repair') || lower.includes('damaged')) labels.push('patching damaged fireproofing');
+    if (lower.includes('material') || lower.includes('stock') || lower.includes('stage')) labels.push('material staging');
+    if (lower.includes('delivery') || lower.includes('unload') || lower.includes('loading dock')) labels.push('delivery / unloading support');
+    if (lower.includes('scaffold')) labels.push('scaffold access coordination');
+    if (lower.includes('lift') || lower.includes('scissor') || lower.includes('boom')) labels.push('mobile lift access');
+    return labels.length ? Array.from(new Set(labels)).join(', ') : 'assigned work activity';
+  }
+
+  function normalizeAreaText(area = '') {
+    const value = String(area || '').trim();
+    if (!value) return '';
+    if (/\bfloor\b|\bfl\b|roof|basement|lobby|stair|dock|room|area/i.test(value)) return value;
+    if (/^\d+(?:st|nd|rd|th)?$/i.test(value)) return `${value} floor`;
+    return value;
+  }
+
+  function extractAreaMentions(text = '') {
+    const source = String(text || '');
+    const mentions = [];
+    const patterns = [
+      /\b\d+(?:st|nd|rd|th)?(?:\s*(?:floor|fl))?\b/gi,
+      /\b(?:roof|basement|cellar|lobby|loading dock|mechanical room|stair\s*[a-z0-9]+|elevator lobby|garage|mezzanine)\b/gi
+    ];
+    patterns.forEach(pattern => {
+      let match;
+      while ((match = pattern.exec(source))) mentions.push(normalizeAreaText(match[0]));
+    });
+    return Array.from(new Set(mentions.filter(Boolean)));
+  }
+
+  function buildAiSafetyLocationDetails({ areas = '', notes = '' }) {
+    const details = [];
+    const clauses = String(notes || '')
+      .replace(/\band\b\s+(?=(?:on|at|in)\s+(?:the\s+)?\d)/gi, '. ')
+      .split(/[.;\n]+|,(?=\s*(?:on|at|in)\s+(?:the\s+)?)/i)
+      .map(part => part.trim())
+      .filter(Boolean);
+
+    clauses.forEach(clause => {
+      const clauseAreas = extractAreaMentions(clause);
+      if (!clauseAreas.length) return;
+      const task = aiSafetyTaskLabel(clause);
+      const cleanClause = normalizeCrewLanguage(clause).replace(/\s+/g, ' ');
+      details.push(`${clauseAreas.join(' / ')}: ${task}. ${cleanClause}`);
+    });
+
+    if (!details.length) {
+      const listedAreas = extractAreaMentions(areas).length ? extractAreaMentions(areas) : String(areas || '').split(',').map(normalizeAreaText).filter(Boolean);
+      if (listedAreas.length) {
+        const task = aiSafetyTaskLabel(notes);
+        details.push(`${listedAreas.join(' / ')}: ${task}. ${normalizeCrewLanguage(notes || 'PAL crews will complete the planned work in the assigned work areas.')}`);
+      }
+    }
+
+    return Array.from(new Set(details)).slice(0, 6);
+  }
+
   function buildAiSafetyContent({ project, date, foreman, areas, equipment, conditions, focus, notes }) {
     const fullPlan = [areas, equipment, conditions, focus, notes].filter(Boolean).join(' ');
     const lower = fullPlan.toLowerCase();
@@ -5213,12 +5320,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (isCleanup) taskParts.push('cleanup of previously sprayed areas');
     if (isPatching) taskParts.push('patching damaged fireproofing');
     if (!taskParts.length) taskParts.push('planned construction work');
-    const professionalTaskLine = `${taskParts.join('; ')} in ${areas || 'assigned work areas'}. ${equipment ? 'Equipment/materials: ' + equipment + '. ' : ''}${conditions ? 'Conditions: ' + conditions + '. ' : ''}${notes ? 'Foreman work plan summary: ' + notes : ''}`.trim()
-      .replace(/\bwe are\b/gi, 'PAL crews are')
-      .replace(/\bwe will\b/gi, 'PAL crews will')
-      .replace(/\bwe\b/gi, 'PAL crews');
+    const locationDetails = buildAiSafetyLocationDetails({ areas, notes });
+    const professionalTaskLine = [
+      locationDetails.length
+        ? `Location-specific work plan: ${locationDetails.join(' ')}`
+        : `${taskParts.join('; ')} in ${areas || 'assigned work areas'}.`,
+      equipment ? `Equipment/materials in use: ${equipment}.` : '',
+      conditions ? `Current work conditions / coordination items: ${conditions}.` : '',
+      notes ? `Foreman work plan summary: ${normalizeCrewLanguage(notes)}` : ''
+    ].filter(Boolean).join(' ');
     const items = [
-      'Review crew assignments, work areas, access routes, and the daily work plan before starting.',
+      locationDetails.length
+        ? `Review location-specific assignments before starting: ${locationDetails.map(detail => detail.split(':')[0]).join(', ')}.`
+        : 'Review crew assignments, work areas, access routes, and the daily work plan before starting.',
+      locationDetails.length ? `Confirm each crew member understands the task sequence: ${locationDetails.map(detail => detail.replace(/\s+/g, ' ')).join(' ')}` : '',
       'Confirm required PPE is worn, including hard hat, safety glasses, gloves, work boots, high visibility clothing when required, and task-specific respiratory protection when required.',
       usesLift ? 'Review scissor lift pre-use inspection, trained operator requirements, travel path, overhead hazards, crush points, and keeping workers clear of lift movement.' : 'Review safe access, housekeeping, material staging, and tool/equipment inspection.',
       isSOFP ? 'Discuss overspray control, restricted spray areas, hose management, airborne material exposure, eye/skin protection, and nearby trade coordination.' : '',
@@ -5323,6 +5438,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const control2 = pickedHazards[1].control;
     const inspection = [
       `360 inspection required before starting in ${areas || 'assigned work areas'}.`,
+      locationDetails.length ? `Verify each listed work location matches the foreman's work plan: ${locationDetails.map(detail => detail.split(':')[0]).join(', ')}.` : '',
       usesLift ? 'Confirm lift inspection, ground conditions, overhead hazards, battery/fuel status, and safe setup area.' : 'Check walking surfaces, lighting, housekeeping, access paths, and material staging.',
       isSOFP ? 'Confirm spray zones, hose routing, overspray protection, PPE, and respiratory protection requirements before spraying.' : '',
       isTarping ? 'Check tarp anchorage, overhead conditions, pinch points, and communication before hanging containment.' : '',
@@ -5513,7 +5629,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       'ai-report-crew-total': '8',
       'ai-report-man-hours': '64',
       'ai-report-weather': 'Clear',
-      'ai-report-temp': '72°F',
+      'ai-report-temp': '72 F',
       'ai-report-status': 'On Track',
       'ai-report-percent': '45'
     };
@@ -5699,7 +5815,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  // ── DOCUMENTS ──
+  //  DOCUMENTS 
 
   function openProjectFieldFormsMenu() {
     if (!currentProject) return toast('Open a project first.');
@@ -5763,6 +5879,510 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   });
 
+  const jhaDisclaimer = 'This Job Hazard Analysis is not intended to be a complete description of all actions that may be deemed necessary to eliminate or reduce risk of injury. Additional precautionary measures may be necessary and must be implemented as conditions mandate.';
+
+  const jhaBaseSteps = [
+    {
+      step: '1. Arrival of PAL Environmental employees to the work site',
+      hazards: 'Not being familiar with tasks, miscommunication, emergency evacuation, contact with hazardous energy and materials, slips, trips and falls.',
+      controls: 'All employees must be oriented on GC/site policies and evacuation procedures before starting work. Employees must report to the designated muster point during an emergency evacuation. The competent person must review SDS information and this JHA with all employees before work begins. The GC must verify hazardous energies are deactivated/locked out and that PAL work areas are cleared of equipment/materials creating slip, trip, fall, or falling-object hazards.'
+    },
+    {
+      step: '2. Mobilization of equipment/material and prepare work area',
+      hazards: 'Falling objects, injury to public/personnel, property damage, lacerations, material/tools falling below, muscle strain, overexertion, slips, trips, falls, struck-by exposure, electrocution.',
+      controls: 'Minimum PPE must be worn at all times. Use barricades, safety tape, signage, and flaggers as needed to restrict access. Designated personnel must control vehicle and pedestrian traffic during loading/unloading. Use team lifting or mechanical equipment for material over 50 lbs. Use proper lifting technique, keep hands and feet clear of pinch points, secure material from displacement, store material away from edges, and inspect tools/equipment/PPE before use.'
+    },
+    {
+      step: '3. Install fireproofing equipment, pumps, hoses, tarps, poly, ladders, scaffolds, and related materials',
+      hazards: 'Lacerations, cuts, pinch points, muscle strain, overexertion, slips/trips/falls, struck-by hazards, electrocution, malfunctioning equipment, fall exposure.',
+      controls: 'Continue required PPE. Install equipment according to manufacturer specifications. Remove damaged/defective equipment from service immediately. Use team lifting/mechanical equipment as needed. Employees exposed to fall hazards of 6 feet or greater must be protected by guardrails or PFAS attached to a rated anchor. Ladders must be inspected and used correctly. Tarps/poly must be installed to protect work surfaces. Keep tools pointed in a safe direction, keep hands clear of barrels/open equipment, install whip checks on hose connections, and use GFCI protection on power tools.'
+    },
+    {
+      step: '4. Mix and apply fireproofing material to structural steel',
+      hazards: 'Lacerations, cuts, pinch points, silica exposure, respiratory exposure, slips/trips/falls, equipment failure, struck-by hazards, electrocution, inadequate lighting, hygiene exposure.',
+      controls: 'Hard hats, respirators when required, safety glasses/goggles, coveralls, rated gloves, and boots must be worn by employees mixing/applying material. OSHA respiratory protection requirements must be followed; employees wearing respirators must have current fit tests and be clean shaven where required. Only authorized employees may enter mixing/spray areas. Tape/sign areas as Do Not Enter or Authorized Employees Only where needed. Use ventilation and dust controls. Inspect scaffolds and aerial lifts before use and document inspections. Employees in aerial lifts must follow training/PFAS requirements. Clean overspray promptly, maintain housekeeping, keep hoses organized, maintain adequate lighting, wash hands, and shut down/secure equipment before unclogging.'
+    },
+    {
+      step: '5. Demobilization and breaking down',
+      hazards: 'Public/personnel injury, property damage, lacerations, material/tools falling below, muscle strain, overexertion, pinch/nip points, hearing exposure, slips, trips, falls, soft tissue injury, struck-by exposure.',
+      controls: 'Wear required PPE during breakdown. Maintain barricades or controlled access until materials and equipment are secured. Follow the same lifting, traffic control, housekeeping, equipment inspection, and fall prevention precautions through completion. Clean equipment thoroughly after use, secure materials, remove waste/debris, and report any damaged equipment or unsafe conditions to the competent person.'
+    }
+  ];
+
+  const jhaTemplates = [
+    {
+      id: 'jha-1-times-square',
+      title: '1 Times Square JHA - Fireproofing',
+      source: 'Safety department PDF',
+      task: 'Apply fireproofing material (MK-10 and intumescent paint) to structural steel',
+      projectName: '1 Times Square',
+      location: 'Throughout',
+      ppe: 'Coveralls, hard hats, face shields, rated gloves, respiratory protection (half face respirator), safety glasses, and rated work boots.',
+      equipment: 'Carrousel pump, S-5, accelerator pumps, fireproofing material, tarps, poly, hand tools, aerial lifts, ladders, and scaffolds.',
+      training: '40 Hr. New York City Site Safety Training certificate, 4 Hr. Scaffold User, Silica training, and task-specific training as required.',
+      competentPersons: 'John Panettiere and Oscar Peguero',
+      safetyContact: 'Richardo Blake - 347-844-0476',
+      date: '2023-08-23',
+      revised: '2023-08-28',
+      steps: jhaBaseSteps
+    },
+    {
+      id: 'jha-345-hudson',
+      title: '345 Hudson Street JHA - Fireproofing',
+      source: 'Safety department PDF',
+      task: 'Apply fireproofing material (Monokote MK10HB and accelerator) to structural steel',
+      projectName: '345 Hudson Street',
+      location: 'Bulkhead, penthouse, and lobby',
+      ppe: 'Coveralls, hard hats, face shields, rated gloves, respiratory protection (half face respirator), safety glasses, and rated work boots.',
+      equipment: 'Carrousel pump, S-5, accelerator pumps, fireproofing material, tarps, poly, hand tools, aerial lifts, ladders, and scaffolds.',
+      training: '40 Hr. New York City Site Safety Training certificate, 4 Hr. Scaffold User, Silica training, and task-specific training as required.',
+      competentPersons: 'John Panettiere',
+      safetyContact: 'Richardo Blake - 347-844-0476',
+      date: '2023-10-23',
+      revised: '',
+      steps: jhaBaseSteps
+    },
+    {
+      id: 'jha-pal-fireproofing-blank',
+      title: 'PAL Fireproofing JHA - Blank Project Template',
+      source: 'PAL reusable template',
+      task: 'Apply fireproofing material to structural steel',
+      projectName: '',
+      location: '',
+      ppe: 'Coveralls, hard hats, face shields or goggles as required, rated gloves, respiratory protection when required, safety glasses, and rated work boots.',
+      equipment: 'Fireproofing pump/equipment, accelerator pump, fireproofing material, tarps, poly, hand tools, aerial lifts, ladders, scaffolds, hoses, cords, and material handling equipment.',
+      training: 'SST/OSHA training, scaffold/lift training, silica/HazCom training, respiratory protection training/fit test when required, and site-specific orientation.',
+      competentPersons: '',
+      safetyContact: '',
+      date: todayISO(),
+      revised: '',
+      steps: jhaBaseSteps
+    }
+  ];
+
+  function getJhaTemplate(id = activeJhaTemplateId) {
+    return jhaTemplates.find(t => t.id === id) || jhaTemplates[0];
+  }
+
+  function refreshJhaProjectOptions() {
+    const select = document.getElementById('jha-project-select');
+    if (!select) return;
+    const current = select.value || currentProject?.id || '';
+    select.innerHTML = '<option value="">Select project...</option>' + allProjects.map(p => `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' - Job ' + esc(p.jobNumber) : ''}</option>`).join('');
+    if (current && Array.from(select.options).some(o => o.value === current)) select.value = current;
+  }
+
+  function renderJhaTemplateList() {
+    const list = document.getElementById('jha-template-list');
+    if (!list) return;
+    const search = String(document.getElementById('jha-template-search')?.value || '').trim().toLowerCase();
+    const rows = jhaTemplates.filter(t => !search || [t.title, t.projectName, t.task, t.location, t.equipment, t.competentPersons].some(v => String(v || '').toLowerCase().includes(search)));
+    list.innerHTML = rows.length ? rows.map(t => `
+      <button class="jha-template-card ${t.id === activeJhaTemplateId ? 'active' : ''}" type="button" onclick="openJhaTemplateWindow('${t.id}', 'previous')">
+        <h3>${esc(t.title)}</h3>
+        <p>${esc(t.task)}</p>
+        <p style="margin-top:5px;">${esc(t.source || 'Template')}</p>
+      </button>`).join('') : '<p class="helper-text">No JHA templates match this search.</p>';
+  }
+
+  function selectJhaTemplate(id) {
+    openJhaTemplateWindow(id, 'previous');
+  }
+
+  function handleJhaWorkflowKey(event, mode) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    if (mode === 'upload') return openUploadJhaModal();
+    showJhaMode(mode);
+  }
+
+  function renderJhaTab() {
+    applyRoleVisibility();
+    showJhaMode('previous');
+  }
+
+  function showJhaMode(mode = 'previous') {
+    const panel = document.getElementById('jha-mode-panel');
+    if (!panel) return;
+    const office = isOfficeRole();
+    if ((mode === 'create' || mode === 'upload') && !office) {
+      panel.innerHTML = '<div class="empty-state"><div class="icon">JHA</div><h3>Office Access Required</h3><p>Foremen can open approved JHAs and fill the acknowledgement/signature section. Office/admin creates, edits, and uploads JHAs.</p></div>';
+      return;
+    }
+    if (mode === 'create') {
+      panel.innerHTML = `
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+          <div>
+            <h3 style="margin:0 0 4px;color:var(--navy);">Create New JHA</h3>
+            <div class="helper-text">Start from the blank PAL fireproofing JHA template. Office/admin can edit the full document before saving or printing.</div>
+          </div>
+          <button class="btn-save" type="button" onclick="openJhaTemplateWindow('jha-pal-fireproofing-blank', 'create')">Open Blank Template</button>
+        </div>`;
+      return;
+    }
+    panel.innerHTML = `
+      <div class="field" style="margin-bottom:12px;">
+        <label>Search Previous Worksite JHAs</label>
+        <input id="jha-template-search" type="search" placeholder="Search by project, task, equipment, location..." oninput="renderJhaTemplateList()" />
+      </div>
+      <div class="jha-template-list" id="jha-template-list"></div>`;
+    renderJhaTemplateList();
+  }
+
+  function openJhaTemplateWindow(id, mode = 'previous') {
+    if ((mode === 'create' || mode === 'edit') && !isOfficeRole()) {
+      return toast('Only office/admin can create or edit the full JHA.');
+    }
+    activeJhaTemplateId = id || activeJhaTemplateId;
+    const modal = document.getElementById('modal-jha-editor');
+    const title = document.getElementById('jha-editor-title');
+    const helper = document.getElementById('jha-editor-helper');
+    const template = getJhaTemplate(activeJhaTemplateId);
+    if (title) title.textContent = template.title || 'JHA';
+    if (helper) helper.textContent = isOfficeRole()
+      ? 'Office/admin can edit the JHA body. Foremen will only fill signatures in the field.'
+      : 'Foreman view: JHA body is locked. Fill project and crew acknowledgement/signature section only.';
+    modal?.classList.add('open');
+    renderJhaEditor(mode);
+  }
+
+  function renderJhaEditor(mode = 'previous') {
+    const host = document.getElementById('jha-editor-panel');
+    if (!host) return;
+    const t = getJhaTemplate();
+    const project = currentProject || {};
+    const office = isOfficeRole();
+    const lockBody = !office;
+    const bodyAttr = lockBody ? 'readonly aria-readonly="true"' : '';
+    const dateAttr = lockBody ? 'disabled' : '';
+    const officeOnlyStyle = office ? '' : 'display:none;';
+    host.innerHTML = `
+      <div class="jha-project-row">
+        <div class="field"><label>Submit Signed JHA To Project</label><select id="jha-project-select" onchange="syncJhaProjectFields()"><option value="">Select project...</option></select></div>
+        <div class="field"><label>Template</label><input value="${esc(t.title)}" readonly /></div>
+      </div>
+      <div class="jha-paper">
+        <div class="jha-body">
+          <p class="jha-disclaimer">${esc(jhaDisclaimer)}</p>
+          <h3 class="jha-office-title">PAL ENVIRONMENTAL SERVICES</h3>
+          <div class="jha-office-subtitle">JOB HAZARD ANALYSIS</div>
+          <div class="jha-input-grid">
+            <div class="field span-2"><label>Task</label><textarea id="jha-task" rows="3" ${bodyAttr}>${esc(t.task)}</textarea></div>
+            <div class="field"><label>Project</label><input id="jha-project-name" value="${esc(project.name || t.projectName || '')}" /></div>
+            <div class="field"><label>Location</label><input id="jha-location" value="${esc(project.location || t.location || '')}" /></div>
+            <div class="field"><label>Competent Person(s)</label><input id="jha-competent-persons" value="${esc(t.competentPersons || currentUser?.displayName || '')}" ${bodyAttr} /></div>
+            <div class="field"><label>Safety Contact</label><input id="jha-safety-contact" value="${esc(t.safetyContact || '')}" ${bodyAttr} /></div>
+            <div class="field"><label>Date</label><input id="jha-date" type="date" value="${esc(t.date || todayISO())}" ${dateAttr} /></div>
+            <div class="field"><label>Revised</label><input id="jha-revised" type="date" value="${esc(t.revised || '')}" ${dateAttr} /></div>
+            <div class="field span-3"><label>Required PPE</label><textarea id="jha-ppe" rows="3" ${bodyAttr}>${esc(t.ppe)}</textarea></div>
+            <div class="field span-3"><label>Equipment Required to Perform Work</label><textarea id="jha-equipment" rows="3" ${bodyAttr}>${esc(t.equipment)}</textarea></div>
+            <div class="field span-3"><label>Required Training / Certificates</label><textarea id="jha-training" rows="2" ${bodyAttr}>${esc(t.training)}</textarea></div>
+          </div>
+          <div class="jha-section-title">Steps to Complete Task / Potential Hazards / Recommended Action</div>
+          <div class="ticket-table-wrap">
+            <table class="jha-table jha-edit-table">
+              <thead><tr><th style="width:22%;">Steps to Complete Task</th><th style="width:28%;">Potential Hazards</th><th>Recommended Action, Procedure, and/or Equipment to Avoid Potential Hazards</th></tr></thead>
+              <tbody id="jha-step-rows">
+                ${t.steps.map(row => `<tr class="jha-step-row"><td><textarea rows="4" ${bodyAttr}>${esc(row.step)}</textarea></td><td><textarea rows="4" ${bodyAttr}>${esc(row.hazards)}</textarea></td><td><textarea rows="4" ${bodyAttr}>${esc(row.controls)}</textarea></td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="jha-ack-title">ACKNOWLEDGEMENT SHEET</div>
+          <div class="jha-input-grid">
+            <div class="field"><label>Competent Person Signature / Typed Name</label><input id="jha-competent-signature" class="ai-signature-input" /></div>
+            <div class="field"><label>Date</label><input id="jha-competent-date" type="date" value="${todayISO()}" /></div>
+            <div class="field"><label>On Site Safety Manager Signature / Typed Name</label><input id="jha-safety-manager-signature" class="ai-signature-input" /></div>
+          </div>
+          <div class="ticket-table-wrap">
+            <table class="jha-table jha-sign-table">
+              <thead><tr><th>Date</th><th>Print Name</th><th>Sign Name</th><th></th></tr></thead>
+              <tbody id="jha-crew-rows">
+                ${Array.from({ length: 6 }, () => `<tr class="jha-sign-row"><td><input type="date" value="${todayISO()}" /></td><td><input placeholder="Print name" /></td><td><input class="ai-signature-input" placeholder="Signature / typed name" /></td><td><button class="btn-sm" type="button" onclick="this.closest('tr').remove()">Remove</button></td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="jha-actions">
+            <button class="btn-outline" type="button" onclick="addJhaCrewRow()">Add Crew Row</button>
+            <button class="btn-save" type="button" id="save-jha-project-btn" onclick="submitJhaToProject()">Submit to Project</button>
+            <button class="btn-outline" type="button" onclick="printJhaTemplate()">Print</button>
+            <button class="btn-outline" type="button" onclick="saveJhaTemplatePdf()">Save PDF</button>
+            <button class="btn-save" type="button" onclick="shareJhaTemplate()">Save / Email File</button>
+            <span class="helper-text" style="${officeOnlyStyle}">Office editing enabled.</span>
+          </div>
+        </div>
+      </div>`;
+    refreshJhaProjectOptions();
+  }
+
+  function syncJhaProjectFields() {
+    const project = allProjects.find(p => p.id === document.getElementById('jha-project-select')?.value);
+    if (!project) return;
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
+    set('jha-project-name', project.name || '');
+    set('jha-location', project.location || '');
+  }
+
+  function addJhaCrewRow() {
+    const body = document.getElementById('jha-crew-rows');
+    if (!body) return;
+    const tr = document.createElement('tr');
+    tr.className = 'jha-sign-row';
+    tr.innerHTML = `<td><input type="date" value="${todayISO()}" /></td><td><input placeholder="Print name" /></td><td><input class="ai-signature-input" placeholder="Signature / typed name" /></td><td><button class="btn-sm" type="button" onclick="this.closest('tr').remove()">Remove</button></td>`;
+    body.appendChild(tr);
+  }
+
+  function getJhaFormData(overrides = {}) {
+    const steps = Array.from(document.querySelectorAll('#jha-step-rows .jha-step-row')).map(row => {
+      const fields = row.querySelectorAll('textarea');
+      return { step: fields[0]?.value.trim() || '', hazards: fields[1]?.value.trim() || '', controls: fields[2]?.value.trim() || '' };
+    }).filter(row => row.step || row.hazards || row.controls);
+    const crewSignatures = Array.from(document.querySelectorAll('#jha-crew-rows .jha-sign-row')).map(row => {
+      const fields = row.querySelectorAll('input');
+      return { date: fields[0]?.value || '', printName: fields[1]?.value.trim() || '', signature: fields[2]?.value.trim() || '' };
+    }).filter(row => row.date || row.printName || row.signature);
+    const project = allProjects.find(p => p.id === document.getElementById('jha-project-select')?.value);
+    const template = getJhaTemplate();
+    return {
+      templateId: activeJhaTemplateId,
+      templateTitle: template.title,
+      projectId: project?.id || overrides.projectId || '',
+      projectName: document.getElementById('jha-project-name')?.value.trim() || overrides.projectName || project?.name || template.projectName || '',
+      jobNumber: project?.jobNumber || overrides.jobNumber || '',
+      task: document.getElementById('jha-task')?.value.trim() || template.task,
+      location: document.getElementById('jha-location')?.value.trim() || overrides.location || project?.location || template.location || '',
+      competentPersons: document.getElementById('jha-competent-persons')?.value.trim() || template.competentPersons || '',
+      safetyContact: document.getElementById('jha-safety-contact')?.value.trim() || template.safetyContact || '',
+      date: document.getElementById('jha-date')?.value || todayISO(),
+      revised: document.getElementById('jha-revised')?.value || '',
+      ppe: document.getElementById('jha-ppe')?.value.trim() || template.ppe,
+      equipment: document.getElementById('jha-equipment')?.value.trim() || template.equipment,
+      training: document.getElementById('jha-training')?.value.trim() || template.training,
+      competentSignature: document.getElementById('jha-competent-signature')?.value.trim() || '',
+      competentDate: document.getElementById('jha-competent-date')?.value || '',
+      safetyManagerSignature: document.getElementById('jha-safety-manager-signature')?.value.trim() || '',
+      steps,
+      crewSignatures
+    };
+  }
+
+  function jhaPrintBody(data = {}) {
+    const steps = Array.isArray(data.steps) && data.steps.length ? data.steps : getJhaTemplate(data.templateId).steps;
+    const crew = Array.isArray(data.crewSignatures) && data.crewSignatures.length ? data.crewSignatures : Array.from({ length: 12 }, () => ({ date:'', printName:'', signature:'' }));
+    return `
+      <section class="jha-paper" style="box-shadow:none;border-color:#111;border-radius:0;">
+        <div class="jha-body">
+          <p class="jha-disclaimer">${esc(jhaDisclaimer)}</p>
+          <h3 class="jha-office-title">PAL ENVIRONMENTAL SERVICES</h3>
+          <div class="jha-office-subtitle">JOB HAZARD ANALYSIS</div>
+          <div class="jha-office-header">
+            <div class="jha-office-cell"><span class="jha-office-label">Task</span>${esc(data.task || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Required PPE</span>${esc(data.ppe || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Project</span>${esc(data.projectName || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Equipment Required to Perform Work</span>${esc(data.equipment || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">All Employees Must Possess</span>${esc(data.training || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Location / Date</span>${esc(data.location || '')}<br>${esc(data.date || '')}${data.revised ? '<br>Revised: ' + esc(data.revised) : ''}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Competent Persons</span>${esc(data.competentPersons || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Safety Contact</span>${esc(data.safetyContact || '')}</div>
+            <div class="jha-office-cell"><span class="jha-office-label">Job Number</span>${esc(data.jobNumber || '')}</div>
+          </div>
+          <table class="jha-office-table">
+            <thead><tr><th style="width:22%;">Steps to Complete Task</th><th style="width:28%;">Potential Hazards</th><th>Recommended Action, Procedure, and/or Equipment to Avoid Potential Hazards</th></tr></thead>
+            <tbody>${steps.map(row => `<tr><td>${esc(row.step || '')}</td><td>${esc(row.hazards || '')}</td><td>${esc(row.controls || '')}</td></tr>`).join('')}</tbody>
+          </table>
+          <div class="jha-ack-title">ACKNOWLEDGEMENT SHEET</div>
+          <table class="jha-office-table">
+            <tbody>
+              <tr><td style="width:35%;">Signature of Competent Person:</td><td>${esc(data.competentSignature || '')}</td><td style="width:18%;">Date: ${esc(data.competentDate || '')}</td></tr>
+              <tr><td>Signature of On Site Safety Manager:</td><td>${esc(data.safetyManagerSignature || '')}</td><td>Date: ${esc(data.competentDate || '')}</td></tr>
+            </tbody>
+          </table>
+          <div class="jha-section-title">Crew Signatures</div>
+          <table class="jha-office-table">
+            <thead><tr><th>Date</th><th>Print Name</th><th>Sign Name</th><th>Date</th><th>Print Name</th><th>Sign Name</th></tr></thead>
+            <tbody>
+              ${Array.from({ length: Math.ceil(crew.length / 2) || 1 }, (_, i) => {
+                const left = crew[i * 2] || {};
+                const right = crew[i * 2 + 1] || {};
+                return `<tr><td>${esc(left.date || '')}</td><td>${esc(left.printName || '')}</td><td>${esc(left.signature || '')}</td><td>${esc(right.date || '')}</td><td>${esc(right.printName || '')}</td><td>${esc(right.signature || '')}</td></tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </section>`;
+  }
+
+  function jhaDocumentHTML(data, title = 'PAL JHA') {
+    return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>${document.querySelector('style')?.innerHTML || ''}@page{size:letter;margin:.25in}body{background:#fff;padding:16px;color:#111}.jha-paper{max-width:10.2in;margin:0 auto}.jha-file-actions{position:sticky;top:0;background:#fff;padding:8px;z-index:5}@media print{body{padding:0}.jha-file-actions{display:none!important}.jha-paper{max-width:100%}}</style></head><body><div class="jha-file-actions"><button onclick="window.print()">Print / Save as PDF</button><button onclick="window.close()">Close</button></div>${jhaPrintBody(data)}</body></html>`;
+  }
+
+  function jhaFileName(data = {}) {
+    return `pal-jha-${exportSlug(data.projectName || data.templateTitle || 'project')}-${exportSlug(data.date || 'today')}.html`;
+  }
+
+  function openJhaDataWindow(data, autoPrint = false) {
+    const blob = new Blob([jhaDocumentHTML(data, data.templateTitle || 'PAL JHA')], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) {
+      URL.revokeObjectURL(url);
+      toast('Popup blocked. Use Save / Email File instead.');
+      return;
+    }
+    if (autoPrint) setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 500);
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }
+
+  function printJhaTemplate() {
+    openJhaDataWindow(getJhaFormData(), true);
+  }
+
+  function saveJhaTemplatePdf() {
+    openJhaDataWindow(getJhaFormData(), false);
+  }
+
+  async function shareJhaData(data) {
+    const html = jhaDocumentHTML(data, data.templateTitle || 'PAL JHA');
+    const fileName = jhaFileName(data);
+    const blob = new Blob([html], { type: 'text/html' });
+    try {
+      if (typeof File !== 'undefined') {
+        const file = new File([blob], fileName, { type: 'text/html' });
+        if (navigator.canShare?.({ files:[file] }) && navigator.share) {
+          await navigator.share({ title: data.templateTitle || 'PAL JHA', files:[file] });
+          return;
+        }
+      }
+    } catch(e) {
+      if (e?.name === 'AbortError') return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast('JHA file downloaded.');
+  }
+
+  function shareJhaTemplate() {
+    return shareJhaData(getJhaFormData());
+  }
+
+  async function submitJhaToProject() {
+    const projectId = document.getElementById('jha-project-select')?.value || currentProject?.id || '';
+    const project = allProjects.find(p => p.id === projectId) || (currentProject?.id === projectId ? currentProject : null);
+    if (!project) return toast('Select a project before submitting the JHA.');
+    const data = getJhaFormData({ projectId: project.id, projectName: project.name || '', jobNumber: project.jobNumber || '', location: project.location || '' });
+    if (!data.crewSignatures.length) return toast('Add at least one crew print name/signature before submitting.');
+    const btn = document.getElementById('save-jha-project-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+        formKey: 'jha-fireproofing',
+        formTitle: data.templateTitle || 'PAL Fireproofing JHA',
+        projectId: project.id,
+        projectName: project.name || data.projectName || '',
+        jobNumber: project.jobNumber || data.jobNumber || '',
+        localSubmittedAt: new Date().toISOString(),
+        submittedAt: serverTimestamp(),
+        submittedBy: currentUser?.uid || '',
+        submittedByName: currentUser?.displayName || currentUser?.email || '',
+        documentData: {
+          ...data,
+          notes: `JHA submitted with ${data.crewSignatures.length} crew signature${data.crewSignatures.length === 1 ? '' : 's'}.`
+        }
+      });
+      toast('JHA saved to project Field Forms.');
+      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+    } catch(e) {
+      console.error(e);
+      toast('Could not save JHA to project.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit to Project'; }
+    }
+  }
+
+  function refreshJhaUploadProjectOptions() {
+    const select = document.getElementById('jha-upload-project-select');
+    if (!select) return;
+    const current = select.value || currentProject?.id || '';
+    select.innerHTML = '<option value="">Select project...</option>' + allProjects.map(p => `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' - Job ' + esc(p.jobNumber) : ''}</option>`).join('');
+    if (current && Array.from(select.options).some(o => o.value === current)) select.value = current;
+  }
+
+  function openUploadJhaModal() {
+    if (!isOfficeRole()) return toast('Only office/admin can upload JHAs.');
+    refreshJhaUploadProjectOptions();
+    const title = document.getElementById('jha-upload-title');
+    const file = document.getElementById('jha-upload-file');
+    const notes = document.getElementById('jha-upload-notes');
+    if (title) title.value = '';
+    if (file) file.value = '';
+    if (notes) notes.value = '';
+    document.getElementById('modal-jha-upload')?.classList.add('open');
+  }
+
+  async function uploadJhaFile() {
+    if (!isOfficeRole()) return toast('Only office/admin can upload JHAs.');
+    const projectId = document.getElementById('jha-upload-project-select')?.value || '';
+    const project = allProjects.find(p => p.id === projectId);
+    const file = document.getElementById('jha-upload-file')?.files?.[0];
+    const title = document.getElementById('jha-upload-title')?.value.trim() || file?.name || 'Uploaded JHA';
+    const notes = document.getElementById('jha-upload-notes')?.value.trim() || '';
+    if (!project) return toast('Select a project before uploading the JHA.');
+    if (!file) return toast('Choose a JHA file to upload.');
+    const btn = document.getElementById('save-jha-upload-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Uploading...'; }
+      const safeName = getCleanFileName(file.name || 'jha-file');
+      const storagePath = `projects/${project.id}/jhaUploads/${Date.now()}_${safeName}`;
+      const storageRef = ref(storage, storagePath);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+        formKey: 'jha-uploaded',
+        formTitle: title,
+        projectId: project.id,
+        projectName: project.name || '',
+        jobNumber: project.jobNumber || '',
+        localSubmittedAt: new Date().toISOString(),
+        submittedAt: serverTimestamp(),
+        submittedBy: currentUser?.uid || '',
+        submittedByName: currentUser?.displayName || currentUser?.email || '',
+        documentData: {
+          templateTitle: title,
+          projectName: project.name || '',
+          jobNumber: project.jobNumber || '',
+          date: todayISO(),
+          uploadedFile: { name: file.name, url, path: storagePath, type: file.type || 'application/octet-stream' },
+          notes
+        }
+      });
+      closeModal('modal-jha-upload');
+      toast('JHA uploaded to project Field Forms.');
+      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+    } catch(e) {
+      console.error(e);
+      toast('Could not upload JHA.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Upload JHA'; }
+    }
+  }
+
+  function printProjectJha(formId) {
+    const form = findProjectFieldForm(formId);
+    if (!form) return toast('JHA not found. Refresh and try again.');
+    openJhaDataWindow(form.documentData || {}, true);
+  }
+
+  function shareProjectJha(formId) {
+    const form = findProjectFieldForm(formId);
+    if (!form) return toast('JHA not found. Refresh and try again.');
+    return shareJhaData(form.documentData || {});
+  }
+
   function handleProjectFieldFormCardKey(event, target) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
@@ -5773,18 +6393,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function openProjectJhaChecklist() {
-    const paper = document.querySelector('.jha-paper');
-    if (!paper) return toast('JHA checklist not found.');
     closeModal('modal-project-field-forms');
-    const clone = paper.cloneNode(true);
-    if (currentProject) {
-      clone.querySelector('.jha-meta')?.insertAdjacentHTML('beforeend', `<br>Project: ${esc(currentProject.name || '')}${currentProject.jobNumber ? '<br>Job: ' + esc(currentProject.jobNumber) : ''}`);
+    showView('view-projects');
+    switchMainTab('main-jha');
+    renderJhaTab();
+    const select = document.getElementById('jha-project-select');
+    if (select && currentProject?.id && Array.from(select.options).some(o => o.value === currentProject.id)) {
+      select.value = currentProject.id;
+      syncJhaProjectFields();
     }
-    const w = window.open('', '_blank');
-    if (!w) return toast('Popup blocked. Allow popups to open the checklist.');
-    const styles = document.querySelector('style')?.innerHTML || '';
-    w.document.write(`<!doctype html><html><head><title>PAL JHA Checklist</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions{display:none!important}.jha-paper{max-width:980px;margin:0 auto}</style></head><body>${clone.outerHTML}<p style="text-align:center;margin-top:16px;"><button onclick="window.print()">Print / Save as PDF</button></p></body></html>`);
-    w.document.close();
+    document.getElementById('main-jha')?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function getCleanFileName(name = 'PAL-Project-File') {
@@ -5957,7 +6575,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function downloadProjectFile(url, fileName = 'PAL-Project-File') {
     const cleanName = getCleanFileName(fileName);
     try {
-      toast('Preparing download…');
+      toast('Preparing download...');
       const response = await fetch(url);
       if (!response.ok) throw new Error('File download failed');
       const blob = await response.blob();
@@ -6034,7 +6652,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="file-icon">${docIcon(d.name)}</div>
         <div class="file-info">
           <h4>${esc(d.name)}</h4>
-          <p>${d.uploadedBy} · ${formatDate(d.uploadedAt)}</p>
+          <p>${d.uploadedBy} - ${formatDate(d.uploadedAt)}</p>
         </div>
         <div class="file-actions">
           <button class="btn-sm" data-url="${esc(safeFileUrl(d.url))}" data-name="${esc(d.name || 'Project document')}" onclick="event.stopPropagation(); downloadProjectFile(this.dataset.url, this.dataset.name)">Download</button>
@@ -6047,7 +6665,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function handleDocUpload(input) {
     if (!input.files.length || !currentProject) return;
-    toast('Uploading…');
+    toast('Uploading...');
     const files = Array.from(input.files);
     for (const file of files) {
       try {
@@ -6068,12 +6686,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         return;
       }
     }
-    toast('✅ Documents uploaded!');
+    toast('Documents uploaded.');
     loadProjectDocs(currentProject.id);
     input.value = '';
   }
 
-  // ── PHOTOS ──
+  //  PHOTOS 
   async function loadProjectPhotos(projectId) {
     const snap = await getDoc(doc(db, 'projects', projectId));
     const data = snap.data();
@@ -6121,7 +6739,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function handlePhotoUpload(input) {
     if (!input.files.length || !currentProject) return;
-    toast('Uploading photos…');
+    toast('Uploading photos...');
     const files = Array.from(input.files);
     const category = document.getElementById('photo-category-select')?.value || 'General';
     for (const file of files) {
@@ -6144,12 +6762,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         return;
       }
     }
-    toast('✅ Photos uploaded!');
+    toast('Photos uploaded.');
     loadProjectPhotos(currentProject.id);
     input.value = '';
   }
 
-  // ── DAILY REPORTS ──
+  //  DAILY REPORTS 
 
   function renderDailyReportDashboard(rows = []) {
     const el = document.getElementById('daily-report-dashboard');
@@ -6235,7 +6853,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       list.appendChild(row);
     });
   }
-  // ── FOREMEN ──
+  //  FOREMEN 
   function getProjectFieldFormType(form = {}) {
     const key = String(form.formKey || '').toLowerCase();
     if (key.includes('payroll')) return 'payroll';
@@ -6326,11 +6944,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       console.error(e);
       list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Could not load submitted field forms.</p>';
     }
-  }
-
-  function getFieldFormSnippet(form) {
-    const data = form.documentData || {};
-    return data.notes || data.corrective_actions || data.work_description || data.toolbox_topic || data.comments || form.projectName || 'Submitted to this project.';
   }
 
   function prettyFieldLabel(key) {
@@ -6478,46 +7091,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return rows.find(r => r.id === formId);
   }
 
-  function fieldFormSafetyPrintCSS() {
-    return `
-      @page{size:landscape;margin:.22in}
-      *{box-sizing:border-box}
-      .print-fallback{display:flex;justify-content:center;margin:0 0 10px}
-      .print-fallback button{border:1px solid #173a5e;border-radius:6px;background:#173a5e;color:#fff;padding:8px 12px;font-weight:800}
-      html,body,#print-root{font-family:Arial,sans-serif;color:#111!important;background:#fff!important}
-      .daily-safety-paper{max-width:10.35in;min-height:7.35in;margin:0 auto;border:1px solid #111;border-radius:0;background:#fff!important;overflow:visible}
-      .daily-safety-head{background:#fff!important;color:#111!important;border-bottom:2px solid #111;display:grid;grid-template-columns:1.25in 1fr 1.35in;gap:.12in;align-items:center}
-      .daily-safety-head .logo{color:#111!important;font-weight:900;font-size:23px;line-height:1}
-      .daily-safety-head .logo small{display:block;color:#111!important;font-size:8px;letter-spacing:.5px;margin-top:3px}
-      .daily-safety-head{padding:11px 14px;grid-template-columns:150px 1fr 160px}
-      .daily-safety-head h3{font-size:21px;margin:0;color:#111!important;text-align:center}
-      .daily-safety-head p{font-size:12px;margin:3px 0 0;color:#111!important;text-align:center}
-      .daily-safety-meta{font-size:11px;line-height:1.3;color:#111!important;text-align:right}
-      .daily-safety-body{padding:10px 14px}
-      .daily-safety-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 14px}
-      .daily-safety-field{border-bottom:1px solid #555;min-height:30px;padding-bottom:4px;overflow:visible;background:#fff!important}
-      .daily-safety-field.full{grid-column:1/-1}
-      .daily-safety-field label,.daily-safety-block-title{display:block;color:#111!important;font-weight:900;font-size:10px;margin-bottom:3px;background:#fff!important}
-      .daily-safety-value{white-space:pre-wrap;font-size:11.5px;line-height:1.28;color:#111!important;-webkit-text-fill-color:#111!important;background:#fff!important;overflow-wrap:anywhere;word-break:break-word}
-      .daily-safety-field.full{border-bottom:0}
-      .daily-safety-field.full .daily-safety-value{
-        min-height:.28in;
-        padding:3px 0 5px;
-        border-bottom:1px solid #555;
-        background:#fff!important;
-      }
-      .daily-safety-sign-table{font-size:12px}
-      .daily-safety-sign-table{width:100%;border-collapse:collapse;margin-top:5px}
-      .daily-safety-sign-table th{background:#fff!important;color:#111!important;border:1px solid #555;padding:5px 6px;text-align:left}
-      .daily-safety-sign-table td{background:#fff!important;color:#111!important;border:1px solid #555;padding:5px 6px;height:30px}
-      .daily-safety-footer{border:1px solid #555;border-radius:0;padding:9px 10px;margin-top:9px;background:#fff!important}
-      .language-line{gap:10px;font-size:11px;margin-bottom:7px;color:#111!important;background:#fff!important}
-      .signature-script{font-size:21px;color:#111!important;-webkit-text-fill-color:#111!important;background:#fff!important}
-      @media print{.print-fallback{display:none!important}.daily-safety-paper{max-width:100%}}
-    `;
-  }
-
-  function printFieldFormSafetySheet(formId, autoPrint = true) {
+  function printFieldFormSafetySheet(formId) {
     const form = findProjectFieldForm(formId);
     if (!form) return toast('Safety sheet not found. Refresh and try again.');
     openSafetySheetFileWindow(form);
@@ -6544,11 +7118,36 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       grid.innerHTML = `
         <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
           <button class="btn-save" type="button" onclick="editFieldFormDailySafety('${form.id}')">Edit / Add Signatures</button>
-          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}', true)">Print</button>
-          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}', true)">Save PDF</button>
+          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Print</button>
+          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Save PDF</button>
           <button class="btn-save" type="button" onclick="shareFieldFormSafetySheet('${form.id}')">Save / Email File</button>
         </div>
         ${dailySafetySheetDetailHTML(form)}`;
+      document.getElementById('modal-report-detail').classList.add('open');
+      return;
+    }
+    if (String(form.formKey || '').startsWith('jha')) {
+      if (heading) heading.textContent = form.formTitle || 'JHA Details';
+      if (data.uploadedFile?.url) {
+        grid.innerHTML = `
+          <div class="report-field span-2"><span class="k">Uploaded JHA</span><div class="v">${esc(data.uploadedFile.name || form.formTitle || 'JHA File')}</div></div>
+          <div class="report-field"><span class="k">Project</span><div class="v">${esc(form.projectName || currentProject?.name || '')}</div></div>
+          <div class="report-field"><span class="k">Submitted By</span><div class="v">${esc(form.submittedByName || form.submittedByEmail || '')}</div></div>
+          ${data.notes ? `<div class="report-field span-2"><span class="k">Notes</span><div class="v">${esc(data.notes)}</div></div>` : ''}
+          <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px;">
+            <a class="btn-outline" href="${esc(safeFileUrl(data.uploadedFile.url))}" target="_blank" rel="noopener" style="text-decoration:none;">Open Uploaded JHA</a>
+            <button class="btn-save" type="button" onclick="downloadProjectFile('${esc(safeFileUrl(data.uploadedFile.url))}', '${esc(data.uploadedFile.name || form.formTitle || 'JHA File')}')">Download</button>
+          </div>`;
+        document.getElementById('modal-report-detail').classList.add('open');
+        return;
+      }
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
+          <button class="btn-outline" type="button" onclick="printProjectJha('${form.id}')">Print</button>
+          <button class="btn-outline" type="button" onclick="printProjectJha('${form.id}')">Save PDF</button>
+          <button class="btn-save" type="button" onclick="shareProjectJha('${form.id}')">Save / Email File</button>
+        </div>
+        <div style="grid-column:1/-1;">${jhaPrintBody(data)}</div>`;
       document.getElementById('modal-report-detail').classList.add('open');
       return;
     }
@@ -6642,7 +7241,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="foreman-avatar">${initials}</div>
         <div class="foreman-info">
           <h4>${esc(f.name || f.email)}</h4>
-          <p>${esc(f.email)} · ${capitalize(f.role || 'foreman')}</p>
+          <p>${esc(f.email)} - ${capitalize(f.role || 'foreman')}</p>
         </div>
         <span class="pill active">Active</span>`;
       list.appendChild(row);
@@ -6677,18 +7276,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }
 
       if (input) input.value = '';
-      toast(`✅ ${email} added as foreman`);
+      toast(`${email} added as foreman.`);
     } catch(e) {
       console.error('Add foreman failed:', e);
       toast('Could not add foreman: ' + e.message);
     }
   }
 
-  // ── EMPLOYEES / CERTIFICATIONS ──
+  //  EMPLOYEES / CERTIFICATIONS 
   async function loadEmployees(force = false) {
     const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
     if (!list) return;
-    list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records…</p>';
+    list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records...</p>';
     try {
       // Read all employees and sort in the browser so every saved employee shows.
       const snap = await getDocs(collection(db, 'employees'));
@@ -6700,7 +7299,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       console.error('Employee load failed:', e);
       list.innerHTML = `
         <div class="empty-state">
-          <div class="icon">⚠️</div>
+          <div class="icon">Warning</div>
           <h3>Could not load employee records</h3>
           <p>${esc(e?.message || 'Check Firebase permissions / connection, then tap Refresh.')}</p>
         </div>`;
@@ -6889,10 +7488,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ${data.warnings.slice(0, 12).map(c => `
           <div class="cert-warning-row">
             <div>
-              <div class="cert-warning-main">${esc(c.employeeName)} — ${esc(c.certTitle)}</div>
+              <div class="cert-warning-main">${esc(c.employeeName)} - ${esc(c.certTitle)}</div>
               <div class="cert-warning-sub">${c.expirationDate ? `Expires: ${esc(c.expirationDate)}` : 'No expiration date'}</div>
             </div>
-            <span class="cert-status-pill ${c.status}">${c.status === 'expired' ? '🔴 Expired' : `🟡 ${c.days} day${c.days === 1 ? '' : 's'} left`}</span>
+            <span class="cert-status-pill ${c.status}">${c.status === 'expired' ? ' Expired' : ` ${c.days} day${c.days === 1 ? '' : 's'} left`}</span>
           </div>`).join('')}
       </div>` : `
       <div class="cert-warning-list">
@@ -6901,7 +7500,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             <div class="cert-warning-main">No expired or expiring certifications</div>
             <div class="cert-warning-sub">Anything with an expiration date inside 30 days will show here.</div>
           </div>
-          <span class="cert-status-pill active">🟢 Clear</span>
+          <span class="cert-status-pill active"> Clear</span>
         </div>
       </div>`;
 
@@ -7026,7 +7625,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!employees.length) {
       list.innerHTML = `
         <div class="empty-state">
-          <div class="icon">👷</div>
+          <div class="icon"></div>
           <h3>${q ? 'No matching employees' : 'No employee records yet'}</h3>
           <p>${q ? 'Try another search.' : 'Tap Add Employee to create the first employee file.'}</p>
         </div>`;
@@ -7047,8 +7646,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ? certs.slice(0, 8).map(cert => {
             const status = getCertStatusKey(cert.expirationDate);
             const label = esc(cert.title || cert.type || 'Cert');
-            const exp = cert.expirationDate ? ` · exp ${esc(cert.expirationDate)}` : '';
-            return `<span class="cert-item pill ${status}">${label}${exp} · ${getCertStatusText(cert.expirationDate)}</span>`;
+            const exp = cert.expirationDate ? ` - exp ${esc(cert.expirationDate)}` : '';
+            return `<span class="cert-item pill ${status}">${label}${exp} - ${getCertStatusText(cert.expirationDate)}</span>`;
           }).join('')
         : '<span class="cert-item">No certifications uploaded yet</span>';
       card.innerHTML = `
@@ -7056,9 +7655,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <div>
             <h4>${esc(emp.name || 'Unnamed Employee')}</h4>
             <div class="employee-meta">
-              ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-              ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-              ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+              ${emp.trade ? `<span> ${esc(emp.trade)}</span>` : ''}
+              ${emp.email ? `<span> ${esc(emp.email)}</span>` : ''}
+              ${emp.phone ? `<span> ${esc(emp.phone)}</span>` : ''}
             </div>
           </div>
           ${currentProject ? `<span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>` : `<span class="pill neutral">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>`}
@@ -7133,7 +7732,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       ].filter(Boolean).join('<br>');
       const preview = isImageCert(cert)
         ? `<a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener"><img class="cert-preview-img" src="${esc(safeFileUrl(cert.url))}" alt="${title}"></a>`
-        : `<div class="cert-pdf-box"><div style="font-size:34px;">📄</div><div>PDF / Document</div></div>`;
+        : `<div class="cert-pdf-box"><div style="font-size:34px;"></div><div>PDF / Document</div></div>`;
       return `<div class="cert-preview-card">
         <h4>${title}</h4>
         <p>${meta}</p>
@@ -7150,9 +7749,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     body.innerHTML = `
       <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
         <div class="employee-meta" style="margin-bottom:8px;">
-          ${emp.trade ? `<span>🛠️ ${esc(emp.trade)}</span>` : ''}
-          ${emp.email ? `<span>✉️ ${esc(emp.email)}</span>` : ''}
-          ${emp.phone ? `<span>📞 ${esc(emp.phone)}</span>` : ''}
+          ${emp.trade ? `<span> ${esc(emp.trade)}</span>` : ''}
+          ${emp.email ? `<span> ${esc(emp.email)}</span>` : ''}
+          ${emp.phone ? `<span> ${esc(emp.phone)}</span>` : ''}
         </div>
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
         <div class="employee-actions" style="margin-top:12px;">
@@ -7177,7 +7776,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
     currentEmployeeId = null;
     const title = document.getElementById('employee-modal-title');
-    if (title) title.textContent = '👷 New Employee File';
+    if (title) title.textContent = ' New Employee File';
     const btn = document.getElementById('save-employee-btn');
     if (btn) {
       btn.disabled = false;
@@ -7201,7 +7800,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.getElementById('emp-trade').value = emp.trade || '';
     document.getElementById('emp-notes').value = emp.notes || '';
     const title = document.getElementById('employee-modal-title');
-    if (title) title.textContent = '✏️ Edit Employee File';
+    if (title) title.textContent = 'Edit Edit Employee File';
     const btn = document.getElementById('save-employee-btn');
     btn.disabled = false;
     btn.textContent = 'Update Employee';
@@ -7214,7 +7813,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const name = document.getElementById('emp-name').value.trim();
     if (!name) { toast('Employee name is required'); return; }
     const btn = document.getElementById('save-employee-btn');
-    btn.disabled = true; btn.textContent = 'Updating…';
+    btn.disabled = true; btn.textContent = 'Updating...';
     try {
       await updateDoc(doc(db, 'employees', currentEmployeeId), {
         name,
@@ -7261,7 +7860,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const name = document.getElementById('emp-name').value.trim();
     if (!name) { toast('Employee name is required'); return; }
     const btn = document.getElementById('save-employee-btn');
-    btn.disabled = true; btn.textContent = 'Saving…';
+    btn.disabled = true; btn.textContent = 'Saving...';
     try {
       await addDoc(collection(db, 'employees'), {
         name,
@@ -7312,7 +7911,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const type = document.getElementById('cert-type');
     if (type) type.value = 'OSHA 30';
     const title = document.getElementById('cert-modal-title');
-    if (title) title.textContent = '🪪 Upload Certification';
+    if (title) title.textContent = ' Upload Certification';
     const btn = document.getElementById('save-cert-btn');
     if (btn) {
       btn.disabled = false;
@@ -7340,9 +7939,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.getElementById('cert-issue-date').value = cert.issueDate || '';
     document.getElementById('cert-exp-date').value = cert.expirationDate || '';
     document.getElementById('cert-file').value = '';
-    document.getElementById('cert-employee-label').textContent = `Employee: ${emp.name} · Editing: ${cert.title || cert.type || 'Certification'} (choose a new file only if replacing it)`;
+    document.getElementById('cert-employee-label').textContent = `Employee: ${emp.name} - Editing: ${cert.title || cert.type || 'Certification'} (choose a new file only if replacing it)`;
     const title = document.getElementById('cert-modal-title');
-    if (title) title.textContent = '✏️ Edit Certification';
+    if (title) title.textContent = 'Edit Edit Certification';
     const btn = document.getElementById('save-cert-btn');
     btn.disabled = false;
     btn.textContent = 'Update Cert';
@@ -7362,7 +7961,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const file = document.getElementById('cert-file').files[0];
     const baseType = document.getElementById('cert-type').value;
     const title = document.getElementById('cert-custom-title').value.trim() || baseType;
-    btn.disabled = true; btn.textContent = 'Updating…';
+    btn.disabled = true; btn.textContent = 'Updating...';
 
     try {
       let updatedCert = {
@@ -7432,7 +8031,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!file) { toast('Select a certification file first'); return; }
     const baseType = document.getElementById('cert-type').value;
     const title = document.getElementById('cert-custom-title').value.trim() || baseType;
-    btn.disabled = true; btn.textContent = 'Uploading…';
+    btn.disabled = true; btn.textContent = 'Uploading...';
     try {
       const path = `employees/${currentEmployeeId}/certifications/${Date.now()}_${file.name}`;
       const storageRef = ref(storage, path);
@@ -7482,13 +8081,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       ['Supervisor / Foreman', report.supervisor || report.foreman || report.submittedByName],
       ['Floors Worked', report.floors],
       ['Ticket #', report.ticket],
-      ['Weather', [report.conditions, report.temp ? `${report.temp}°F` : '', report.wind].filter(Boolean).join(' · ')],
+      ['Weather', [report.conditions, report.temp ? `${report.temp} F` : '', report.wind].filter(Boolean).join(' - ')],
       ['Crew Total', report.crew_total],
       ['Man-Hours', report.man_hours],
       ['Work Status', report.status],
       ['% Complete', report.percent_complete],
       ['Safety Incidents', report.safety_incidents],
-      ['Toolbox Talk', [report.toolbox_yes_no, report.toolbox_topic].filter(Boolean).join(' · ')],
+      ['Toolbox Talk', [report.toolbox_yes_no, report.toolbox_topic].filter(Boolean).join(' - ')],
       ['Work Description', report.work_description],
       ['Delivery Description', report.delivery_description],
       ['Company Equipment', report.company_equipment],
@@ -7504,7 +8103,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
 
-  // ── EXTRA WORK TICKETS ──
+  //  EXTRA WORK TICKETS 
   function refreshTicketProjectOptions() {
     const selects = ['ticket-project-select', 'ticket-project-filter'];
     selects.forEach(id => {
@@ -7514,12 +8113,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (id === 'ticket-project-filter') {
         el.innerHTML = '<option value="all">All Projects</option>';
       } else {
-        el.innerHTML = '<option value="">Select project…</option>';
+        el.innerHTML = '<option value="">Select project...</option>';
       }
       allProjects.forEach(p => {
         const opt = document.createElement('option');
         opt.value = p.id;
-        opt.textContent = `${p.name || 'Unnamed Project'}${p.jobNumber ? ' · ' + p.jobNumber : ''}`;
+        opt.textContent = `${p.name || 'Unnamed Project'}${p.jobNumber ? ' - ' + p.jobNumber : ''}`;
         el.appendChild(opt);
       });
       if ([...el.options].some(o => o.value === current)) el.value = current;
@@ -7556,9 +8155,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!sel) return;
       const current = sel.value;
       if (id === 'warehouse-project-filter') {
-        sel.innerHTML = '<option value="all">All Projects</option>' + allProjects.map(p => `<option value="${p.id}">${esc(p.name || 'Unnamed Project')}${p.jobNumber ? ' · ' + esc(p.jobNumber) : ''}</option>`).join('');
+        sel.innerHTML = '<option value="all">All Projects</option>' + allProjects.map(p => `<option value="${p.id}">${esc(p.name || 'Unnamed Project')}${p.jobNumber ? ' - ' + esc(p.jobNumber) : ''}</option>`).join('');
       } else {
-        sel.innerHTML = '<option value="">Select a project…</option>' + allProjects.map(p => `<option value="${p.id}">${esc(p.name || 'Unnamed Project')}${p.jobNumber ? ' · ' + esc(p.jobNumber) : ''}</option>`).join('');
+        sel.innerHTML = '<option value="">Select a project...</option>' + allProjects.map(p => `<option value="${p.id}">${esc(p.name || 'Unnamed Project')}${p.jobNumber ? ' - ' + esc(p.jobNumber) : ''}</option>`).join('');
       }
       if (current && Array.from(sel.options).some(o => o.value === current)) sel.value = current;
     });
@@ -7609,11 +8208,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <div>
             <h4>${esc(item.itemName || 'Unnamed Item')}</h4>
             <div class="warehouse-meta">
-              ${item.itemId ? `<span>🏷️ ${esc(item.itemId)}</span>` : ''}
+              ${item.itemId ? `<span> ${esc(item.itemId)}</span>` : ''}
               ${item.qty ? `<span>Qty: ${esc(item.qty)}</span>` : ''}
-              ${item.projectName ? `<span>🏗️ ${esc(item.projectName)}</span>` : ''}
-              ${item.date ? `<span>📅 ${esc(item.date)}</span>` : ''}
-              ${item.handledBy ? `<span>👤 ${esc(item.handledBy)}</span>` : ''}
+              ${item.projectName ? `<span> ${esc(item.projectName)}</span>` : ''}
+              ${item.date ? `<span> ${esc(item.date)}</span>` : ''}
+              ${item.handledBy ? `<span> ${esc(item.handledBy)}</span>` : ''}
             </div>
           </div>
           <span class="warehouse-status ${status}">${warehouseStatusLabel(status)}</span>
@@ -7640,7 +8239,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!list) return;
 
     if (!items.length) {
-      list.innerHTML = `<div class="empty-state"><div class="icon">📦</div><h3>No warehouse records yet</h3><p>Add equipment or material movement to start tracking.</p></div>`;
+      list.innerHTML = `<div class="empty-state"><div class="icon"></div><h3>No warehouse records yet</h3><p>Add equipment or material movement to start tracking.</p></div>`;
       return;
     }
 
@@ -7666,7 +8265,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
     if (!listEl) return;
     if (!items.length) {
-      listEl.innerHTML = `<div class="empty-state"><div class="icon">📦</div><h3>No warehouse records for this project</h3><p>Add equipment or materials assigned to this job.</p></div>`;
+      listEl.innerHTML = `<div class="empty-state"><div class="icon"></div><h3>No warehouse records for this project</h3><p>Add equipment or materials assigned to this job.</p></div>`;
       return;
     }
 
@@ -7712,7 +8311,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
     const project = allProjects.find(p => p.id === projectId);
     const btn = document.getElementById('save-warehouse-btn');
-    if (btn) { btn.disabled = true; btn.textContent = editingWarehouseItemId ? 'Updating…' : 'Saving…'; }
+    if (btn) { btn.disabled = true; btn.textContent = editingWarehouseItemId ? 'Updating...' : 'Saving...'; }
 
     try {
       const item = {
@@ -7813,7 +8412,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <div class="ticket-total-box material"><strong>${money(t.materials)}</strong><span>Materials</span></div>
           <div class="ticket-total-box equipment"><strong>${money(t.equipment)}</strong><span>Equipment</span></div>
           <div class="ticket-total-box other"><strong>${money(t.bond + t.tax + t.other)}</strong><span>Bond / Tax / Other</span></div>
-          <div class="ticket-total-box grand"><strong>${money(t.grand)}</strong><span>Project Total · ${t.count} Ticket${t.count === 1 ? '' : 's'}</span></div>
+          <div class="ticket-total-box grand"><strong>${money(t.grand)}</strong><span>Project Total - ${t.count} Ticket${t.count === 1 ? '' : 's'}</span></div>
         </div>`;
     }
 
@@ -7821,7 +8420,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!data.tickets.length) {
         listEl.innerHTML = `
           <div class="empty-state">
-            <div class="icon">💵</div>
+            <div class="icon"></div>
             <h3>No extra work tickets yet</h3>
             <p>Create the first ticket for this project when extra work needs to be tracked.</p>
           </div>`;
@@ -7837,9 +8436,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
               <div>
                 <h4>${esc(t.ticketNo || 'Extra Work Ticket')}</h4>
                 <div class="ticket-meta">
-                  ${t.date ? `<span>📅 ${esc(t.date)}</span>` : ''}
-                  ${t.status ? `<span>🏷️ ${esc(t.status)}</span>` : ''}
-                  ${t.authorizedBy ? `<span>✍️ ${esc(t.authorizedBy)}</span>` : ''}
+                  ${t.date ? `<span> ${esc(t.date)}</span>` : ''}
+                  ${t.status ? `<span> ${esc(t.status)}</span>` : ''}
+                  ${t.authorizedBy ? `<span> ${esc(t.authorizedBy)}</span>` : ''}
                 </div>
               </div>
               <div class="ticket-total">${money(t.grandTotal || 0)}</div>
@@ -7919,7 +8518,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <div class="ticket-total-box material"><strong>${money(t.materials)}</strong><span>Material Total</span></div>
           <div class="ticket-total-box equipment"><strong>${money(t.equipment)}</strong><span>Equipment Total</span></div>
           <div class="ticket-total-box other"><strong>${money(t.bond + t.tax + t.other)}</strong><span>Bond / Tax / Other</span></div>
-          <div class="ticket-total-box grand"><strong>${money(t.grand)}</strong><span>Grand Total · ${t.count} Ticket${t.count === 1 ? '' : 's'}</span></div>
+          <div class="ticket-total-box grand"><strong>${money(t.grand)}</strong><span>Grand Total - ${t.count} Ticket${t.count === 1 ? '' : 's'}</span></div>
         </div>`;
     }
 
@@ -7967,6 +8566,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function renderMainTickets() {
     const list = document.getElementById('tickets-list-main');
     if (!list) return;
+    renderTicketDashboard();
     const search = (document.getElementById('ticket-search')?.value || '').toLowerCase().trim();
     const projectFilter = document.getElementById('ticket-project-filter')?.value || 'all';
     let tickets = allTickets.filter(t => {
@@ -7976,7 +8576,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         .some(v => String(v || '').toLowerCase().includes(search));
     });
     if (!tickets.length) {
-      list.innerHTML = '<div class="empty-state"><div class="icon">💵</div><h3>No extra work tickets found</h3><p>Tap “New Ticket” to create one and link it to a project.</p></div>';
+      list.innerHTML = '<div class="empty-state"><div class="icon"></div><h3>No extra work tickets found</h3><p>Tap New Ticket to create one and link it to a project.</p></div>';
       return;
     }
     list.innerHTML = tickets.map(t => `
@@ -7985,15 +8585,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <div>
             <h4>${esc(t.ticketNo || 'Extra Work Ticket')}</h4>
             <div class="ticket-meta">
-              <span>🏗️ ${esc(t.projectName || 'Project')}</span>
-              ${t.projectJobNumber ? `<span>📋 ${esc(t.projectJobNumber)}</span>` : ''}
-              ${t.date ? `<span>📅 ${esc(t.date)}</span>` : ''}
-              ${t.authorizedBy ? `<span>✍️ ${esc(t.authorizedBy)}</span>` : ''}${t.status ? `<span>🏷️ ${esc(t.status)}</span>` : ''}
+              <span> ${esc(t.projectName || 'Project')}</span>
+              ${t.projectJobNumber ? `<span> ${esc(t.projectJobNumber)}</span>` : ''}
+              ${t.date ? `<span> ${esc(t.date)}</span>` : ''}
+              ${t.authorizedBy ? `<span> ${esc(t.authorizedBy)}</span>` : ''}${t.status ? `<span> ${esc(t.status)}</span>` : ''}
             </div>
           </div>
           <div class="ticket-total">${money(t.grandTotal || 0)}</div>
         </div>
-        ${t.description ? `<p style="margin-top:10px;color:var(--text);font-size:14px;line-height:1.45;">${esc(t.description).slice(0,180)}${String(t.description).length > 180 ? '…' : ''}</p>` : ''}
+        ${t.description ? `<p style="margin-top:10px;color:var(--text);font-size:14px;line-height:1.45;">${esc(t.description).slice(0,180)}${String(t.description).length > 180 ? '...' : ''}</p>` : ''}
       </div>
     `).join('');
   }
@@ -8132,7 +8732,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if(!projectId){toast('Select the project this ticket belongs to.'); return;}
     const project=allProjects.find(p=>p.id===projectId);
     const btn=document.getElementById('save-ticket-btn');
-    btn.disabled=true; btn.textContent=editingTicketId ? 'Updating…' : 'Saving…';
+    btn.disabled=true; btn.textContent=editingTicketId ? 'Updating...' : 'Saving...';
 
     try{
       const rows=collectTicketRows();
@@ -8205,7 +8805,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     btn.disabled=false; btn.textContent='Save Ticket';
   }
 
-  function ticketPaperHTML(t){ const laborRows=(t.labor||[]).map(r=>`<tr><td>${esc(r.name||'')}</td><td>${esc(r.trade||'')}</td><td>${r.st||''}</td><td>${r.ot||''}</td><td>${r.dt||''}</td><td>${money(r.rate||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="7">No labor listed</td></tr>'; const matRows=(t.materials||[]).map(r=>`<tr><td>${r.qty||''}</td><td>${esc(r.unit||'')}</td><td>${esc(r.description||'')}</td><td>${money(r.unitCost||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="5">No materials listed</td></tr>'; const eqRows=(t.equipment||[]).map(r=>`<tr><td>${r.qty||''}</td><td>${esc(r.description||'')}</td><td>${money(r.rate||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="4">No equipment listed</td></tr>'; const sig1=t.contractorSignature?`<img src="${t.contractorSignature}" style="max-height:55px;max-width:100%;">`:'<br><br>'; const sig2=t.palSignature?`<img src="${t.palSignature}" style="max-height:55px;max-width:100%;">`:'<br><br>'; return `<div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><div class="ticket-label">Ticket No.</div>${esc(t.ticketNo||'—')}</div></div><div class="ticket-line-grid"><div class="cell wide"><div class="ticket-label">Project / Jobsite</div>${esc(t.projectName||'—')}</div><div class="cell"><div class="ticket-label">Date</div>${esc(t.date||'—')}</div><div class="cell"><div class="ticket-label">Status</div>${esc(t.status||'Submitted')}</div><div class="cell"><div class="ticket-label">PAL Job No.</div>${esc(t.jobNumber||t.projectJobNumber||'—')}</div><div class="cell wide"><div class="ticket-label">Contractor / Authorized By</div>${esc(t.authorizedBy||'—')}</div><div class="cell"><div class="ticket-label">Location / Floor</div>${esc(t.location||'—')}</div><div class="cell"><div class="ticket-label">Work Type</div>${esc(t.workType||'—')}</div></div><div class="ticket-label">Authorization to proceed / Description of extra work</div><div style="border:1px solid #555;min-height:70px;padding:8px;white-space:pre-line;">${esc(t.description||'—')}</div><div class="ticket-section-head">Labor / Time</div><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate</th><th>Total</th></tr></thead><tbody>${laborRows}</tbody></table><div class="ticket-section-head">Material</div><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost</th><th>Total</th></tr></thead><tbody>${matRows}</tbody></table><div class="ticket-section-head">Equipment Rental / Trucking</div><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate</th><th>Total</th></tr></thead><tbody>${eqRows}</tbody></table><div class="ticket-summary"><div><div class="ticket-label">Notes</div><div style="border:1px solid #555;min-height:70px;padding:8px;white-space:pre-line;">${esc(t.notes||'')}</div><div class="ticket-sign-grid"><div class="ticket-sign-box"><div class="ticket-label">Contractor Signature</div>${sig1}</div><div class="ticket-sign-box"><div class="ticket-label">PAL Accepted By</div>${sig2}</div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><span>${money(t.laborTotal||0)}</span></div><div class="ticket-total-row"><span>Material Total</span><span>${money(t.materialTotal||0)}</span></div><div class="ticket-total-row"><span>Equipment / Rental</span><span>${money(t.equipmentTotal||0)}</span></div><div class="ticket-total-row"><span>Bond / Insurance</span><span>${money(t.bondTotal||0)}</span></div><div class="ticket-total-row"><span>Tax</span><span>${money(t.taxTotal||0)}</span></div><div class="ticket-total-row"><span>Other / Markup</span><span>${money(t.otherTotal||0)}</span></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><span>${money(t.grandTotal||0)}</span></div></div></div></div>`; }
+  function ticketPaperHTML(t){ const laborRows=(t.labor||[]).map(r=>`<tr><td>${esc(r.name||'')}</td><td>${esc(r.trade||'')}</td><td>${r.st||''}</td><td>${r.ot||''}</td><td>${r.dt||''}</td><td>${money(r.rate||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="7">No labor listed</td></tr>'; const matRows=(t.materials||[]).map(r=>`<tr><td>${r.qty||''}</td><td>${esc(r.unit||'')}</td><td>${esc(r.description||'')}</td><td>${money(r.unitCost||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="5">No materials listed</td></tr>'; const eqRows=(t.equipment||[]).map(r=>`<tr><td>${r.qty||''}</td><td>${esc(r.description||'')}</td><td>${money(r.rate||0)}</td><td>${money(r.total||0)}</td></tr>`).join('')||'<tr><td colspan="4">No equipment listed</td></tr>'; const sig1=t.contractorSignature?`<img src="${t.contractorSignature}" style="max-height:55px;max-width:100%;">`:'<br><br>'; const sig2=t.palSignature?`<img src="${t.palSignature}" style="max-height:55px;max-width:100%;">`:'<br><br>'; return `<div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><div class="ticket-label">Ticket No.</div>${esc(t.ticketNo||'-')}</div></div><div class="ticket-line-grid"><div class="cell wide"><div class="ticket-label">Project / Jobsite</div>${esc(t.projectName||'-')}</div><div class="cell"><div class="ticket-label">Date</div>${esc(t.date||'-')}</div><div class="cell"><div class="ticket-label">Status</div>${esc(t.status||'Submitted')}</div><div class="cell"><div class="ticket-label">PAL Job No.</div>${esc(t.jobNumber||t.projectJobNumber||'-')}</div><div class="cell wide"><div class="ticket-label">Contractor / Authorized By</div>${esc(t.authorizedBy||'-')}</div><div class="cell"><div class="ticket-label">Location / Floor</div>${esc(t.location||'-')}</div><div class="cell"><div class="ticket-label">Work Type</div>${esc(t.workType||'-')}</div></div><div class="ticket-label">Authorization to proceed / Description of extra work</div><div style="border:1px solid #555;min-height:70px;padding:8px;white-space:pre-line;">${esc(t.description||'-')}</div><div class="ticket-section-head">Labor / Time</div><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate</th><th>Total</th></tr></thead><tbody>${laborRows}</tbody></table><div class="ticket-section-head">Material</div><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost</th><th>Total</th></tr></thead><tbody>${matRows}</tbody></table><div class="ticket-section-head">Equipment Rental / Trucking</div><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate</th><th>Total</th></tr></thead><tbody>${eqRows}</tbody></table><div class="ticket-summary"><div><div class="ticket-label">Notes</div><div style="border:1px solid #555;min-height:70px;padding:8px;white-space:pre-line;">${esc(t.notes||'')}</div><div class="ticket-sign-grid"><div class="ticket-sign-box"><div class="ticket-label">Contractor Signature</div>${sig1}</div><div class="ticket-sign-box"><div class="ticket-label">PAL Accepted By</div>${sig2}</div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><span>${money(t.laborTotal||0)}</span></div><div class="ticket-total-row"><span>Material Total</span><span>${money(t.materialTotal||0)}</span></div><div class="ticket-total-row"><span>Equipment / Rental</span><span>${money(t.equipmentTotal||0)}</span></div><div class="ticket-total-row"><span>Bond / Insurance</span><span>${money(t.bondTotal||0)}</span></div><div class="ticket-total-row"><span>Tax</span><span>${money(t.taxTotal||0)}</span></div><div class="ticket-total-row"><span>Other / Markup</span><span>${money(t.otherTotal||0)}</span></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><span>${money(t.grandTotal||0)}</span></div></div></div></div>`; }
   function openTicketDetail(projectId,ticketId){ const project=allProjects.find(p=>p.id===projectId); const ticket=(project?.extraTickets||[]).find(t=>t.id===ticketId); if(!ticket){toast('Ticket not found yet. Try refresh.');return;} selectedTicket={...ticket,projectId,projectName:project?.name||ticket.projectName||'',projectJobNumber:project?.jobNumber||ticket.projectJobNumber||''}; document.getElementById('ticket-detail-grid').innerHTML=ticketPaperHTML(selectedTicket); document.getElementById('modal-ticket-detail').classList.add('open'); }
   function editSelectedTicket(){ if(!selectedTicket){toast('Open a ticket first.'); return;} closeModal('modal-ticket-detail'); openExtraWorkTicketModal(selectedTicket.projectId, selectedTicket); }
   function printTicketDetail(){ if(!selectedTicket)return; const w=window.open('','_blank'); if(!w){toast('Popup blocked. Allow popups to print ticket.');return;} w.document.write(`<!doctype html><html><head><title>PAL Safety Hub - Extra Work Ticket</title><style>${document.querySelector('style').innerHTML}body{background:#fff;padding:16px}.modal-actions,.header,.tabs,button{display:none!important}.ticket-paper{max-width:980px;margin:auto}</style></head><body>${ticketPaperHTML(selectedTicket)}<p><button onclick="window.print()">Print / Save as File</button></p></body></html>`); w.document.close(); }
@@ -8214,7 +8814,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return new Intl.NumberFormat('en-US', { style:'currency', currency:'USD' }).format(Number(n || 0));
   }
 
-  // ── UI HELPERS ──
+  //  UI HELPERS 
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -8266,7 +8866,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         };
         if (statusCard) statusCard.innerHTML = `<h3>PAL New Hire Packet</h3>
           <p class="helper-text">Your intake link opened correctly. The office request could not be preloaded, but you can still complete your PAL pre-site packet below.</p>
-          <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '—')}</div></div>`;
+          <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '-')}</div></div>`;
         if (formCard) formCard.style.display = 'block';
         const os = document.getElementById('public-orientation-status');
         if (os) os.textContent = 'Orientation Form: Pending';
@@ -8279,9 +8879,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const x = currentPublicNewHireIntake;
       if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Request Loaded</h3>
         <div class="report-grid" style="margin-top:10px;">
-          <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName || 'PAL jobsite')} ${x.projectJobNumber ? '· Job # ' + esc(x.projectJobNumber) : ''}</div></div>
+          <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName || 'PAL jobsite')} ${x.projectJobNumber ? '- Job # ' + esc(x.projectJobNumber) : ''}</div></div>
           <div class="report-field"><span class="k">Foreman / Contact</span><div class="v">${esc(x.foreman || 'PAL office / foreman')}</div></div>
-          <div class="report-field"><span class="k">Expected Start Date</span><div class="v">${esc(x.startDate || '—')}</div></div>
+          <div class="report-field"><span class="k">Expected Start Date</span><div class="v">${esc(x.startDate || '-')}</div></div>
           <div class="report-field"><span class="k">Current Status</span><div class="v"><span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span></div></div>
           <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required || 'Upload all certs requested by PAL.')}</div></div>
           <div class="report-field span-2"><span class="k">PAL Notes</span><div class="v">${esc(x.notes || 'Please upload clear certification photos before arriving on site.')}</div></div>
@@ -8315,7 +8915,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       };
       if (statusCard) statusCard.innerHTML = `<h3>PAL New Hire Packet</h3>
         <p class="helper-text">We could not preload the office request, but you can still complete your PAL pre-site packet below. Your submission will stay linked to this intake code.</p>
-        <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '—')}</div></div>`;
+        <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '-')}</div></div>`;
       if (formCard) formCard.style.display = 'block';
       const os = document.getElementById('public-orientation-status');
       if (os) os.textContent = 'Orientation Form: Pending';
@@ -8386,7 +8986,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!ensurePublicIntakeForUpload()) return;
     const btn = document.getElementById('save-newhire-cert-upload-btn');
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const uploads = [];
       const certInputs = [
         ['newhire-cert-osha', 'OSHA 30 / OSHA 10', 'newhire-cert-osha-exp'],
@@ -8434,7 +9034,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!ensurePublicIntakeForUpload()) return;
     const btn = document.getElementById('save-newhire-payroll-id-btn');
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const uploads = [];
       const inputs = [
         ['newhire-payroll-driver-id', 'Driver License / Photo ID'],
@@ -8535,7 +9135,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!publicNewHireIntakeId) return toast('Missing intake link.');
     const btn = document.getElementById('public-final-submit-btn');
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
       await refreshCurrentPublicIntakeQuiet();
       const checklist = getNewHirePacketChecklist(currentPublicNewHireIntake || {});
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
@@ -8549,7 +9149,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       await refreshCurrentPublicIntakeQuiet();
       const statusCard = document.getElementById('public-intake-status-card');
       if (statusCard && currentPublicNewHireIntake) {
-        statusCard.innerHTML = `<h3>✅ Packet Submitted to PAL</h3>
+        statusCard.innerHTML = `<h3>Packet Submitted to PAL</h3>
           <p class="helper-text">Your new-hire packet has been sent to PAL office/foreman for review. If anything is missing, PAL will contact you.</p>
           <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId)}</div></div>`;
       }
@@ -8566,7 +9166,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const input = document.getElementById('pub-nh-files');
     const files = Array.from(input?.files || []);
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
       const uploaded = [];
       for (const file of files) {
         const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
@@ -8623,7 +9223,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }, { merge: true });
       const statusCard = document.getElementById('public-intake-status-card');
       const formCard = document.getElementById('public-intake-form-card');
-      if (statusCard) statusCard.innerHTML = `<h3>✅ Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
+      if (statusCard) statusCard.innerHTML = `<h3>Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
       if (formCard) formCard.style.display = 'none';
       toast('Intake submitted to PAL.');
     } catch (e) {
@@ -8652,11 +9252,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function refreshNewHireProjectOptions() {
     const select = document.getElementById('nh-project-select');
     if (!select) return;
-    select.innerHTML = '<option value="">Select project…</option>' + allProjects.map(p => `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' · Job # ' + esc(p.jobNumber) : ''}</option>`).join('');
+    select.innerHTML = '<option value="">Select project...</option>' + allProjects.map(p => `<option value="${esc(p.id)}">${esc(p.name || 'Project')}${p.jobNumber ? ' - Job # ' + esc(p.jobNumber) : ''}</option>`).join('');
   }
 
   function buildNewHireIntakeText(data) {
-    const projectLine = data.projectName ? `Project: ${data.projectName}${data.projectJobNumber ? ' · Job # ' + data.projectJobNumber : ''}` : 'Project: PAL jobsite';
+    const projectLine = data.projectName ? `Project: ${data.projectName}${data.projectJobNumber ? ' - Job # ' + data.projectJobNumber : ''}` : 'Project: PAL jobsite';
     const contactLine = data.foreman ? `Contact: ${data.foreman}` : 'Contact: PAL office / foreman';
     const certLine = data.required ? data.required : 'Please send photos of all required certs/cards requested by PAL.';
     const startLine = data.startDate ? `Expected start date: ${data.startDate}` : '';
@@ -8723,7 +9323,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const data = getNewHireFormData();
     if (!data.name) return toast('Employee name is required.');
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const docRef = await addDoc(collection(db, 'newHireIntakes'), {
         ...data,
         certFiles: [],
@@ -8854,7 +9454,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     });
     renderNewHireDashboard(allNewHireIntakes);
     if (!items.length) {
-      list.innerHTML = '<div class="empty-state"><div class="icon">🧾</div><h3>No intake requests found</h3><p>Create a request to start pre-site onboarding.</p></div>';
+      list.innerHTML = '<div class="empty-state"><div class="icon"></div><h3>No intake requests found</h3><p>Create a request to start pre-site onboarding.</p></div>';
       return;
     }
     list.innerHTML = items.map(x => `<div class="newhire-card">
@@ -8862,12 +9462,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <div>
           <h4>${esc(x.name || 'New Hire')}</h4>
           <div class="newhire-meta">
-            ${x.trade ? `<span>👷 ${esc(x.trade)}</span>` : ''}
-            ${x.projectName ? `<span>🏗️ ${esc(x.projectName)}</span>` : ''}
-            ${x.projectJobNumber ? `<span>📋 ${esc(x.projectJobNumber)}</span>` : ''}
-            ${x.startDate ? `<span>📅 ${esc(x.startDate)}</span>` : ''}
-            ${x.foreman ? `<span>👤 ${esc(x.foreman)}</span>` : ''}
-            ${(x.certFiles || []).length ? `<span>📎 ${(x.certFiles || []).length} cert file(s)</span>` : ''}${(x.payrollIdFiles || []).length ? `<span>🔒 ${(x.payrollIdFiles || []).length} payroll/ID file(s)</span>` : ''}
+            ${x.trade ? `<span> ${esc(x.trade)}</span>` : ''}
+            ${x.projectName ? `<span> ${esc(x.projectName)}</span>` : ''}
+            ${x.projectJobNumber ? `<span> ${esc(x.projectJobNumber)}</span>` : ''}
+            ${x.startDate ? `<span> ${esc(x.startDate)}</span>` : ''}
+            ${x.foreman ? `<span> ${esc(x.foreman)}</span>` : ''}
+            ${(x.certFiles || []).length ? `<span> ${(x.certFiles || []).length} cert file(s)</span>` : ''}${(x.payrollIdFiles || []).length ? `<span> ${(x.payrollIdFiles || []).length} payroll/ID file(s)</span>` : ''}
           </div>
         </div>
         <span class="pill ${newHireStatusClass(x.status)}">${esc(x.status || 'Pending')}</span>
@@ -8967,7 +9567,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!x) return toast('Intake request not found.');
     currentNewHireReviewId = id;
     const title = document.getElementById('newhire-review-title');
-    if (title) title.textContent = `New Hire Review — ${x.name || 'New Hire'}`;
+    if (title) title.textContent = `New Hire Review - ${x.name || 'New Hire'}`;
     const body = document.getElementById('newhire-review-body');
     if (body) body.innerHTML = `<div class="report-grid">
       <div class="report-field"><span class="k">Employee</span><div class="v">${esc(x.name)}</div></div>
@@ -8975,7 +9575,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div class="report-field"><span class="k">Phone</span><div class="v">${esc(x.phone)}</div></div>
       <div class="report-field"><span class="k">Email</span><div class="v">${esc(x.email)}</div></div>
       <div class="report-field"><span class="k">Trade / Role</span><div class="v">${esc(x.trade)}</div></div>
-      <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName)} ${x.projectJobNumber ? '· Job # ' + esc(x.projectJobNumber) : ''}</div></div>
+      <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName)} ${x.projectJobNumber ? '- Job # ' + esc(x.projectJobNumber) : ''}</div></div>
       <div class="report-field"><span class="k">Foreman / Contact</span><div class="v">${esc(x.foreman)}</div></div>
       <div class="report-field"><span class="k">Start Date</span><div class="v">${esc(x.startDate)}</div></div>
       <div class="report-field span-2"><span class="k">Required Certs / Documents</span><div class="v">${esc(x.required)}</div></div>
@@ -9030,12 +9630,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
-      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">📎 <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
+      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item"> <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
     </div>
     <div class="newhire-upload-list" style="margin-top:12px;">
       <strong>Payroll / ID Uploads</strong>
       <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
-      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">🔒 ${esc(f.type || 'Payroll / ID Document')}: <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded Document')}</a></div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
+      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item"> ${esc(f.type || 'Payroll / ID Document')}: <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded Document')}</a></div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
     document.getElementById('modal-newhire-review')?.classList.add('open');
@@ -9098,7 +9698,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
     set('nh-orient-employee-name', form.employeeName || x.name || '');
     set('nh-orient-date', form.date || todayISO());
-    set('nh-orient-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' · '));
+    set('nh-orient-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' - '));
     set('nh-orient-notes', form.notes || '');
     set('nh-orient-signature', form.signature || x.name || '');
     set('nh-orient-date-signed', form.dateSigned || todayISO());
@@ -9129,7 +9729,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
     };
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       await updateDoc(doc(db, 'newHireIntakes', currentNewHireOrientationId), {
         orientationForm,
         updatedAt: serverTimestamp()
@@ -9158,7 +9758,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
     set('nh-drug-employee-name', form.employeeName || x.name || '');
     set('nh-drug-date', form.date || todayISO());
-    set('nh-drug-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' · '));
+    set('nh-drug-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' - '));
     set('nh-drug-consent', form.consent || 'I consent');
     set('nh-drug-notes', form.notes || '');
     set('nh-drug-signature', form.signature || x.name || '');
@@ -9188,7 +9788,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
     };
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       await updateDoc(doc(db, 'newHireIntakes', currentNewHireDrugConsentId), {
         drugConsentForm,
         updatedAt: serverTimestamp()
@@ -9218,7 +9818,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
     set('nh-safety-employee-name', form.employeeName || x.name || '');
     set('nh-safety-date', form.date || todayISO());
-    set('nh-safety-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' · '));
+    set('nh-safety-project', form.project || [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' - '));
     set('nh-safety-fall', form.fallAcknowledgement || 'Acknowledged');
     set('nh-safety-scaffold', form.scaffoldAcknowledgement || 'Acknowledged');
     set('nh-safety-notes', form.notes || '');
@@ -9250,7 +9850,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
     };
     try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       await updateDoc(doc(db, 'newHireIntakes', currentNewHireSafetyAgreementId), {
         safetyAgreementForm,
         updatedAt: serverTimestamp()
@@ -9292,7 +9892,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   async function loadWorkforceStatusDashboard(force = false) {
     const summary = document.getElementById('workforce-status-summary');
     const board = document.getElementById('workforce-status-board');
-    if (summary) summary.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading workforce status…</p>';
+    if (summary) summary.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading workforce status...</p>';
     if (board) board.innerHTML = '';
     try {
       if (!allNewHireIntakes || !allNewHireIntakes.length) {
@@ -9310,7 +9910,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       renderWorkforceStatusDashboardEnhanced();
     } catch (e) {
       console.error('Workforce status dashboard failed', e);
-      if (summary) summary.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Could not load workforce status</h3><p>Check connection and refresh.</p></div>';
+      if (summary) summary.innerHTML = '<div class="empty-state"><div class="icon">Warning</div><h3>Could not load workforce status</h3><p>Check connection and refresh.</p></div>';
     }
   }
 
@@ -9371,48 +9971,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div><div class="workforce-attention-main">Nothing urgent right now</div><div class="workforce-attention-sub">Expired certs, 30-day certs, and incomplete onboarding items will show here.</div></div>
       <span class="cert-status-pill active">Clear</span>
     </div></div>`;
-  }
-
-  function buildWorkforceRowsEnhanced() {
-    const good = [];
-    const missing = [];
-    const hold = [];
-
-    (allNewHireIntakes || []).forEach(x => {
-      const status = String(x.status || 'Pending');
-      const certCount = (x.certFiles || []).length;
-      const payrollCount = (x.payrollIdFiles || []).length;
-      const base = {
-        id: x.id,
-        type: 'intake',
-        name: x.name || 'New Hire',
-        project: x.projectName || '',
-        trade: x.trade || '',
-        detail: `${status} • Cert files: ${certCount} • Payroll/ID files: ${payrollCount}`,
-        action: `openNewHireReview('${esc(x.id)}')`
-      };
-      if (status === 'Good To Work') good.push(base);
-      else if (status === 'Missing Info') missing.push(base);
-      else missing.push(base);
-    });
-
-    (allEmployees || []).forEach(emp => {
-      const p = getEmployeeCertProblem(emp);
-      const row = {
-        id: emp.id,
-        type: 'employee',
-        name: emp.name || 'Employee',
-        project: '',
-        trade: emp.trade || '',
-        detail: `Certs: ${p.total} • Expired: ${p.expired.length} • Expiring soon: ${p.soon.length}`,
-        action: `openEmployeeDetail('${esc(emp.id)}')`
-      };
-      if (p.expired.length) hold.push(row);
-      else if (p.soon.length || !p.total) missing.push(row);
-      else good.push(row);
-    });
-
-    return { good, missing, hold };
   }
 
   function renderWorkforceColumn(title, items, emptyText) {
@@ -9489,23 +10047,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return { good, missing, hold };
   }
 
-  function renderWorkforceStatusDashboard(summaryId = 'workforce-status-summary', boardId = 'workforce-status-board') {
-    const summary = document.getElementById(summaryId);
-    const board = document.getElementById(boardId);
-    if (!summary || !board) return;
-    const rows = buildWorkforceRows();
-    summary.innerHTML = `<div class="workforce-status-grid">
-      <div class="workforce-status-card good"><strong>${rows.good.length}</strong><span>Good To Work</span></div>
-      <div class="workforce-status-card missing"><strong>${rows.missing.length}</strong><span>Missing / Needs Review</span></div>
-      <div class="workforce-status-card hold"><strong>${rows.hold.length}</strong><span>Expired / Hold</span></div>
-    </div>`;
-    board.innerHTML = `<div class="workforce-board">
-      ${renderWorkforceColumn('🟢 Good To Work', rows.good, 'No cleared workers yet.')}
-      ${renderWorkforceColumn('🟡 Missing / Needs Review', rows.missing, 'No missing items right now.')}
-      ${renderWorkforceColumn('🔴 Expired / Hold', rows.hold, 'No expired/hold items right now.')}
-    </div>`;
-  }
-
   function renderWorkforceStatusDashboardEnhanced(summaryId = 'workforce-status-summary', boardId = 'workforce-status-board', filterId = '') {
     const summary = document.getElementById(summaryId);
     const board = document.getElementById(boardId);
@@ -9553,6 +10094,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-workforce-overview') loadWorkforceOverview(true);
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
+    if (tabId === 'main-jha') renderJhaTab();
     if (tabId === 'main-employee-onboarding') loadEmployeeOnboarding(true);
     if (tabId === 'main-cert-email-preview') loadCertEmailPreview(true);
     if (tabId === 'main-tickets') {
@@ -9643,13 +10185,13 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   function docIcon(name) {
-    if (!name) return '📄';
+    if (!name) return '';
     const ext = name.split('.').pop().toLowerCase();
-    if (['pdf'].includes(ext)) return '📕';
-    if (['doc','docx'].includes(ext)) return '📘';
-    if (['xls','xlsx'].includes(ext)) return '📗';
-    if (['jpg','jpeg','png','gif','webp'].includes(ext)) return '🖼️';
-    return '📄';
+    if (['pdf'].includes(ext)) return '';
+    if (['doc','docx'].includes(ext)) return '';
+    if (['xls','xlsx'].includes(ext)) return '';
+    if (['jpg','jpeg','png','gif','webp'].includes(ext)) return '';
+    return '';
   }
 
   // Close modal on overlay click
@@ -9676,3 +10218,4 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 <!-- PAYROLL_ID_UPLOADS_SAFE_PHASE5_2026_05_15 -->
 
 <!-- PAYROLL_CERT_UPLOAD_VISIBLE_FORM_BUTTONS_PHASE6_2026_05_15 -->
+
