@@ -854,22 +854,64 @@
 
     .cert-alert-summary {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
       margin: 12px 0 16px;
     }
     .cert-alert-box {
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 8px;
       padding: 12px;
       background: #fff;
       box-shadow: 0 4px 12px rgba(0,0,0,.04);
+      border-left: 5px solid #2563eb;
+      text-align:left;
+      width:100%;
     }
+    .cert-alert-box.filter-card { cursor:pointer; }
+    .cert-alert-box.filter-card:hover, .cert-alert-box.filter-card:focus { border-color:var(--green); outline:none; }
+    .cert-alert-box.filter-card.active { border-color:var(--green); border-left-color:var(--green); box-shadow:0 0 0 2px rgba(112,193,71,.18), 0 8px 18px rgba(16,24,40,.09); }
     .cert-alert-box strong { display:block; font-size:22px; margin-bottom:2px; }
     .cert-alert-box span { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .cert-alert-box.all { border-left-color:#2563eb; }
     .cert-alert-box.valid { border-left: 5px solid #16a34a; }
     .cert-alert-box.soon { border-left: 5px solid #d97706; }
     .cert-alert-box.expired { border-left: 5px solid #dc2626; }
+    .cert-alert-box.missing { border-left-color:#7c3aed; }
+    .employee-workspace {
+      display:grid;
+      grid-template-columns:minmax(220px,280px) minmax(0,1fr);
+      gap:16px;
+      align-items:start;
+    }
+    .employee-cert-panel,
+    .employee-list-panel {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:14px;
+      box-shadow:0 4px 14px rgba(16,24,40,.04);
+    }
+    .employee-cert-panel {
+      position:sticky;
+      top:84px;
+    }
+    .employee-panel-title {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .employee-panel-title h3 { margin:0; color:var(--navy); font-size:16px; }
+    .employee-panel-title span { color:var(--muted); font-size:11px; font-weight:800; text-align:right; }
+    .employee-cert-panel .cert-alert-summary {
+      grid-template-columns:1fr;
+      margin:0;
+    }
+    .employee-list-panel .cert-warning-list {
+      margin-top:0;
+    }
     .cert-status-pill {
       display:inline-flex;
       align-items:center;
@@ -902,7 +944,8 @@
     .cert-warning-row:first-child { border-top:0; }
     .cert-warning-main { font-weight:800; color:var(--text); }
     .cert-warning-sub { font-size:12px; color:var(--muted); margin-top:2px; }
-    @media(max-width:700px){ .cert-alert-summary { grid-template-columns: 1fr; } .cert-warning-row{align-items:flex-start; flex-direction:column;} }
+    @media(max-width:900px){ .employee-workspace { grid-template-columns:1fr; } .employee-cert-panel { position:static; } .employee-cert-panel .cert-alert-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:700px){ .cert-alert-summary, .employee-cert-panel .cert-alert-summary { grid-template-columns: 1fr; } .cert-warning-row{align-items:flex-start; flex-direction:column;} }
 
     .workforce-overview-grid {
       display:grid;
@@ -2034,27 +2077,27 @@
       <div class="page-header">
         <h2>Employees & Certs</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="switchMainTab('main-workforce-overview')">Snapshot</button>
           <button class="btn-outline" onclick="switchMainTab('main-cert-email-preview')">Cert Email</button>
-          <button class="btn-outline" onclick="loadEmployees(true)">Refresh</button>
           <button class="btn-add" onclick="openEmployeeModal()">+ Add Employee</button>
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Existing employee files and certification records live here so the office can track expired, expiring, missing, and valid certs.</div>
-      <div id="cert-alert-summary-main"></div>
-      <div id="cert-alert-list-main"></div>
-      <div class="search-row">
-        <input class="search-input" id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
-        <select id="cert-watch-filter" class="inline-select" onchange="renderEmployeesList()">
-          <option value="all">All Cert Statuses</option>
-          <option value="expired">Expired</option>
-          <option value="soon">Expiring 30 Days</option>
-          <option value="missing">Missing Certs</option>
-          <option value="no-expiration">No Expiration Date</option>
-          <option value="valid">Valid</option>
-        </select>
+      <div class="employee-workspace">
+        <aside class="employee-cert-panel">
+          <div class="employee-panel-title">
+            <h3>Cert Watch</h3>
+            <span>Filter employee files</span>
+          </div>
+          <div id="cert-alert-summary-main"></div>
+        </aside>
+        <section class="employee-list-panel">
+          <div id="cert-alert-list-main"></div>
+          <div class="search-row">
+            <input class="search-input" id="employee-search" type="search" placeholder="Search by name, trade, phone, email, or cert..." oninput="searchEmployees(this.value)" />
+          </div>
+          <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Open Employees or search to load employee records.</p></div>
+        </section>
       </div>
-      <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Click Refresh or Employees to load employee records.</p></div>
     </div>
 
 
@@ -3193,6 +3236,7 @@
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
   let activeOnboardingReviewBucket = 'awaiting';
+  let activeEmployeeCertFilter = 'all';
   let allWarehouseItems = [];
   let currentNewHireOrientationId = null;
   let currentNewHireDrugConsentId = null;
@@ -3321,6 +3365,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveEmployee = saveEmployee;
   window.loadEmployees = loadEmployees;
   window.searchEmployees = searchEmployees;
+  window.setEmployeeCertFilter = setEmployeeCertFilter;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.loadWorkforceOverview = loadWorkforceOverview;
   window.openWorkforceOverviewTarget = openWorkforceOverviewTarget;
@@ -7318,6 +7363,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     renderEmployeesList(value);
   }
 
+  function setEmployeeCertFilter(filter = 'all') {
+    activeEmployeeCertFilter = filter || 'all';
+    renderEmployeesList();
+  }
+
   async function loadWorkforceOverview(force = false) {
     const el = document.getElementById('workforce-overview-summary');
     if (el) el.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading workforce overview...</p>';
@@ -7399,8 +7449,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function openWorkforceOverviewTarget(target) {
     const applyEmployeeFilter = value => {
-      const filter = document.getElementById('cert-watch-filter');
-      if (filter) filter.value = value;
+      activeEmployeeCertFilter = value || 'all';
       renderEmployeesList();
     };
     const applyNewHireFilter = (activeTab = 'review', bucket = 'awaiting') => {
@@ -7474,12 +7523,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderCertAlerts() {
     const data = getCertAlertData();
+    const noCerts = (allEmployees || []).filter(emp => !(Array.isArray(emp.certifications) && emp.certifications.length)).length;
+    const card = (filter, className, count, label) => `
+      <button class="cert-alert-box filter-card ${className} ${activeEmployeeCertFilter === filter ? 'active' : ''}" type="button" onclick="setEmployeeCertFilter('${filter}')">
+        <strong>${count}</strong>
+        <span>${label}</span>
+      </button>`;
 
     const summaryHTML = `
       <div class="cert-alert-summary">
-        <div class="cert-alert-box expired"><strong>${data.expired.length}</strong><span>Expired Certs</span></div>
-        <div class="cert-alert-box soon"><strong>${data.soon.length}</strong><span>Expiring Within 30 Days</span></div>
-        <div class="cert-alert-box valid"><strong>${data.valid.length}</strong><span>Valid Certs</span></div>
+        ${card('all', 'all', (allEmployees || []).length, 'All Employees')}
+        ${card('expired', 'expired', data.expired.length, 'Expired Certs')}
+        ${card('soon', 'soon', data.soon.length, 'Expiring Within 30 Days')}
+        ${card('missing', 'missing', noCerts, 'Missing Certs')}
+        ${card('valid', 'valid', data.valid.length, 'Valid Certs')}
       </div>`;
 
     const warningHTML = data.warnings.length ? `
@@ -7604,7 +7661,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
     if (!list) return;
     const q = String(filterText || document.getElementById('employee-search')?.value || '').trim().toLowerCase();
-    const certFilter = document.getElementById('cert-watch-filter')?.value || 'all';
+    const certFilter = activeEmployeeCertFilter || 'all';
     const employees = allEmployees.filter(emp => {
       const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
       const haystack = [
@@ -7625,8 +7682,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       list.innerHTML = `
         <div class="empty-state">
           <div class="icon"></div>
-          <h3>${q ? 'No matching employees' : 'No employee records yet'}</h3>
-          <p>${q ? 'Try another search.' : 'Tap Add Employee to create the first employee file.'}</p>
+          <h3>${q ? 'No matching employees' : 'No employee records found'}</h3>
+          <p>${q ? 'Try another search.' : 'Try another cert filter or tap Add Employee to create a file.'}</p>
         </div>`;
       return;
     }
@@ -9480,14 +9537,13 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       missing: 'Missing Info',
       'approved-week': 'Good To Work'
     };
-    const status = bucketStatus[activeOnboardingReviewBucket] || document.getElementById('newhire-status-filter')?.value || 'all';
+    const status = bucketStatus[activeOnboardingReviewBucket] || 'Ready for Review';
     let items = allNewHireIntakes.filter(x => {
       if (status !== 'all' && (x.status || 'Pending') !== status) return false;
       if (activeOnboardingReviewBucket === 'approved-week' && !isNewHireApprovedThisWeek(x)) return false;
       if (!search) return true;
       return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status].some(v => String(v || '').toLowerCase().includes(search));
     });
-    renderNewHireDashboard(allNewHireIntakes);
     renderOnboardingReviewBuckets(allNewHireIntakes);
     if (!items.length) {
       const emptyText = activeOnboardingReviewBucket === 'approved-week'
