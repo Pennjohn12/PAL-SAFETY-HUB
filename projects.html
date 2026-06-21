@@ -1005,8 +1005,8 @@
     }
     @media(max-width:560px){ .workforce-overview-grid { grid-template-columns:1fr; } .cert-email-preview { min-height:280px; font-size:12px; } }
 
-    .employee-card { cursor:pointer; }
-    .employee-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
+    .employee-card.employee-row { cursor:pointer; }
+    .employee-card.employee-row:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
     .cert-preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:12px; }
     .cert-preview-card { background:white; border:1px solid var(--line); border-radius:14px; padding:12px; box-shadow:0 4px 12px rgba(16,24,40,.04); }
     .cert-preview-card h4 { color:var(--navy); font-size:14px; margin-bottom:4px; }
@@ -1166,6 +1166,23 @@
     .report-meta, .employee-meta { font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
     .report-snippet { font-size:14px; color:var(--text); line-height:1.5; margin:8px 0 10px; white-space:pre-line; }
     .report-actions, .employee-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .employee-card.employee-row {
+      border-radius:8px;
+      padding:10px 12px;
+      margin-bottom:8px;
+      box-shadow:0 2px 8px rgba(16,24,40,.035);
+    }
+    .employee-card.employee-row .employee-card-header { margin-bottom:0; align-items:center; }
+    .employee-card.employee-row h4 { font-size:15px; margin-bottom:2px; }
+    .employee-card.employee-row .employee-meta { gap:7px; font-size:11.5px; }
+    .employee-card.employee-row .pill { padding:5px 8px; font-size:11px; }
+    .employee-row-status { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .employee-expand-label { color:var(--muted); font-size:12px; font-weight:800; }
+    .employee-expanded-body { display:none; margin-top:10px; border-top:1px solid var(--line); padding-top:10px; }
+    .employee-card.employee-row.expanded .employee-expanded-body { display:block; }
+    .employee-card.employee-row.expanded { border-color:var(--green); box-shadow:0 0 0 2px rgba(112,193,71,.16), 0 8px 18px rgba(16,24,40,.07); }
+    .employee-card.employee-row .employee-actions { margin-top:10px; gap:6px; }
+    .employee-card.employee-row .btn-sm { min-height:34px; padding:7px 9px; font-size:12px; }
     .pill.neutral { background:#eef2f7; color:#475569; }
     .pill.blue { background:#e8f0fb; color:#1d4f91; }
     .pill.warn { background:#fff5e8; color:#c96d00; }
@@ -1243,6 +1260,8 @@
       .project-header-card h2 { font-size: 20px; }
       .photo-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
       .project-summary-grid, .detail-grid, .report-grid { grid-template-columns: 1fr; }
+      .employee-card.employee-row .employee-card-header { align-items:flex-start; }
+      .employee-row-status { justify-content:flex-start; margin-top:8px; }
       .page-header { align-items: stretch; display:block; }
       .page-header h2 { font-size:22px; margin-bottom:10px; }
       .header-actions { width:100%; display:grid; grid-template-columns:1fr; gap:8px; }
@@ -3224,6 +3243,7 @@
   let currentEmployeeId = null;
   let currentCertificationUploadedAt = null;
   let allEmployees = [];
+  let expandedEmployeeCardId = '';
   let allProjects = [];
   let projectAlphaFilter = 'all';
   let currentProjectFieldForms = [];
@@ -3366,6 +3386,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.loadEmployees = loadEmployees;
   window.searchEmployees = searchEmployees;
   window.setEmployeeCertFilter = setEmployeeCertFilter;
+  window.toggleEmployeeCard = toggleEmployeeCard;
   window.toggleEmployeeAssignment = toggleEmployeeAssignment;
   window.loadWorkforceOverview = loadWorkforceOverview;
   window.openWorkforceOverviewTarget = openWorkforceOverviewTarget;
@@ -7337,8 +7358,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   //  EMPLOYEES / CERTIFICATIONS 
+  function getActiveEmployeeListElement() {
+    const main = document.getElementById('employees-list-main');
+    const detail = document.getElementById('employees-list');
+    if (main && document.getElementById('main-employees')?.classList.contains('active')) return main;
+    if (detail && document.getElementById('tab-employees')?.classList.contains('active')) return detail;
+    return main || detail;
+  }
+
   async function loadEmployees(force = false) {
-    const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
+    const list = getActiveEmployeeListElement();
     if (!list) return;
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records...</p>';
     try {
@@ -7365,6 +7394,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function setEmployeeCertFilter(filter = 'all') {
     activeEmployeeCertFilter = filter || 'all';
+    expandedEmployeeCardId = '';
+    renderEmployeesList();
+  }
+
+  function toggleEmployeeCard(employeeId) {
+    expandedEmployeeCardId = expandedEmployeeCardId === employeeId ? '' : employeeId;
     renderEmployeesList();
   }
 
@@ -7658,7 +7693,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderEmployeesList(filterText = '') {
     renderCertAlerts();
-    const list = document.getElementById('employees-list-main') || document.getElementById('employees-list');
+    const list = getActiveEmployeeListElement();
     if (!list) return;
     const q = String(filterText || document.getElementById('employee-search')?.value || '').trim().toLowerCase();
     const certFilter = activeEmployeeCertFilter || 'all';
@@ -7692,12 +7727,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     employees.forEach(emp => {
       const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
       const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const expanded = expandedEmployeeCardId === emp.id;
       const card = document.createElement('div');
-      card.className = 'employee-card';
+      card.className = `employee-card employee-row ${expanded ? 'expanded' : ''}`;
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
-      card.onclick = () => openEmployeeDetail(emp.id);
-      card.onkeydown = (e) => { if (e.key === 'Enter') openEmployeeDetail(emp.id); };
+      card.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      card.onclick = () => toggleEmployeeCard(emp.id);
+      card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleEmployeeCard(emp.id); } };
       const certTags = certs.length
         ? certs.slice(0, 8).map(cert => {
             const status = getCertStatusKey(cert.expirationDate);
@@ -7716,29 +7753,24 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
               ${emp.phone ? `<span> ${esc(emp.phone)}</span>` : ''}
             </div>
           </div>
-          ${currentProject ? `<span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned to this project' : 'Not assigned here'}</span>` : `<span class="pill neutral">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>`}
+          <div class="employee-row-status">
+            ${currentProject ? `<span class="pill ${assigned ? 'active' : 'neutral'}">${assigned ? 'Assigned' : 'Not assigned'}</span>` : `<span class="pill neutral">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>`}
+            <span class="employee-expand-label">${expanded ? 'Collapse' : 'Expand'}</span>
+          </div>
         </div>
-        <div class="helper-text">${emp.notes ? esc(emp.notes) : 'Tap this employee to open the file, view cert images, or upload a cert.'}</div>
-        <div class="cert-list">${certTags}</div>
-        <div class="employee-actions" style="margin-top:12px;" onclick="event.stopPropagation()">
-          ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
-          <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
-          <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
-          <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Delete Employee</button>
-          <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+        <div class="employee-expanded-body">
+          <div class="helper-text">${emp.notes ? esc(emp.notes) : 'Open this employee file to view cert images, upload new certs, or update employee details.'}</div>
+          <div class="cert-list">${certTags}</div>
+          <div class="employee-actions" onclick="event.stopPropagation()">
+            ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
+            <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
+            <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
+            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Delete Employee</button>
+            <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
+          </div>
         </div>`;
       list.appendChild(card);
     });
-    mirrorEmployeeLists();
-  }
-
-  function mirrorEmployeeLists() {
-    const main = document.getElementById('employees-list-main');
-    const detail = document.getElementById('employees-list');
-    if (main && detail && main !== detail) {
-      // Keep the Project Detail Employees tab in sync with the main Existing Employees tab.
-      detail.innerHTML = main.innerHTML;
-    }
   }
 
 
