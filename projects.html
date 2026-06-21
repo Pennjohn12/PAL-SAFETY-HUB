@@ -1134,6 +1134,52 @@
     .pipeline-tabs .tab {
       min-height:42px;
     }
+    .onboarding-flow-grid,
+    .onboarding-review-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .onboarding-review-grid {
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    .onboarding-flow-card,
+    .onboarding-review-card {
+      background:#fff;
+      border:1px solid var(--line);
+      border-left:5px solid #2563eb;
+      border-radius:8px;
+      padding:14px;
+      text-align:left;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(16,24,40,.05);
+      min-height:110px;
+    }
+    .onboarding-flow-card h3,
+    .onboarding-review-card h3 { margin:0 0 6px; color:var(--navy); font-size:16px; }
+    .onboarding-flow-card p,
+    .onboarding-review-card p { margin:0; color:var(--muted); font-size:13px; line-height:1.4; }
+    .onboarding-flow-card.active,
+    .onboarding-review-card.active {
+      border-color:var(--green);
+      border-left-color:var(--green);
+      box-shadow:0 0 0 2px rgba(112,193,71,.18), 0 8px 18px rgba(16,24,40,.09);
+    }
+    .onboarding-review-card.missing { border-left-color:#dc2626; }
+    .onboarding-review-card.approved { border-left-color:#16a34a; }
+    .onboarding-review-card strong { display:block; font-size:24px; color:var(--navy); line-height:1; margin-bottom:6px; }
+    .onboarding-notice-placeholder {
+      background:#fff;
+      border:1px solid var(--line);
+      border-left:5px solid #d97706;
+      border-radius:8px;
+      padding:12px;
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
     .photo-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
     .photo-section-title { font-size:13px; font-weight:800; letter-spacing:.35px; text-transform:uppercase; color:var(--navy); margin:18px 0 10px; }
     .cert-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
@@ -1164,22 +1210,6 @@
   
 
     /* NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12 */
-    .newhire-dashboard {
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap:10px;
-      margin:12px 0 16px;
-    }
-    .newhire-box {
-      background:white; border:1px solid var(--line); border-radius:14px;
-      padding:12px; box-shadow:0 4px 12px rgba(0,0,0,.04); border-left:5px solid var(--navy);
-    }
-    .newhire-box strong { display:block; font-size:20px; color:var(--text); margin-bottom:3px; }
-    .newhire-box span { color:var(--muted); font-size:12px; font-weight:800; }
-    .newhire-box.pending { border-left-color:#d97706; }
-    .newhire-box.review { border-left-color:#2563eb; }
-    .newhire-box.good { border-left-color:#16a34a; }
-    .newhire-box.missing { border-left-color:#dc2626; }
     .newhire-card {
       background:white; border:1px solid var(--line); border-radius:16px; padding:16px;
       margin-bottom:12px; box-shadow:0 4px 12px rgba(16,24,40,.04);
@@ -1188,6 +1218,20 @@
     .newhire-card h4 { color:var(--navy); font-size:16px; margin-bottom:4px; }
     .newhire-meta { font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
     .newhire-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .newhire-card.compact {
+      border-radius:8px;
+      padding:11px 12px;
+      margin-bottom:8px;
+      box-shadow:0 2px 8px rgba(16,24,40,.035);
+    }
+    .newhire-card.compact .newhire-card-header { gap:8px; }
+    .newhire-card.compact h4 { font-size:15px; margin-bottom:2px; }
+    .newhire-card.compact .newhire-meta { gap:7px; font-size:11.5px; }
+    .newhire-card.compact .pill { padding:5px 8px; font-size:11px; }
+    .newhire-card.compact .newhire-completion { margin:8px 0 2px; gap:5px; }
+    .newhire-card.compact .newhire-progress-track { height:6px; }
+    .newhire-card.compact .newhire-actions { margin-top:8px; gap:6px; }
+    .newhire-card.compact .btn-sm { padding:7px 9px; font-size:12px; min-height:34px; }
     .newhire-completion {
       margin:12px 0 4px;
       display:grid;
@@ -1239,8 +1283,8 @@
     .newhire-text-actions .helper-text { margin:0; flex:1 1 220px; }
     .newhire-upload-list { display:grid; gap:8px; margin-top:10px; }
     .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
-    @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
-    @media(max-width:600px){ .newhire-card-header { display:block; } .newhire-card-header .pill { margin-top:8px; } .newhire-actions .btn-sm { flex:1 1 100%; min-height:44px; } }
+    @media(max-width:800px){ .onboarding-flow-grid, .onboarding-review-grid { grid-template-columns:1fr; } }
+    @media(max-width:600px){ .newhire-card-header { display:block; } .newhire-card-header .pill { margin-top:8px; } .newhire-actions .btn-sm { flex:1 1 100%; min-height:44px; } .newhire-card.compact .btn-sm { min-height:42px; } }
 
     /* FORM_LAUNCHER_SAFE_ORIENTATION_PHASE1_2026_05_15 */
     .packet-form-card { background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:12px; }
@@ -2018,30 +2062,26 @@
       <div class="page-header">
         <h2>New Hire Onboarding</h2>
         <div class="header-actions">
-          <button class="btn-outline" onclick="switchMainTab('main-employees')">Existing Employees</button>
-          <button class="btn-outline" onclick="loadEmployeeOnboarding(true)">Refresh</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">+ Create Intake Request</button>
         </div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Track new hires from intake sent, to review, to Good To Work, with history kept in one place.</div>
-      <div class="tabs pipeline-tabs" style="margin-bottom:14px;">
-        <button class="tab active" data-onboarding-tab="pending" onclick="switchOnboardingTab('pending')">Pending</button>
-        <button class="tab" data-onboarding-tab="review" onclick="switchOnboardingTab('review')">Review</button>
-        <button class="tab" data-onboarding-tab="good" onclick="switchOnboardingTab('good')">Good To Work</button>
-        <button class="tab" data-onboarding-tab="history" onclick="switchOnboardingTab('history')">History</button>
+      <div class="onboarding-flow-grid">
+        <button class="onboarding-flow-card active" type="button" data-onboarding-tab="review" onclick="switchOnboardingTab('review')">
+          <h3>Review Queue</h3>
+          <p>Approve completed packets, flag missing information, and review the employees cleared this week.</p>
+        </button>
+        <button class="onboarding-flow-card" type="button" data-onboarding-tab="history" onclick="switchOnboardingTab('history')">
+          <h3>History</h3>
+          <p>Look back at prior intake activity by date range, employee, project, trade, or status.</p>
+        </button>
       </div>
       <div id="onboarding-intake-section">
-      <div class="helper-text" id="onboarding-intake-helper" style="margin-bottom:14px;">Intake requests that have been sent and are still pending completion.</div>
-      <div id="newhire-dashboard-main"></div>
+      <div class="helper-text" id="onboarding-intake-helper" style="margin-bottom:14px;">Completed onboarding packets waiting for office, safety, or foreman approval.</div>
+      <div class="onboarding-review-grid" id="onboarding-review-grid"></div>
+      <div class="onboarding-notice-placeholder">Future notification email: when an intake is ready for review, this can automatically alert the assigned foreman, supervisor, safety contact, or office group.</div>
       <div class="search-row">
         <input class="search-input" id="newhire-search" placeholder="Search by employee, project, trade, foreman, status..." oninput="renderNewHireIntakes()" />
-        <select id="newhire-status-filter" class="inline-select" onchange="renderNewHireIntakes()">
-          <option value="all">All Statuses</option>
-          <option value="Pending" selected>Pending</option>
-          <option value="Ready for Review">Ready for Review</option>
-          <option value="Good To Work">Good To Work</option>
-          <option value="Missing Info">Missing Info</option>
-        </select>
       </div>
       <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Open Onboarding or click Refresh to load requests.</p></div>
       </div>
@@ -2061,15 +2101,6 @@
         <input class="search-input" id="recent-hire-search" placeholder="Search recent hires by name, project, trade, status..." oninput="renderRecentHires()" />
       </div>
       <div id="recent-hire-list-main"><p style="color:var(--muted);font-size:14px;">Open History or click Refresh to load intake activity.</p></div>
-    </div>
-
-
-      <div id="onboarding-good-section" style="display:none;">
-      <div class="helper-text" style="margin-bottom:14px;">Office quick view: who is Good To Work, who is missing onboarding/certs, and who should be held because of expired items.</div>
-      <div id="workforce-status-summary">
-        <div class="empty-state"><div class="icon">Complete</div><h3>Workforce dashboard ready</h3><p>Click Refresh or open this tab to load worker status.</p></div>
-      </div>
-      <div id="workforce-status-board"></div>
     </div>
     </div>
 
@@ -3161,6 +3192,7 @@
   let allTickets = [];
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
+  let activeOnboardingReviewBucket = 'awaiting';
   let allWarehouseItems = [];
   let currentNewHireOrientationId = null;
   let currentNewHireDrugConsentId = null;
@@ -3311,6 +3343,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.loadNewHireIntakes = loadNewHireIntakes;
   window.loadEmployeeOnboarding = loadEmployeeOnboarding;
   window.switchOnboardingTab = switchOnboardingTab;
+  window.setOnboardingReviewBucket = setOnboardingReviewBucket;
   window.renderNewHireIntakes = renderNewHireIntakes;
   window.renderRecentHires = renderRecentHires;
   window.copyNewHireIntakeText = copyNewHireIntakeText;
@@ -7327,7 +7360,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     <div class="workforce-overview-actions">
       <button class="btn-sm" type="button" onclick="switchMainTab('main-employees')">Open Employees</button>
       <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('review')">Review New Hires</button>
-      <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('good')">Open Good To Work</button>
+      <button class="btn-sm" type="button" onclick="switchMainTab('main-employee-onboarding'); switchOnboardingTab('review'); setOnboardingReviewBucket('approved-week')">Approved This Week</button>
     </div>
     <div class="workforce-overview-heading">
       <h3>Needs Attention</h3>
@@ -7370,16 +7403,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (filter) filter.value = value;
       renderEmployeesList();
     };
-    const applyNewHireFilter = (value, activeTab = '') => {
+    const applyNewHireFilter = (activeTab = 'review', bucket = 'awaiting') => {
       const intake = document.getElementById('onboarding-intake-section');
-      const good = document.getElementById('onboarding-good-section');
       const history = document.getElementById('onboarding-history-section');
       if (intake) intake.style.display = '';
-      if (good) good.style.display = 'none';
       if (history) history.style.display = 'none';
       document.querySelectorAll('[data-onboarding-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.onboardingTab === activeTab));
-      const filter = document.getElementById('newhire-status-filter');
-      if (filter) filter.value = value;
+      activeOnboardingReviewBucket = bucket || 'awaiting';
       renderNewHireIntakes();
     };
 
@@ -7396,14 +7426,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     if (target === 'pending' || target === 'review' || target === 'missing-info' || target === 'good') {
       switchMainTab('main-employee-onboarding');
-      const statusMap = {
-        pending: 'Pending',
-        review: 'Ready for Review',
-        'missing-info': 'Missing Info',
-        good: 'Good To Work'
-      };
-      const activeTabMap = { pending: 'pending', review: 'review', 'missing-info': '', good: '' };
-      setTimeout(() => applyNewHireFilter(statusMap[target], activeTabMap[target]), 0);
+      const bucketMap = { pending: 'awaiting', review: 'awaiting', 'missing-info': 'missing', good: 'approved-week' };
+      setTimeout(() => applyNewHireFilter('review', bucketMap[target]), 0);
     }
   }
 
@@ -9337,7 +9361,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   async function loadEmployeeOnboarding(force = false) {
     await loadNewHireIntakes(force);
-    switchOnboardingTab(document.querySelector('[data-onboarding-tab].active')?.dataset.onboardingTab || 'pending', false);
+    switchOnboardingTab(document.querySelector('[data-onboarding-tab].active')?.dataset.onboardingTab || 'review', false);
   }
 
   function switchOnboardingTab(tab, shouldLoad = true) {
@@ -9345,28 +9369,40 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       btn.classList.toggle('active', btn.dataset.onboardingTab === tab);
     });
     const intake = document.getElementById('onboarding-intake-section');
-    const good = document.getElementById('onboarding-good-section');
     const history = document.getElementById('onboarding-history-section');
-    if (intake) intake.style.display = (tab === 'pending' || tab === 'review') ? '' : 'none';
-    if (good) good.style.display = tab === 'good' ? '' : 'none';
+    if (intake) intake.style.display = tab === 'review' ? '' : 'none';
     if (history) history.style.display = tab === 'history' ? '' : 'none';
 
     const statusFilter = document.getElementById('newhire-status-filter');
     const helper = document.getElementById('onboarding-intake-helper');
-    if (tab === 'pending') {
-      if (statusFilter) statusFilter.value = 'Pending';
-      if (helper) helper.textContent = 'Intake requests that have been sent and are still pending completion.';
-      renderNewHireIntakes();
-    } else if (tab === 'review') {
+    if (tab === 'review') {
+      if (!['awaiting', 'missing', 'approved-week'].includes(activeOnboardingReviewBucket)) activeOnboardingReviewBucket = 'awaiting';
       if (statusFilter) statusFilter.value = 'Ready for Review';
       if (helper) helper.textContent = 'Completed onboarding packets waiting for office or foreman review.';
       renderNewHireIntakes();
-    } else if (tab === 'good') {
-      loadWorkforceStatusDashboard(shouldLoad);
     } else if (tab === 'history') {
       if (shouldLoad) loadNewHireIntakes(true);
       else renderRecentHires();
     }
+  }
+
+  function setOnboardingReviewBucket(bucket) {
+    activeOnboardingReviewBucket = bucket || 'awaiting';
+    const statusFilter = document.getElementById('newhire-status-filter');
+    const helper = document.getElementById('onboarding-intake-helper');
+    const statusByBucket = {
+      awaiting: 'Ready for Review',
+      missing: 'Missing Info',
+      'approved-week': 'Good To Work'
+    };
+    const helperByBucket = {
+      awaiting: 'Completed onboarding packets waiting for safety, office, or foreman approval.',
+      missing: 'Packets that need corrected information before the employee can be cleared.',
+      'approved-week': 'Employees marked Good To Work this week. Keep them here for quick review before they roll into history.'
+    };
+    if (statusFilter) statusFilter.value = statusByBucket[activeOnboardingReviewBucket] || 'Ready for Review';
+    if (helper) helper.textContent = helperByBucket[activeOnboardingReviewBucket] || helperByBucket.awaiting;
+    renderNewHireIntakes();
   }
 
   function renderNewHireDashboard(items) {
@@ -9386,6 +9422,52 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       <div class="newhire-box review"><strong>${counts.review}</strong><span>Ready for Review</span></div>
       <div class="newhire-box good"><strong>${counts.good}</strong><span>Good To Work</span></div>
     </div>`;
+  }
+
+  function getNewHireDateValue(x, keys = ['approvedAt', 'updatedAt', 'createdAt', 'startDate']) {
+    for (const key of keys) {
+      const raw = x?.[key];
+      if (!raw) continue;
+      if (raw?.toDate) return raw.toDate();
+      if (raw?.seconds) return new Date(raw.seconds * 1000);
+      const value = key === 'startDate' && typeof raw === 'string' ? raw + 'T00:00:00' : raw;
+      const date = new Date(value);
+      if (!Number.isNaN(date.getTime())) return date;
+    }
+    return null;
+  }
+
+  function isNewHireApprovedThisWeek(x) {
+    if (String(x.status || '') !== 'Good To Work') return false;
+    const date = getNewHireDateValue(x, ['approvedAt', 'updatedAt', 'createdAt', 'startDate']);
+    if (!date) return false;
+    const start = new Date();
+    start.setHours(0,0,0,0);
+    start.setDate(start.getDate() - start.getDay());
+    const end = new Date(start);
+    end.setDate(start.getDate() + 7);
+    return date >= start && date < end;
+  }
+
+  function renderOnboardingReviewBuckets(items = allNewHireIntakes) {
+    const host = document.getElementById('onboarding-review-grid');
+    if (!host) return;
+    const counts = {
+      awaiting: items.filter(x => String(x.status || 'Pending') === 'Ready for Review').length,
+      missing: items.filter(x => String(x.status || 'Pending') === 'Missing Info').length,
+      approvedWeek: items.filter(isNewHireApprovedThisWeek).length
+    };
+    const card = (bucket, title, count, text, extraClass = '') => `
+      <button class="onboarding-review-card ${extraClass} ${activeOnboardingReviewBucket === bucket ? 'active' : ''}" type="button" onclick="setOnboardingReviewBucket('${bucket}')">
+        <strong>${count}</strong>
+        <h3>${title}</h3>
+        <p>${text}</p>
+      </button>`;
+    host.innerHTML = [
+      card('awaiting', 'Awaiting Approval', counts.awaiting, 'Completed packets ready for office, safety, or foreman review.'),
+      card('missing', 'Missing Information', counts.missing, 'Packets that need corrections before the employee is cleared.', 'missing'),
+      card('approved-week', 'Approved This Week', counts.approvedWeek, 'Recent Good To Work employees kept handy for quick review.', 'approved')
+    ].join('');
   }
 
   function getNewHireCompletion(x) {
@@ -9421,18 +9503,30 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const list = document.getElementById('newhire-list-main');
     if (!list) return;
     const search = (document.getElementById('newhire-search')?.value || '').toLowerCase().trim();
-    const status = document.getElementById('newhire-status-filter')?.value || 'all';
+    const bucketStatus = {
+      awaiting: 'Ready for Review',
+      missing: 'Missing Info',
+      'approved-week': 'Good To Work'
+    };
+    const status = bucketStatus[activeOnboardingReviewBucket] || document.getElementById('newhire-status-filter')?.value || 'all';
     let items = allNewHireIntakes.filter(x => {
       if (status !== 'all' && (x.status || 'Pending') !== status) return false;
+      if (activeOnboardingReviewBucket === 'approved-week' && !isNewHireApprovedThisWeek(x)) return false;
       if (!search) return true;
       return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status].some(v => String(v || '').toLowerCase().includes(search));
     });
     renderNewHireDashboard(allNewHireIntakes);
+    renderOnboardingReviewBuckets(allNewHireIntakes);
     if (!items.length) {
-      list.innerHTML = '<div class="empty-state"><div class="icon"></div><h3>No intake requests found</h3><p>Create a request to start pre-site onboarding.</p></div>';
+      const emptyText = activeOnboardingReviewBucket === 'approved-week'
+        ? 'No employees were marked Good To Work this week.'
+        : activeOnboardingReviewBucket === 'missing'
+          ? 'No intake packets are waiting on corrections right now.'
+          : 'No intake packets are waiting for approval right now.';
+      list.innerHTML = `<div class="empty-state"><div class="icon"></div><h3>No intake requests found</h3><p>${emptyText}</p></div>`;
       return;
     }
-    list.innerHTML = items.map(x => `<div class="newhire-card">
+    list.innerHTML = items.map(x => `<div class="newhire-card compact">
       <div class="newhire-card-header">
         <div>
           <h4>${esc(x.name || 'New Hire')}</h4>
@@ -9850,7 +9944,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   async function setNewHireStatus(id, status) {
     if (!id) return;
     try {
-      await updateDoc(doc(db, 'newHireIntakes', id), { status, updatedAt: serverTimestamp() });
+      const payload = { status, updatedAt: serverTimestamp() };
+      if (status === 'Good To Work') payload.approvedAt = serverTimestamp();
+      if (status === 'Missing Info') payload.correctionRequestedAt = serverTimestamp();
+      await updateDoc(doc(db, 'newHireIntakes', id), payload);
       toast(`Status updated: ${status}`);
       await loadNewHireIntakes(true);
       if (document.getElementById('workforce-overview-status-board')) {
