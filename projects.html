@@ -10212,6 +10212,15 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').then(registration => {
+        registration.update().catch(() => {});
+      }).catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>
 

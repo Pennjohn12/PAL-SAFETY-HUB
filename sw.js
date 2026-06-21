@@ -1,7 +1,7 @@
-// PAL Safety Hub — Service Worker
-// Caches the app so it works offline after first load
+// PAL Safety Hub Service Worker
+// Caches the app so it works offline after first load.
 
-const CACHE_NAME = 'pal-safety-hub-v2';
+const CACHE_NAME = 'pal-safety-hub-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -16,7 +16,6 @@ const ASSETS = [
 ];
 const CACHE_PATHS = new Set(ASSETS.map(asset => new URL(asset, self.location.href).pathname));
 
-// Install: cache all core files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -24,7 +23,6 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate: clean up old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -34,8 +32,7 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: serve from cache, fall back to network
-// Network-first strategy so updates are always picked up when online
+// Use fresh pages when online, cached pages only when offline.
 self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url);
   if (event.request.method !== 'GET' || requestUrl.origin !== self.location.origin) {
@@ -45,18 +42,14 @@ self.addEventListener('fetch', event => {
     return;
   }
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-store' })
       .then(response => {
-        // If we got a good response, cache it and return it
         if (response && response.status === 200 && response.type === 'basic') {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
       })
-      .catch(() => {
-        // Offline — serve from cache
-        return caches.match(event.request);
-      })
+      .catch(() => caches.match(event.request))
   );
 });
