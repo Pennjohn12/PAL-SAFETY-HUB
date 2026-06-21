@@ -9373,11 +9373,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (intake) intake.style.display = tab === 'review' ? '' : 'none';
     if (history) history.style.display = tab === 'history' ? '' : 'none';
 
-    const statusFilter = document.getElementById('newhire-status-filter');
     const helper = document.getElementById('onboarding-intake-helper');
     if (tab === 'review') {
       if (!['awaiting', 'missing', 'approved-week'].includes(activeOnboardingReviewBucket)) activeOnboardingReviewBucket = 'awaiting';
-      if (statusFilter) statusFilter.value = 'Ready for Review';
       if (helper) helper.textContent = 'Completed onboarding packets waiting for office or foreman review.';
       renderNewHireIntakes();
     } else if (tab === 'history') {
@@ -9388,40 +9386,14 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function setOnboardingReviewBucket(bucket) {
     activeOnboardingReviewBucket = bucket || 'awaiting';
-    const statusFilter = document.getElementById('newhire-status-filter');
     const helper = document.getElementById('onboarding-intake-helper');
-    const statusByBucket = {
-      awaiting: 'Ready for Review',
-      missing: 'Missing Info',
-      'approved-week': 'Good To Work'
-    };
     const helperByBucket = {
       awaiting: 'Completed onboarding packets waiting for safety, office, or foreman approval.',
       missing: 'Packets that need corrected information before the employee can be cleared.',
       'approved-week': 'Employees marked Good To Work this week. Keep them here for quick review before they roll into history.'
     };
-    if (statusFilter) statusFilter.value = statusByBucket[activeOnboardingReviewBucket] || 'Ready for Review';
     if (helper) helper.textContent = helperByBucket[activeOnboardingReviewBucket] || helperByBucket.awaiting;
     renderNewHireIntakes();
-  }
-
-  function renderNewHireDashboard(items) {
-    const el = document.getElementById('newhire-dashboard-main');
-    if (!el) return;
-    const counts = { total: items.length, pending: 0, review: 0, good: 0, missing: 0 };
-    items.forEach(x => {
-      const s = String(x.status || 'Pending');
-      if (s === 'Good To Work') counts.good++;
-      else if (s === 'Ready for Review') counts.review++;
-      else if (s === 'Missing Info') counts.missing++;
-      else counts.pending++;
-    });
-    el.innerHTML = `<div class="newhire-dashboard">
-      <div class="newhire-box"><strong>${counts.total}</strong><span>Total Intake Requests</span></div>
-      <div class="newhire-box pending"><strong>${counts.pending}</strong><span>Pending</span></div>
-      <div class="newhire-box review"><strong>${counts.review}</strong><span>Ready for Review</span></div>
-      <div class="newhire-box good"><strong>${counts.good}</strong><span>Good To Work</span></div>
-    </div>`;
   }
 
   function getNewHireDateValue(x, keys = ['approvedAt', 'updatedAt', 'createdAt', 'startDate']) {
