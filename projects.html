@@ -220,32 +220,11 @@
       overflow:hidden;
       box-shadow:0 4px 14px rgba(16,24,40,.05);
     }
-    .jha-head {
-      background:var(--navy);
-      color:#fff;
-      display:grid;
-      grid-template-columns:160px 1fr 190px;
-      gap:14px;
-      align-items:center;
-      padding:14px 18px;
-    }
-    .jha-logo { color:var(--green); font-size:24px; font-weight:900; line-height:1; }
-    .jha-logo small { display:block; color:#fff; font-size:9px; letter-spacing:.6px; margin-top:3px; }
-    .jha-head h3 { color:#fff; margin:0; text-align:center; font-size:20px; }
-    .jha-head p { color:rgba(255,255,255,.78); margin:3px 0 0; text-align:center; }
-    .jha-meta { color:rgba(255,255,255,.82); text-align:right; line-height:1.45; font-size:13px; }
     .jha-body { padding:16px 18px; }
-    .jha-info-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 14px; margin-bottom:14px; }
-    .jha-field { border-bottom:1px solid #9fb3c8; padding-bottom:5px; min-height:38px; }
-    .jha-field.span-2 { grid-column:span 2; }
-    .jha-field.full { grid-column:1/-1; }
-    .jha-field label { display:block; color:var(--navy); font-weight:900; font-size:12px; margin-bottom:4px; }
-    .jha-field div { color:var(--text); font-size:14px; line-height:1.35; white-space:pre-line; }
     .jha-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
     .jha-table th { background:#eef4fa; color:var(--navy); text-align:left; border:1px solid #cbd7e4; padding:8px; }
     .jha-table td { border:1px solid #d8e1ec; padding:8px; vertical-align:top; line-height:1.35; }
     .jha-section-title { color:var(--navy); font-weight:900; margin:16px 0 6px; }
-    .jha-tool-layout { display:grid; grid-template-columns:320px minmax(0,1fr); gap:16px; align-items:start; }
     .jha-workflow-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:16px; }
     .jha-workflow-card { background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px; cursor:pointer; min-height:130px; display:flex; flex-direction:column; justify-content:space-between; }
     .jha-workflow-card.disabled { cursor:not-allowed; opacity:.62; background:#f8fafc; }
@@ -254,7 +233,7 @@
     .jha-mode-panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px; }
     .jha-template-panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px; position:sticky; top:12px; }
     .jha-template-list { display:grid; gap:10px; margin-top:10px; }
-    .jha-template-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; cursor:pointer; text-align:left; }
+    .jha-template-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; cursor:pointer; text-align:left; width:100%; }
     .jha-template-card.active { border-color:var(--green); box-shadow:0 0 0 2px rgba(112,193,71,.18); }
     .jha-template-card h3 { margin:0 0 5px; color:var(--navy); font-size:15px; }
     .jha-template-card p { margin:0; color:var(--muted); font-size:13px; line-height:1.35; }
@@ -281,15 +260,8 @@
     .jha-file-actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:0 0 12px; }
     .jha-file-actions button { border:1px solid #111; border-radius:8px; background:#fff; color:#111; padding:10px 14px; font-weight:900; }
     @media(max-width:850px){
-      .jha-tool-layout { grid-template-columns:1fr; }
       .jha-workflow-grid { grid-template-columns:1fr; }
       .jha-template-panel { position:static; }
-      .jha-head { grid-template-columns:1fr; }
-      .jha-head h3,
-      .jha-head p,
-      .jha-meta { text-align:left; }
-      .jha-info-grid { grid-template-columns:1fr; }
-      .jha-field.span-2 { grid-column:auto; }
       .jha-project-row, .jha-input-grid { grid-template-columns:1fr; }
       .jha-input-grid .span-2, .jha-input-grid .span-3 { grid-column:auto; }
       .jha-office-header { grid-template-columns:1fr; }
@@ -1159,17 +1131,6 @@
       border:1.5px solid var(--line); border-radius:10px; padding:11px 14px; font:inherit; font-size:14px; outline:none; background:white;
       min-width:180px;
     }
-    .workforce-tabs {
-      gap:8px;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;
-    }
-    .workforce-tabs .tab {
-      min-height:42px;
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
     .pipeline-tabs .tab {
       min-height:42px;
     }
@@ -1580,7 +1541,8 @@
       <button class="tab active" onclick="switchMainTab('main-projects', this)">Projects</button>
       <button class="tab" onclick="switchMainTab('main-foreman-tools', this)">Foreman / Supervisor Tools</button>
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
-      <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Workforce</button>
+      <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Onboarding</button>
+      <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
     </div>
@@ -2001,17 +1963,13 @@
 
     <div class="tab-pane" id="main-workforce-overview">
       <div class="page-header">
-        <h2>Workforce</h2>
+        <h2>Workforce Snapshot</h2>
         <div class="header-actions">
+          <button class="btn-outline" onclick="switchMainTab('main-employee-onboarding')">Onboarding</button>
+          <button class="btn-outline" onclick="switchMainTab('main-employees')">Employees</button>
           <button class="btn-outline" onclick="loadWorkforceOverview(true)">Refresh</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">Create Intake Request</button>
         </div>
-      </div>
-      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab active" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
-        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
-        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Office snapshot of new hires, employee records, and certification risk.</div>
       <div id="workforce-overview-summary">
@@ -2021,17 +1979,13 @@
 
     <div class="tab-pane" id="main-employees">
       <div class="page-header">
-        <h2>Workforce</h2>
+        <h2>Employees & Certs</h2>
         <div class="header-actions">
+          <button class="btn-outline" onclick="switchMainTab('main-workforce-overview')">Snapshot</button>
+          <button class="btn-outline" onclick="switchMainTab('main-cert-email-preview')">Cert Email</button>
           <button class="btn-outline" onclick="loadEmployees(true)">Refresh</button>
           <button class="btn-add" onclick="openEmployeeModal()">+ Add Employee</button>
         </div>
-      </div>
-      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab active" onclick="switchMainTab('main-employees', this)">Employees</button>
-        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
-        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Existing employee files and certification records live here so the office can track expired, expiring, missing, and valid certs.</div>
       <div id="cert-alert-summary-main"></div>
@@ -2053,17 +2007,12 @@
 
     <div class="tab-pane" id="main-employee-onboarding">
       <div class="page-header">
-        <h2>New Hire Pipeline</h2>
+        <h2>New Hire Onboarding</h2>
         <div class="header-actions">
+          <button class="btn-outline" onclick="switchMainTab('main-employees')">Existing Employees</button>
           <button class="btn-outline" onclick="loadEmployeeOnboarding(true)">Refresh</button>
           <button class="btn-add" onclick="openNewHireIntakeModal()">+ Create Intake Request</button>
         </div>
-      </div>
-      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
-        <button class="tab active" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
-        <button class="tab" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Track new hires from intake sent, to review, to Good To Work, with history kept in one place.</div>
       <div class="tabs pipeline-tabs" style="margin-bottom:14px;">
@@ -2085,7 +2034,7 @@
           <option value="Missing Info">Missing Info</option>
         </select>
       </div>
-      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Open New Hire Pipeline or click Refresh to load requests.</p></div>
+      <div id="newhire-list-main"><p style="color:var(--muted);font-size:14px;">Open Onboarding or click Refresh to load requests.</p></div>
       </div>
 
       <div id="onboarding-history-section" style="display:none;">
@@ -2117,17 +2066,12 @@
 
     <div class="tab-pane" id="main-cert-email-preview">
       <div class="page-header">
-        <h2>Cert Email Preview</h2>
+        <h2>Certification Email</h2>
         <div class="header-actions">
+          <button class="btn-outline" onclick="switchMainTab('main-employees')">Back to Employees</button>
           <button class="btn-outline" onclick="loadCertEmailPreview(true)">Refresh</button>
           <button class="btn-add" onclick="copyCertEmailPreview()">Copy Email</button>
         </div>
-      </div>
-      <div class="tabs workforce-tabs" style="margin-bottom:14px;">
-        <button class="tab" onclick="switchMainTab('main-workforce-overview', this)">Overview</button>
-        <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
-        <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">New Hire Pipeline</button>
-        <button class="tab active" onclick="switchMainTab('main-cert-email-preview', this)">Cert Email</button>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Preview the expired and 30-day certification email before this becomes an automatic weekly or monthly send.</div>
       <div id="cert-email-summary"></div>
@@ -3265,7 +3209,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openProjectJhaChecklist = openProjectJhaChecklist;
   window.renderJhaTab = renderJhaTab;
   window.renderJhaTemplateList = renderJhaTemplateList;
-  window.selectJhaTemplate = selectJhaTemplate;
+  window.syncJhaProjectFields = syncJhaProjectFields;
   window.addJhaCrewRow = addJhaCrewRow;
   window.submitJhaToProject = submitJhaToProject;
   window.printJhaTemplate = printJhaTemplate;
@@ -5880,6 +5824,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   });
 
   const jhaDisclaimer = 'This Job Hazard Analysis is not intended to be a complete description of all actions that may be deemed necessary to eliminate or reduce risk of injury. Additional precautionary measures may be necessary and must be implemented as conditions mandate.';
+  const JHA_UPLOAD_MAX_BYTES = 25 * 1024 * 1024;
+  const JHA_ALLOWED_UPLOAD_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'webp'];
 
   const jhaBaseSteps = [
     {
@@ -5985,10 +5931,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       </button>`).join('') : '<p class="helper-text">No JHA templates match this search.</p>';
   }
 
-  function selectJhaTemplate(id) {
-    openJhaTemplateWindow(id, 'previous');
-  }
-
   function handleJhaWorkflowKey(event, mode) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
@@ -5997,7 +5939,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function renderJhaTab() {
-    applyRoleVisibility();
+    applyRoleUI();
     showJhaMode('previous');
   }
 
@@ -6324,6 +6266,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.getElementById('modal-jha-upload')?.classList.add('open');
   }
 
+  function validateJhaUploadFile(file) {
+    if (!file) return 'Choose a JHA file to upload.';
+    const ext = String(file.name || '').split('.').pop().toLowerCase();
+    if (!JHA_ALLOWED_UPLOAD_EXTENSIONS.includes(ext)) {
+      return 'Upload a PDF, Word document, JPG, PNG, or WEBP file.';
+    }
+    if (file.size > JHA_UPLOAD_MAX_BYTES) {
+      return 'JHA upload is too large. Keep files under 25 MB.';
+    }
+    return '';
+  }
+
   async function uploadJhaFile() {
     if (!isOfficeRole()) return toast('Only office/admin can upload JHAs.');
     const projectId = document.getElementById('jha-upload-project-select')?.value || '';
@@ -6332,7 +6286,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const title = document.getElementById('jha-upload-title')?.value.trim() || file?.name || 'Uploaded JHA';
     const notes = document.getElementById('jha-upload-notes')?.value.trim() || '';
     if (!project) return toast('Select a project before uploading the JHA.');
-    if (!file) return toast('Choose a JHA file to upload.');
+    const fileError = validateJhaUploadFile(file);
+    if (fileError) return toast(fileError);
     const btn = document.getElementById('save-jha-upload-btn');
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Uploading...'; }
@@ -6356,7 +6311,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           projectName: project.name || '',
           jobNumber: project.jobNumber || '',
           date: todayISO(),
-          uploadedFile: { name: file.name, url, path: storagePath, type: file.type || 'application/octet-stream' },
+          uploadedFile: { name: file.name, url, path: storagePath, type: file.type || 'application/octet-stream', size: file.size || 0 },
           notes
         }
       });
@@ -7136,7 +7091,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           ${data.notes ? `<div class="report-field span-2"><span class="k">Notes</span><div class="v">${esc(data.notes)}</div></div>` : ''}
           <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px;">
             <a class="btn-outline" href="${esc(safeFileUrl(data.uploadedFile.url))}" target="_blank" rel="noopener" style="text-decoration:none;">Open Uploaded JHA</a>
-            <button class="btn-save" type="button" onclick="downloadProjectFile('${esc(safeFileUrl(data.uploadedFile.url))}', '${esc(data.uploadedFile.name || form.formTitle || 'JHA File')}')">Download</button>
+            <button class="btn-save" type="button" data-url="${esc(safeFileUrl(data.uploadedFile.url))}" data-name="${esc(data.uploadedFile.name || form.formTitle || 'JHA File')}" onclick="downloadProjectFile(this.dataset.url, this.dataset.name)">Download</button>
           </div>`;
         document.getElementById('modal-report-detail').classList.add('open');
         return;
@@ -10082,9 +10037,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
-    const topTarget = ['main-workforce-overview', 'main-employees', 'main-employee-onboarding', 'main-cert-email-preview'].includes(tabId)
-      ? 'main-workforce-overview'
-      : tabId;
+    const supportTabMap = {
+      'main-workforce-overview': 'main-employees',
+      'main-cert-email-preview': 'main-employees'
+    };
+    const topTarget = supportTabMap[tabId] || tabId;
     const topTab = document.querySelector(`#main-dashboard-tabs .tab[onclick*="${topTarget}"]`);
     if (topTab) topTab.classList.add('active');
     else if (btn) btn.classList.add('active');
@@ -10195,7 +10152,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   // Close modal on overlay click
-  ['modal-new-project','modal-report-detail','modal-foreman-tool','modal-project-field-forms','modal-official-project-form','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
+  ['modal-new-project','modal-report-detail','modal-foreman-tool','modal-project-field-forms','modal-official-project-form','modal-jha-editor','modal-jha-upload','modal-new-employee','modal-employee-detail','modal-certification'].forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     modal.addEventListener('click', function(e) {
