@@ -1228,6 +1228,15 @@
       background:#f8fafc; border:1px solid var(--line); border-radius:14px;
       padding:12px; margin-top:14px; white-space:pre-line; color:var(--text); font-size:13px; line-height:1.45;
     }
+    .newhire-text-placeholder {
+      background:#fff; border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px;
+      padding:12px; margin-top:12px; display:grid; gap:10px;
+    }
+    .newhire-text-placeholder-head { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; }
+    .newhire-text-placeholder h4 { margin:0; color:var(--navy); font-size:15px; }
+    .newhire-text-placeholder .pill { white-space:nowrap; }
+    .newhire-text-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .newhire-text-actions .helper-text { margin:0; flex:1 1 220px; }
     .newhire-upload-list { display:grid; gap:8px; margin-top:10px; }
     .newhire-upload-item { background:#f8fafc; border:1px solid var(--line); border-radius:12px; padding:10px; font-size:13px; }
     @media(max-width:800px){ .newhire-dashboard { grid-template-columns:1fr; } }
@@ -2841,6 +2850,17 @@
       <div class="field span-2"><label>Notes / Instructions</label><textarea id="nh-notes" rows="3" placeholder="Tell the employee what to send before arriving to site..."></textarea></div>
     </div>
     <div class="newhire-share-box" id="nh-share-preview">Fill out the request to generate the text message.</div>
+    <div class="newhire-text-placeholder">
+      <div class="newhire-text-placeholder-head">
+        <h4>Future Direct Text Message</h4>
+        <span class="pill warn">Provider Not Connected Yet</span>
+      </div>
+      <div class="helper-text">Once texting is connected, this is where the office will send the intake link directly to the phone number above.</div>
+      <div class="newhire-text-actions">
+        <div class="helper-text">For now, save the request and use Copy Text Message.</div>
+        <button class="btn-save" type="button" disabled title="Text messaging provider has not been connected yet.">Send Text</button>
+      </div>
+    </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-intake')">Cancel</button>
       <button class="btn-secondary" onclick="copyNewHireIntakeText()">Copy Text Message</button>
