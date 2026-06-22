@@ -2820,7 +2820,7 @@
 
 <!-- EXTRA WORK TICKET MODAL -->
 <div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="GC Signed">GC Signed</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-outline" type="button" onclick="downloadCurrentTicketDraft()">Save as File</button><button class="btn-outline" type="button" onclick="printCurrentTicketDraft()">Print</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
-<div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-outline" onclick="copyGcSignatureLink()">Copy GC Signature Link</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
+<div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-outline" onclick="copyGcSignatureLink()">Copy GC Signature Link</button><button class="btn-outline" onclick="shareGcSignatureLink()">Send GC Signature Link</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
 
 
 
@@ -3270,6 +3270,7 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const storage = getStorage(app);
+  const PAL_PUBLIC_PROJECTS_URL = 'https://pennjohn12.github.io/PAL-SAFETY-HUB/projects.html';
   const PAL_ADMIN_EMAILS = [
     'jpanettiere@palcorp.com',
     'john.panettiere@palcorp.com',
@@ -3497,6 +3498,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.printCurrentTicketDraft = printCurrentTicketDraft;
   window.downloadCurrentTicketDraft = downloadCurrentTicketDraft;
   window.copyGcSignatureLink = copyGcSignatureLink;
+  window.shareGcSignatureLink = shareGcSignatureLink;
   window.clearPublicTicketSignature = clearPublicTicketSignature;
   window.submitPublicTicketSignature = submitPublicTicketSignature;
   window.loadWarehouse = loadWarehouse;
@@ -9052,8 +9054,22 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  function getTicketSignatureLink(projectId, ticketId, token) {
+  function getShareableProjectsPageUrl() {
+    const localHostnames = ['', 'localhost', '127.0.0.1'];
+    const isLocalFile = window.location.protocol === 'file:';
+    const isLocalHost = localHostnames.includes(window.location.hostname);
+    if (isLocalFile || isLocalHost) return PAL_PUBLIC_PROJECTS_URL;
     const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    if (!url.pathname.toLowerCase().endsWith('/projects.html')) {
+      url.pathname = url.pathname.replace(/\/?$/, '/projects.html');
+    }
+    return url.toString();
+  }
+
+  function getTicketSignatureLink(projectId, ticketId, token) {
+    const url = new URL(getShareableProjectsPageUrl());
     url.search = '';
     url.hash = '';
     url.searchParams.set('ticketProjectId', projectId);
@@ -9080,41 +9096,75 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  async function copyGcSignatureLink() {
+  async function ensureGcSignatureLink() {
     if (!selectedTicket?.projectId || !selectedTicket?.id) { toast('Open a saved ticket first.'); return; }
+    const projectRef = doc(db, 'projects', selectedTicket.projectId);
+    const snap = await getDoc(projectRef);
+    if (!snap.exists()) throw new Error('Project not found');
+    const data = snap.data() || {};
+    const tickets = Array.isArray(data.extraTickets) ? data.extraTickets : [];
+    const existing = tickets.find(t => t.id === selectedTicket.id);
+    if (!existing) throw new Error('Ticket not found');
+    const token = existing.gcSignatureToken || generateSecureToken();
+    const linkCreatedAt = existing.gcSignatureLinkCreatedAt || new Date().toISOString();
+    const updatedTicket = {
+      ...existing,
+      gcSignatureToken: token,
+      gcSignatureLinkCreatedAt: linkCreatedAt,
+      gcSignatureLinkCreatedBy: currentUser?.uid || existing.gcSignatureLinkCreatedBy || '',
+      gcSignatureLinkCreatedByName: currentUser?.displayName || currentUser?.email || existing.gcSignatureLinkCreatedByName || ''
+    };
+    const updatedTickets = tickets.map(t => t.id === selectedTicket.id ? updatedTicket : t);
+    await updateDoc(projectRef, { extraTickets: updatedTickets });
+    selectedTicket = { ...selectedTicket, ...updatedTicket, projectId: selectedTicket.projectId, projectName: data.name || selectedTicket.projectName || '', projectJobNumber: data.jobNumber || selectedTicket.projectJobNumber || '' };
+    loadProjects();
+    loadMainTickets();
+    return getTicketSignatureLink(selectedTicket.projectId, selectedTicket.id, token);
+  }
+
+  async function copyGcSignatureLink() {
     const btn = window.event?.target;
     const oldText = btn?.textContent;
     if (btn) { btn.disabled = true; btn.textContent = 'Creating Link...'; }
     try {
-      const projectRef = doc(db, 'projects', selectedTicket.projectId);
-      const snap = await getDoc(projectRef);
-      if (!snap.exists()) throw new Error('Project not found');
-      const data = snap.data() || {};
-      const tickets = Array.isArray(data.extraTickets) ? data.extraTickets : [];
-      const existing = tickets.find(t => t.id === selectedTicket.id);
-      if (!existing) throw new Error('Ticket not found');
-      const token = existing.gcSignatureToken || generateSecureToken();
-      const linkCreatedAt = existing.gcSignatureLinkCreatedAt || new Date().toISOString();
-      const updatedTicket = {
-        ...existing,
-        gcSignatureToken: token,
-        gcSignatureLinkCreatedAt: linkCreatedAt,
-        gcSignatureLinkCreatedBy: currentUser?.uid || existing.gcSignatureLinkCreatedBy || '',
-        gcSignatureLinkCreatedByName: currentUser?.displayName || currentUser?.email || existing.gcSignatureLinkCreatedByName || ''
-      };
-      const updatedTickets = tickets.map(t => t.id === selectedTicket.id ? updatedTicket : t);
-      await updateDoc(projectRef, { extraTickets: updatedTickets });
-      selectedTicket = { ...selectedTicket, ...updatedTicket, projectId: selectedTicket.projectId, projectName: data.name || selectedTicket.projectName || '', projectJobNumber: data.jobNumber || selectedTicket.projectJobNumber || '' };
-      const link = getTicketSignatureLink(selectedTicket.projectId, selectedTicket.id, token);
+      const link = await ensureGcSignatureLink();
+      if (!link) return;
       const copied = await writeClipboardText(link);
       toast(copied ? 'GC signature link copied. Send it manually by text or email.' : 'Link created. Copy it from the address bar if needed.');
-      loadProjects();
-      loadMainTickets();
     } catch(e) {
       console.error(e);
       toast('Could not create signature link: ' + e.message);
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = oldText || 'Copy GC Signature Link'; }
+    }
+  }
+
+  async function shareGcSignatureLink() {
+    const btn = window.event?.target;
+    const oldText = btn?.textContent;
+    if (btn) { btn.disabled = true; btn.textContent = 'Preparing Link...'; }
+    try {
+      const link = await ensureGcSignatureLink();
+      if (!link) return;
+      const ticketLabel = selectedTicket?.ticketNo ? `Ticket ${selectedTicket.ticketNo}` : 'PAL extra work ticket';
+      const text = `${ticketLabel} is ready for review and signature: ${link}`;
+      if (navigator.share) {
+        await navigator.share({ title: 'PAL Extra Work Ticket Signature', text, url: link });
+        toast('Signature link ready to send.');
+      } else {
+        const copied = await writeClipboardText(text);
+        const subject = encodeURIComponent('PAL Extra Work Ticket Signature');
+        const body = encodeURIComponent(text);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        toast(copied ? 'Signature message copied and email opened.' : 'Email opened with signature link.');
+      }
+    } catch(e) {
+      if (e?.name !== 'AbortError') {
+        console.error(e);
+        toast('Could not prepare signature link: ' + e.message);
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = oldText || 'Send GC Signature Link'; }
     }
   }
 
