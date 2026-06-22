@@ -2064,14 +2064,16 @@
         </div>
         <div class="ticket-table-wrap">
           <table class="ticket-table">
-            <thead><tr><th>LU #</th><th>Name</th><th>Cost Code</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th><th>Reg</th><th>OT</th><th>Total</th><th></th></tr></thead>
+            <thead><tr><th>LU #</th><th>Name</th><th>Last 4 SSN</th><th>Cost Code</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th><th>Reg</th><th>OT</th><th>Total</th><th></th></tr></thead>
             <tbody id="weekly-payroll-rows"></tbody>
           </table>
         </div>
         <div class="ai-safety-actions"><button class="btn-outline" type="button" onclick="addWeeklyPayrollRow()">Add Row</button><button class="btn-outline" type="button" onclick="clearWeeklyPayroll()">Clear Sheet</button></div>
-        <div class="doc-review-box" style="margin-top:14px;">
+        <div class="doc-review-box" style="margin-top:14px;max-width:520px;">
           <h4>Common Fireproofing Cost Codes</h4>
-          <p>Supervisor FP 35-0001 | Operating Engineer FP 35-0002 | Sprayer FP 35-0003 | Labor FP 35-0004 | Project Manager FP 35-0005 | Firewatch FP 35-0006 | Cleanup FP 35-0009</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;font-size:13px;">
+            <div><strong>35-01</strong> Supervisor</div><div><strong>35-02</strong> Operating Engineer</div><div><strong>35-03</strong> Sprayer</div><div><strong>35-04</strong> Labor</div><div><strong>35-05</strong> Project Manager</div><div><strong>35-06</strong> Firewatch</div><div><strong>35-09</strong> Cleanup</div>
+          </div>
         </div>
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-weekly-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
@@ -2099,6 +2101,7 @@
           <table class="ticket-table">
             <thead><tr><th>Description</th><th>Date</th><th>Category</th><th>Amount</th><th></th></tr></thead>
             <tbody id="foreman-expense-rows"></tbody>
+            <tfoot><tr><th colspan="3" style="text-align:right;">Total</th><th id="foreman-expense-table-total">$0.00</th><th></th></tr></tfoot>
           </table>
         </div>
         <div class="ai-safety-actions"><button class="btn-outline" type="button" onclick="addForemanExpenseRow()">Add Expense Row</button><button class="btn-outline" type="button" onclick="clearForemanExpenseReport()">Clear Sheet</button></div>
@@ -3337,6 +3340,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let currentPublicNewHireIntake = null;
   let publicTicketSignatureLoaded = false;
   let currentPublicTicketSignature = null;
+  let foremanToolClearTimer = null;
   document.title = 'PAL Safety Hub';
 
   //  Expose functions to global scope 
@@ -4390,6 +4394,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   };
 
   function openForemanToolModal(tabId, editingExisting = false, returnToFieldForms = false) {
+    cancelForemanToolAutoClear();
     activeForemanToolId = tabId;
     foremanToolReturnToFieldForms = !!returnToFieldForms;
     if (tabId === 'foreman-tool-manual-safety' && !editingExisting) {
@@ -4421,6 +4426,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function closeForemanToolModal() {
     document.getElementById('modal-foreman-tool')?.classList.remove('open');
+    scheduleForemanToolAutoClear(activeForemanToolId);
   }
 
   function closeForemanToolAndReturn() {
@@ -4432,6 +4438,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function switchForemanToolTab(tabId) {
+    cancelForemanToolAutoClear();
     activeForemanToolId = tabId;
     document.querySelectorAll('.foreman-tool-pane').forEach(p => {
       p.classList.remove('active');
@@ -4496,6 +4503,49 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     if (tabId === 'foreman-tool-expense-report' && !document.querySelector('#foreman-expense-rows tr')) {
       for (let i = 0; i < 3; i++) addForemanExpenseRow();
+    }
+  }
+
+  function cancelForemanToolAutoClear() {
+    if (!foremanToolClearTimer) return;
+    clearTimeout(foremanToolClearTimer);
+    foremanToolClearTimer = null;
+  }
+
+  function scheduleForemanToolAutoClear(tabId) {
+    cancelForemanToolAutoClear();
+    if (!tabId || !tabId.startsWith('foreman-tool-')) return;
+    foremanToolClearTimer = setTimeout(() => {
+      if (document.getElementById('modal-foreman-tool')?.classList.contains('open')) return;
+      resetForemanToolForm(tabId);
+      foremanToolClearTimer = null;
+    }, 10000);
+  }
+
+  function resetForemanToolForm(tabId) {
+    const pane = document.getElementById(tabId);
+    if (!pane) return;
+    pane.querySelectorAll('input, textarea, select').forEach(el => {
+      if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else if (el.type === 'date') el.value = todayISO();
+      else if (el.readOnly) el.value = el.id?.includes('total') ? '0.00' : '';
+      else el.value = '';
+    });
+    if (tabId === 'foreman-tool-daily-payroll') {
+      const tbody = document.getElementById('daily-payroll-rows');
+      if (tbody) tbody.innerHTML = '';
+      for (let i = 0; i < 5; i++) addDailyPayrollRow();
+    }
+    if (tabId === 'foreman-tool-weekly-payroll') {
+      const tbody = document.getElementById('weekly-payroll-rows');
+      if (tbody) tbody.innerHTML = '';
+      for (let i = 0; i < 8; i++) addWeeklyPayrollRow();
+    }
+    if (tabId === 'foreman-tool-expense-report') {
+      const tbody = document.getElementById('foreman-expense-rows');
+      if (tbody) tbody.innerHTML = '';
+      for (let i = 0; i < 3; i++) addForemanExpenseRow();
+      updateForemanExpenseTotals();
     }
   }
 
@@ -4576,7 +4626,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!tbody) return;
     const dayInput = day => `<td><input type="number" min="0" max="24" step="0.5" class="weekly-payroll-${day}" oninput="calcWeeklyPayrollRow(this.closest('tr'))" /></td>`;
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td><input /></td><td><input /></td><td><input /></td>
+    tr.innerHTML = `<td><input /></td><td><input /></td><td><input maxlength="4" inputmode="numeric" placeholder="0000" /></td><td><input /></td>
       ${['mon','tue','wed','thu','fri','sat','sun'].map(dayInput).join('')}
       <td><input class="weekly-payroll-reg" readonly /></td>
       <td><input class="weekly-payroll-ot" readonly /></td>
@@ -4613,8 +4663,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const advance = parseFloat(document.getElementById('foreman-expense-cash-advance')?.value || 0);
     const totalReported = document.getElementById('foreman-expense-total-reported');
     const totalDue = document.getElementById('foreman-expense-total-due');
+    const tableTotal = document.getElementById('foreman-expense-table-total');
     if (totalReported) totalReported.value = total.toFixed(2);
     if (totalDue) totalDue.value = (total - advance).toFixed(2);
+    if (tableTotal) tableTotal.textContent = `$${total.toFixed(2)}`;
   }
 
   function clearForemanExpenseReport() {
@@ -4667,17 +4719,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const rows = Array.from(document.querySelectorAll('#weekly-payroll-rows tr')).map(tr => {
       const inputs = tr.querySelectorAll('input');
       const dayHours = {};
-      days.forEach((day, index) => { dayHours[day] = inputs[index + 3]?.value || ''; });
+      days.forEach((day, index) => { dayHours[day] = inputs[index + 4]?.value || ''; });
       return {
         luNumber: inputs[0]?.value.trim() || '',
         workerName: inputs[1]?.value.trim() || '',
-        costCode: inputs[2]?.value.trim() || '',
+        ssnLast4: inputs[2]?.value.trim() || '',
+        costCode: inputs[3]?.value.trim() || '',
         ...dayHours,
-        regularHours: inputs[10]?.value || '',
-        overtimeHours: inputs[11]?.value || '',
-        totalHours: inputs[12]?.value || ''
+        regularHours: inputs[11]?.value || '',
+        overtimeHours: inputs[12]?.value || '',
+        totalHours: inputs[13]?.value || ''
       };
-    }).filter(r => r.luNumber || r.workerName || r.costCode || days.some(day => r[day]) || r.totalHours);
+    }).filter(r => r.luNumber || r.workerName || r.ssnLast4 || r.costCode || days.some(day => r[day]) || r.totalHours);
     const totals = rows.reduce((acc, row) => {
       acc.regularHours += parseFloat(row.regularHours || 0);
       acc.overtimeHours += parseFloat(row.overtimeHours || 0);
@@ -4747,6 +4800,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         }
       });
       toast(`${formTitle} saved to project Field Forms.`);
+      resetForemanToolForm(activeForemanToolId);
       if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
     } catch (e) {
       console.error(e);
@@ -5196,9 +5250,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           ],
           tables: [{
             title: 'Weekly Hours',
-            headers: ['LU #', 'Worker', 'Cost Code', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Reg', 'OT', 'Total'],
+            headers: ['LU #', 'Worker', 'Last 4 SSN', 'Cost Code', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Reg', 'OT', 'Total'],
             rows: data.rows,
-            columns: ['luNumber', 'workerName', 'costCode', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'regularHours', 'overtimeHours', 'totalHours']
+            columns: ['luNumber', 'workerName', 'ssnLast4', 'costCode', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'regularHours', 'overtimeHours', 'totalHours']
           }]
         })
       };
@@ -7205,7 +7259,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="report-field"><span class="k">Supervisor</span><div class="v">${esc(data.supervisor || '')}</div></div>
         <div class="report-field"><span class="k">Week Of</span><div class="v">${esc(data.weekOf || '')}</div></div>
         <div class="report-field"><span class="k">Location</span><div class="v">${esc(data.location || '')}</div></div>
-        ${fieldFormTableHTML(['LU #','Worker','Cost Code','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Reg','OT','Total'], data.rows, ['luNumber','workerName','costCode','mon','tue','wed','thu','fri','sat','sun','regularHours','overtimeHours','totalHours'])}`;
+        ${fieldFormTableHTML(['LU #','Worker','Last 4 SSN','Cost Code','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Reg','OT','Total'], data.rows, ['luNumber','workerName','ssnLast4','costCode','mon','tue','wed','thu','fri','sat','sun','regularHours','overtimeHours','totalHours'])}`;
     }
     if (form.formKey === 'expense-report') {
       return `
