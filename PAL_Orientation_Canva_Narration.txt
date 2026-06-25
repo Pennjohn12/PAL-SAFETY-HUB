@@ -1,0 +1,51 @@
+PAL Orientation Canva Narration Script
+Source: Orientation Form English (Revised).pdf
+
+Scene 1: PAL Environmental Services
+Welcome to PAL Environmental Services orientation. This training introduces the safety expectations, required training records, jobsite rules, and reporting procedures every PAL employee must understand before working on a project. Your safety, the safety of your crew, and the protection of the environment are PAL priorities on every job.
+
+Scene 2: Orientation Goals
+PAL orientation is built around five goals: protecting employee health and safety, preventing accidents through planning and risk assessment, educating employees, meeting or exceeding safety requirements, and keeping clear communication between employees, supervisors, and management.
+
+Scene 3: Required Training Records
+Before working on a PAL project, employees must have the required training records for the work they will perform. At minimum, this may include NYC Site Safety Training or OSHA 30, fall prevention training, scaffold user training, and fit test and medical clearance when respiratory protection is required.
+
+Scene 4: PPE Required At All Times
+PAL employees must report to the job prepared with required personal protective equipment. At a minimum, workers must wear an approved hard hat, high visibility vest, approved safety glasses, work boots, long pants, and proper shirt coverage. Some tasks may require additional PPE such as face shields, respirators, coveralls, hearing protection, rubber gloves, rubber boots, or task-specific gloves. Respirators may only be used after the proper medical clearance, fit test, and authorization.
+
+Scene 5: Fall Protection
+Any employee exposed to a fall hazard of six feet or greater must have fall protection training. Fall hazards include open edges, aerial lifts, scaffolds over six feet, and walkways bridging gaps. Guardrails, hole covers, and personal fall arrest systems must be properly installed, inspected, and used. Always inspect fall protection equipment before use, confirm anchor points are rated correctly, watch for overhead hazards, and barricade work below when needed.
+
+Scene 6: Electrical Safety
+Electrical safety starts with inspecting cords, plugs, and temporary wiring before use. Extension cords must be heavy-duty, grounded, undamaged, and used with GFCI protection. Never alter plug prongs, never use cords with exposed wires, and do not route cords through doorways or across walking paths where they create trip hazards. GFCIs must be tested before use each shift.
+
+Scene 7: Ladder Safety
+Ladders should only be used for access or short-duration light-duty tasks when safer options are not practical. A-frame ladders must be fully opened with spreaders locked. Do not stand on the top step or straddle the top. Face the ladder while working and maintain three points of contact when climbing. Straight ladders must be set at the proper slope, tied off, and extend three feet above the landing. Never move a ladder while someone is on it, and never use metal ladders near electrical hazards.
+
+Scene 8: Tools, LOTO, and Material Handling
+Employees must be trained before using hand or power tools. Inspect tools, cords, guards, and accessories before each use. Damaged tools must be removed from service and reported. When equipment or systems contain hazardous energy, lockout/tagout procedures are required. Material handling also requires planning. Know the weight and shape of the load, use mechanical assistance when practical, inspect rigging, secure loads from shifting, and stop to ask for help when something is too heavy or awkward to move safely.
+
+Scene 9: Fire Safety and Housekeeping
+Fire prevention means controlling heat, oxygen, and fuel. Know the site-specific emergency action plan. Hot work requires the proper permit and must follow federal, city, local, and project requirements. If a fire is too large, call 911 first. Housekeeping must be performed daily. Keep walkways, aisles, doorways, stairs, and fire extinguishers clear. Clean spills immediately or barricade the area.
+
+Scene 10: HazCom, Scaffolds, and Lifts
+All employees must understand hazard communication, GHS labels, and the location of Safety Data Sheets. Scaffolds must be erected by a competent person, installed according to manufacturer requirements, inspected daily, and documented. Mobile elevating work platforms and scissor lifts may only be used by trained employees. Workers must wear fall protection when required, stay inside the platform, inspect equipment daily, and maintain awareness above, below, and around the lift.
+
+Scene 11: Heavy Equipment and Confined Space
+When working near heavy equipment, stay alert. Listen for backup alarms, make eye contact with operators, stay clear of loading areas, and never walk beside equipment being loaded. Confined space entry requires specialized training. Hazards may include low oxygen, hazardous atmosphere, explosive gases, entrapment, or engulfment. Do not enter a confined space unless you are trained and authorized for that specific work.
+
+Scene 12: Asbestos, Lead, Silica, and Environmental Issues
+Only authorized and trained personnel may handle or remove asbestos-containing materials or lead. PAL and all federal, state, local, and project requirements must be followed. Respirable crystalline silica can cause serious illness. Wet methods, HEPA vacuums, dust collection, medical surveillance when required, and task-specific exposure control plans must be used. Waste must be disposed of properly. Contact your supervisor for proper disposal.
+
+Scene 13: Emergency Action Plan
+Every project must have an emergency action plan posted. Know your muster point before work begins. During an emergency, walk, do not run. Shut down heavy equipment if safe to do so, report to the muster point, and do not leave until released. After notifying proper authorities, PAL supervision and EH&S must be notified. Do not speak to the press. PAL will issue official statements when appropriate.
+
+Scene 14: Discipline, Reporting, and Return To Work
+PAL has disciplinary rules for serious safety violations and repeated non-serious violations. At the same time, no one has the right to put you in an unsafe situation, and no employee will be penalized for refusing unsafe work. All accidents and incidents must be reported immediately to your supervisor and PAL EH&S, even if they seem minor. If medical attention is required, return-to-work notes or discharge papers must be submitted before returning to work.
+
+Scene 15: Alcohol, Drugs, Smoking, and Testing
+PAL maintains a drug-free and alcohol-free workplace. Alcohol consumption is not allowed, including during lunch breaks. Illegal drugs, controlled substances, drug paraphernalia, or reporting to work under the influence are prohibited. Smoking is not permitted on New York City construction sites. PAL employees and applicants must follow the drug and alcohol testing policy.
+
+Scene 16: Questions and Acknowledgement
+If you have questions, ask your supervisor, foreman, general superintendent, or PAL EH&S. Safety depends on communication. If you are unsure, stop and ask before continuing. Thank you for completing PAL Environmental Services orientation.
+

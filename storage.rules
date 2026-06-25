@@ -1,0 +1,107 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userEmail() {
+      return signedIn() && request.auth.token.email != null
+        ? request.auth.token.email
+        : '';
+    }
+
+    function profile() {
+      return signedIn()
+        ? firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data
+        : {};
+    }
+
+    function isBootstrapAdmin() {
+      return userEmail() in [
+        'jvpanettiere@gmail.com',
+        'jvpanettiere@outlook.com',
+        'adilorenzo@palcorp.com',
+        'jpanettiere@palcorp.com',
+        'john.panettiere@palcorp.com',
+        'pennj@palcorp.com'
+      ];
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        isBootstrapAdmin() ||
+        profile().admin == true ||
+        profile().isAdmin == true ||
+        profile().role in ['admin', 'administrator', 'owner'] ||
+        profile().accessLevel in ['admin', 'owner']
+      );
+    }
+
+    function isOffice() {
+      return signedIn() && (
+        isAdmin() ||
+        profile().role in ['office', 'project manager', 'project_manager'] ||
+        profile().accessLevel == 'office'
+      );
+    }
+
+    function isStaff() {
+      return signedIn() && (
+        isOffice() ||
+        profile().role in ['foreman', 'supervisor'] ||
+        profile().accessLevel in ['foreman', 'supervisor']
+      );
+    }
+
+    function isSafeUpload(maxBytes) {
+      return request.resource != null
+        && request.resource.size < maxBytes
+        && request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/html|text/plain');
+    }
+
+    match /projects/{projectId}/{folder}/{fileName} {
+      allow read: if isStaff();
+      allow write: if isStaff() && folder in [
+        'docs',
+        'photos',
+        'dailyReports',
+        'jhaUploads'
+      ] && isSafeUpload(25 * 1024 * 1024);
+      allow delete: if isAdmin();
+    }
+
+    match /projects/{projectId}/dailyReports/{reportId}/{fileName} {
+      allow read: if isStaff();
+      allow write: if isStaff() && isSafeUpload(25 * 1024 * 1024);
+      allow delete: if isAdmin();
+    }
+
+    match /employees/{employeeId}/certifications/{fileName} {
+      allow read: if isOffice();
+      allow write: if isOffice() && isSafeUpload(25 * 1024 * 1024);
+      allow delete: if isAdmin();
+    }
+
+    match /newHireIntakes/{intakeId}/{folder}/{fileName} {
+      // Public intake upload links use unguessable intake IDs.
+      allow read: if isOffice();
+      allow write: if (
+        isOffice() ||
+        folder in [
+          'publicUploads',
+          'payrollIdUploads',
+          'orientation',
+          'drugConsent',
+          'safetyAgreement'
+        ]
+      ) && isSafeUpload(25 * 1024 * 1024);
+      allow delete: if isAdmin();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

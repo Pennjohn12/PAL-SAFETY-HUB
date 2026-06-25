@@ -1,7 +1,7 @@
 {
   "name": "PAL Safety Hub",
   "short_name": "PAL Safety",
-  "description": "PAL Environmental Services — Digital Safety Binder & Field Forms",
+  "description": "PAL Environmental Services - Digital Safety Binder & Field Forms",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1b3a5c",

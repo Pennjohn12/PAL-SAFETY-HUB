@@ -1,0 +1,267 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userEmail() {
+      return signedIn() && request.auth.token.email != null
+        ? request.auth.token.email
+        : '';
+    }
+
+    function profile() {
+      return signedIn()
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+        : {};
+    }
+
+    function isBootstrapAdmin() {
+      return userEmail() in [
+        'jvpanettiere@gmail.com',
+        'jvpanettiere@outlook.com',
+        'adilorenzo@palcorp.com',
+        'jpanettiere@palcorp.com',
+        'john.panettiere@palcorp.com',
+        'pennj@palcorp.com'
+      ];
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        isBootstrapAdmin() ||
+        profile().admin == true ||
+        profile().isAdmin == true ||
+        profile().role in ['admin', 'administrator', 'owner'] ||
+        profile().accessLevel in ['admin', 'owner']
+      );
+    }
+
+    function isOffice() {
+      return signedIn() && (
+        isAdmin() ||
+        profile().role in ['office', 'project manager', 'project_manager'] ||
+        profile().accessLevel == 'office'
+      );
+    }
+
+    function isStaff() {
+      return signedIn() && (
+        isOffice() ||
+        profile().role in ['foreman', 'supervisor'] ||
+        profile().accessLevel in ['foreman', 'supervisor']
+      );
+    }
+
+    function isProjectMember(project) {
+      return signedIn() && (
+        isOffice() ||
+        project.createdBy == request.auth.uid ||
+        (project.memberUids is list && request.auth.uid in project.memberUids) ||
+        (project.memberEmails is list && userEmail() in project.memberEmails) ||
+        (project.foremanUids is list && request.auth.uid in project.foremanUids) ||
+        (project.foremanEmails is list && userEmail() in project.foremanEmails)
+      );
+    }
+
+    function emailGrant() {
+      return signedIn()
+        ? get(/databases/$(database)/documents/userAccessGrants/$(userEmail())).data
+        : {};
+    }
+
+    function hasEmailGrant() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/userAccessGrants/$(userEmail()))
+        && emailGrant().email == userEmail();
+    }
+
+    function grantAllowsRequestedUserRole() {
+      return hasEmailGrant()
+        && request.resource.data.role == emailGrant().role
+        && request.resource.data.accessLevel == emailGrant().accessLevel
+        && request.resource.data.admin == emailGrant().admin
+        && request.resource.data.isAdmin == emailGrant().isAdmin
+        && request.resource.data.disabled == emailGrant().disabled;
+    }
+
+    function safeUserCreate(userId) {
+      return signedIn()
+        && userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && (
+          !('admin' in request.resource.data) || request.resource.data.admin == false || isBootstrapAdmin() || grantAllowsRequestedUserRole()
+        )
+        && (
+          !('isAdmin' in request.resource.data) || request.resource.data.isAdmin == false || isBootstrapAdmin() || grantAllowsRequestedUserRole()
+        )
+        && (
+          !('accessLevel' in request.resource.data) ||
+          request.resource.data.accessLevel in ['employee', 'foreman', 'supervisor'] ||
+          isBootstrapAdmin() ||
+          grantAllowsRequestedUserRole()
+        )
+        && (
+          !('role' in request.resource.data) ||
+          request.resource.data.role in ['employee', 'foreman', 'supervisor'] ||
+          isBootstrapAdmin() ||
+          grantAllowsRequestedUserRole()
+        );
+    }
+
+    function safeProjectCreate() {
+      return isOffice()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.memberUids is list
+        && request.resource.data.memberEmails is list
+        && request.auth.uid in request.resource.data.memberUids;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (isOffice() || userId == request.auth.uid || resource.data.uid == request.auth.uid);
+      allow create: if safeUserCreate(userId);
+      allow update: if signedIn() && (
+        isAdmin() ||
+        (
+          userId == request.auth.uid &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['name', 'phone', 'updatedAt'])
+        )
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /userAccessGrants/{emailId} {
+      allow get: if signedIn() && (isAdmin() || emailId == userEmail());
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /projects/{projectId} {
+      // Current app loads all projects and filters in the browser.
+      // Phase 2 hardening should change the app query to assigned project IDs, then this can become:
+      // allow read: if isProjectMember(resource.data);
+      allow read: if isStaff();
+      allow create: if safeProjectCreate();
+      allow update: if signedIn() && (
+        isOffice() ||
+        (
+          isProjectMember(resource.data) &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'documents',
+            'photos',
+            'extraTickets',
+            'warehouseItems',
+            'updatedAt',
+            'notes',
+            'notesUpdatedAt',
+            'notesUpdatedBy'
+          ])
+        )
+      );
+      allow delete: if isAdmin();
+
+      match /reports/{reportId} {
+        allow read: if isStaff();
+        allow create: if isStaff();
+        allow update, delete: if isOffice();
+      }
+
+      match /fieldForms/{formId} {
+        allow read: if isStaff();
+        allow create: if isStaff();
+        allow update: if isOffice() || (
+          isStaff() &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'documentData',
+            'updatedAt',
+            'updatedBy',
+            'updatedByName'
+          ])
+        );
+        allow delete: if isAdmin();
+      }
+    }
+
+    match /employees/{employeeId} {
+      allow read: if isOffice();
+      allow create, update: if isOffice();
+      allow delete: if isAdmin();
+    }
+
+    match /newHireIntakes/{intakeId} {
+      // Public intake links are unguessable IDs. Public users can only get/create/update a known packet.
+      // Listing all intakes is office-only.
+      allow get: if isOffice() || true;
+      allow list: if isOffice();
+      allow create: if isOffice() || (
+        request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted'] &&
+        request.resource.data.keys().hasOnly([
+          'name',
+          'phone',
+          'email',
+          'trade',
+          'projectId',
+          'projectName',
+          'foreman',
+          'required',
+          'notes',
+          'status',
+          'createdAt',
+          'createdBy',
+          'createdByName',
+          'intakeLink',
+          'updatedAt',
+          'publicSubmittedAt',
+          'orientationForm',
+          'drugConsentForm',
+          'safetyAgreementForm',
+          'certFiles',
+          'payrollIdFiles',
+          'emergencyName',
+          'emergencyPhone',
+          'finalSubmittedAt'
+        ])
+      );
+      allow update: if isOffice() || (
+        request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted'] &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'name',
+          'phone',
+          'email',
+          'trade',
+          'notes',
+          'status',
+          'updatedAt',
+          'publicSubmittedAt',
+          'orientationForm',
+          'drugConsentForm',
+          'safetyAgreementForm',
+          'certFiles',
+          'payrollIdFiles',
+          'emergencyName',
+          'emergencyPhone',
+          'finalSubmittedAt'
+        ])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Public GC ticket signing should move here or to a Cloud Function.
+    // Do not allow unauthenticated users to update /projects/{projectId} directly in production rules.
+    match /publicTicketSignatures/{signatureId} {
+      allow read, write: if false;
+    }
+
+    match /auditLogs/{logId} {
+      allow read: if isOffice();
+      allow create: if signedIn();
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

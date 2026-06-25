@@ -1254,6 +1254,21 @@
     .report-field .k { display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.35px; margin-bottom:6px; }
     .report-field .v { font-size:14px; color:var(--text); white-space:pre-line; }
     .admin-only.hidden-by-role, .foreman-only.hidden-by-role { display:none !important; }
+    .owner-only.hidden-by-role { display:none !important; }
+    .access-toolbar { display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+    .access-list { display:grid; gap:10px; }
+    .access-invite-panel { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; box-shadow:0 4px 14px rgba(16,24,40,.04); }
+    .access-invite-panel h3 { margin:0 0 8px; color:var(--navy); font-size:16px; }
+    .access-invite-row { display:grid; grid-template-columns:1.4fr 180px 140px; gap:10px; align-items:end; }
+    .access-row { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; display:grid; grid-template-columns:1fr 210px 120px; gap:12px; align-items:center; box-shadow:0 4px 14px rgba(16,24,40,.04); }
+    .access-person h4 { margin:0 0 3px; color:var(--navy); font-size:15px; }
+    .access-person p { margin:0; color:var(--muted); font-size:12px; line-height:1.4; }
+    .access-role-badge { display:inline-flex; align-items:center; justify-content:center; min-height:28px; border-radius:999px; padding:4px 10px; font-size:12px; font-weight:900; background:#eef4fa; color:var(--navy); }
+    .access-role-badge.admin { background:#ede9fe; color:#5b21b6; }
+    .access-role-badge.office { background:#dbeafe; color:#1d4ed8; }
+    .access-role-badge.field { background:#dcfce7; color:#166534; }
+    .access-role-badge.disabled { background:#fee2e2; color:#991b1b; }
+    @media(max-width:760px){ .access-row, .access-invite-row { grid-template-columns:1fr; } .access-row .inline-select, .access-row .btn-sm, .access-invite-row .inline-select, .access-invite-row .btn-sm { width:100%; min-height:44px; } }
 
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
@@ -1508,7 +1523,8 @@
       <div class="field">
         <label>Role</label>
         <select id="reg-role" style="border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:15px;outline:none;width:100%;background:white;">
-          <option value="foreman">Foreman / Field</option>
+          <option value="employee">Employee / Intake Only</option>
+          <option value="foreman">Foreman</option>
           <option value="office">Office / Project Manager</option>
           <option value="admin">Admin / Owner</option>
         </select>
@@ -1704,6 +1720,7 @@
       <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
+      <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-user-access', this)">User Access</button>
     </div>
 
     <div class="tab-pane active" id="main-projects">
@@ -1865,8 +1882,8 @@
           <button class="btn-secondary" type="button" onclick="closeForemanToolAndReturn()">Back / Close</button>
           <button class="btn-save" type="button" id="save-manual-safety-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
       </div>
       </div>
@@ -1941,8 +1958,8 @@
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-ai-safety-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
         <div class="ai-safety-note">Foreman must review and edit the generated text before presenting it to the crew. Employee phone sign-in links can be added in a later patch.</div>
       </div>
@@ -1973,8 +1990,8 @@
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-manual-report-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
       </div>
       </div>
@@ -2009,8 +2026,8 @@
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-ai-report-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Share</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
         <div class="ai-safety-note">AI assisted report text is a starting point only. Foreman must review and edit before saving.</div>
       </div>
@@ -2043,8 +2060,8 @@
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-daily-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
       </div>
       </div>
@@ -2078,8 +2095,8 @@
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-weekly-payroll-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
       </div>
       </div>
@@ -2116,8 +2133,8 @@
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-expense-report-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
-          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareForemanTool()">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
       </div>
       </div>
@@ -2283,6 +2300,51 @@
         </select>
       </div>
       <div id="warehouse-list-main"><p style="color:var(--muted);font-size:14px;">Click Warehouse to load equipment records.</p></div>
+      <div class="doc-review-box" style="margin-top:18px;">
+        <h4>Future Warehouse Flow</h4>
+        <p>This tab can become a major connection point between the field and the warehouse. The future version could handle material and equipment requests, returns from the jobsite, and QR-code scanning for each movement: leaving the warehouse, arriving on site, leaving the site, and returning back to the warehouse.</p>
+        <p>That same flow could track larger equipment, gang boxes, PPE, gloves, glasses, and other supplies so the warehouse, supervisors, and foremen all know what was sent, where it is, what is being used, and what needs to come back. Built out properly, this would make the warehouse process faster, cleaner, and much easier to manage as the company grows.</p>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="main-user-access">
+      <div class="page-header">
+        <h2>User Access</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadUserAccessPanel(true)">Refresh</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Review accounts created through PAL Safety Hub and assign the correct access level. Employee / Intake Only users can use public intake links, but cannot open the signed-in project dashboard. Disabled users have no working app access.</div>
+      <div class="access-invite-panel">
+        <h3>Pre-Authorize Email</h3>
+        <div class="helper-text" style="margin-bottom:10px;">Add an email before the person creates an account. When they sign up with that email, PAL Safety Hub will apply this access level.</div>
+        <div class="access-invite-row">
+          <div class="field" style="margin:0;">
+            <label>Email</label>
+            <input id="access-grant-email" type="email" placeholder="person@palcorp.com" />
+          </div>
+          <div class="field" style="margin:0;">
+            <label>Access</label>
+            <select id="access-grant-role" class="inline-select">
+              <option value="employee">Employee / Intake Only</option>
+              <option value="foreman">Foreman</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="office">Office</option>
+              <option value="admin">Admin</option>
+              <option value="disabled">Disabled</option>
+            </select>
+          </div>
+          <button class="btn-sm" type="button" onclick="saveEmailAccessGrant()">Save Access</button>
+        </div>
+      </div>
+      <div class="access-toolbar">
+        <div class="search-row" style="margin:0;flex:1;min-width:260px;">
+          <input class="search-input" id="user-access-search" type="search" placeholder="Search by name, email, or role..." oninput="renderUserAccessList()" />
+          <button class="btn-outline" type="button" onclick="clearUserAccessSearch()">Clear</button>
+        </div>
+        <div class="loaded-stamp" id="user-access-stamp"></div>
+      </div>
+      <div id="user-access-list"><p style="color:var(--muted);font-size:14px;">Open User Access to load account records.</p></div>
     </div>
   </div>
 </div>
@@ -2824,8 +2886,8 @@
 
 
 <!-- EXTRA WORK TICKET MODAL -->
-<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="GC Signed">GC Signed</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-outline" type="button" onclick="downloadCurrentTicketDraft()">Save as File</button><button class="btn-outline" type="button" onclick="printCurrentTicketDraft()">Print</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
-<div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-outline" onclick="copyGcSignatureLink()">Copy GC Signature Link</button><button class="btn-outline" onclick="openGcSignatureLinkModal()">GC Signature Options</button><button class="btn-save" onclick="printTicketDetail()">Print / Save as File</button></div></div></div>
+<div class="modal-overlay" id="modal-extra-ticket"><div class="modal" style="max-width:980px;"><h3>PAL Daily Extra Work Order</h3><div class="ticket-paper"><div class="ticket-top"><div class="ticket-logo-box">PAL<small>ENVIRONMENTAL SERVICES</small></div><div class="ticket-title">Daily Extra Work Order</div><div class="ticket-no-box"><label>Ticket No.</label><input id="ticket-number" placeholder="Ticket #" /></div></div><div class="ticket-line-grid"><div class="cell wide"><label>Link to Project / Jobsite</label><select id="ticket-project-select"></select></div><div class="cell"><label>Date</label><input type="date" id="ticket-date" /></div><div class="cell"><label>Status</label><select id="ticket-status"><option value="Submitted">Submitted</option><option value="Office Review">Office Review</option><option value="Priced">Priced</option><option value="GC Signed">GC Signed</option><option value="Approved">Approved</option></select></div><div class="cell"><label>PAL Job No.</label><input type="text" id="ticket-job-number" placeholder="Auto from project" /></div><div class="cell wide"><label>Contractor / Authorized By</label><input type="text" id="ticket-authorized-by" placeholder="GC / contractor name" /></div><div class="cell"><label>Location / Floor</label><input type="text" id="ticket-location" placeholder="Floor / area" /></div><div class="cell"><label>Work Type</label><input type="text" id="ticket-work-type" placeholder="Fireproofing / Demo / Asbestos" /></div></div><div id="ticket-pricing-lock-note" class="pricing-lock-note">Field users fill the work details. Final pricing is completed by the office.</div><label>Authorization to proceed / Description of extra work</label><textarea id="ticket-description" rows="4" placeholder="Describe the extra work, location, reason, direction received, and scope performed..."></textarea><div class="ticket-section-head">Labor / Time</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Employee / Classification</th><th>Trade</th><th>ST Hrs</th><th>OT Hrs</th><th>DT Hrs</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-labor-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketLaborRow()">+ Add Labor Row</button></div><div class="ticket-section-head">Material</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty</th><th>Unit</th><th>Description</th><th>Unit Cost <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-material-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketMaterialRow()">+ Add Material Row</button></div><div class="ticket-section-head">Equipment Rental / Trucking</div><div class="ticket-table-wrap"><table class="ticket-table"><thead><tr><th>Qty / Days</th><th>Description</th><th>Rate <span class="pricing-locked-label">Office</span></th><th>Total</th><th></th></tr></thead><tbody id="ticket-equipment-rows"></tbody></table></div><div class="ticket-actions-inline"><button type="button" class="btn-secondary" onclick="addTicketEquipmentRow()">+ Add Equipment Row</button></div><div class="ticket-summary"><div><label>Notes</label><textarea id="ticket-notes" rows="5" placeholder="Optional notes..."></textarea><div class="ticket-sign-grid"><div class="ticket-sign-box"><label>Contractor Signature</label><canvas id="ticket-contractor-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-contractor-signature')">Clear</button></div><div class="ticket-sign-box"><label>PAL Accepted By</label><canvas id="ticket-pal-signature"></canvas><button type="button" class="btn-sm" onclick="clearTicketSignature('ticket-pal-signature')">Clear</button></div></div></div><div class="ticket-total-box"><div class="ticket-total-row"><span>Labor Total</span><input id="ticket-labor-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Material Total</span><input id="ticket-material-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Equipment / Rental</span><input id="ticket-equipment-total" readonly value="$0.00" /></div><div class="ticket-total-row"><span>Bond / Insurance</span><input type="number" step="0.01" id="ticket-bond-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Tax</span><input type="number" step="0.01" id="ticket-tax-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row"><span>Other / Markup</span><input type="number" step="0.01" id="ticket-other-total" oninput="updateTicketGrandTotal()" placeholder="0.00" /></div><div class="ticket-total-row ticket-grand-row"><span>Grand Total</span><input id="ticket-grand-total" readonly value="$0.00" /></div></div></div></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-extra-ticket')">Cancel</button><button class="btn-outline" type="button" onclick="downloadCurrentTicketDraft()">Save to Files</button><button class="btn-outline" type="button" onclick="printCurrentTicketDraft()">Print</button><button class="btn-save" id="save-ticket-btn" onclick="saveExtraWorkTicket()">Save Ticket</button></div></div></div>
+<div class="modal-overlay" id="modal-ticket-detail"><div class="modal" style="max-width:980px;"><h3>Extra Work Ticket Details</h3><div id="ticket-detail-grid"></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-ticket-detail')">Close</button><button class="btn-secondary" onclick="editSelectedTicket()">Edit Ticket</button><button class="btn-outline" onclick="copyGcSignatureLink()">Copy GC Signature Link</button><button class="btn-outline" onclick="openGcSignatureLinkModal()">GC Signature Options</button><button class="btn-outline" onclick="downloadTicketDetail()">Save to Files</button><button class="btn-save" onclick="printTicketDetail()">Print / PDF</button></div></div></div>
 <div class="modal-overlay" id="modal-gc-signature-link"><div class="modal" style="max-width:720px;"><h3>Send GC Signature Link</h3><p class="helper-text">This is a signature-only link. The GC can review this ticket and sign it, but they cannot access the project dashboard or edit PAL records.</p><div class="field"><label>Clickable Signature Link</label><a id="gc-signature-link-anchor" href="#" target="_blank" rel="noopener" style="display:block;word-break:break-all;color:var(--navy);font-weight:800;margin:6px 0 10px;">Signature link will appear here.</a><textarea id="gc-signature-link-text" readonly rows="4" style="width:100%;font-size:13px;"></textarea></div><div class="modal-actions"><button class="btn-secondary" onclick="closeModal('modal-gc-signature-link')">Close</button><button class="btn-outline" onclick="openGcSignatureLink()">Open Link</button><button class="btn-outline" onclick="copyGcSignatureLinkFromModal()">Copy Link</button><button class="btn-outline" onclick="textGcSignatureLink()">Text Link</button><button class="btn-save" onclick="emailGcSignatureLink()">Email Link</button></div></div></div>
 
 
@@ -3278,11 +3340,13 @@
   const storage = getStorage(app);
   const PAL_PUBLIC_PROJECTS_URL = 'https://pennjohn12.github.io/PAL-SAFETY-HUB/projects.html';
   const PAL_ADMIN_EMAILS = [
+    'jvpanettiere@gmail.com',
+    'jvpanettiere@outlook.com',
+    'adilorenzo@palcorp.com',
     'jpanettiere@palcorp.com',
     'john.panettiere@palcorp.com',
     'pennj@palcorp.com'
   ];
-  const PAL_ADMIN_NAMES = ['john panettiere', 'pennj'];
 
   //  State 
   let currentUser = null;
@@ -3292,6 +3356,8 @@
   let currentEmployeeId = null;
   let currentCertificationUploadedAt = null;
   let allEmployees = [];
+  let allUserProfiles = [];
+  let allEmailAccessGrants = [];
   let expandedEmployeeCardId = '';
   let allProjects = [];
   let projectAlphaFilter = 'all';
@@ -3401,6 +3467,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.editFieldFormDailySafety = editFieldFormDailySafety;
   window.printFieldFormSafetySheet = printFieldFormSafetySheet;
   window.shareFieldFormSafetySheet = shareFieldFormSafetySheet;
+  window.saveFieldFormDocumentToFiles = saveFieldFormDocumentToFiles;
   window.refreshAiSafetyProjectOptions = refreshAiSafetyProjectOptions;
   window.syncManualSafetyProjectFields = syncManualSafetyProjectFields;
   window.fillAiSafetyExample = fillAiSafetyExample;
@@ -3502,6 +3569,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.renderMainTickets = renderMainTickets;
   window.openTicketDetail = openTicketDetail;
   window.printTicketDetail = printTicketDetail;
+  window.downloadTicketDetail = downloadTicketDetail;
   window.printCurrentTicketDraft = printCurrentTicketDraft;
   window.downloadCurrentTicketDraft = downloadCurrentTicketDraft;
   window.copyGcSignatureLink = copyGcSignatureLink;
@@ -3520,6 +3588,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openWarehouseItemDetail = openWarehouseItemDetail;
   window.editSelectedTicket = editSelectedTicket;
   window.loadWorkforceStatusDashboard = loadWorkforceStatusDashboard;
+  window.loadUserAccessPanel = loadUserAccessPanel;
+  window.renderUserAccessList = renderUserAccessList;
+  window.clearUserAccessSearch = clearUserAccessSearch;
+  window.saveEmailAccessGrant = saveEmailAccessGrant;
+  window.saveExistingEmailAccessGrant = saveExistingEmailAccessGrant;
+  window.saveUserAccessRole = saveUserAccessRole;
 
   //  Auth state 
   onAuthStateChanged(auth, async user => {
@@ -3543,7 +3617,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (user) {
       currentUser = user;
       updateUserUI(user);
-      currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' };
+      currentUserProfile = { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'employee', accessLevel: 'employee' };
       try {
         const profile = await loadUserProfile(user);
         if (profile) currentUserProfile = profile;
@@ -3551,8 +3625,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         console.error('Falling back to basic user profile', e);
       }
       applyRoleUI();
-      showView('view-projects');
-      loadProjects();
+      if (isEmployeeOnlyRole()) {
+        showView('view-login');
+        toast('This account is Employee / Intake Only. Use the intake link from PAL to complete documents.');
+      } else {
+        showView('view-projects');
+        loadProjects();
+      }
     } else {
       currentUser = null;
       currentUserProfile = null;
@@ -3575,23 +3654,91 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function loadUserProfile(user) {
     try {
+      const directSnap = await getDoc(doc(db, 'users', user.uid));
+      if (directSnap.exists()) return await normalizeAccessProfile(user, { id: user.uid, ...directSnap.data() });
+
       const q = query(collection(db, 'users'), where('uid', '==', user.uid), limit(1));
       const snap = await getDocs(q);
-      if (!snap.empty) return await normalizeAccessProfile(user, { id: snap.docs[0].id, ...snap.docs[0].data() });
+      if (!snap.empty) {
+        const legacyProfile = { id: snap.docs[0].id, ...snap.docs[0].data() };
+        try {
+          await setDoc(doc(db, 'users', user.uid), {
+            ...legacyProfile,
+            uid: user.uid,
+            email: legacyProfile.email || user.email,
+            name: legacyProfile.name || user.displayName || user.email,
+            migratedFromLegacyProfileId: legacyProfile.id,
+            migratedAt: serverTimestamp()
+          }, { merge: true });
+          return await normalizeAccessProfile(user, { ...legacyProfile, id: user.uid });
+        } catch (migrateErr) {
+          console.warn('Could not migrate user profile to uid document', migrateErr);
+          return await normalizeAccessProfile(user, legacyProfile);
+        }
+      }
+      const grantedProfile = await applyEmailAccessGrant(user, { uid: user.uid, email: user.email, name: user.displayName || user.email });
+      if (grantedProfile) return await normalizeAccessProfile(user, grantedProfile);
     } catch (e) {
       console.error('Could not load user profile', e);
     }
-    return await normalizeAccessProfile(user, { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'foreman' });
+    return await normalizeAccessProfile(user, { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'employee', accessLevel: 'employee' });
   }
 
   function cleanAccessText(value) {
     return String(value || '').trim().toLowerCase();
   }
 
+  function accessGrantIdForEmail(email) {
+    return cleanAccessText(email).replace(/\//g, '_');
+  }
+
+  function rolePayloadForAccess(access) {
+    const key = cleanAccessText(access);
+    const rolePayloads = {
+      employee: { role: 'employee', accessLevel: 'employee', admin: false, isAdmin: false, disabled: false },
+      foreman: { role: 'foreman', accessLevel: 'foreman', admin: false, isAdmin: false, disabled: false },
+      supervisor: { role: 'supervisor', accessLevel: 'supervisor', admin: false, isAdmin: false, disabled: false },
+      office: { role: 'office', accessLevel: 'office', admin: false, isAdmin: false, disabled: false },
+      admin: { role: 'admin', accessLevel: 'admin', admin: true, isAdmin: true, disabled: false },
+      disabled: { role: 'disabled', accessLevel: 'disabled', admin: false, isAdmin: false, disabled: true }
+    };
+    return rolePayloads[key] || rolePayloads.foreman;
+  }
+
+  async function loadEmailAccessGrant(email) {
+    const normalizedEmail = cleanAccessText(email);
+    if (!normalizedEmail) return null;
+    try {
+      const snap = await getDoc(doc(db, 'userAccessGrants', accessGrantIdForEmail(normalizedEmail)));
+      if (!snap.exists()) return null;
+      const grant = snap.data() || {};
+      return grant.email && cleanAccessText(grant.email) === normalizedEmail ? { id: snap.id, ...grant } : null;
+    } catch (e) {
+      console.warn('Could not load email access grant', e);
+      return null;
+    }
+  }
+
+  async function applyEmailAccessGrant(user, baseProfile = {}) {
+    const grant = await loadEmailAccessGrant(user?.email);
+    if (!grant) return null;
+    const payload = {
+      ...rolePayloadForAccess(grant.role || grant.accessLevel),
+      uid: user.uid,
+      email: cleanAccessText(user.email),
+      name: baseProfile.name || user.displayName || user.email,
+      accessGrantId: grant.id,
+      accessGrantAppliedAt: serverTimestamp(),
+      accessUpdatedBy: grant.createdBy || grant.accessUpdatedBy || '',
+      accessUpdatedByName: grant.createdByName || grant.accessUpdatedByName || ''
+    };
+    await setDoc(doc(db, 'users', user.uid), payload, { merge: true });
+    return { id: user.uid, ...baseProfile, ...payload };
+  }
+
   function isKnownAdminProfile(profile = currentUserProfile) {
     const email = cleanAccessText(profile?.email || currentUser?.email);
-    const name = cleanAccessText(profile?.name || currentUser?.displayName);
-    return PAL_ADMIN_EMAILS.includes(email) || PAL_ADMIN_NAMES.includes(name);
+    return PAL_ADMIN_EMAILS.includes(email);
   }
 
   async function normalizeAccessProfile(user, profile) {
@@ -3599,25 +3746,22 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       uid: profile?.uid || user.uid,
       email: profile?.email || user.email,
       name: profile?.name || user.displayName || user.email,
-      role: profile?.role || 'foreman',
+      role: profile?.role || 'employee',
+      accessLevel: profile?.accessLevel || 'employee',
       ...profile
     };
     if (!isKnownAdminProfile(merged)) return merged;
     const adminProfile = { ...merged, role: 'admin', admin: true, accessLevel: 'admin' };
     try {
       const payload = { role: 'admin', admin: true, accessLevel: 'admin', updatedAt: serverTimestamp() };
-      if (adminProfile.id) {
-        await updateDoc(doc(db, 'users', adminProfile.id), payload);
-      } else {
-        const created = await addDoc(collection(db, 'users'), {
-          uid: user.uid,
-          email: user.email,
-          name: user.displayName || user.email,
-          ...payload,
-          createdAt: serverTimestamp()
-        });
-        adminProfile.id = created.id;
-      }
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName || user.email,
+        ...payload,
+        createdAt: adminProfile.createdAt || serverTimestamp()
+      }, { merge: true });
+      adminProfile.id = user.uid;
     } catch (e) {
       console.warn('Could not persist admin access profile', e);
     }
@@ -3634,10 +3778,39 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       || isKnownAdminProfile();
   }
 
+  function isAdminRole(profile = currentUserProfile) {
+    const role = cleanAccessText(profile?.role);
+    const accessLevel = cleanAccessText(profile?.accessLevel);
+    return ['admin', 'administrator', 'owner'].includes(role)
+      || ['admin', 'owner'].includes(accessLevel)
+      || profile?.admin === true
+      || profile?.isAdmin === true
+      || isKnownAdminProfile(profile);
+  }
+
+  function isDisabledRole(profile = currentUserProfile) {
+    return profile?.disabled === true
+      || cleanAccessText(profile?.role) === 'disabled'
+      || cleanAccessText(profile?.accessLevel) === 'disabled';
+  }
+
+  function isEmployeeOnlyRole(profile = currentUserProfile) {
+    const role = cleanAccessText(profile?.role);
+    const accessLevel = cleanAccessText(profile?.accessLevel);
+    return !isOfficeRole()
+      && !isAdminRole(profile)
+      && (role === 'employee' || accessLevel === 'employee' || role === 'intake' || accessLevel === 'intake');
+  }
+
   function applyRoleUI() {
     const office = isOfficeRole();
+    const admin = isAdminRole();
     document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden-by-role', !office));
     document.querySelectorAll('.foreman-only').forEach(el => el.classList.toggle('hidden-by-role', office));
+    document.querySelectorAll('.owner-only').forEach(el => el.classList.toggle('hidden-by-role', !admin));
+    if (!admin && document.getElementById('main-user-access')?.classList.contains('active')) {
+      switchMainTab('main-projects');
+    }
   }
 
   //  AUTH FUNCTIONS 
@@ -3678,7 +3851,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       // Hard laptop/browser fallback: do not wait only on onAuthStateChanged.
       currentUser = cred.user;
       updateUserUI(cred.user);
-      currentUserProfile = { uid: cred.user.uid, email: cred.user.email, name: cred.user.displayName || cred.user.email, role: 'foreman' };
+      currentUserProfile = { uid: cred.user.uid, email: cred.user.email, name: cred.user.displayName || cred.user.email, role: 'employee', accessLevel: 'employee' };
       try {
         const profile = await Promise.race([
           loadUserProfile(cred.user),
@@ -3689,8 +3862,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         console.warn('Login worked, profile load failed. Continuing with basic profile.', profileErr);
       }
       applyRoleUI();
-      showView('view-projects');
-      loadProjects();
+      if (isEmployeeOnlyRole()) {
+        showView('view-login');
+        toast('This account is Employee / Intake Only. Use the intake link from PAL to complete documents.');
+      } else {
+        showView('view-projects');
+        loadProjects();
+      }
 
       if (btn) {
         btn.disabled = false;
@@ -3715,27 +3893,40 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function doRegister() {
     const name = document.getElementById('reg-name').value.trim();
-    const role = document.getElementById('reg-role').value;
+    const requestedRole = document.getElementById('reg-role').value;
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
     const btn = document.getElementById('reg-btn');
     const errEl = document.getElementById('reg-error');
     errEl.classList.remove('show');
     if (!name || !email || !password) { showError(errEl, 'Please fill in all fields.'); return; }
+    const normalizedEmail = cleanAccessText(email);
+    const elevatedRoleRequested = ['office', 'admin', 'administrator', 'owner'].includes(cleanAccessText(requestedRole));
+    if (elevatedRoleRequested && !PAL_ADMIN_EMAILS.includes(normalizedEmail)) {
+      showError(errEl, 'Office/Admin access has to be assigned by an admin. If your email was pre-approved, choose Employee / Intake Only here and the app will apply your saved access after signup.');
+      return;
+    }
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>';
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
-      // Save user profile to Firestore
-      const adminRole = ['admin', 'administrator', 'owner'].includes(cleanAccessText(role));
-      await addDoc(collection(db, 'users'), {
+      const adminRole = ['admin', 'administrator', 'owner'].includes(cleanAccessText(requestedRole)) && PAL_ADMIN_EMAILS.includes(normalizedEmail);
+      const role = adminRole ? 'admin' : 'employee';
+      const grant = await loadEmailAccessGrant(normalizedEmail);
+      const grantedPayload = grant ? rolePayloadForAccess(grant.role || grant.accessLevel) : null;
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        ...(grantedPayload || {
+          role,
+          admin: adminRole,
+          accessLevel: adminRole ? 'admin' : 'employee',
+          disabled: false
+        }),
         uid: cred.user.uid,
         name,
-        email,
-        role,
-        admin: adminRole,
-        accessLevel: adminRole ? 'admin' : role,
+        email: normalizedEmail || email,
+        accessGrantId: grant?.id || '',
+        accessGrantAppliedAt: grant ? serverTimestamp() : null,
         createdAt: serverTimestamp()
       });
       toast(`Welcome, ${name}! `);
@@ -3772,12 +3963,73 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function canUserAccessProject(project) {
     if (!project || !currentUser) return false;
+    if (isDisabledRole()) return false;
     if (isOfficeRole()) return true;
     const foremen = Array.isArray(project.foremen) ? project.foremen : [];
     const email = (currentUser.email || '').toLowerCase();
+    const memberUids = Array.isArray(project.memberUids) ? project.memberUids : [];
+    const memberEmails = Array.isArray(project.memberEmails) ? project.memberEmails.map(cleanAccessText) : [];
+    const foremanUids = Array.isArray(project.foremanUids) ? project.foremanUids : [];
+    const foremanEmails = Array.isArray(project.foremanEmails) ? project.foremanEmails.map(cleanAccessText) : [];
     return project.createdBy === currentUser.uid
+      || memberUids.includes(currentUser.uid)
+      || memberEmails.includes(email)
+      || foremanUids.includes(currentUser.uid)
+      || foremanEmails.includes(email)
       || foremen.some(f => f.uid && f.uid === currentUser.uid)
       || foremen.some(f => (f.email || '').toLowerCase() === email);
+  }
+
+  function uniqueCleanList(values = []) {
+    return [...new Set(values.map(v => String(v || '').trim()).filter(Boolean))];
+  }
+
+  function uniqueEmailList(values = []) {
+    return uniqueCleanList(values.map(cleanAccessText)).filter(Boolean);
+  }
+
+  function buildProjectAccessFields(foremen = []) {
+    const existingForemen = Array.isArray(foremen) ? foremen : [];
+    const foremanUids = uniqueCleanList(existingForemen.map(f => f.uid));
+    const foremanEmails = uniqueEmailList(existingForemen.map(f => f.email));
+    const memberUids = uniqueCleanList([currentUser?.uid, ...foremanUids]);
+    const memberEmails = uniqueEmailList([currentUser?.email, ...foremanEmails]);
+    return { memberUids, memberEmails, foremanUids, foremanEmails };
+  }
+
+  function buildProjectAccessFieldsFromProject(project = {}) {
+    const existingForemen = Array.isArray(project.foremen) ? project.foremen : [];
+    const foremanUids = uniqueCleanList(existingForemen.map(f => f.uid));
+    const foremanEmails = uniqueEmailList(existingForemen.map(f => f.email));
+    const creatorEmail = project.createdByEmail || (project.createdBy === currentUser?.uid ? currentUser?.email : '');
+    return {
+      memberUids: uniqueCleanList([project.createdBy, ...foremanUids]),
+      memberEmails: uniqueEmailList([creatorEmail, ...foremanEmails]),
+      foremanUids,
+      foremanEmails
+    };
+  }
+
+  function projectNeedsAccessBackfill(project = {}) {
+    return !Array.isArray(project.memberUids)
+      || !Array.isArray(project.memberEmails)
+      || !Array.isArray(project.foremanUids)
+      || !Array.isArray(project.foremanEmails);
+  }
+
+  async function backfillProjectAccessFields(project) {
+    if (!isOfficeRole() || !project?.id || !projectNeedsAccessBackfill(project)) return;
+    try {
+      await updateDoc(doc(db, 'projects', project.id), {
+        ...buildProjectAccessFieldsFromProject(project),
+        createdByEmail: project.createdByEmail || (project.createdBy === currentUser?.uid ? cleanAccessText(currentUser?.email) : ''),
+        accessBackfilledAt: serverTimestamp(),
+        accessUpdatedAt: serverTimestamp(),
+        accessUpdatedBy: currentUser?.uid || ''
+      });
+    } catch (e) {
+      console.warn('Could not backfill project access fields', project.id, e);
+    }
   }
 
   function setProjectAlphaFilter(letter) {
@@ -3866,6 +4118,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     unsubProjects = onSnapshot(q, snap => {
       const docs = [];
       snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
+      if (isOfficeRole()) docs.forEach(project => backfillProjectAccessFields(project));
       const filtered = docs.filter(p => {
         return canUserAccessProject(p);
       });
@@ -3911,6 +4164,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById('save-project-btn');
     btn.disabled = true; btn.textContent = 'Saving...';
     try {
+      const accessFields = buildProjectAccessFields([]);
       await addDoc(collection(db, 'projects'), {
         name,
         jobNumber: document.getElementById('np-job').value.trim(),
@@ -3919,8 +4173,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         notes: document.getElementById('np-notes').value.trim(),
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
+        createdByEmail: cleanAccessText(currentUser.email),
         createdAt: serverTimestamp(),
         foremen: [],
+        ...accessFields,
+        accessUpdatedAt: serverTimestamp(),
+        accessUpdatedBy: currentUser.uid,
         documents: [],
         photos: [],
         reportCount: 0
@@ -5017,7 +5275,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const w = window.open(url, '_blank', 'noopener');
     if (!w) {
       URL.revokeObjectURL(url);
-      toast('Popup blocked. Use Save / Email File instead.');
+      toast('Popup blocked. Use Save to Files instead.');
       return;
     }
     setTimeout(() => URL.revokeObjectURL(url), 120000);
@@ -5026,31 +5284,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function shareOrDownloadSafetySheet(form) {
     const html = safetySheetDocumentHTML(form);
     const fileName = safetySheetFileName(form);
-    const blob = new Blob([html], { type: 'text/html' });
-    const title = form?.formTitle || 'PAL Daily Safety';
-    try {
-      if (typeof File !== 'undefined') {
-        const file = new File([blob], fileName, { type: 'text/html' });
-        if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-          await navigator.share({
-            title,
-            files: [file]
-          });
-          return;
-        }
-      }
-    } catch (e) {
-      if (e?.name === 'AbortError') return;
-    }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-    toast('Safety sheet file downloaded.');
+    downloadHtmlDocument(fileName, html, 'Safety sheet saved to files.');
   }
 
   const safeForemanExportTools = [
@@ -5096,6 +5330,19 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>
         <tbody>${body}</tbody>
       </table>`;
+  }
+
+  function downloadHtmlDocument(fileName, html, successMessage = 'File saved to device.') {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast(successMessage);
   }
 
   function foremanExportCSS() {
@@ -5297,6 +5544,107 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return null;
   }
 
+  function savedPayrollExpenseExportDocument(form) {
+    const data = form?.documentData || {};
+    const projectName = form?.projectName || currentProject?.name || 'Project';
+    if (form?.formKey === 'daily-payroll') {
+      const title = 'PAL Daily Payroll';
+      return {
+        title,
+        fileName: `pal-daily-payroll-${exportSlug(projectName)}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Daily worker time sheet',
+          meta: `Project: ${esc(projectName)}<br>Job: ${esc(data.jobNumber || form.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project', projectName],
+            ['Job Number', data.jobNumber || form.jobNumber || ''],
+            ['Date', data.date],
+            ['Foreman / Supervisor', data.foreman],
+            ['Week Of', data.weekOf],
+            ['Job Address', data.address],
+            ['Regular Hours', data.totals?.regularHours ? Number(data.totals.regularHours).toFixed(2) : '0.00'],
+            ['Overtime Hours', data.totals?.overtimeHours ? Number(data.totals.overtimeHours).toFixed(2) : '0.00'],
+            ['Total Hours', data.totals?.totalHours ? Number(data.totals.totalHours).toFixed(2) : '0.00'],
+            ['Printed Name', data.printedName],
+            ['Date Signed', data.dateSigned],
+            ['Signature', data.signature]
+          ],
+          tables: [{
+            title: 'Worker Hours',
+            headers: ['#', 'Worker', 'LU #', 'Role', 'Time In', 'Time Out', 'Reg', 'OT', 'Total'],
+            rows: data.rows || [],
+            columns: ['row', 'workerName', 'luNumber', 'role', 'timeIn', 'timeOut', 'regularHours', 'overtimeHours', 'totalHours']
+          }]
+        })
+      };
+    }
+    if (form?.formKey === 'weekly-payroll') {
+      const title = 'PAL Weekly Payroll';
+      return {
+        title,
+        fileName: `pal-weekly-payroll-${exportSlug(projectName)}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Weekly fireproofing payroll sheet',
+          meta: `Project: ${esc(projectName)}<br>Job: ${esc(data.jobNumber || form.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project', projectName],
+            ['Page #', data.page],
+            ['Date', data.date],
+            ['Job Number', data.jobNumber || form.jobNumber || ''],
+            ['Supervisor', data.supervisor],
+            ['Week Of', data.weekOf],
+            ['Location', data.location],
+            ['Regular Hours', data.totals?.regularHours ? Number(data.totals.regularHours).toFixed(2) : '0.00'],
+            ['Overtime Hours', data.totals?.overtimeHours ? Number(data.totals.overtimeHours).toFixed(2) : '0.00'],
+            ['Total Hours', data.totals?.totalHours ? Number(data.totals.totalHours).toFixed(2) : '0.00']
+          ],
+          tables: [{
+            title: 'Weekly Hours',
+            headers: ['LU #', 'Worker', 'Last 4 SSN', 'Cost Code', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Reg', 'OT', 'Total'],
+            rows: data.rows || [],
+            columns: ['luNumber', 'workerName', 'ssnLast4', 'costCode', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'regularHours', 'overtimeHours', 'totalHours']
+          }]
+        })
+      };
+    }
+    if (form?.formKey === 'expense-report') {
+      const title = 'PAL Expense Report';
+      return {
+        title,
+        fileName: `pal-expense-report-${exportSlug(projectName || data.employeeName)}-${exportSlug(data.reportDate || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Expense report',
+          meta: `Project: ${esc(projectName)}<br>Employee: ${esc(data.employeeName || '')}<br>Date: ${esc(data.reportDate || '')}`,
+          fields: [
+            ['Project', projectName],
+            ['Employee', data.employeeName],
+            ['Report Date', data.reportDate],
+            ['Purpose', data.purpose],
+            ['Account #', data.account],
+            ['Trip Start', data.tripStart],
+            ['Trip End', data.tripEnd],
+            ['Total Reported', `$${data.totalReported || '0.00'}`],
+            ['Cash Advance', `$${data.cashAdvance || '0.00'}`],
+            ['Total Due Employee', `$${data.totalDue || '0.00'}`],
+            ['Approver', data.approver],
+            ['Date Signed', data.dateSigned],
+            ['Signature', data.signature]
+          ],
+          tables: [{
+            title: 'Expenses',
+            headers: ['Description', 'Date', 'Category', 'Amount'],
+            rows: data.rows || [],
+            columns: ['description', 'date', 'category', 'amount']
+          }]
+        })
+      };
+    }
+    return null;
+  }
+
   function openForemanExportFileWindow(doc) {
     if (!doc) return toast('Open a supported foreman tool first.');
     const blob = new Blob([doc.html], { type: 'text/html' });
@@ -5304,7 +5652,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const w = window.open(url, '_blank', 'noopener');
     if (!w) {
       URL.revokeObjectURL(url);
-      toast('Popup blocked. Use Save / Email File instead.');
+      toast('Popup blocked. Use Save to Files instead.');
       return;
     }
     setTimeout(() => URL.revokeObjectURL(url), 120000);
@@ -5312,27 +5660,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function shareOrDownloadForemanExport(doc) {
     if (!doc) return toast('Open a supported foreman tool first.');
-    const blob = new Blob([doc.html], { type: 'text/html' });
-    try {
-      if (typeof File !== 'undefined') {
-        const file = new File([blob], doc.fileName, { type: 'text/html' });
-        if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-          await navigator.share({ title: doc.title, files: [file] });
-          return;
-        }
-      }
-    } catch (e) {
-      if (e?.name === 'AbortError') return;
-    }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = doc.fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-    toast('Document file downloaded.');
+    downloadHtmlDocument(doc.fileName, doc.html, 'Document saved to files.');
   }
 
   function openForemanToolPrintWindow(autoPrint = false) {
@@ -5383,15 +5711,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       return shareOrDownloadForemanExport(currentForemanExportDocument());
     }
     const title = foremanToolTitles[activeForemanToolId] || 'PAL Foreman Tool';
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text: `${title} - PAL Safety Hub` });
-        return;
-      } catch (e) {
-        if (e?.name === 'AbortError') return;
-      }
-    }
-    openForemanToolPrintWindow(false);
+    const clone = cloneForemanToolForExport();
+    if (!clone) return toast('Open a foreman tool first.');
+    const styles = document.querySelector('style')?.innerHTML || '';
+    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>${styles}body{background:#fff;padding:18px}.header,.tabs,.modal-actions,.ai-safety-actions,.foreman-form-actions,button{display:none!important}.ai-safety-panel{max-width:980px;margin:0 auto}.foreman-tool-pane{display:block!important}</style></head><body>${clone.innerHTML}</body></html>`;
+    downloadHtmlDocument(`pal-${exportSlug(title)}-${todayISO()}.html`, html, 'Document saved to files.');
   }
 
   function fillAiSafetyExample() {
@@ -6289,8 +6613,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             <button class="btn-outline" type="button" onclick="addJhaCrewRow()">Add Crew Row</button>
             <button class="btn-save" type="button" id="save-jha-project-btn" onclick="submitJhaToProject()">Submit to Project</button>
             <button class="btn-outline" type="button" onclick="printJhaTemplate()">Print</button>
-            <button class="btn-outline" type="button" onclick="saveJhaTemplatePdf()">Save PDF</button>
-            <button class="btn-save" type="button" onclick="shareJhaTemplate()">Save / Email File</button>
+            <button class="btn-outline" type="button" onclick="saveJhaTemplatePdf()">Print / PDF</button>
+            <button class="btn-save" type="button" onclick="shareJhaTemplate()">Save to Files</button>
             <span class="helper-text" style="${officeOnlyStyle}">Office editing enabled.</span>
           </div>
         </div>
@@ -6409,7 +6733,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const w = window.open(url, '_blank', 'noopener');
     if (!w) {
       URL.revokeObjectURL(url);
-      toast('Popup blocked. Use Save / Email File instead.');
+      toast('Popup blocked. Use Save to Files instead.');
       return;
     }
     if (autoPrint) setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 500);
@@ -6427,27 +6751,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function shareJhaData(data) {
     const html = jhaDocumentHTML(data, data.templateTitle || 'PAL JHA');
     const fileName = jhaFileName(data);
-    const blob = new Blob([html], { type: 'text/html' });
-    try {
-      if (typeof File !== 'undefined') {
-        const file = new File([blob], fileName, { type: 'text/html' });
-        if (navigator.canShare?.({ files:[file] }) && navigator.share) {
-          await navigator.share({ title: data.templateTitle || 'PAL JHA', files:[file] });
-          return;
-        }
-      }
-    } catch(e) {
-      if (e?.name === 'AbortError') return;
-    }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-    toast('JHA file downloaded.');
+    downloadHtmlDocument(fileName, html, 'JHA saved to files.');
   }
 
   function shareJhaTemplate() {
@@ -7300,6 +7604,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return shareOrDownloadSafetySheet(form);
   }
 
+  function saveFieldFormDocumentToFiles(formId) {
+    const form = findProjectFieldForm(formId);
+    if (!form) return toast('Document not found. Refresh and try again.');
+    if (form.formKey === 'daily-safety-meeting' || form.formKey === 'ai-daily-safety') return shareOrDownloadSafetySheet(form);
+    if (String(form.formKey || '').startsWith('jha')) return shareProjectJha(formId);
+    const doc = savedPayrollExpenseExportDocument(form);
+    if (!doc) return toast('Save to Files is not ready for this document yet.');
+    downloadHtmlDocument(doc.fileName, doc.html, 'Document saved to files.');
+  }
+
   function openFieldFormDetail(formId) {
     const form = findProjectFieldForm(formId);
     if (!form) return;
@@ -7316,8 +7630,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
           <button class="btn-save" type="button" onclick="editFieldFormDailySafety('${form.id}')">Edit / Add Signatures</button>
           <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Print</button>
-          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareFieldFormSafetySheet('${form.id}')">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="saveFieldFormDocumentToFiles('${form.id}')">Save to Files</button>
         </div>
         ${dailySafetySheetDetailHTML(form)}`;
       document.getElementById('modal-report-detail').classList.add('open');
@@ -7341,8 +7655,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       grid.innerHTML = `
         <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
           <button class="btn-outline" type="button" onclick="printProjectJha('${form.id}')">Print</button>
-          <button class="btn-outline" type="button" onclick="printProjectJha('${form.id}')">Save PDF</button>
-          <button class="btn-save" type="button" onclick="shareProjectJha('${form.id}')">Save / Email File</button>
+          <button class="btn-outline" type="button" onclick="printProjectJha('${form.id}')">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="saveFieldFormDocumentToFiles('${form.id}')">Save to Files</button>
         </div>
         <div style="grid-column:1/-1;">${jhaPrintBody(data)}</div>`;
       document.getElementById('modal-report-detail').classList.add('open');
@@ -7350,7 +7664,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     if (['daily-payroll','weekly-payroll','expense-report'].includes(form.formKey)) {
       if (heading) heading.textContent = form.formTitle || 'Field Form Details';
-      grid.innerHTML = payrollExpenseDetailHTML(form);
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
+          <button class="btn-save" type="button" onclick="saveFieldFormDocumentToFiles('${form.id}')">Save to Files</button>
+        </div>
+        ${payrollExpenseDetailHTML(form)}`;
       document.getElementById('modal-report-detail').classList.add('open');
       return;
     }
@@ -7462,7 +7780,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
     try {
       await updateDoc(doc(db, 'projects', currentProject.id), {
-        foremen: arrayUnion(foremanRecord)
+        foremen: arrayUnion(foremanRecord),
+        foremanEmails: arrayUnion(email),
+        memberEmails: arrayUnion(email),
+        accessUpdatedAt: serverTimestamp(),
+        accessUpdatedBy: currentUser?.uid || ''
       });
 
       const snap = await getDoc(doc(db, 'projects', currentProject.id));
@@ -7477,6 +7799,215 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     } catch(e) {
       console.error('Add foreman failed:', e);
       toast('Could not add foreman: ' + e.message);
+    }
+  }
+
+  function accessRoleLabel(profile = {}) {
+    if (profile.disabled === true || cleanAccessText(profile.role) === 'disabled' || cleanAccessText(profile.accessLevel) === 'disabled') return 'Disabled';
+    if (isAdminRole(profile)) return 'Admin';
+    const role = cleanAccessText(profile.role || profile.accessLevel);
+    if (['office', 'project manager', 'project_manager'].includes(role) || cleanAccessText(profile.accessLevel) === 'office') return 'Office';
+    if (['supervisor'].includes(role) || cleanAccessText(profile.accessLevel) === 'supervisor') return 'Supervisor';
+    if (['employee', 'intake', 'intake-only', 'intake_only'].includes(role) || cleanAccessText(profile.accessLevel) === 'employee') return 'Employee / Intake Only';
+    return 'Foreman';
+  }
+
+  function accessRoleValue(profile = {}) {
+    const label = accessRoleLabel(profile);
+    if (label === 'Admin') return 'admin';
+    if (label === 'Office') return 'office';
+    if (label === 'Supervisor') return 'supervisor';
+    if (label === 'Disabled') return 'disabled';
+    if (label === 'Employee / Intake Only') return 'employee';
+    return 'foreman';
+  }
+
+  function accessRoleClass(profile = {}) {
+    const value = accessRoleValue(profile);
+    if (value === 'admin') return 'admin';
+    if (value === 'office') return 'office';
+    if (value === 'disabled') return 'disabled';
+    if (value === 'employee') return 'disabled';
+    return 'field';
+  }
+
+  async function loadUserAccessPanel(force = false) {
+    if (!isAdminRole()) return toast('Only admin can manage user access.');
+    const list = document.getElementById('user-access-list');
+    if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading user accounts...</p>';
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      const grantSnap = await getDocs(collection(db, 'userAccessGrants'));
+      allUserProfiles = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => String(a.name || a.email || '').localeCompare(String(b.name || b.email || '')));
+      allEmailAccessGrants = grantSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => String(a.email || '').localeCompare(String(b.email || '')));
+      const stamp = document.getElementById('user-access-stamp');
+      if (stamp) stamp.textContent = `Loaded ${allUserProfiles.length} account${allUserProfiles.length === 1 ? '' : 's'} and ${allEmailAccessGrants.length} saved email${allEmailAccessGrants.length === 1 ? '' : 's'} at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+      renderUserAccessList();
+    } catch (e) {
+      console.error('User access load failed', e);
+      if (list) list.innerHTML = '<div class="empty-state"><div class="icon">Access</div><h3>Could not load user access</h3><p>Check Firebase permissions and try again.</p></div>';
+      toast('Could not load user access.');
+    }
+  }
+
+  function renderUserAccessList() {
+    const list = document.getElementById('user-access-list');
+    if (!list) return;
+    const q = cleanAccessText(document.getElementById('user-access-search')?.value || '');
+    const users = allUserProfiles.filter(user => {
+      const text = [user.name, user.email, user.role, user.accessLevel, accessRoleLabel(user)].filter(Boolean).join(' ').toLowerCase();
+      return !q || text.includes(q);
+    });
+    const userEmails = new Set(allUserProfiles.map(u => cleanAccessText(u.email)).filter(Boolean));
+    const grants = allEmailAccessGrants.filter(grant => {
+      const text = [grant.email, grant.role, grant.accessLevel, accessRoleLabel(grant), 'pending pre authorized'].filter(Boolean).join(' ').toLowerCase();
+      return !userEmails.has(cleanAccessText(grant.email)) && (!q || text.includes(q));
+    });
+    if (!users.length && !grants.length) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">Access</div><h3>No accounts found</h3><p>${q ? 'No accounts or saved emails match that search.' : 'Accounts and pre-authorized emails will appear here.'}</p></div>`;
+      return;
+    }
+    const grantRows = grants.map(grant => {
+      const safeId = esc(grant.id || accessGrantIdForEmail(grant.email));
+      const value = accessRoleValue(grant);
+      return `<div class="access-row">
+        <div class="access-person">
+          <h4>${esc(grant.email || 'Saved Email')}</h4>
+          <p>Pre-authorized email - account not created yet.</p>
+          <p>Saved by: ${esc(grant.createdByName || grant.createdBy || '-')}</p>
+        </div>
+        <div>
+          <div class="access-role-badge ${accessRoleClass(grant)}">${accessRoleLabel(grant)}</div>
+          <div class="helper-text" style="margin-top:6px;">Applies when this email signs up.</div>
+        </div>
+        <div>
+          <select class="inline-select" id="grant-role-${safeId}">
+            <option value="employee" ${value === 'employee' ? 'selected' : ''}>Employee / Intake Only</option>
+            <option value="foreman" ${value === 'foreman' ? 'selected' : ''}>Foreman</option>
+            <option value="supervisor" ${value === 'supervisor' ? 'selected' : ''}>Supervisor</option>
+            <option value="office" ${value === 'office' ? 'selected' : ''}>Office</option>
+            <option value="admin" ${value === 'admin' ? 'selected' : ''}>Admin</option>
+            <option value="disabled" ${value === 'disabled' ? 'selected' : ''}>Disabled</option>
+          </select>
+          <button class="btn-sm" type="button" onclick="saveExistingEmailAccessGrant('${safeId}')">Save</button>
+        </div>
+      </div>`;
+    });
+    const userRows = users.map(user => {
+      const value = accessRoleValue(user);
+      const safeId = esc(user.id || user.uid || '');
+      const isSelf = (user.uid && currentUser?.uid === user.uid) || user.id === currentUser?.uid;
+      return `<div class="access-row">
+        <div class="access-person">
+          <h4>${esc(user.name || user.email || 'Unnamed Account')}</h4>
+          <p>${esc(user.email || 'No email saved')}</p>
+          <p>Account ID: ${esc(user.uid || user.id || '-')}</p>
+        </div>
+        <div>
+          <div class="access-role-badge ${accessRoleClass(user)}">${accessRoleLabel(user)}</div>
+          ${isSelf ? '<div class="helper-text" style="margin-top:6px;">This is your current admin account.</div>' : ''}
+        </div>
+        <div>
+          <select class="inline-select" id="access-role-${safeId}" ${isSelf ? 'disabled' : ''}>
+            <option value="employee" ${value === 'employee' ? 'selected' : ''}>Employee / Intake Only</option>
+            <option value="foreman" ${value === 'foreman' ? 'selected' : ''}>Foreman</option>
+            <option value="supervisor" ${value === 'supervisor' ? 'selected' : ''}>Supervisor</option>
+            <option value="office" ${value === 'office' ? 'selected' : ''}>Office</option>
+            <option value="admin" ${value === 'admin' ? 'selected' : ''}>Admin</option>
+            <option value="disabled" ${value === 'disabled' ? 'selected' : ''}>Disabled</option>
+          </select>
+          <button class="btn-sm" type="button" ${isSelf ? 'disabled' : ''} onclick="saveUserAccessRole('${safeId}')">Save</button>
+        </div>
+      </div>`;
+    });
+    list.innerHTML = `<div class="access-list">${[...grantRows, ...userRows].join('')}</div>`;
+  }
+
+  function clearUserAccessSearch() {
+    const input = document.getElementById('user-access-search');
+    if (input) input.value = '';
+    renderUserAccessList();
+  }
+
+  async function saveEmailAccessGrant() {
+    if (!isAdminRole()) return toast('Only admin can manage user access.');
+    const email = cleanAccessText(document.getElementById('access-grant-email')?.value || '');
+    const role = document.getElementById('access-grant-role')?.value || 'employee';
+    if (!email || !email.includes('@')) return toast('Enter a valid email address.');
+    try {
+      await setDoc(doc(db, 'userAccessGrants', accessGrantIdForEmail(email)), {
+        email,
+        ...rolePayloadForAccess(role),
+        createdAt: serverTimestamp(),
+        createdBy: currentUser?.uid || '',
+        createdByName: currentUser?.displayName || currentUser?.email || '',
+        accessUpdatedAt: serverTimestamp(),
+        accessUpdatedBy: currentUser?.uid || '',
+        accessUpdatedByName: currentUser?.displayName || currentUser?.email || ''
+      }, { merge: true });
+      const input = document.getElementById('access-grant-email');
+      if (input) input.value = '';
+      toast(`${email} saved with ${accessRoleLabel(rolePayloadForAccess(role))} access.`);
+      await loadUserAccessPanel(true);
+    } catch (e) {
+      console.error('Email access grant failed', e);
+      toast('Could not save email access: ' + e.message);
+    }
+  }
+
+  async function saveExistingEmailAccessGrant(grantId) {
+    if (!isAdminRole()) return toast('Only admin can manage user access.');
+    const grant = allEmailAccessGrants.find(g => g.id === grantId);
+    if (!grant) return toast('Saved email not found.');
+    const role = document.getElementById(`grant-role-${grantId}`)?.value || 'employee';
+    try {
+      await setDoc(doc(db, 'userAccessGrants', grantId), {
+        email: cleanAccessText(grant.email),
+        ...rolePayloadForAccess(role),
+        accessUpdatedAt: serverTimestamp(),
+        accessUpdatedBy: currentUser?.uid || '',
+        accessUpdatedByName: currentUser?.displayName || currentUser?.email || ''
+      }, { merge: true });
+      toast(`${grant.email} access updated.`);
+      await loadUserAccessPanel(true);
+    } catch (e) {
+      console.error('Saved email access update failed', e);
+      toast('Could not update saved email: ' + e.message);
+    }
+  }
+
+  async function saveUserAccessRole(userId) {
+    if (!isAdminRole()) return toast('Only admin can manage user access.');
+    if (!userId) return;
+    const user = allUserProfiles.find(u => u.id === userId);
+    if (!user) return toast('User account not found.');
+    const selected = document.getElementById(`access-role-${userId}`)?.value || 'employee';
+    const rolePayloads = {
+      employee: { role: 'employee', accessLevel: 'employee', admin: false, isAdmin: false, disabled: false },
+      foreman: { role: 'foreman', accessLevel: 'foreman', admin: false, isAdmin: false, disabled: false },
+      supervisor: { role: 'supervisor', accessLevel: 'supervisor', admin: false, isAdmin: false, disabled: false },
+      office: { role: 'office', accessLevel: 'office', admin: false, isAdmin: false, disabled: false },
+      admin: { role: 'admin', accessLevel: 'admin', admin: true, isAdmin: true, disabled: false },
+      disabled: { role: 'disabled', accessLevel: 'disabled', admin: false, isAdmin: false, disabled: true }
+    };
+    const payload = rolePayloads[selected] || rolePayloads.foreman;
+    try {
+      await setDoc(doc(db, 'users', userId), {
+        ...payload,
+        uid: user.uid || userId,
+        email: cleanAccessText(user.email),
+        name: user.name || user.email || '',
+        accessUpdatedAt: serverTimestamp(),
+        accessUpdatedBy: currentUser?.uid || '',
+        accessUpdatedByName: currentUser?.displayName || currentUser?.email || ''
+      }, { merge: true });
+      toast(`${user.email || user.name || 'User'} access updated.`);
+      await loadUserAccessPanel(true);
+    } catch (e) {
+      console.error('User access update failed', e);
+      toast('Could not update access: ' + e.message);
     }
   }
 
@@ -9125,6 +9656,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function openTicketDetail(projectId,ticketId){ const project=allProjects.find(p=>p.id===projectId); const ticket=(project?.extraTickets||[]).find(t=>t.id===ticketId); if(!ticket){toast('Ticket not found yet. Try refresh.');return;} selectedTicket={...ticket,projectId,projectName:project?.name||ticket.projectName||'',projectJobNumber:project?.jobNumber||ticket.projectJobNumber||''}; document.getElementById('ticket-detail-grid').innerHTML=ticketPaperHTML(selectedTicket); document.getElementById('modal-ticket-detail').classList.add('open'); }
   function editSelectedTicket(){ if(!selectedTicket){toast('Open a ticket first.'); return;} closeModal('modal-ticket-detail'); openExtraWorkTicketModal(selectedTicket.projectId, selectedTicket); }
   function printTicketDetail(){ if(!selectedTicket)return; const w=window.open('','_blank'); if(!w){toast('Popup blocked. Allow popups to print ticket.');return;} w.document.write(ticketDocumentHTML(selectedTicket, true)); w.document.close(); }
+  function downloadTicketDetail(){ if(!selectedTicket){toast('Open a ticket first.');return;} const fileName = `pal-ticket-${exportSlug(selectedTicket.projectName || 'project')}-${exportSlug(selectedTicket.ticketNo || selectedTicket.date || 'ticket')}.html`; downloadHtmlDocument(fileName, ticketDocumentHTML(selectedTicket, false), 'Ticket saved to files.'); }
 
   function generateSecureToken() {
     try {
@@ -10729,6 +11261,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-jha') renderJhaTab();
     if (tabId === 'main-employee-onboarding') loadEmployeeOnboarding(true);
     if (tabId === 'main-cert-email-preview') loadCertEmailPreview(true);
+    if (tabId === 'main-user-access') loadUserAccessPanel(true);
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();
       setTimeout(() => openExtraWorkTicketModal(), 0);
