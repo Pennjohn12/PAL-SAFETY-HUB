@@ -1748,6 +1748,7 @@
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
       <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-activity-log', this)">Activity Log</button>
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-backup-export', this)">Backup Export</button>
+      <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-integrations', this)">Integrations</button>
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-user-access', this)">User Access</button>
     </div>
 
@@ -2436,6 +2437,53 @@
         </div>
       </div>
       <div class="loaded-stamp" id="backup-export-status" style="margin-top:12px;">Ready to export.</div>
+    </div>
+
+    <div class="tab-pane" id="main-integrations">
+      <div class="page-header">
+        <h2>Service Integrations</h2>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Admin-only setup map for paid services. These are intentionally marked as not connected until backend functions, provider accounts, and monthly caps are turned on.</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Email Automation</div>
+          <div class="value" style="font-size:24px;">Not Connected</div>
+          <div class="sub">Target: weekly cert report, intake review alerts, approved/missing-info notices.</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Text Messaging</div>
+          <div class="value" style="font-size:24px;">Not Connected</div>
+          <div class="sub">Target cap: 1,000 SMS segments/month before admin override.</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">AI Assistance</div>
+          <div class="value" style="font-size:24px;">Not Connected</div>
+          <div class="sub">Target cap: 500 generations/month for safety sheets and daily reports.</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Backend Guardrail</div>
+          <div class="value" style="font-size:24px;">Required</div>
+          <div class="sub">Provider keys must live in Firebase backend secrets, never inside this public app.</div>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>Launch Order</h3>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">1. Email</span><div class="v">Connect provider, set office/safety recipients, then automate the weekly cert expiration report.</div></div>
+          <div class="report-field"><span class="k">2. SMS</span><div class="v">Connect Twilio for intake/correction links with a hard monthly cap and audit log entries.</div></div>
+          <div class="report-field"><span class="k">3. AI</span><div class="v">Move AI drafting to a protected backend endpoint with project/user tracking and monthly limits.</div></div>
+          <div class="report-field"><span class="k">4. Usage Review</span><div class="v">Show monthly usage and warnings before any service can run past its included allowance.</div></div>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>Default Monthly Limits</h3>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">Email</span><div class="v">3,000 emails/month, warning at 80%.</div></div>
+          <div class="report-field"><span class="k">SMS</span><div class="v">1,000 SMS segments/month, warning at 75%.</div></div>
+          <div class="report-field"><span class="k">AI</span><div class="v">500 generations/month, warning at 75%.</div></div>
+          <div class="report-field"><span class="k">Admin Override</span><div class="v">Any overage should require admin approval so monthly cost stays controlled.</div></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -3932,6 +3980,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       switchMainTab('main-projects');
     }
     if (!admin && document.getElementById('main-backup-export')?.classList.contains('active')) {
+      switchMainTab('main-projects');
+    }
+    if (!admin && document.getElementById('main-integrations')?.classList.contains('active')) {
       switchMainTab('main-projects');
     }
     if (!admin && document.getElementById('main-user-access')?.classList.contains('active')) {

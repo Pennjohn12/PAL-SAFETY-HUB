@@ -22,6 +22,8 @@ These rules are a hardening foundation, but the current app still has a few area
 10. Admin-only Backup Export now provides an immediate manual recovery/reference snapshot. It exports Firestore record data, nested project field forms/reports, access records, audit records, and file URLs/metadata to a dated JSON file. This does not replace Google Cloud backup/retention for actual uploaded file contents.
 11. A backup and retention runbook now documents the production storage plan: scheduled Firestore backups, Google Cloud Storage retention/versioning, monthly admin checks, quarterly recovery tests, and the limits of the manual export.
 12. A production deployment plan now uses JobsiteResources as the working platform name, with `pal.jobsiteresources.com` as the target PAL app domain and future companies separated under their own subdomains.
+13. A paid service integrations plan and admin-only Integrations screen now define the email, SMS, and AI rollout order, default monthly caps, and the rule that provider API keys must live in backend secrets instead of the public app.
+14. Resend email integration scaffolding now lives in Firebase Functions. The Resend key is expected as a Firebase secret, office/admin access is checked on the backend, monthly email usage is capped/logged, and integration settings/usage/email logs have explicit Firestore rules.
 
 ## Role assignment plan
 
