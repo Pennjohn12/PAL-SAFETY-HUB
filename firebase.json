@@ -11,10 +11,70 @@
       "firebase.json",
       "firestore.rules",
       "storage.rules",
+      "SECURITY_RULES_NOTES.md",
+      "PAL_ORIENTATION_AI_VIDEO_PLAN.md",
+      "PAL_Orientation_Canva_Narration.txt",
+      "PAL_Orientation_Canva_Storyboard.pptx",
+      "PAL_Orientation_Draft_Video.avi",
       "**/.*",
       "**/node_modules/**",
+      "**/*.md",
+      "**/*.map",
       "files.zip",
       "PAL-projects-updated.html"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(html|js|json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-store, max-age=0"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "geolocation=(), microphone=(), camera=(self), payment=()"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(png|jpg|jpeg|gif|webp|ico)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          }
+        ]
+      }
     ]
   }
 }

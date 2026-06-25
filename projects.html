@@ -1077,6 +1077,22 @@
     }
     .toast.show { opacity: 1; }
 
+    .connection-banner {
+      position: sticky;
+      top: 0;
+      z-index: 2100;
+      display: none;
+      padding: 10px 14px;
+      background: #fff7ed;
+      color: #9a3412;
+      border-bottom: 1px solid #fed7aa;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      white-space: normal;
+    }
+    .connection-banner.show { display: block; }
+
 
     .header-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     .header-actions .btn-add,
@@ -1475,6 +1491,8 @@
 
 </head>
 <body>
+
+<div class="connection-banner" id="connection-banner">Offline mode: cloud saves, uploads, and submissions need internet. Reconnect before sending work to PAL.</div>
 
 <!-- 
      LOGIN VIEW
@@ -3364,7 +3382,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
@@ -3426,6 +3444,7 @@
   let editingTicketId = null;
   let editingTicketOriginal = null;
   let loginInProgress = false;
+  let offlineSyncInProgress = false;
   let unsubProjects = null;
   let unsubProjectDetail = null;
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
@@ -3437,7 +3456,7 @@
   const publicTicketSignToken = publicTicketSignParams.get('ticketToken') || '';
 // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
-const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
+  const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
 if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) {
   publicNewHireIntakeId = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
   const palPublicUrl = new URL(window.location.href);
@@ -3678,6 +3697,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       } else {
         showView('view-projects');
         loadProjects();
+        syncOfflineCloudQueue();
       }
     } else {
       currentUser = null;
@@ -4275,6 +4295,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function saveNewProject() {
+    if (!requireCloudConnection('create a project')) return;
     const name = document.getElementById('np-name').value.trim();
     if (!name) { toast('Project name is required'); return; }
     const btn = document.getElementById('save-project-btn');
@@ -4376,6 +4397,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function saveProjectNotes() {
+    if (!requireCloudConnection('save project notes')) return;
     if (!currentProject?.id) return toast('Open a project first.');
     const btn = document.getElementById('save-project-notes-btn');
     const notes = document.getElementById('detail-project-notes')?.value.trim() || '';
@@ -4556,6 +4578,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function saveDailyReportV2() {
+    if (!requireCloudConnection('save a daily report')) return;
     if (!currentProject) return;
     const btn = document.getElementById('save-daily-report-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
@@ -5169,7 +5192,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById(buttonId);
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+      const result = await saveProjectFieldFormOrQueue(project, {
         formKey,
         formTitle,
         projectId: project.id,
@@ -5183,10 +5206,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           ...data,
           notes: `${formTitle} submitted with ${data.rows.length} row${data.rows.length === 1 ? '' : 's'}.`
         }
-      });
-      toast(`${formTitle} saved to project Field Forms.`);
+      }, formTitle);
+      toast(result.queued ? `${formTitle} saved on this device and waiting to sync.` : `${formTitle} saved to project Field Forms.`);
       resetForemanToolForm(activeForemanToolId);
-      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+      if (!result.queued && currentProject?.id === project.id) loadProjectFieldForms(project.id);
     } catch (e) {
       console.error(e);
       toast(`Could not save ${formTitle.toLowerCase()}.`);
@@ -6222,6 +6245,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!sheet.items_discussed && !sheet.tasks_locations) return toast('Fill the manual safety sheet before saving.');
     const btn = document.getElementById('save-manual-safety-btn');
     const signIns = getManualSafetySignIns();
+    if (editingFieldFormId && editingFieldFormProjectId && navigator.onLine === false) {
+      return toast('Reconnect before updating an existing project sheet. New sheets can be saved offline.');
+    }
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const payload = {
@@ -6232,7 +6258,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         jobNumber: project.jobNumber || '',
         submittedBy: currentUser?.uid || '',
         submittedByName: currentUser?.displayName || currentUser?.email || '',
-        updatedAt: serverTimestamp(),
         localUpdatedAt: new Date().toISOString(),
         documentData: {
           ...sheet,
@@ -6241,17 +6266,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         }
       };
       if (editingFieldFormId && editingFieldFormProjectId) {
-        await updateDoc(doc(db, 'projects', editingFieldFormProjectId, 'fieldForms', editingFieldFormId), payload);
+        await updateDoc(doc(db, 'projects', editingFieldFormProjectId, 'fieldForms', editingFieldFormId), { ...payload, updatedAt: serverTimestamp() });
         toast('Daily safety sheet updated in project.');
       } else {
-        await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+        const result = await saveProjectFieldFormOrQueue(project, {
           ...payload,
-          localSubmittedAt: new Date().toISOString(),
-          submittedAt: serverTimestamp()
-        });
-        toast('Manual daily safety sheet saved to project Field Forms.');
+          localSubmittedAt: new Date().toISOString()
+        }, 'Manual Daily Safety Sheet');
+        toast(result.queued ? 'Manual daily safety sheet saved on this device and waiting to sync.' : 'Manual daily safety sheet saved to project Field Forms.');
       }
-      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+      if (navigator.onLine !== false && currentProject?.id === project.id) loadProjectFieldForms(project.id);
     } catch (e) {
       console.error(e);
       toast('Could not save manual safety sheet.');
@@ -6355,7 +6379,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById(mode === 'ai' ? 'save-ai-report-btn' : 'save-manual-report-btn');
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await addDoc(collection(db, 'projects', project.id, 'reports'), {
+      const result = await saveProjectReportOrQueue(project, {
         ...report,
         photos: [],
         photoCount: 0,
@@ -6364,11 +6388,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         projectId: project.id,
         submittedBy: currentUser?.uid || '',
         submittedByName: currentUser?.displayName || currentUser?.email || '',
-        submittedAt: new Date().toISOString(),
-        createdAt: serverTimestamp()
-      });
-      toast('Daily report saved to project.');
-      if (currentProject?.id === project.id) loadProjectReports(project.id);
+        submittedAt: new Date().toISOString()
+      }, mode === 'ai' ? 'AI Daily Report' : 'Daily Report');
+      toast(result.queued ? 'Daily report saved on this device and waiting to sync.' : 'Daily report saved to project.');
+      if (!result.queued && currentProject?.id === project.id) loadProjectReports(project.id);
     } catch (e) {
       console.error(e);
       toast('Could not save daily report.');
@@ -6407,14 +6430,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const foreman = sheet.foreman || document.getElementById('ai-safety-foreman')?.value.trim() || currentUser?.displayName || currentUser?.email || '';
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+      const result = await saveProjectFieldFormOrQueue(project, {
         formKey: 'daily-safety-meeting',
         formTitle: 'Daily Safety Meeting',
         projectId: project.id,
         projectName: project.name || '',
         jobNumber: project.jobNumber || '',
         localSubmittedAt: new Date().toISOString(),
-        submittedAt: serverTimestamp(),
         submittedBy: currentUser?.uid || '',
         submittedByName: currentUser?.displayName || currentUser?.email || '',
         documentData: {
@@ -6430,9 +6452,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           signIns,
           notes: sheet.items_discussed || sheet.tasks_locations
         }
-      });
-      toast('AI safety sheet saved to project Field Forms.');
-      if (currentProject?.id === project.id) loadProjectFieldForms(project.id);
+      }, 'AI Daily Safety Sheet');
+      toast(result.queued ? 'AI safety sheet saved on this device and waiting to sync.' : 'AI safety sheet saved to project Field Forms.');
+      if (!result.queued && currentProject?.id === project.id) loadProjectFieldForms(project.id);
     } catch (e) {
       console.error(e);
       toast('Could not save AI safety sheet.');
@@ -6952,6 +6974,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function uploadJhaFile() {
+    if (!requireCloudConnection('upload a JHA')) return;
     if (!isOfficeRole()) return toast('Only office/admin can upload JHAs.');
     const projectId = document.getElementById('jha-upload-project-select')?.value || '';
     const project = allProjects.find(p => p.id === projectId);
@@ -7299,6 +7322,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function handleDocUpload(input) {
+    if (!requireCloudConnection('upload documents')) { if (input) input.value = ''; return; }
     if (!input.files.length || !currentProject) return;
     toast('Uploading...');
     const files = Array.from(input.files);
@@ -7381,6 +7405,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function handlePhotoUpload(input) {
+    if (!requireCloudConnection('upload photos')) { if (input) input.value = ''; return; }
     if (!input.files.length || !currentProject) return;
     toast('Uploading photos...');
     const files = Array.from(input.files);
@@ -8131,12 +8156,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       'access.user_role.updated': 'User access updated',
       'employee.created': 'Employee created',
       'employee.updated': 'Employee updated',
-      'employee.deleted': 'Employee deleted',
+      'employee.archived': 'Employee archived',
       'employee.assigned_to_project': 'Employee assigned to project',
       'employee.removed_from_project': 'Employee removed from project',
       'employee.certification.uploaded': 'Certification uploaded',
       'employee.certification.updated': 'Certification updated',
-      'employee.certification.deleted': 'Certification deleted',
+      'employee.certification.archived': 'Certification archived',
       'new_hire_intake.created': 'New hire intake created',
       'new_hire_intake.cert_files_uploaded': 'New hire cert files uploaded',
       'new_hire_intake.status_updated': 'New hire status updated',
@@ -8327,6 +8352,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return main || detail;
   }
 
+  function isArchivedRecord(item = {}) {
+    return item.archived === true || item.deleted === true || String(item.status || '').toLowerCase() === 'archived';
+  }
+
+  function activeEmployeeRecords(rows = []) {
+    return (rows || []).filter(emp => !isArchivedRecord(emp));
+  }
+
+  function activeCertifications(certs = []) {
+    return (Array.isArray(certs) ? certs : []).filter(cert => !isArchivedRecord(cert));
+  }
+
   async function loadEmployees(force = false) {
     const list = getActiveEmployeeListElement();
     if (!list) return;
@@ -8336,6 +8373,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const snap = await getDocs(collection(db, 'employees'));
       allEmployees = [];
       snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
+      allEmployees = activeEmployeeRecords(allEmployees);
       allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       renderEmployeesList();
     } catch (e) {
@@ -8369,7 +8407,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (el) el.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading workforce overview...</p>';
     try {
       const empSnap = await getDocs(collection(db, 'employees'));
-      allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allEmployees = activeEmployeeRecords(empSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
       allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -8384,7 +8422,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const el = document.getElementById('workforce-overview-summary');
     if (!el) return;
     const certData = getCertAlertData();
-    const noCerts = (allEmployees || []).filter(emp => !(Array.isArray(emp.certifications) && emp.certifications.length)).length;
+    const noCerts = (allEmployees || []).filter(emp => !activeCertifications(emp.certifications).length).length;
     const intakeCounts = { pending: 0, review: 0, good: 0, missing: 0 };
     (allNewHireIntakes || []).forEach(x => {
       const s = String(x.status || 'Pending');
@@ -8489,7 +8527,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function getCertAlertData() {
     const allCerts = [];
     allEmployees.forEach(emp => {
-      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const certs = activeCertifications(emp.certifications);
       certs.forEach(cert => {
         const days = getCertDaysUntil(cert.expirationDate);
         const status = getCertStatusKey(cert.expirationDate);
@@ -8519,7 +8557,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderCertAlerts() {
     const data = getCertAlertData();
-    const noCerts = (allEmployees || []).filter(emp => !(Array.isArray(emp.certifications) && emp.certifications.length)).length;
+    const noCerts = (allEmployees || []).filter(emp => !activeCertifications(emp.certifications).length).length;
     const card = (filter, className, count, label) => `
       <button class="cert-alert-box filter-card ${className} ${activeEmployeeCertFilter === filter ? 'active' : ''}" type="button" onclick="setEmployeeCertFilter('${filter}')">
         <strong>${count}</strong>
@@ -8600,7 +8638,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     try {
       if (force || !allEmployees || !allEmployees.length) {
         const empSnap = await getDocs(collection(db, 'employees'));
-        allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allEmployees = activeEmployeeRecords(empSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       }
       const subject = document.getElementById('cert-email-subject');
@@ -8659,7 +8697,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const q = String(filterText || document.getElementById('employee-search')?.value || '').trim().toLowerCase();
     const certFilter = activeEmployeeCertFilter || 'all';
     const employees = allEmployees.filter(emp => {
-      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const certs = activeCertifications(emp.certifications);
       const haystack = [
         emp.name, emp.trade, emp.email, emp.phone, emp.notes,
         ...certs.flatMap(c => [c.title, c.type, c.fileName, c.expirationDate])
@@ -8687,7 +8725,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     list.innerHTML = '';
     employees.forEach(emp => {
       const assigned = Array.isArray(emp.assignedProjectIds) && currentProject ? emp.assignedProjectIds.includes(currentProject.id) : false;
-      const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+      const certs = activeCertifications(emp.certifications);
       const expanded = expandedEmployeeCardId === emp.id;
       const card = document.createElement('div');
       card.className = `employee-card employee-row ${expanded ? 'expanded' : ''}`;
@@ -8726,7 +8764,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
             <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
             <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
-            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Delete Employee</button>
+            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Archive Employee</button>
             <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
           </div>
         </div>`;
@@ -8765,7 +8803,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     currentEmployeeId = employeeId;
     const emp = allEmployees.find(e => e.id === employeeId);
     if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
-    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const certs = activeCertifications(emp.certifications);
     const titleEl = document.getElementById('employee-detail-title');
     const body = document.getElementById('employee-detail-body');
     if (!titleEl || !body) { toast('Employee detail window missing. Refresh and try again.'); return; }
@@ -8790,7 +8828,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
           <button class="btn-sm" onclick="editCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Edit Cert</button>
-          <button class="btn-sm danger" onclick="deleteCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Delete Cert</button>
+          <button class="btn-sm danger" onclick="deleteCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Archive Cert</button>
         </div>
       </div>`;
     }).join('') : '<p class="helper-text">No certifications uploaded yet.</p>';
@@ -8805,7 +8843,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
         <div class="employee-actions" style="margin-top:12px;">
           <button class="btn-sm" onclick="editEmployee('${employeeId}')">Detail Edit Employee</button>
-          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Delete Employee</button>
+          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Archive Employee</button>
         </div>
       </div>
       <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
@@ -8858,6 +8896,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function updateEmployee() {
+    if (!requireCloudConnection('update an employee file')) return;
     if (!currentEmployeeId) { toast('No employee selected'); return; }
     const name = document.getElementById('emp-name').value.trim();
     if (!name) { toast('Employee name is required'); return; }
@@ -8888,26 +8927,34 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function deleteEmployee(employeeId) {
+    if (!requireCloudConnection('archive an employee file')) return;
     const emp = allEmployees.find(e => e.id === employeeId);
     if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
-    const ok = confirm(`Delete ${emp.name || 'this employee'} and all saved certifications?`);
+    const ok = confirm(`Archive ${emp.name || 'this employee'}? The record will be hidden from active lists but preserved for long-term history.`);
     if (!ok) return;
     try {
-      await deleteDoc(doc(db, 'employees', employeeId));
-      await logAuditEvent('employee.deleted', { employeeId, employeeName: emp.name || '' });
+      await updateDoc(doc(db, 'employees', employeeId), {
+        archived: true,
+        archivedAt: serverTimestamp(),
+        archivedBy: currentUser?.uid || '',
+        archivedByName: currentUser?.displayName || currentUser?.email || '',
+        status: 'archived'
+      });
+      await logAuditEvent('employee.archived', { employeeId, employeeName: emp.name || '' });
       if (currentEmployeeId === employeeId) {
         currentEmployeeId = null;
         closeModal('modal-employee-detail');
       }
       await loadEmployees(true);
-      toast('Employee deleted');
+      toast('Employee archived');
     } catch (e) {
       console.error(e);
-      toast('Could not delete employee');
+      toast('Could not archive employee');
     }
   }
 
   async function saveEmployee() {
+    if (!requireCloudConnection('create an employee file')) return;
     const name = document.getElementById('emp-name').value.trim();
     if (!name) { toast('Employee name is required'); return; }
     const btn = document.getElementById('save-employee-btn');
@@ -8996,7 +9043,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     currentEmployeeId = employeeId;
     currentCertificationUploadedAt = uploadedAt;
     const emp = allEmployees.find(e => e.id === employeeId);
-    const cert = (emp?.certifications || []).find(c => String(c.uploadedAt || '') === String(uploadedAt || ''));
+    const cert = activeCertifications(emp?.certifications).find(c => String(c.uploadedAt || '') === String(uploadedAt || ''));
     if (!emp || !cert) { toast('Certification not found. Tap refresh and try again.'); return; }
     document.getElementById('cert-type').value = cert.type || 'Other';
     document.getElementById('cert-custom-title').value = cert.title || '';
@@ -9014,12 +9061,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function updateCertification() {
+    if (!requireCloudConnection('update a certification')) return;
     if (!currentEmployeeId || !currentCertificationUploadedAt) { toast('No certification selected'); return; }
     const emp = allEmployees.find(e => e.id === currentEmployeeId);
     if (!emp) { toast('Employee not found. Tap refresh and try again.'); return; }
     const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
     const idx = certs.findIndex(c => String(c.uploadedAt || '') === String(currentCertificationUploadedAt || ''));
-    if (idx < 0) { toast('Certification not found. Tap refresh and try again.'); return; }
+    if (idx < 0 || isArchivedRecord(certs[idx])) { toast('Certification not found. Tap refresh and try again.'); return; }
 
     const btn = document.getElementById('save-cert-btn');
     const file = document.getElementById('cert-file').files[0];
@@ -9075,31 +9123,41 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function deleteCertification(employeeId, uploadedAt) {
+    if (!requireCloudConnection('archive a certification')) return;
     const emp = allEmployees.find(e => e.id === employeeId);
     if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
     const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
     const cert = certs.find(c => String(c.uploadedAt || '') === String(uploadedAt || ''));
-    if (!cert) { toast('Certification not found. Tap refresh and try again.'); return; }
-    const ok = confirm(`Delete ${cert.title || cert.type || 'this certification'} from ${emp.name || 'this employee'}?`);
+    if (!cert || isArchivedRecord(cert)) { toast('Certification not found. Tap refresh and try again.'); return; }
+    const ok = confirm(`Archive ${cert.title || cert.type || 'this certification'} from ${emp.name || 'this employee'}? It will be hidden from active lists but preserved in the employee history.`);
     if (!ok) return;
     try {
-      const updatedCerts = certs.filter(c => String(c.uploadedAt || '') !== String(uploadedAt || ''));
+      const updatedCerts = certs.map(c => String(c.uploadedAt || '') === String(uploadedAt || '')
+        ? {
+            ...c,
+            archived: true,
+            archivedAt: new Date().toISOString(),
+            archivedBy: currentUser?.uid || '',
+            archivedByName: currentUser?.displayName || currentUser?.email || ''
+          }
+        : c);
       await updateDoc(doc(db, 'employees', employeeId), { certifications: updatedCerts });
-      await logAuditEvent('employee.certification.deleted', {
+      await logAuditEvent('employee.certification.archived', {
         employeeId,
         employeeName: emp.name || '',
         certificationTitle: cert.title || cert.type || ''
       });
       await loadEmployees(true);
       if (document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(employeeId);
-      toast('Certification deleted');
+      toast('Certification archived');
     } catch (e) {
       console.error(e);
-      toast('Could not delete certification');
+      toast('Could not archive certification');
     }
   }
 
   async function saveCertification() {
+    if (!requireCloudConnection('upload a certification')) return;
     if (!currentEmployeeId) return;
     const btn = document.getElementById('save-cert-btn');
     const file = document.getElementById('cert-file').files[0];
@@ -9916,6 +9974,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function saveExtraWorkTicket(){
+    if (!requireCloudConnection('save a ticket')) return;
     const projectId=editingTicketProjectId||document.getElementById('ticket-project-select')?.value||'';
     if(!projectId){toast('Select the project this ticket belongs to.'); return;}
     const project=allProjects.find(p=>p.id===projectId);
@@ -10352,6 +10411,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function submitPublicTicketSignature() {
+    if (!requireCloudConnection('submit the signature')) return;
     if (!currentPublicTicketSignature) { toast('Ticket is not loaded yet.'); return; }
     const signerName = document.getElementById('public-ticket-signer-name')?.value.trim() || '';
     const signerCompany = document.getElementById('public-ticket-signer-company')?.value.trim() || '';
@@ -10583,6 +10643,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function saveNewHireCertUploads() {
+    if (!requireCloudConnection('save certification uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
     const btn = document.getElementById('save-newhire-cert-upload-btn');
     try {
@@ -10631,6 +10692,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function saveNewHirePayrollIdUploads() {
+    if (!requireCloudConnection('save payroll or ID uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
     const btn = document.getElementById('save-newhire-payroll-id-btn');
     try {
@@ -10732,6 +10794,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function finalSubmitPublicNewHirePacket() {
+    if (!requireCloudConnection('submit the intake packet')) return;
     if (!publicNewHireIntakeId) return toast('Missing intake link.');
     const btn = document.getElementById('public-final-submit-btn');
     try {
@@ -10918,6 +10981,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   async function saveNewHireIntake() {
+    if (!requireCloudConnection('create an intake request')) return;
     if (!currentUser) return toast('Please sign in first.');
     const btn = document.getElementById('save-newhire-btn');
     const data = getNewHireFormData();
@@ -11290,6 +11354,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   async function uploadNewHireCertFiles() {
+    if (!requireCloudConnection('upload cert files')) return;
     if (!currentNewHireReviewId) return toast('Open an intake request first.');
     const input = document.getElementById('newhire-cert-upload');
     const files = Array.from(input?.files || []);
@@ -11365,6 +11430,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   async function saveNewHireOrientationForm() {
+    if (!requireCloudConnection('save the orientation form')) return;
     if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
     if (!currentNewHireOrientationId) return toast('Open an intake request first.');
     const btn = document.getElementById('save-newhire-orientation-btn');
@@ -11425,6 +11491,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   async function saveNewHireDrugConsentForm() {
+    if (!requireCloudConnection('save the drug consent form')) return;
     if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
     if (!currentNewHireDrugConsentId) return toast('Open an intake request first.');
     const btn = document.getElementById('save-newhire-drug-btn');
@@ -11486,6 +11553,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   async function saveNewHireSafetyAgreementForm() {
+    if (!requireCloudConnection('save the safety agreement')) return;
     if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
     if (!currentNewHireSafetyAgreementId) return toast('Open an intake request first.');
     const btn = document.getElementById('save-newhire-safety-btn');
@@ -11529,6 +11597,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
 
   async function setNewHireStatus(id, status) {
+    if (!requireCloudConnection('update the intake status')) return;
     if (!id) return;
     try {
       const payload = { status, updatedAt: serverTimestamp() };
@@ -11571,7 +11640,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (!allEmployees || !allEmployees.length) {
         try {
           const empSnap = await getDocs(collection(db, 'employees'));
-          allEmployees = empSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          allEmployees = activeEmployeeRecords(empSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (e) { console.warn('Employee status load warning', e); }
       }
       renderWorkforceStatusDashboardEnhanced();
@@ -11582,7 +11651,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   function getEmployeeCertProblem(emp) {
-    const certs = Array.isArray(emp.certifications) ? emp.certifications : [];
+    const certs = activeCertifications(emp.certifications);
     const expired = certs.filter(c => getCertStatusKey(c.expirationDate) === 'expired');
     const soon = certs.filter(c => getCertStatusKey(c.expirationDate) === 'warn');
     return { expired, soon, total: certs.length };
@@ -11801,7 +11870,141 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
+  function updateConnectionStatus(shouldToast = false) {
+    const banner = document.getElementById('connection-banner');
+    const online = navigator.onLine !== false;
+    if (banner) {
+      const waiting = offlineCloudQueueCount();
+      banner.classList.toggle('show', !online);
+      banner.textContent = online
+        ? (waiting ? `${waiting} form${waiting === 1 ? '' : 's'} waiting to sync to PAL Projects.` : '')
+        : `Offline mode: ${waiting ? waiting + ' form' + (waiting === 1 ? '' : 's') + ' waiting. ' : ''}Forms can be saved on this device, but uploads/photos and final cloud sync need internet.`;
+      banner.classList.toggle('show', !online || waiting > 0);
+    }
+    if (shouldToast) toast(online ? 'Back online. Cloud saves are available.' : 'You are offline. Reconnect before saving or uploading to PAL.');
+    return online;
+  }
+
+  function requireCloudConnection(action = 'save or upload') {
+    if (navigator.onLine !== false) return true;
+    updateConnectionStatus(false);
+    toast(`You are offline. Reconnect before you ${action}.`);
+    return false;
+  }
+
+  const OFFLINE_CLOUD_QUEUE_KEY = 'pal-offline-cloud-queue-v1';
+
+  function readOfflineCloudQueue() {
+    try {
+      return JSON.parse(localStorage.getItem(OFFLINE_CLOUD_QUEUE_KEY) || '[]').filter(Boolean);
+    } catch (e) {
+      console.warn('Could not read offline queue', e);
+      return [];
+    }
+  }
+
+  function writeOfflineCloudQueue(queue = []) {
+    localStorage.setItem(OFFLINE_CLOUD_QUEUE_KEY, JSON.stringify(queue));
+  }
+
+  function offlineCloudQueueCount() {
+    return readOfflineCloudQueue().length;
+  }
+
+  function queueCloudWrite(item) {
+    const queue = readOfflineCloudQueue();
+    queue.push({
+      id: `offline_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      queuedAt: new Date().toISOString(),
+      queuedBy: currentUser?.uid || '',
+      queuedByName: currentUser?.displayName || currentUser?.email || '',
+      ...item
+    });
+    writeOfflineCloudQueue(queue);
+    updateConnectionStatus(false);
+    toast('Saved on this device. It will submit to the project when internet returns.');
+  }
+
+  async function saveProjectFieldFormOrQueue(project, payload, label = 'field form') {
+    if (navigator.onLine === false) {
+      queueCloudWrite({ kind: 'projectFieldForm', projectId: project.id, projectName: project.name || '', label, payload });
+      return { queued: true };
+    }
+    const docRef = await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+      ...payload,
+      updatedAt: serverTimestamp(),
+      submittedAt: serverTimestamp()
+    });
+    return { saved: true, id: docRef.id };
+  }
+
+  async function saveProjectReportOrQueue(project, payload, label = 'daily report') {
+    if (navigator.onLine === false) {
+      queueCloudWrite({ kind: 'projectReport', projectId: project.id, projectName: project.name || '', label, payload });
+      return { queued: true };
+    }
+    const docRef = await addDoc(collection(db, 'projects', project.id, 'reports'), {
+      ...payload,
+      createdAt: serverTimestamp()
+    });
+    return { saved: true, id: docRef.id };
+  }
+
+  async function syncOfflineCloudQueue() {
+    if (offlineSyncInProgress || navigator.onLine === false || !currentUser) return;
+    const queue = readOfflineCloudQueue();
+    if (!queue.length) return;
+    offlineSyncInProgress = true;
+    const remaining = [];
+    let synced = 0;
+    for (const item of queue) {
+      try {
+        if (item.kind === 'projectFieldForm') {
+          await addDoc(collection(db, 'projects', item.projectId, 'fieldForms'), {
+            ...(item.payload || {}),
+            updatedAt: serverTimestamp(),
+            submittedAt: serverTimestamp(),
+            syncedFromOffline: true,
+            offlineQueuedAt: item.queuedAt,
+            offlineSyncedAt: new Date().toISOString()
+          });
+          synced += 1;
+        } else if (item.kind === 'projectReport') {
+          await addDoc(collection(db, 'projects', item.projectId, 'reports'), {
+            ...(item.payload || {}),
+            createdAt: serverTimestamp(),
+            syncedFromOffline: true,
+            offlineQueuedAt: item.queuedAt,
+            offlineSyncedAt: new Date().toISOString()
+          });
+          synced += 1;
+        } else {
+          remaining.push(item);
+        }
+      } catch (e) {
+        console.warn('Offline queue item did not sync yet', item, e);
+        remaining.push(item);
+      }
+    }
+    writeOfflineCloudQueue(remaining);
+    offlineSyncInProgress = false;
+    updateConnectionStatus(false);
+    if (synced) toast(`${synced} offline form${synced === 1 ? '' : 's'} submitted to project.`);
+  }
+
+  window.addEventListener('online', () => { updateConnectionStatus(true); syncOfflineCloudQueue(); });
+  window.addEventListener('offline', () => updateConnectionStatus(true));
+  window.addEventListener('unhandledrejection', event => {
+    const message = String(event.reason?.message || event.reason || '');
+    if (/offline|network|failed to fetch|unavailable/i.test(message)) {
+      updateConnectionStatus(false);
+      toast('Connection issue detected. Check internet before saving again.');
+    }
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
+    updateConnectionStatus(false);
+    syncOfflineCloudQueue();
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) loginBtn.addEventListener('click', event => {
       event.preventDefault();

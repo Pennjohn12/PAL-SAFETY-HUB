@@ -3828,6 +3828,34 @@ function addSignatureRow(targetId) {
       window.__palToastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2600);
     }
     window.toastPalMessage = toastPalMessage;
+    function updatePalConnectionNotice(showToast = false) {
+      let el = document.getElementById('pal-connection-notice');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'pal-connection-notice';
+        el.style.position = 'sticky';
+        el.style.top = '0';
+        el.style.zIndex = '99998';
+        el.style.display = 'none';
+        el.style.padding = '10px 14px';
+        el.style.background = '#fff7ed';
+        el.style.color = '#9a3412';
+        el.style.borderBottom = '1px solid #fed7aa';
+        el.style.fontSize = '13px';
+        el.style.fontWeight = '900';
+        el.style.textAlign = 'center';
+        document.body.prepend(el);
+      }
+      const online = navigator.onLine !== false;
+      el.style.display = online ? 'none' : 'block';
+      el.textContent = 'Offline mode: you can still save some forms on this device, but project/cloud submission needs internet.';
+      if (showToast && typeof toastPalMessage === 'function') {
+        toastPalMessage(online ? 'Back online. Project/cloud submit is available.' : 'You are offline. Reconnect before submitting to PAL Projects.');
+      }
+      return online;
+    }
+    window.addEventListener('online', () => updatePalConnectionNotice(true));
+    window.addEventListener('offline', () => updatePalConnectionNotice(true));
     function getCleanDocumentTitle() {
       const active = document.querySelector('.page.active');
       const rawTitle =
@@ -4684,6 +4712,7 @@ function closeTalk() {
       for (let i = 0; i < 26; i++) addWeeklyFpRow();
       for (let i = 0; i < 3; i++) addExpenseRow();
       restoreForms();
+      updatePalConnectionNotice(false);
       initAllSigPads();
       const activeLangBtn = document.querySelector(`.lang-switch button[onclick*="'${currentLang}'"]`);
       setLanguage(currentLang, activeLangBtn);

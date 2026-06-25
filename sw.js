@@ -1,7 +1,7 @@
 // PAL Safety Hub Service Worker
 // Caches the app so it works offline after first load.
 
-const CACHE_NAME = 'pal-safety-hub-v4';
+const CACHE_NAME = 'pal-safety-hub-v5';
 const ASSETS = [
   './',
   './index.html',

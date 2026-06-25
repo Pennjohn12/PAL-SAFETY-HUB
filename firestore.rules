@@ -133,7 +133,7 @@ service cloud.firestore {
           request.resource.data.diff(resource.data).changedKeys().hasOnly(['name', 'phone', 'updatedAt'])
         )
       );
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /userAccessGrants/{emailId} {
@@ -161,12 +161,13 @@ service cloud.firestore {
           ])
         )
       );
-      allow delete: if isAdmin();
+      allow delete: if false;
 
       match /reports/{reportId} {
         allow read: if isProjectMemberById(projectId);
         allow create: if isProjectMemberById(projectId);
-        allow update, delete: if isOffice();
+        allow update: if isOffice();
+        allow delete: if false;
       }
 
       match /fieldForms/{formId} {
@@ -181,14 +182,14 @@ service cloud.firestore {
             'updatedByName'
           ])
         );
-        allow delete: if isAdmin();
+        allow delete: if false;
       }
     }
 
     match /employees/{employeeId} {
       allow read: if isOffice();
       allow create, update: if isOffice();
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /newHireIntakes/{intakeId} {
@@ -246,7 +247,7 @@ service cloud.firestore {
           'finalSubmittedAt'
         ])
       );
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /publicTicketSignatures/{signatureId} {

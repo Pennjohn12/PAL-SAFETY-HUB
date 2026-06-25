@@ -84,19 +84,19 @@ service firebase.storage {
         'dailyReports',
         'jhaUploads'
       ] && isSafeUpload(25 * 1024 * 1024);
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /projects/{projectId}/dailyReports/{reportId}/{fileName} {
       allow read: if isProjectMember(projectId);
       allow write: if isProjectMember(projectId) && isSafeUpload(25 * 1024 * 1024);
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /employees/{employeeId}/certifications/{fileName} {
       allow read: if isOffice();
       allow write: if isOffice() && isSafeUpload(25 * 1024 * 1024);
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /newHireIntakes/{intakeId}/{folder}/{fileName} {
@@ -112,7 +112,7 @@ service firebase.storage {
           'safetyAgreement'
         ]
       ) && isSafeUpload(25 * 1024 * 1024);
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
     match /{allPaths=**} {
