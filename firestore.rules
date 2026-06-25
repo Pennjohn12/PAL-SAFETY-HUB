@@ -66,6 +66,10 @@ service cloud.firestore {
       );
     }
 
+    function isProjectMemberById(projectId) {
+      return isProjectMember(get(/databases/$(database)/documents/projects/$(projectId)).data);
+    }
+
     function emailGrant() {
       return signedIn()
         ? get(/databases/$(database)/documents/userAccessGrants/$(userEmail())).data
@@ -139,10 +143,7 @@ service cloud.firestore {
     }
 
     match /projects/{projectId} {
-      // Current app loads all projects and filters in the browser.
-      // Phase 2 hardening should change the app query to assigned project IDs, then this can become:
-      // allow read: if isProjectMember(resource.data);
-      allow read: if isStaff();
+      allow read: if isProjectMember(resource.data);
       allow create: if safeProjectCreate();
       allow update: if signedIn() && (
         isOffice() ||
@@ -163,16 +164,16 @@ service cloud.firestore {
       allow delete: if isAdmin();
 
       match /reports/{reportId} {
-        allow read: if isStaff();
-        allow create: if isStaff();
+        allow read: if isProjectMemberById(projectId);
+        allow create: if isProjectMemberById(projectId);
         allow update, delete: if isOffice();
       }
 
       match /fieldForms/{formId} {
-        allow read: if isStaff();
-        allow create: if isStaff();
+        allow read: if isProjectMemberById(projectId);
+        allow create: if isProjectMemberById(projectId);
         allow update: if isOffice() || (
-          isStaff() &&
+          isProjectMemberById(projectId) &&
           request.resource.data.diff(resource.data).changedKeys().hasOnly([
             'documentData',
             'updatedAt',
@@ -248,15 +249,61 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Public GC ticket signing should move here or to a Cloud Function.
-    // Do not allow unauthenticated users to update /projects/{projectId} directly in production rules.
     match /publicTicketSignatures/{signatureId} {
-      allow read, write: if false;
+      allow get: if (
+        resource.data.token == signatureId
+        && resource.data.status in ['Pending', 'Signed']
+        && resource.data.expiresAt is timestamp
+        && request.time < resource.data.expiresAt
+      ) || (signedIn() && isProjectMemberById(resource.data.projectId));
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.token == signatureId
+        && request.resource.data.expiresAt is timestamp
+        && request.time < request.resource.data.expiresAt
+        && isProjectMemberById(request.resource.data.projectId);
+      allow update: if (
+        resource.data.token == signatureId
+        && resource.data.status == 'Pending'
+        && resource.data.expiresAt is timestamp
+        && request.time < resource.data.expiresAt
+        && request.resource.data.status == 'Signed'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'ticket',
+          'contractorSignature',
+          'contractorSignatureType',
+          'contractorTypedSignature',
+          'contractorSignedBy',
+          'contractorCompany',
+          'contractorSignedAt',
+          'updatedAt'
+        ])
+      ) || (
+        signedIn()
+        && isProjectMemberById(resource.data.projectId)
+      );
+      allow delete: if isAdmin();
     }
 
     match /auditLogs/{logId} {
       allow read: if isOffice();
-      allow create: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.action is string
+        && request.resource.data.diff({}).affectedKeys().hasOnly([
+          'action',
+          'details',
+          'projectId',
+          'projectName',
+          'actorUid',
+          'actorEmail',
+          'actorName',
+          'actorRole',
+          'createdAt',
+          'userAgent'
+        ]);
       allow update, delete: if false;
     }
 

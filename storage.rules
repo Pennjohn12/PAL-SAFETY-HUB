@@ -55,6 +55,21 @@ service firebase.storage {
       );
     }
 
+    function projectData(projectId) {
+      return firestore.get(/databases/(default)/documents/projects/$(projectId)).data;
+    }
+
+    function isProjectMember(projectId) {
+      return signedIn() && (
+        isOffice() ||
+        projectData(projectId).createdBy == request.auth.uid ||
+        (projectData(projectId).memberUids is list && request.auth.uid in projectData(projectId).memberUids) ||
+        (projectData(projectId).memberEmails is list && userEmail() in projectData(projectId).memberEmails) ||
+        (projectData(projectId).foremanUids is list && request.auth.uid in projectData(projectId).foremanUids) ||
+        (projectData(projectId).foremanEmails is list && userEmail() in projectData(projectId).foremanEmails)
+      );
+    }
+
     function isSafeUpload(maxBytes) {
       return request.resource != null
         && request.resource.size < maxBytes
@@ -62,8 +77,8 @@ service firebase.storage {
     }
 
     match /projects/{projectId}/{folder}/{fileName} {
-      allow read: if isStaff();
-      allow write: if isStaff() && folder in [
+      allow read: if isProjectMember(projectId);
+      allow write: if isProjectMember(projectId) && folder in [
         'docs',
         'photos',
         'dailyReports',
@@ -73,8 +88,8 @@ service firebase.storage {
     }
 
     match /projects/{projectId}/dailyReports/{reportId}/{fileName} {
-      allow read: if isStaff();
-      allow write: if isStaff() && isSafeUpload(25 * 1024 * 1024);
+      allow read: if isProjectMember(projectId);
+      allow write: if isProjectMember(projectId) && isSafeUpload(25 * 1024 * 1024);
       allow delete: if isAdmin();
     }
 

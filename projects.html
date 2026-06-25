@@ -1268,7 +1268,15 @@
     .access-role-badge.office { background:#dbeafe; color:#1d4ed8; }
     .access-role-badge.field { background:#dcfce7; color:#166534; }
     .access-role-badge.disabled { background:#fee2e2; color:#991b1b; }
-    @media(max-width:760px){ .access-row, .access-invite-row { grid-template-columns:1fr; } .access-row .inline-select, .access-row .btn-sm, .access-invite-row .inline-select, .access-invite-row .btn-sm { width:100%; min-height:44px; } }
+    .activity-toolbar { display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+    .activity-filter-row { display:grid; grid-template-columns:minmax(220px,1fr) 180px 150px; gap:10px; align-items:end; width:100%; }
+    .activity-list { display:grid; gap:10px; }
+    .activity-row { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; box-shadow:0 4px 14px rgba(16,24,40,.04); display:grid; gap:8px; }
+    .activity-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+    .activity-title { color:var(--navy); font-weight:900; font-size:14px; }
+    .activity-meta { color:var(--muted); font-size:12px; line-height:1.45; }
+    .activity-details { background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:8px 10px; color:var(--text); font-size:12px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; }
+    @media(max-width:760px){ .access-row, .access-invite-row, .activity-filter-row { grid-template-columns:1fr; } .access-row .inline-select, .access-row .btn-sm, .access-invite-row .inline-select, .access-invite-row .btn-sm, .activity-filter-row .inline-select, .activity-filter-row .btn-sm { width:100%; min-height:44px; } }
 
     @media (max-width: 600px) {
       .login-card { padding: 28px 20px; }
@@ -1720,6 +1728,7 @@
       <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
+      <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-activity-log', this)">Activity Log</button>
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-user-access', this)">User Access</button>
     </div>
 
@@ -2305,6 +2314,39 @@
         <p>This tab can become a major connection point between the field and the warehouse. The future version could handle material and equipment requests, returns from the jobsite, and QR-code scanning for each movement: leaving the warehouse, arriving on site, leaving the site, and returning back to the warehouse.</p>
         <p>That same flow could track larger equipment, gang boxes, PPE, gloves, glasses, and other supplies so the warehouse, supervisors, and foremen all know what was sent, where it is, what is being used, and what needs to come back. Built out properly, this would make the warehouse process faster, cleaner, and much easier to manage as the company grows.</p>
       </div>
+    </div>
+
+    <div class="tab-pane" id="main-activity-log">
+      <div class="page-header">
+        <h2>Activity Log</h2>
+        <div class="header-actions">
+          <button class="btn-outline" onclick="loadActivityLog(true)">Refresh</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Read-only record of important app actions. Use this to confirm who changed access, uploaded files, approved intakes, edited tickets, or sent GC signature links.</div>
+      <div class="activity-toolbar">
+        <div class="activity-filter-row">
+          <div class="field" style="margin:0;">
+            <label>Search</label>
+            <input class="search-input" id="activity-search" type="search" placeholder="Search action, person, project, email, or details..." oninput="renderActivityLog()" />
+          </div>
+          <div class="field" style="margin:0;">
+            <label>Type</label>
+            <select id="activity-type-filter" class="inline-select" onchange="renderActivityLog()">
+              <option value="all">All Activity</option>
+              <option value="access">Access</option>
+              <option value="project">Projects</option>
+              <option value="upload">Uploads</option>
+              <option value="employee">Employees</option>
+              <option value="intake">Onboarding</option>
+              <option value="ticket">Tickets</option>
+            </select>
+          </div>
+          <button class="btn-sm" type="button" onclick="clearActivityLogFilters()">Clear</button>
+        </div>
+        <div class="loaded-stamp" id="activity-log-stamp"></div>
+      </div>
+      <div id="activity-log-list"><p style="color:var(--muted);font-size:14px;">Open Activity Log to load recent app activity.</p></div>
     </div>
 
     <div class="tab-pane" id="main-user-access">
@@ -3322,7 +3364,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
@@ -3358,6 +3400,7 @@
   let allEmployees = [];
   let allUserProfiles = [];
   let allEmailAccessGrants = [];
+  let allActivityLogs = [];
   let expandedEmployeeCardId = '';
   let allProjects = [];
   let projectAlphaFilter = 'all';
@@ -3594,6 +3637,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveEmailAccessGrant = saveEmailAccessGrant;
   window.saveExistingEmailAccessGrant = saveExistingEmailAccessGrant;
   window.saveUserAccessRole = saveUserAccessRole;
+  window.loadActivityLog = loadActivityLog;
+  window.renderActivityLog = renderActivityLog;
+  window.clearActivityLogFilters = clearActivityLogFilters;
 
   //  Auth state 
   onAuthStateChanged(auth, async user => {
@@ -3613,6 +3659,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       currentUser = user || null;
       showView('view-public-newhire-intake');
       if (!publicNewHireIntakeLoaded) loadPublicNewHireIntake();
+      return;
     }
     if (user) {
       currentUser = user;
@@ -3703,6 +3750,27 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       disabled: { role: 'disabled', accessLevel: 'disabled', admin: false, isAdmin: false, disabled: true }
     };
     return rolePayloads[key] || rolePayloads.foreman;
+  }
+
+  async function logAuditEvent(action, details = {}) {
+    if (!currentUser || !action) return;
+    try {
+      const safeDetails = { ...(details || {}) };
+      await addDoc(collection(db, 'auditLogs'), {
+        action: String(action).slice(0, 80),
+        details: safeDetails,
+        projectId: safeDetails.projectId || currentProject?.id || '',
+        projectName: safeDetails.projectName || currentProject?.name || '',
+        actorUid: currentUser.uid || '',
+        actorEmail: cleanAccessText(currentUser.email || ''),
+        actorName: currentUser.displayName || currentUser.email || '',
+        actorRole: currentUserProfile?.accessLevel || currentUserProfile?.role || '',
+        createdAt: serverTimestamp(),
+        userAgent: navigator.userAgent || ''
+      });
+    } catch (e) {
+      console.warn('Audit log failed', action, e);
+    }
   }
 
   async function loadEmailAccessGrant(email) {
@@ -3808,6 +3876,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden-by-role', !office));
     document.querySelectorAll('.foreman-only').forEach(el => el.classList.toggle('hidden-by-role', office));
     document.querySelectorAll('.owner-only').forEach(el => el.classList.toggle('hidden-by-role', !admin));
+    if (!office && document.getElementById('main-activity-log')?.classList.contains('active')) {
+      switchMainTab('main-projects');
+    }
     if (!admin && document.getElementById('main-user-access')?.classList.contains('active')) {
       switchMainTab('main-projects');
     }
@@ -4113,15 +4184,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function loadProjects() {
     const list = document.getElementById('projects-list');
     if (list) list.innerHTML = '<p style="color:var(--muted);padding:20px 0;text-align:center;">Loading projects...</p>';
-    const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
     if (unsubProjects) unsubProjects();
-    unsubProjects = onSnapshot(q, snap => {
-      const docs = [];
-      snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
-      if (isOfficeRole()) docs.forEach(project => backfillProjectAccessFields(project));
-      const filtered = docs.filter(p => {
-        return canUserAccessProject(p);
-      });
+
+    const applyLoadedProjects = docs => {
+      const filtered = docs.filter(p => canUserAccessProject(p));
       allProjects = filtered;
       refreshTicketProjectOptions();
       refreshAiSafetyProjectOptions();
@@ -4151,11 +4217,61 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           toast('That project is not available for your account.');
         }
       }
-    }, err => {
+    };
+
+    const handleProjectLoadError = err => {
       console.error('Project load failed:', err);
       if (list) list.innerHTML = '<p style="color:var(--red);padding:20px 0;text-align:center;">Could not load projects. Check account access or Firebase permissions.</p>';
       toast('Could not load projects.');
-    });
+    };
+
+    if (isOfficeRole()) {
+      const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+      unsubProjects = onSnapshot(q, snap => {
+        const docs = [];
+        snap.forEach(docSnap => docs.push({ id: docSnap.id, ...docSnap.data() }));
+        docs.forEach(project => backfillProjectAccessFields(project));
+        applyLoadedProjects(docs);
+      }, handleProjectLoadError);
+      return;
+    }
+
+    const userEmail = cleanAccessText(currentUser?.email || '');
+    const userId = currentUser?.uid || '';
+    const projectMap = new Map();
+    let uidLoaded = !userId;
+    let emailLoaded = !userEmail;
+
+    const pushSnapshot = (snap, source) => {
+      snap.forEach(docSnap => projectMap.set(docSnap.id, { id: docSnap.id, ...docSnap.data() }));
+      if (source === 'uid') uidLoaded = true;
+      if (source === 'email') emailLoaded = true;
+      if (!uidLoaded || !emailLoaded) return;
+      const docs = [...projectMap.values()].sort((a, b) => {
+        const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : Date.parse(a.createdAt || '') || 0;
+        const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : Date.parse(b.createdAt || '') || 0;
+        return bTime - aTime;
+      });
+      applyLoadedProjects(docs);
+    };
+
+    const unsubscribers = [];
+    if (userId) {
+      unsubscribers.push(onSnapshot(
+        query(collection(db, 'projects'), where('memberUids', 'array-contains', userId)),
+        snap => pushSnapshot(snap, 'uid'),
+        handleProjectLoadError
+      ));
+    }
+    if (userEmail) {
+      unsubscribers.push(onSnapshot(
+        query(collection(db, 'projects'), where('memberEmails', 'array-contains', userEmail)),
+        snap => pushSnapshot(snap, 'email'),
+        handleProjectLoadError
+      ));
+    }
+    unsubProjects = () => unsubscribers.forEach(unsub => unsub && unsub());
+    if (!unsubscribers.length) applyLoadedProjects([]);
   }
 
   async function saveNewProject() {
@@ -4165,7 +4281,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     btn.disabled = true; btn.textContent = 'Saving...';
     try {
       const accessFields = buildProjectAccessFields([]);
-      await addDoc(collection(db, 'projects'), {
+      const projectRef = await addDoc(collection(db, 'projects'), {
         name,
         jobNumber: document.getElementById('np-job').value.trim(),
         location: document.getElementById('np-location').value.trim(),
@@ -4183,6 +4299,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         photos: [],
         reportCount: 0
       });
+      await logAuditEvent('project.created', { projectId: projectRef.id, projectName: name });
       closeModal('modal-new-project');
       clearModal();
       toast('Project created! ');
@@ -4252,6 +4369,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       loadProjectFieldForms(id);
       loadProjectForemen(currentProjectDoc);
       if (isOfficeRole()) await loadEmployees();
+      syncSignedTicketRequestsForProject(id, currentProjectDoc).catch(e => console.warn('GC signature sync failed', e));
       if (document.getElementById('tab-project-tickets')?.classList.contains('active')) renderProjectTicketsTab();
       if (document.getElementById('tab-project-warehouse')?.classList.contains('active')) renderProjectWarehouseTab();
     });
@@ -4268,6 +4386,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         notesUpdatedAt: new Date().toISOString(),
         notesUpdatedBy: currentUser?.email || currentUser?.uid || ''
       });
+      await logAuditEvent('project.notes.updated', { projectId: currentProject.id, projectName: currentProject.name || '', noteLength: notes.length });
       currentProject.notes = notes;
       currentProjectDoc = { ...(currentProjectDoc || {}), notes };
       toast('Project notes saved.');
@@ -4305,6 +4424,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     loadProjectFieldForms(projectId);
     loadProjectForemen(currentProjectDoc);
     if (isOfficeRole()) await loadEmployees();
+    syncSignedTicketRequestsForProject(projectId, currentProjectDoc).catch(e => console.warn('GC signature sync failed', e));
   }
 
   function updateProjectSummary(data) {
@@ -4490,13 +4610,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         createdAt: serverTimestamp()
       };
 
-      await addDoc(collection(db, 'projects', currentProject.id, 'reports'), report);
+      const reportRef = await addDoc(collection(db, 'projects', currentProject.id, 'reports'), report);
 
       if (photoRecords.length) {
         await updateDoc(doc(db, 'projects', currentProject.id), {
           photos: arrayUnion(...photoRecords)
         });
       }
+      await logAuditEvent('daily_report.created', {
+        projectId: currentProject.id,
+        projectName: currentProject.name || '',
+        reportId: reportRef.id,
+        date: report.date,
+        photoCount: photoRecords.length
+      });
 
       closeModal('modal-daily-report-v2');
       await loadProjectReports(currentProject.id);
@@ -6842,7 +6969,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const storageRef = ref(storage, storagePath);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
+      const formRef = await addDoc(collection(db, 'projects', project.id, 'fieldForms'), {
         formKey: 'jha-uploaded',
         formTitle: title,
         projectId: project.id,
@@ -6860,6 +6987,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           uploadedFile: { name: file.name, url, path: storagePath, type: file.type || 'application/octet-stream', size: file.size || 0 },
           notes
         }
+      });
+      await logAuditEvent('jha.uploaded', {
+        projectId: project.id,
+        projectName: project.name || '',
+        fieldFormId: formRef.id,
+        fileName: file.name,
+        fileSize: file.size || 0
       });
       closeModal('modal-jha-upload');
       toast('JHA uploaded to project Field Forms.');
@@ -7168,6 +7302,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!input.files.length || !currentProject) return;
     toast('Uploading...');
     const files = Array.from(input.files);
+    const uploadedFiles = [];
     for (const file of files) {
       try {
         const path = `projects/${currentProject.id}/docs/${Date.now()}_${file.name}`;
@@ -7182,11 +7317,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             uploadedAt: new Date().toISOString()
           })
         });
+        uploadedFiles.push({ name: file.name, size: file.size || 0 });
       } catch(e) {
         toast('Upload failed: ' + e.message);
         return;
       }
     }
+    await logAuditEvent('project.documents.uploaded', {
+      projectId: currentProject.id,
+      projectName: currentProject.name || '',
+      fileCount: uploadedFiles.length,
+      files: uploadedFiles.slice(0, 10)
+    });
     toast('Documents uploaded.');
     loadProjectDocs(currentProject.id);
     input.value = '';
@@ -7243,6 +7385,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     toast('Uploading photos...');
     const files = Array.from(input.files);
     const category = document.getElementById('photo-category-select')?.value || 'General';
+    const uploadedFiles = [];
     for (const file of files) {
       try {
         const path = `projects/${currentProject.id}/photos/${Date.now()}_${file.name}`;
@@ -7258,11 +7401,19 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             uploadedAt: new Date().toISOString()
           })
         });
+        uploadedFiles.push({ name: file.name, size: file.size || 0 });
       } catch(e) {
         toast('Photo upload failed: ' + e.message);
         return;
       }
     }
+    await logAuditEvent('project.photos.uploaded', {
+      projectId: currentProject.id,
+      projectName: currentProject.name || '',
+      category,
+      fileCount: uploadedFiles.length,
+      files: uploadedFiles.slice(0, 10)
+    });
     toast('Photos uploaded.');
     loadProjectPhotos(currentProject.id);
     input.value = '';
@@ -7769,10 +7920,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!email) { toast('Enter an email address'); return; }
     if (!currentProject?.id) { toast('Open a project first.'); return; }
 
+    let matchedUser = null;
+    try {
+      const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email), limit(1)));
+      if (!userSnap.empty) matchedUser = { id: userSnap.docs[0].id, ...userSnap.docs[0].data() };
+    } catch (e) {
+      console.warn('Could not look up foreman user profile', e);
+    }
+
     const foremanRecord = {
       email,
-      uid: '',
-      name: email.split('@')[0],
+      uid: matchedUser?.uid || matchedUser?.id || '',
+      name: matchedUser?.name || email.split('@')[0],
       role: 'foreman',
       addedAt: new Date().toISOString(),
       addedBy: currentUser?.email || ''
@@ -7781,6 +7940,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     try {
       await updateDoc(doc(db, 'projects', currentProject.id), {
         foremen: arrayUnion(foremanRecord),
+        ...(foremanRecord.uid ? { foremanUids: arrayUnion(foremanRecord.uid), memberUids: arrayUnion(foremanRecord.uid) } : {}),
         foremanEmails: arrayUnion(email),
         memberEmails: arrayUnion(email),
         accessUpdatedAt: serverTimestamp(),
@@ -7796,6 +7956,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
       if (input) input.value = '';
       toast(`${email} added as foreman.`);
+      await logAuditEvent('project.access.foreman_added', {
+        projectId: currentProject.id,
+        projectName: currentProject.name || '',
+        targetEmail: email,
+        targetUid: foremanRecord.uid || ''
+      });
     } catch(e) {
       console.error('Add foreman failed:', e);
       toast('Could not add foreman: ' + e.message);
@@ -7931,6 +8097,140 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     renderUserAccessList();
   }
 
+  function auditTimestamp(value) {
+    if (!value) return 'Time not saved';
+    const date = value.toDate ? value.toDate() : new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Time not saved';
+    return date.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+
+  function activityTypeForAction(action = '') {
+    const key = String(action || '').toLowerCase();
+    if (key.startsWith('access.')) return 'access';
+    if (key.startsWith('project.')) return key.includes('upload') ? 'upload' : 'project';
+    if (key.includes('uploaded')) return 'upload';
+    if (key.startsWith('employee.')) return 'employee';
+    if (key.startsWith('new_hire_intake.')) return 'intake';
+    if (key.startsWith('ticket.')) return 'ticket';
+    if (key.startsWith('daily_report.')) return 'project';
+    if (key.startsWith('jha.')) return 'upload';
+    return 'other';
+  }
+
+  function friendlyActivityAction(action = '') {
+    const labels = {
+      'project.created': 'Project created',
+      'project.notes.updated': 'Project notes updated',
+      'project.documents.uploaded': 'Project documents uploaded',
+      'project.photos.uploaded': 'Project photos uploaded',
+      'project.access.foreman_added': 'Foreman added to project',
+      'daily_report.created': 'Daily report saved',
+      'jha.uploaded': 'JHA uploaded',
+      'access.email_grant.saved': 'Email access saved',
+      'access.email_grant.updated': 'Email access updated',
+      'access.user_role.updated': 'User access updated',
+      'employee.created': 'Employee created',
+      'employee.updated': 'Employee updated',
+      'employee.deleted': 'Employee deleted',
+      'employee.assigned_to_project': 'Employee assigned to project',
+      'employee.removed_from_project': 'Employee removed from project',
+      'employee.certification.uploaded': 'Certification uploaded',
+      'employee.certification.updated': 'Certification updated',
+      'employee.certification.deleted': 'Certification deleted',
+      'new_hire_intake.created': 'New hire intake created',
+      'new_hire_intake.cert_files_uploaded': 'New hire cert files uploaded',
+      'new_hire_intake.status_updated': 'New hire status updated',
+      'ticket.created': 'Ticket created',
+      'ticket.updated': 'Ticket updated',
+      'ticket.gc_signature.synced': 'GC signature synced',
+      'ticket.gc_signature_link.created': 'GC signature link created',
+      'ticket.gc_signature_link.reused': 'GC signature link reused'
+    };
+    return labels[action] || String(action || 'Activity').replaceAll('_', ' ').replaceAll('.', ' ');
+  }
+
+  function compactActivityDetails(details = {}) {
+    const entries = Object.entries(details || {}).filter(([key, value]) => {
+      return value !== undefined && value !== null && value !== '' && key !== 'files';
+    });
+    const text = entries.slice(0, 8).map(([key, value]) => {
+      const label = key.replace(/([A-Z])/g, ' $1').replaceAll('_', ' ').trim();
+      const display = Array.isArray(value) ? `${value.length} item(s)` : String(value);
+      return `${label}: ${display}`;
+    }).join('\n');
+    const fileCount = Array.isArray(details.files) ? `\nFiles listed: ${details.files.map(f => f.name).filter(Boolean).slice(0, 5).join(', ')}` : '';
+    return (text + fileCount).trim() || 'No extra details saved.';
+  }
+
+  async function loadActivityLog(force = false) {
+    if (!isOfficeRole()) return toast('Only office/admin can view the activity log.');
+    const list = document.getElementById('activity-log-list');
+    const stamp = document.getElementById('activity-log-stamp');
+    if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading recent activity...</p>';
+    try {
+      const snap = await getDocs(query(collection(db, 'auditLogs'), orderBy('createdAt', 'desc'), limit(100)));
+      allActivityLogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (stamp) stamp.textContent = `Loaded ${allActivityLogs.length} recent record${allActivityLogs.length === 1 ? '' : 's'} at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+      renderActivityLog();
+    } catch (e) {
+      console.error('Activity log load failed', e);
+      if (list) list.innerHTML = '<div class="empty-state"><div class="icon">Activity</div><h3>Could not load activity</h3><p>Check account access or Firebase rules.</p></div>';
+      toast('Could not load activity log.');
+    }
+  }
+
+  function renderActivityLog() {
+    const list = document.getElementById('activity-log-list');
+    if (!list) return;
+    const search = cleanAccessText(document.getElementById('activity-search')?.value || '');
+    const type = document.getElementById('activity-type-filter')?.value || 'all';
+    const rows = (allActivityLogs || []).filter(item => {
+      const itemType = activityTypeForAction(item.action);
+      if (type !== 'all' && itemType !== type) return false;
+      if (!search) return true;
+      const haystack = cleanAccessText([
+        item.action,
+        friendlyActivityAction(item.action),
+        item.actorName,
+        item.actorEmail,
+        item.actorRole,
+        item.projectName,
+        item.projectId,
+        compactActivityDetails(item.details || {})
+      ].join(' '));
+      return haystack.includes(search);
+    });
+    if (!allActivityLogs.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">Activity</div><h3>No activity recorded yet</h3><p>Important actions will appear here after people start using the app.</p></div>';
+      return;
+    }
+    if (!rows.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">Search</div><h3>No matching activity</h3><p>Try another search term or activity type.</p></div>';
+      return;
+    }
+    list.innerHTML = `<div class="activity-list">${rows.map(item => `
+      <div class="activity-row">
+        <div class="activity-top">
+          <div>
+            <div class="activity-title">${esc(friendlyActivityAction(item.action))}</div>
+            <div class="activity-meta">${esc(item.actorName || item.actorEmail || 'Unknown user')} ${item.actorRole ? '- ' + esc(item.actorRole) : ''}</div>
+          </div>
+          <span class="access-role-badge ${activityTypeForAction(item.action) === 'access' ? 'office' : activityTypeForAction(item.action) === 'employee' ? 'field' : ''}">${esc(activityTypeForAction(item.action))}</span>
+        </div>
+        <div class="activity-meta">${esc(auditTimestamp(item.createdAt))}${item.projectName ? ' | Project: ' + esc(item.projectName) : ''}</div>
+        <div class="activity-details">${esc(compactActivityDetails(item.details || {}))}</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function clearActivityLogFilters() {
+    const search = document.getElementById('activity-search');
+    const type = document.getElementById('activity-type-filter');
+    if (search) search.value = '';
+    if (type) type.value = 'all';
+    renderActivityLog();
+  }
+
   async function saveEmailAccessGrant() {
     if (!isAdminRole()) return toast('Only admin can manage user access.');
     const email = cleanAccessText(document.getElementById('access-grant-email')?.value || '');
@@ -7947,6 +8247,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         accessUpdatedBy: currentUser?.uid || '',
         accessUpdatedByName: currentUser?.displayName || currentUser?.email || ''
       }, { merge: true });
+      await logAuditEvent('access.email_grant.saved', { targetEmail: email, targetRole: role });
       const input = document.getElementById('access-grant-email');
       if (input) input.value = '';
       toast(`${email} saved with ${accessRoleLabel(rolePayloadForAccess(role))} access.`);
@@ -7970,6 +8271,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         accessUpdatedBy: currentUser?.uid || '',
         accessUpdatedByName: currentUser?.displayName || currentUser?.email || ''
       }, { merge: true });
+      await logAuditEvent('access.email_grant.updated', { targetEmail: cleanAccessText(grant.email), targetRole: role });
       toast(`${grant.email} access updated.`);
       await loadUserAccessPanel(true);
     } catch (e) {
@@ -8003,6 +8305,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         accessUpdatedBy: currentUser?.uid || '',
         accessUpdatedByName: currentUser?.displayName || currentUser?.email || ''
       }, { merge: true });
+      await logAuditEvent('access.user_role.updated', {
+        targetUid: user.uid || userId,
+        targetEmail: cleanAccessText(user.email),
+        targetRole: selected
+      });
       toast(`${user.email || user.name || 'User'} access updated.`);
       await loadUserAccessPanel(true);
     } catch (e) {
@@ -8567,6 +8874,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         updatedBy: currentUser.displayName || currentUser.email
       });
       const editedId = currentEmployeeId;
+      await logAuditEvent('employee.updated', { employeeId: editedId, employeeName: name });
       closeModal('modal-new-employee');
       resetEmployeeForm();
       await loadEmployees(true);
@@ -8586,6 +8894,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!ok) return;
     try {
       await deleteDoc(doc(db, 'employees', employeeId));
+      await logAuditEvent('employee.deleted', { employeeId, employeeName: emp.name || '' });
       if (currentEmployeeId === employeeId) {
         currentEmployeeId = null;
         closeModal('modal-employee-detail');
@@ -8604,7 +8913,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById('save-employee-btn');
     btn.disabled = true; btn.textContent = 'Saving...';
     try {
-      await addDoc(collection(db, 'employees'), {
+      const employeeRef = await addDoc(collection(db, 'employees'), {
         name,
         email: document.getElementById('emp-email').value.trim(),
         phone: document.getElementById('emp-phone').value.trim(),
@@ -8615,6 +8924,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
+      });
+      await logAuditEvent('employee.created', {
+        employeeId: employeeRef.id,
+        employeeName: name,
+        projectId: currentProject?.id || '',
+        projectName: currentProject?.name || ''
       });
       closeModal('modal-new-employee');
       resetEmployeeForm();
@@ -8633,6 +8948,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const employeeRef = doc(db, 'employees', employeeId);
       await updateDoc(employeeRef, {
         assignedProjectIds: assign ? arrayUnion(currentProject.id) : arrayRemove(currentProject.id)
+      });
+      const emp = allEmployees.find(e => e.id === employeeId);
+      await logAuditEvent(assign ? 'employee.assigned_to_project' : 'employee.removed_from_project', {
+        employeeId,
+        employeeName: emp?.name || '',
+        projectId: currentProject.id,
+        projectName: currentProject.name || ''
       });
       await loadEmployees(true);
       toast(assign ? 'Employee assigned to project' : 'Employee removed from project');
@@ -8732,6 +9054,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
       const updatedCerts = certs.map((c, i) => i === idx ? updatedCert : c);
       await updateDoc(doc(db, 'employees', currentEmployeeId), { certifications: updatedCerts });
+      await logAuditEvent('employee.certification.updated', {
+        employeeId: currentEmployeeId,
+        employeeName: emp.name || '',
+        certificationTitle: title,
+        fileReplaced: !!file
+      });
 
       const employeeIdToOpen = currentEmployeeId;
       closeModal('modal-certification');
@@ -8757,6 +9085,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     try {
       const updatedCerts = certs.filter(c => String(c.uploadedAt || '') !== String(uploadedAt || ''));
       await updateDoc(doc(db, 'employees', employeeId), { certifications: updatedCerts });
+      await logAuditEvent('employee.certification.deleted', {
+        employeeId,
+        employeeName: emp.name || '',
+        certificationTitle: cert.title || cert.type || ''
+      });
       await loadEmployees(true);
       if (document.getElementById('modal-employee-detail')?.classList.contains('open')) openEmployeeDetail(employeeId);
       toast('Certification deleted');
@@ -8791,6 +9124,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           uploadedAt: new Date().toISOString(),
           uploadedBy: currentUser.displayName || currentUser.email
         })
+      });
+      const emp = allEmployees.find(e => e.id === currentEmployeeId);
+      await logAuditEvent('employee.certification.uploaded', {
+        employeeId: currentEmployeeId,
+        employeeName: emp?.name || '',
+        certificationTitle: title,
+        fileName: file.name,
+        fileSize: file.size || 0
       });
       const employeeIdToOpen = currentEmployeeId;
       closeModal('modal-certification');
@@ -9623,6 +9964,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ticket.createdByName=currentUser.displayName||currentUser.email;
         ticket.createdAt=new Date().toISOString();
         await updateDoc(doc(db,'projects',projectId),{extraTickets:arrayUnion(ticket)});
+        await logAuditEvent('ticket.created', {
+          projectId,
+          projectName: project?.name || ticket.projectName || '',
+          ticketId: ticket.id,
+          ticketNo: ticket.ticketNo || '',
+          grandTotal: ticket.grandTotal || 0
+        });
         toast('Extra work ticket submitted');
       } else {
         const freshSnap = await getDoc(doc(db,'projects',projectId));
@@ -9631,6 +9979,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const updatedTickets = currentTickets.map(t => t.id === editingTicketId ? ticket : t);
         if (!updatedTickets.some(t => t.id === editingTicketId)) updatedTickets.push(ticket);
         await updateDoc(doc(db,'projects',projectId),{extraTickets:updatedTickets});
+        await logAuditEvent('ticket.updated', {
+          projectId,
+          projectName: project?.name || ticket.projectName || '',
+          ticketId: ticket.id,
+          ticketNo: ticket.ticketNo || '',
+          grandTotal: ticket.grandTotal || 0
+        });
         toast('Ticket updated');
       }
 
@@ -9657,6 +10012,51 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function editSelectedTicket(){ if(!selectedTicket){toast('Open a ticket first.'); return;} closeModal('modal-ticket-detail'); openExtraWorkTicketModal(selectedTicket.projectId, selectedTicket); }
   function printTicketDetail(){ if(!selectedTicket)return; const w=window.open('','_blank'); if(!w){toast('Popup blocked. Allow popups to print ticket.');return;} w.document.write(ticketDocumentHTML(selectedTicket, true)); w.document.close(); }
   function downloadTicketDetail(){ if(!selectedTicket){toast('Open a ticket first.');return;} const fileName = `pal-ticket-${exportSlug(selectedTicket.projectName || 'project')}-${exportSlug(selectedTicket.ticketNo || selectedTicket.date || 'ticket')}.html`; downloadHtmlDocument(fileName, ticketDocumentHTML(selectedTicket, false), 'Ticket saved to files.'); }
+
+  async function syncSignedTicketRequestsForProject(projectId, projectData = null) {
+    if (!projectId || !currentUser) return;
+    const data = projectData || currentProjectDoc || {};
+    const tickets = Array.isArray(data.extraTickets) ? data.extraTickets : [];
+    const ticketsWithLinks = tickets.filter(t => t.id && t.gcSignatureToken);
+    if (!ticketsWithLinks.length) return;
+
+    let changed = false;
+    const updatedTickets = [...tickets];
+    for (const ticket of ticketsWithLinks) {
+      try {
+        const snap = await getDoc(doc(db, 'publicTicketSignatures', ticket.gcSignatureToken));
+        if (!snap.exists()) continue;
+        const request = snap.data() || {};
+        if (request.status !== 'Signed' || request.projectId !== projectId || request.ticketId !== ticket.id || !request.ticket) continue;
+        const index = updatedTickets.findIndex(t => t.id === ticket.id);
+        if (index < 0) continue;
+        const signedAt = request.ticket.contractorSignedAt || request.contractorSignedAt || '';
+        if (signedAt && updatedTickets[index].contractorSignedAt === signedAt) continue;
+        updatedTickets[index] = {
+          ...updatedTickets[index],
+          ...request.ticket,
+          id: ticket.id,
+          gcSignatureToken: ticket.gcSignatureToken,
+          gcSignatureStatus: 'Signed',
+          gcSignatureSyncedAt: new Date().toISOString()
+        };
+        changed = true;
+      } catch (e) {
+        console.warn('Could not sync GC signature request', ticket.id, e);
+      }
+    }
+
+    if (!changed) return;
+    await updateDoc(doc(db, 'projects', projectId), {
+      extraTickets: updatedTickets,
+      updatedAt: new Date().toISOString()
+    });
+    await logAuditEvent('ticket.gc_signature.synced', {
+      projectId,
+      projectName: data.name || '',
+      signedTicketCount: updatedTickets.filter(t => t.gcSignatureStatus === 'Signed').length
+    });
+  }
 
   function generateSecureToken() {
     try {
@@ -9692,6 +10092,38 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return url.toString();
   }
 
+  function gcSignatureExpiryDate(days = 7) {
+    return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  }
+
+  function normalizeDateValue(value) {
+    if (!value) return null;
+    if (value.toDate) return value.toDate();
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function isDateExpired(value) {
+    const date = normalizeDateValue(value);
+    return !!date && date.getTime() <= Date.now();
+  }
+
+  function publicTicketSnapshot(ticket, project = {}) {
+    const {
+      gcSignatureToken,
+      gcSignatureLinkCreatedAt,
+      gcSignatureLinkCreatedBy,
+      gcSignatureLinkCreatedByName,
+      ...safeTicket
+    } = ticket || {};
+    return {
+      ...safeTicket,
+      projectId: project.id || safeTicket.projectId || '',
+      projectName: project.name || safeTicket.projectName || '',
+      projectJobNumber: project.jobNumber || safeTicket.projectJobNumber || safeTicket.jobNumber || ''
+    };
+  }
+
   async function writeClipboardText(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -9719,17 +10151,45 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const tickets = Array.isArray(data.extraTickets) ? data.extraTickets : [];
     const existing = tickets.find(t => t.id === selectedTicket.id);
     if (!existing) throw new Error('Ticket not found');
-    const token = existing.gcSignatureToken || generateSecureToken();
-    const linkCreatedAt = existing.gcSignatureLinkCreatedAt || new Date().toISOString();
+    const existingExpiresDate = normalizeDateValue(existing.gcSignatureExpiresAt);
+    const reuseExistingLink = !!(existing.gcSignatureToken && existingExpiresDate && existingExpiresDate.getTime() > Date.now());
+    const existingExpired = !!(existing.gcSignatureToken && !reuseExistingLink);
+    const token = reuseExistingLink ? existing.gcSignatureToken : generateSecureToken();
+    const linkCreatedAt = reuseExistingLink && existing.gcSignatureLinkCreatedAt ? existing.gcSignatureLinkCreatedAt : new Date().toISOString();
+    const expiresDate = reuseExistingLink ? existingExpiresDate : gcSignatureExpiryDate(7);
     const updatedTicket = {
       ...existing,
       gcSignatureToken: token,
       gcSignatureLinkCreatedAt: linkCreatedAt,
+      gcSignatureExpiresAt: expiresDate.toISOString(),
       gcSignatureLinkCreatedBy: currentUser?.uid || existing.gcSignatureLinkCreatedBy || '',
-      gcSignatureLinkCreatedByName: currentUser?.displayName || currentUser?.email || existing.gcSignatureLinkCreatedByName || ''
+      gcSignatureLinkCreatedByName: currentUser?.displayName || currentUser?.email || existing.gcSignatureLinkCreatedByName || '',
+      gcSignatureStatus: existingExpired ? 'Pending' : (existing.gcSignatureStatus || 'Pending')
     };
+    await setDoc(doc(db, 'publicTicketSignatures', token), {
+      token,
+      projectId: selectedTicket.projectId,
+      ticketId: selectedTicket.id,
+      status: !existingExpired && existing.gcSignatureStatus === 'Signed' ? 'Signed' : 'Pending',
+      ticket: publicTicketSnapshot(updatedTicket, { id: selectedTicket.projectId, ...data }),
+      projectName: data.name || updatedTicket.projectName || '',
+      projectJobNumber: data.jobNumber || updatedTicket.projectJobNumber || '',
+      createdAt: linkCreatedAt,
+      expiresAt: Timestamp.fromDate(expiresDate),
+      expiresAtText: expiresDate.toISOString(),
+      createdBy: currentUser?.uid || existing.gcSignatureLinkCreatedBy || '',
+      createdByName: currentUser?.displayName || currentUser?.email || existing.gcSignatureLinkCreatedByName || '',
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
     const updatedTickets = tickets.map(t => t.id === selectedTicket.id ? updatedTicket : t);
     await updateDoc(projectRef, { extraTickets: updatedTickets });
+    await logAuditEvent(reuseExistingLink ? 'ticket.gc_signature_link.reused' : 'ticket.gc_signature_link.created', {
+      projectId: selectedTicket.projectId,
+      projectName: data.name || selectedTicket.projectName || '',
+      ticketId: selectedTicket.id,
+      ticketNo: updatedTicket.ticketNo || '',
+      expiresAt: expiresDate.toISOString()
+    });
     selectedTicket = { ...selectedTicket, ...updatedTicket, projectId: selectedTicket.projectId, projectName: data.name || selectedTicket.projectName || '', projectJobNumber: data.jobNumber || selectedTicket.projectJobNumber || '' };
     loadProjects();
     loadMainTickets();
@@ -9849,12 +10309,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (statusCard) statusCard.innerHTML = '<h3>Loading Ticket...</h3><p class="helper-text">Please wait while PAL Safety Hub loads the ticket for signature.</p>';
     if (reviewCard) reviewCard.style.display = 'none';
     try {
-      const snap = await getDoc(doc(db, 'projects', publicTicketSignProjectId));
+      const snap = await getDoc(doc(db, 'publicTicketSignatures', publicTicketSignToken));
       if (!snap.exists()) throw new Error('Ticket link is no longer active.');
-      const project = { id: publicTicketSignProjectId, ...snap.data() };
-      const ticket = (project.extraTickets || []).find(t => t.id === publicTicketSignTicketId);
-      if (!ticket || !ticket.gcSignatureToken || ticket.gcSignatureToken !== publicTicketSignToken) throw new Error('Ticket link is invalid or expired.');
-      currentPublicTicketSignature = { project, ticket: { ...ticket, projectId: project.id, projectName: project.name || ticket.projectName || '', projectJobNumber: project.jobNumber || ticket.projectJobNumber || '' } };
+      const request = { id: snap.id, ...snap.data() };
+      if (request.token !== publicTicketSignToken || request.projectId !== publicTicketSignProjectId || request.ticketId !== publicTicketSignTicketId) throw new Error('Ticket link is invalid or expired.');
+      if (isDateExpired(request.expiresAt || request.expiresAtText)) throw new Error('This ticket signature link has expired. Please ask PAL for a new link.');
+      const ticket = {
+        ...(request.ticket || {}),
+        projectId: request.projectId,
+        projectName: request.projectName || request.ticket?.projectName || '',
+        projectJobNumber: request.projectJobNumber || request.ticket?.projectJobNumber || ''
+      };
+      currentPublicTicketSignature = { request, ticket };
       if (statusCard) statusCard.style.display = 'none';
       if (reviewCard) reviewCard.style.display = 'block';
       const paper = document.getElementById('public-ticket-paper');
@@ -9862,9 +10328,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const nameInput = document.getElementById('public-ticket-signer-name');
       const companyInput = document.getElementById('public-ticket-signer-company');
       const typedSignatureInput = document.getElementById('public-ticket-typed-signature');
-      if (nameInput) nameInput.value = ticket.contractorSignedBy || '';
-      if (companyInput) companyInput.value = ticket.contractorCompany || '';
-      if (typedSignatureInput) typedSignatureInput.value = ticket.contractorTypedSignature || ticket.contractorSignedBy || '';
+      if (nameInput) nameInput.value = request.contractorSignedBy || ticket.contractorSignedBy || '';
+      if (companyInput) companyInput.value = request.contractorCompany || ticket.contractorCompany || '';
+      if (typedSignatureInput) typedSignatureInput.value = request.contractorTypedSignature || ticket.contractorTypedSignature || request.contractorSignedBy || ticket.contractorSignedBy || '';
+      if (request.status === 'Signed' || request.status === 'Applied') {
+        if (reviewCard) reviewCard.innerHTML = `<h3>Signature Already Submitted</h3><p class="helper-text">This ticket signature has already been submitted to PAL.</p>${ticketPaperHTML(ticket)}`;
+        return;
+      }
       setTimeout(() => initSignaturePadCanvas('public-ticket-signature'), 50);
     } catch(e) {
       currentPublicTicketSignature = null;
@@ -9893,15 +10363,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById('public-ticket-submit-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
     try {
-      const projectRef = doc(db, 'projects', publicTicketSignProjectId);
-      const snap = await getDoc(projectRef);
-      if (!snap.exists()) throw new Error('Project not found');
-      const data = snap.data() || {};
-      const tickets = Array.isArray(data.extraTickets) ? data.extraTickets : [];
-      const existing = tickets.find(t => t.id === publicTicketSignTicketId);
-      if (!existing || !existing.gcSignatureToken || existing.gcSignatureToken !== publicTicketSignToken) throw new Error('Ticket link is invalid or expired.');
+      const requestRef = doc(db, 'publicTicketSignatures', publicTicketSignToken);
+      const snap = await getDoc(requestRef);
+      if (!snap.exists()) throw new Error('Ticket link is no longer active.');
+      const request = { id: snap.id, ...snap.data() };
+      if (request.token !== publicTicketSignToken || request.projectId !== publicTicketSignProjectId || request.ticketId !== publicTicketSignTicketId || request.status !== 'Pending') throw new Error('Ticket link is invalid or already submitted.');
+      if (isDateExpired(request.expiresAt || request.expiresAtText)) throw new Error('This ticket signature link has expired. Please ask PAL for a new link.');
+      const existing = request.ticket || {};
       const signedTicket = {
         ...existing,
+        projectId: request.projectId,
+        projectName: request.projectName || existing.projectName || '',
+        projectJobNumber: request.projectJobNumber || existing.projectJobNumber || '',
         status: 'GC Signed',
         contractorSignature: signature,
         contractorSignatureType: drawnSignature ? 'drawn' : 'typed',
@@ -9912,13 +10385,22 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         gcSignatureStatus: 'Signed',
         updatedAt: new Date().toISOString()
       };
-      const updatedTickets = tickets.map(t => t.id === publicTicketSignTicketId ? signedTicket : t);
-      await updateDoc(projectRef, { extraTickets: updatedTickets });
-      currentPublicTicketSignature.ticket = { ...signedTicket, projectId: publicTicketSignProjectId, projectName: data.name || signedTicket.projectName || '', projectJobNumber: data.jobNumber || signedTicket.projectJobNumber || '' };
+      await updateDoc(requestRef, {
+        status: 'Signed',
+        ticket: signedTicket,
+        contractorSignature: signature,
+        contractorSignatureType: drawnSignature ? 'drawn' : 'typed',
+        contractorTypedSignature: typedSignature,
+        contractorSignedBy: signerName,
+        contractorCompany: signerCompany,
+        contractorSignedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      currentPublicTicketSignature.ticket = signedTicket;
       const paper = document.getElementById('public-ticket-paper');
       if (paper) paper.innerHTML = ticketPaperHTML(currentPublicTicketSignature.ticket);
       const reviewCard = document.getElementById('public-ticket-review-card');
-      if (reviewCard) reviewCard.innerHTML = `<h3>Signature Submitted</h3><p class="helper-text">Thank you. This signed ticket has been sent back to PAL and saved with the project.</p>${ticketPaperHTML(currentPublicTicketSignature.ticket)}`;
+      if (reviewCard) reviewCard.innerHTML = `<h3>Signature Submitted</h3><p class="helper-text">Thank you. This signed ticket has been sent back to PAL.</p>${ticketPaperHTML(currentPublicTicketSignature.ticket)}`;
       toast('Signature submitted to PAL.');
     } catch(e) {
       console.error(e);
@@ -10452,6 +10934,13 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       });
       const intakeLink = `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`;
       await updateDoc(doc(db, 'newHireIntakes', docRef.id), { intakeLink });
+      await logAuditEvent('new_hire_intake.created', {
+        intakeId: docRef.id,
+        employeeName: data.name || '',
+        projectId: data.projectId || '',
+        projectName: data.projectName || '',
+        status: data.status || 'Pending'
+      });
       closeModal('modal-newhire-intake');
       toast('New hire intake request created.');
       await loadNewHireIntakes(true);
@@ -10817,6 +11306,14 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       }
       const existing = allNewHireIntakes.find(x => x.id === currentNewHireReviewId)?.certFiles || [];
       await updateDoc(doc(db, 'newHireIntakes', currentNewHireReviewId), { certFiles: [...existing, ...uploaded], status: 'Ready for Review', updatedAt: serverTimestamp() });
+      const intake = allNewHireIntakes.find(x => x.id === currentNewHireReviewId);
+      await logAuditEvent('new_hire_intake.cert_files_uploaded', {
+        intakeId: currentNewHireReviewId,
+        employeeName: intake?.name || '',
+        projectId: intake?.projectId || '',
+        projectName: intake?.projectName || '',
+        fileCount: uploaded.length
+      });
       toast('Cert files uploaded.');
       await loadNewHireIntakes(true);
       openNewHireReview(currentNewHireReviewId);
@@ -11038,6 +11535,14 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (status === 'Good To Work') payload.approvedAt = serverTimestamp();
       if (status === 'Missing Info') payload.correctionRequestedAt = serverTimestamp();
       await updateDoc(doc(db, 'newHireIntakes', id), payload);
+      const intake = allNewHireIntakes.find(x => x.id === id);
+      await logAuditEvent('new_hire_intake.status_updated', {
+        intakeId: id,
+        employeeName: intake?.name || '',
+        projectId: intake?.projectId || '',
+        projectName: intake?.projectName || '',
+        status
+      });
       toast(`Status updated: ${status}`);
       await loadNewHireIntakes(true);
       if (document.getElementById('workforce-overview-status-board')) {
@@ -11261,6 +11766,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-jha') renderJhaTab();
     if (tabId === 'main-employee-onboarding') loadEmployeeOnboarding(true);
     if (tabId === 'main-cert-email-preview') loadCertEmailPreview(true);
+    if (tabId === 'main-activity-log') loadActivityLog(true);
     if (tabId === 'main-user-access') loadUserAccessPanel(true);
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();

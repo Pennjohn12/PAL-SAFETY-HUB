@@ -8,11 +8,12 @@
 
 ## Important before deploy
 
-These rules are a hardening foundation, but the current app still has two areas to tighten before a strict production rollout:
+These rules are a hardening foundation, but the current app still has a few areas to review before a strict production rollout:
 
-1. Project records now save `memberUids`, `memberEmails`, `foremanUids`, and `foremanEmails`, and office/admin views quietly backfill older project records. Project reads still allow signed-in staff during the transition because the app still loads all projects and filters in the browser. The next app patch should query only assigned projects, then Firestore project reads can be locked down per project.
+1. Project records now save `memberUids`, `memberEmails`, `foremanUids`, and `foremanEmails`. Foreman/supervisor project lists now query only assigned projects, and Firestore/Storage project access is locked to project members. Before deploying strict rules, office/admin should open the project list once so older projects can backfill access-list fields.
 2. User profile records now save to `/users/{auth.uid}` so Firebase rules can reliably read each person's role. Before deploying strict rules, confirm any older office/admin profile records have been opened/migrated or manually copied to the user's uid document.
-3. GC ticket signature links should move away from unauthenticated direct project updates. The safer model is a dedicated public signature request record or a Cloud Function that validates the token and writes only the signature fields.
+3. GC ticket signature links now use `/publicTicketSignatures/{token}`. Public signers can submit only to that request record; PAL signed-in project members sync the signed result back into the project ticket. GC signature links expire after 7 days and must be recreated after expiration. A future Cloud Function would make this even stronger by applying the signature server-side immediately.
+4. Audit logs now write to `/auditLogs` for important app actions such as access changes, project creation/notes, uploads, employee/certification changes, intake approvals, tickets, and GC signature link activity. The app can create audit entries only for the signed-in user, office/admin can read them, and entries cannot be edited or deleted from the app.
 
 ## Role assignment plan
 
