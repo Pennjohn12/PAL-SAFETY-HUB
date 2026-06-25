@@ -1747,6 +1747,7 @@
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
       <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-activity-log', this)">Activity Log</button>
+      <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-backup-export', this)">Backup Export</button>
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-user-access', this)">User Access</button>
     </div>
 
@@ -2405,6 +2406,36 @@
         <div class="loaded-stamp" id="user-access-stamp"></div>
       </div>
       <div id="user-access-list"><p style="color:var(--muted);font-size:14px;">Open User Access to load account records.</p></div>
+    </div>
+
+    <div class="tab-pane" id="main-backup-export">
+      <div class="page-header">
+        <h2>Backup Export</h2>
+        <div class="header-actions">
+          <button class="btn-save" id="backup-export-btn" type="button" onclick="exportAdminDataSnapshot()">Download Backup Snapshot</button>
+        </div>
+      </div>
+      <div class="helper-text" style="margin-bottom:14px;">Admin-only safety copy of important database records. This downloads record data, notes, audit history, and file links/metadata. It does not replace Google Cloud Storage retention or server-side backups for the actual uploaded file contents.</div>
+      <div class="detail-card">
+        <h3>Included in Snapshot</h3>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">Projects</span><div class="v">Project records, document/photo metadata, tickets, warehouse items, and project access fields.</div></div>
+          <div class="report-field"><span class="k">Project Forms</span><div class="v">Daily safety sheets, field forms, payroll/expense records, JHAs, and daily reports saved under each project.</div></div>
+          <div class="report-field"><span class="k">Workforce</span><div class="v">Employee records, certification metadata, archived flags, and onboarding intake records.</div></div>
+          <div class="report-field"><span class="k">Security</span><div class="v">Users, access grants, and recent audit/activity records.</div></div>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>Production Backup Setup</h3>
+        <div class="helper-text" style="margin-bottom:12px;">For 10 to 20 year record protection, this app also needs Google Cloud backup and Storage retention enabled outside the app.</div>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">Firestore</span><div class="v">Enable scheduled database backups or managed exports for project, workforce, access, and activity records.</div></div>
+          <div class="report-field"><span class="k">Storage Files</span><div class="v">Enable file retention/versioning for uploaded PDFs, photos, certs, JHAs, tickets, and onboarding files.</div></div>
+          <div class="report-field"><span class="k">Recovery Test</span><div class="v">Test restoring records and downloading stored files before PAL relies on the app as the official record system.</div></div>
+          <div class="report-field"><span class="k">Monthly Check</span><div class="v">Download this snapshot, confirm cloud backups completed, and save the export in a secure company location.</div></div>
+        </div>
+      </div>
+      <div class="loaded-stamp" id="backup-export-status" style="margin-top:12px;">Ready to export.</div>
     </div>
   </div>
 </div>
@@ -3659,6 +3690,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.loadActivityLog = loadActivityLog;
   window.renderActivityLog = renderActivityLog;
   window.clearActivityLogFilters = clearActivityLogFilters;
+  window.exportAdminDataSnapshot = exportAdminDataSnapshot;
 
   //  Auth state 
   onAuthStateChanged(auth, async user => {
@@ -3897,6 +3929,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.querySelectorAll('.foreman-only').forEach(el => el.classList.toggle('hidden-by-role', office));
     document.querySelectorAll('.owner-only').forEach(el => el.classList.toggle('hidden-by-role', !admin));
     if (!office && document.getElementById('main-activity-log')?.classList.contains('active')) {
+      switchMainTab('main-projects');
+    }
+    if (!admin && document.getElementById('main-backup-export')?.classList.contains('active')) {
       switchMainTab('main-projects');
     }
     if (!admin && document.getElementById('main-user-access')?.classList.contains('active')) {
@@ -8169,7 +8204,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       'ticket.updated': 'Ticket updated',
       'ticket.gc_signature.synced': 'GC signature synced',
       'ticket.gc_signature_link.created': 'GC signature link created',
-      'ticket.gc_signature_link.reused': 'GC signature link reused'
+      'ticket.gc_signature_link.reused': 'GC signature link reused',
+      'backup.snapshot.exported': 'Backup snapshot exported'
     };
     return labels[action] || String(action || 'Activity').replaceAll('_', ' ').replaceAll('.', ' ');
   }
@@ -8254,6 +8290,92 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (search) search.value = '';
     if (type) type.value = 'all';
     renderActivityLog();
+  }
+
+  function backupPlainValue(value) {
+    if (!value) return value;
+    if (value.toDate) return value.toDate().toISOString();
+    if (Array.isArray(value)) return value.map(backupPlainValue);
+    if (typeof value === 'object') {
+      return Object.fromEntries(Object.entries(value).map(([key, val]) => [key, backupPlainValue(val)]));
+    }
+    return value;
+  }
+
+  async function backupCollection(path, options = {}) {
+    const max = options.limit || 0;
+    const pathParts = String(path).split('/').filter(Boolean);
+    const collectionRef = collection(db, ...pathParts);
+    const constraints = [];
+    if (options.orderBy) constraints.push(orderBy(options.orderBy, options.direction || 'desc'));
+    if (max) constraints.push(limit(max));
+    const snap = constraints.length
+      ? await getDocs(query(collectionRef, ...constraints))
+      : await getDocs(collectionRef);
+    return snap.docs.map(docSnap => ({ id: docSnap.id, ...backupPlainValue(docSnap.data()) }));
+  }
+
+  async function exportAdminDataSnapshot() {
+    if (!isAdminRole()) return toast('Only admin can export backup snapshots.');
+    if (!requireCloudConnection('export a backup snapshot')) return;
+    const btn = document.getElementById('backup-export-btn');
+    const status = document.getElementById('backup-export-status');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Building Snapshot...'; }
+      if (status) status.textContent = 'Collecting records from Firebase...';
+
+      const projects = await backupCollection('projects');
+      for (const project of projects) {
+        project.fieldForms = await backupCollection(`projects/${project.id}/fieldForms`);
+        project.reports = await backupCollection(`projects/${project.id}/reports`);
+      }
+
+      const snapshot = {
+        app: 'PAL Safety Hub',
+        type: 'manual-admin-backup-snapshot',
+        exportedAt: new Date().toISOString(),
+        exportedBy: {
+          uid: currentUser?.uid || '',
+          email: cleanAccessText(currentUser?.email || ''),
+          name: currentUser?.displayName || currentUser?.email || ''
+        },
+        notes: [
+          'This snapshot exports Firestore record data and file URLs/metadata.',
+          'It does not contain the binary contents of uploaded files stored in Google Cloud Storage.',
+          'Use Google Cloud/Firebase backup and retention settings for full long-term file recovery.'
+        ],
+        counts: {},
+        data: {
+          projects,
+          employees: await backupCollection('employees'),
+          newHireIntakes: await backupCollection('newHireIntakes'),
+          users: await backupCollection('users'),
+          userAccessGrants: await backupCollection('userAccessGrants'),
+          auditLogs: await backupCollection('auditLogs', { orderBy: 'createdAt', limit: 500 })
+        }
+      };
+      Object.entries(snapshot.data).forEach(([key, value]) => { snapshot.counts[key] = Array.isArray(value) ? value.length : 0; });
+
+      const json = JSON.stringify(snapshot, null, 2);
+      const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pal-safety-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      if (status) status.textContent = `Backup snapshot exported at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.`;
+      await logAuditEvent('backup.snapshot.exported', { recordGroups: Object.keys(snapshot.data).length, projectCount: projects.length });
+      toast('Backup snapshot downloaded.');
+    } catch (e) {
+      console.error('Backup export failed', e);
+      if (status) status.textContent = 'Backup export failed. Check admin access and connection.';
+      toast('Could not export backup snapshot: ' + (e?.message || 'unknown error'));
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Download Backup Snapshot'; }
+    }
   }
 
   async function saveEmailAccessGrant() {

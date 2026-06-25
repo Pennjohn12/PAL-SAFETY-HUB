@@ -19,6 +19,9 @@ These rules are a hardening foundation, but the current app still has a few area
 7. Firebase Hosting now excludes internal notes/draft orientation assets from public deployment, adds browser safety headers, and uses no-store caching for app shell files so security patches are less likely to be hidden behind old cached pages. The service worker cache version was bumped so installed devices refresh to the current build.
 8. The app now has field-friendly connection warnings. Projects/intake pages show an offline banner, major cloud saves/uploads/submissions stop before trying to run offline, and the public form home page warns users that project/cloud submission needs internet even if local form saving still works.
 9. Foreman project field forms now have a first offline outbox. Daily safety sheets, AI safety sheets, foreman daily reports, daily payroll, weekly payroll, and expense reports can be saved on the device while offline, then automatically submitted to the project when the device is back online and the user is signed in. File/photo uploads still require internet and should be handled in a future IndexedDB upload queue if needed.
+10. Admin-only Backup Export now provides an immediate manual recovery/reference snapshot. It exports Firestore record data, nested project field forms/reports, access records, audit records, and file URLs/metadata to a dated JSON file. This does not replace Google Cloud backup/retention for actual uploaded file contents.
+11. A backup and retention runbook now documents the production storage plan: scheduled Firestore backups, Google Cloud Storage retention/versioning, monthly admin checks, quarterly recovery tests, and the limits of the manual export.
+12. A production deployment plan now uses JobsiteResources as the working platform name, with `pal.jobsiteresources.com` as the target PAL app domain and future companies separated under their own subdomains.
 
 ## Role assignment plan
 
