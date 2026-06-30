@@ -1982,7 +1982,7 @@
 
         <div class="ai-safety-actions">
           <button class="btn-outline" type="button" onclick="fillAiSafetyExample()">Use Example</button>
-          <button class="btn-save" type="button" onclick="generateProjectAiSafetySheet()">Fill Safety Sheet</button>
+          <button class="btn-save" id="generate-ai-safety-btn" type="button" onclick="generateProjectAiSafetySheet()">Fill Safety Sheet</button>
         </div>
         <div class="foreman-form-actions">
           <button class="btn-save" type="button" id="save-ai-safety-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
@@ -2278,6 +2278,7 @@
         </div>
         <textarea id="cert-email-body" class="cert-email-preview" readonly></textarea>
         <div class="cert-email-actions">
+          <button class="btn-save" id="cert-email-send" type="button" onclick="sendCertEmailNow()">Send Email</button>
           <button class="btn-save" type="button" onclick="copyCertEmailPreview()">Copy Email Body</button>
           <button class="btn-outline" type="button" onclick="openCertEmailDraft()">Open Email Draft</button>
           <button class="btn-outline" type="button" onclick="downloadCertEmailPreview()">Download Text</button>
@@ -3463,6 +3464,7 @@
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80",
@@ -3477,6 +3479,9 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const storage = getStorage(app);
+  const functions = getFunctions(app, 'us-central1');
+  const sendAppEmailCallable = httpsCallable(functions, 'sendAppEmail');
+  const generateSafetyDraftCallable = httpsCallable(functions, 'generateSafetyDraft');
   const PAL_PUBLIC_PROJECTS_URL = 'https://pennjohn12.github.io/PAL-SAFETY-HUB/projects.html';
   const PAL_ADMIN_EMAILS = [
     'jvpanettiere@gmail.com',
@@ -3659,6 +3664,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.loadCertEmailPreview = loadCertEmailPreview;
   window.renderCertEmailPreview = renderCertEmailPreview;
   window.copyCertEmailPreview = copyCertEmailPreview;
+  window.sendCertEmailNow = sendCertEmailNow;
   window.openCertEmailDraft = openCertEmailDraft;
   window.downloadCertEmailPreview = downloadCertEmailPreview;
   window.openEmployeeDetail = openEmployeeDetail;
@@ -6487,7 +6493,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  function generateProjectAiSafetySheet() {
+  async function generateProjectAiSafetySheet() {
     const project = selectedAiSafetyProject();
     const data = {
       project,
@@ -6501,8 +6507,39 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     };
     if (!project) return toast('Select a project first.');
     if (!data.notes && !data.areas) return toast('Add the work plan or work areas first.');
-    fillAiSafetySheetFields(buildAiSafetyContent(data));
-    toast('AI assisted safety sheet filled. Review before saving.');
+    const btn = document.getElementById('generate-ai-safety-btn');
+    const localDraft = () => fillAiSafetySheetFields(buildAiSafetyContent(data));
+    if (!navigator.onLine) {
+      localDraft();
+      return toast('Offline draft filled. Review carefully before saving.');
+    }
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Creating Draft...'; }
+      const result = await generateSafetyDraftCallable({
+        projectName: project.name || '',
+        jobNumber: project.jobNumber || '',
+        date: data.date,
+        foreman: data.foreman,
+        areas: data.areas,
+        equipment: data.equipment,
+        conditions: data.conditions,
+        focus: data.focus,
+        notes: data.notes
+      });
+      const draft = result.data?.draft;
+      if (!draft?.tasks_locations || !draft?.hazard1 || !draft?.control1
+        || !draft?.hazard2 || !draft?.control2) {
+        throw new Error('No complete safety draft returned.');
+      }
+      fillAiSafetySheetFields(draft);
+      toast('OpenAI safety draft filled. Review before saving.');
+    } catch (error) {
+      console.error('OpenAI safety draft unavailable', error);
+      localDraft();
+      toast('Online AI was unavailable. A local draft was filled instead.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Fill Safety Sheet'; }
+    }
   }
 
   async function saveProjectAiSafetySheet() {
@@ -8847,6 +8884,45 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const subject = document.getElementById('cert-email-subject')?.value.trim() || 'PAL Certification Watch - Expired and 30-Day Certs';
     const body = document.getElementById('cert-email-body')?.value || buildCertEmailText();
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  async function sendCertEmailNow() {
+    const toValue = document.getElementById('cert-email-to')?.value.trim() || '';
+    const recipients = [...new Set(toValue.split(/[;,]/).map(value => value.trim().toLowerCase()).filter(Boolean))];
+    const subject = document.getElementById('cert-email-subject')?.value.trim() || 'PAL Certification Watch - Expired and 30-Day Certs';
+    const body = document.getElementById('cert-email-body')?.value || buildCertEmailText();
+    const button = document.getElementById('cert-email-send');
+    if (!recipients.length || recipients.some(email => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      toast('Enter a valid recipient email address.');
+      return;
+    }
+    if (!currentUser) {
+      toast('Sign in before sending email.');
+      return;
+    }
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Sending...';
+    }
+    try {
+      const result = await sendAppEmailCallable({
+        to: recipients,
+        subject,
+        text: body,
+        feature: 'certification-watch-manual'
+      });
+      const count = Number(result.data?.recipientCount || recipients.length);
+      toast(`Certification email sent to ${count} recipient${count === 1 ? '' : 's'}.`);
+    } catch (error) {
+      console.error('Certification email send failed', error);
+      const message = String(error?.message || '').replace(/^Firebase:\s*/i, '').replace(/\s*\([^)]*\)\.?$/, '');
+      toast(message || 'Could not send the certification email.');
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = 'Send Email';
+      }
+    }
   }
 
   function downloadCertEmailPreview() {

@@ -303,6 +303,16 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    match /integrationAiLogs/{logId} {
+      allow read: if isOffice();
+      allow create, update, delete: if false;
+    }
+
+    match /automationRuns/{runId} {
+      allow read: if isOffice();
+      allow create, update, delete: if false;
+    }
+
     match /auditLogs/{logId} {
       allow read: if isOffice();
       allow create: if signedIn()

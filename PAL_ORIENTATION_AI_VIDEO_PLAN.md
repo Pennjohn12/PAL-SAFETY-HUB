@@ -1,5 +1,7 @@
 # PAL Orientation AI Video Plan
 
+> Superseded for production by `PAL_ORIENTATION_HEYGEN_PRODUCTION_PACKAGE.md`, which contains the approved-length script, five in-app checkpoints, localization instructions, and production QA requirements. Keep this file as the earlier storyboard reference.
+
 Source: `Orientation Form English (Revised).pdf`
 
 ## Recommended Format
