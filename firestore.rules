@@ -308,6 +308,11 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    match /integrationSmsLogs/{logId} {
+      allow read: if isOffice();
+      allow create, update, delete: if false;
+    }
+
     match /automationRuns/{runId} {
       allow read: if isOffice();
       allow create, update, delete: if false;

@@ -9,6 +9,10 @@ admin.initializeApp();
 const db = admin.firestore();
 const resendApiKey = defineSecret('RESEND_API_KEY');
 const openaiApiKey = defineSecret('OPENAI_API_KEY');
+const twilioAccountSid = defineSecret('TWILIO_ACCOUNT_SID');
+const twilioApiKeySid = defineSecret('TWILIO_API_KEY_SID');
+const twilioApiKeySecret = defineSecret('TWILIO_API_KEY_SECRET');
+const TWILIO_FROM_NUMBER = '+15164004507';
 
 const BOOTSTRAP_ADMIN_EMAILS = new Set([
   'jvpanettiere@gmail.com',
@@ -183,6 +187,65 @@ async function logEmailEvent(payload) {
   });
 }
 
+function normalizeUsPhone(value) {
+  const digits = String(value || '').replace(/\D/g, '');
+  const normalized = digits.length === 10 ? `+1${digits}` : (digits.length === 11 && digits.startsWith('1') ? `+${digits}` : '');
+  if (!/^\+1[2-9]\d{9}$/.test(normalized)) {
+    throw new HttpsError('invalid-argument', 'Enter a valid 10-digit U.S. mobile number.');
+  }
+  return normalized;
+}
+
+function validateIntakeUrl(value) {
+  try {
+    const url = new URL(String(value || ''));
+    const allowedHosts = new Set([
+      'jobsiteresources.com', 'www.jobsiteresources.com', 'pal.jobsiteresources.com',
+      'pal-safety-hub.web.app', 'pal-safety-hub.firebaseapp.com', 'pennjohn12.github.io'
+    ]);
+    if (url.protocol !== 'https:' || !allowedHosts.has(url.hostname.toLowerCase()) || !url.searchParams.get('intake')) {
+      throw new Error('Invalid intake URL');
+    }
+    return url.toString().slice(0, 600);
+  } catch (_) {
+    throw new HttpsError('invalid-argument', 'The intake link is invalid. Save the request again and retry.');
+  }
+}
+
+async function reserveSmsMessage() {
+  const usageId = currentUsageId();
+  const usageRef = db.collection('usage').doc(usageId);
+  const settingsSnap = await db.collection('integrationSettings').doc('pal').get();
+  const configuredLimit = Number(settingsSnap.data()?.smsMonthlyLimit || 1000);
+  const monthlyLimit = Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : 1000;
+  await db.runTransaction(async transaction => {
+    const usageSnap = await transaction.get(usageRef);
+    const used = Number(usageSnap.data()?.smsSent || 0);
+    if (used >= monthlyLimit) {
+      throw new HttpsError('resource-exhausted', 'Monthly text-message limit reached.');
+    }
+    transaction.set(usageRef, {
+      month: usageId,
+      smsSent: used + 1,
+      smsMonthlyLimit: monthlyLimit,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+  return { usageId, monthlyLimit };
+}
+
+async function releaseSmsMessage(usageId) {
+  const usageRef = db.collection('usage').doc(usageId);
+  await db.runTransaction(async transaction => {
+    const snap = await transaction.get(usageRef);
+    const used = Number(snap.data()?.smsSent || 0);
+    transaction.set(usageRef, {
+      smsSent: Math.max(0, used - 1),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+}
+
 function isArchivedRecord(item = {}) {
   return item.archived === true
     || item.deleted === true
@@ -298,6 +361,73 @@ exports.sendAppEmail = onCall({
     recipientCount: recipients.length,
     usageId
   };
+});
+
+exports.sendAppText = onCall({
+  region: 'us-central1',
+  invoker: 'public',
+  secrets: [twilioAccountSid, twilioApiKeySid, twilioApiKeySecret],
+  enforceAppCheck: false,
+  timeoutSeconds: 30,
+  memory: '256MiB'
+}, async request => {
+  const access = await assertOfficeAccess(request.auth);
+  const feature = cleanText(request.data?.feature, 80);
+  if (feature !== 'new-hire-intake') {
+    throw new HttpsError('invalid-argument', 'This text-message type is not supported.');
+  }
+
+  const to = normalizeUsPhone(request.data?.to);
+  const intakeUrl = validateIntakeUrl(request.data?.intakeUrl);
+  const employeeName = cleanText(request.data?.employeeName, 80);
+  const projectName = cleanText(request.data?.projectName, 100) || 'your PAL jobsite';
+  const greeting = employeeName ? `${employeeName}, please` : 'Please';
+  const body = `PAL Safety Hub: ${greeting} complete your pre-site intake for ${projectName}: ${intakeUrl} Reply STOP to opt out.`;
+  const usage = await reserveSmsMessage();
+
+  try {
+    const form = new URLSearchParams({ To: to, From: TWILIO_FROM_NUMBER, Body: body });
+    const credentials = Buffer.from(`${twilioApiKeySid.value()}:${twilioApiKeySecret.value()}`).toString('base64');
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid.value()}/Messages.json`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${credentials}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: form.toString()
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      console.error('Twilio send failed', response.status, result?.code, result?.message);
+      const approvalPending = [30034, 30044, 21610].includes(Number(result?.code));
+      throw new HttpsError(
+        approvalPending ? 'failed-precondition' : 'internal',
+        approvalPending
+          ? 'Twilio carrier approval is still pending. Use Copy Text Message until approval is complete.'
+          : 'The text could not be delivered. Check the phone number and try again.'
+      );
+    }
+
+    await db.collection('integrationSmsLogs').add({
+      provider: 'twilio', providerId: result.sid || '', feature, to,
+      intakeId: cleanText(request.data?.intakeId, 160), projectName,
+      sentByUid: request.auth.uid, sentByEmail: access.email,
+      usageId: usage.usageId, status: result.status || 'queued',
+      sentAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('auditLogs').add({
+      action: 'text.sent', createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      actorUid: request.auth.uid, actorEmail: access.email, feature,
+      recipientCount: 1, provider: 'twilio', providerId: result.sid || '',
+      usageId: usage.usageId
+    });
+    return { ok: true, providerId: result.sid || '', status: result.status || 'queued', usageId: usage.usageId };
+  } catch (error) {
+    await releaseSmsMessage(usage.usageId).catch(refundError => console.error('SMS usage refund failed', refundError));
+    if (error instanceof HttpsError) throw error;
+    console.error('Text send failed', error);
+    throw new HttpsError('internal', 'The text could not be sent. Try again shortly.');
+  }
 });
 
 exports.generateSafetyDraft = onCall({

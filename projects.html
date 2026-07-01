@@ -3195,13 +3195,13 @@
     <div class="newhire-share-box" id="nh-share-preview">Fill out the request to generate the text message.</div>
     <div class="newhire-text-placeholder">
       <div class="newhire-text-placeholder-head">
-        <h4>Future Direct Text Message</h4>
-        <span class="pill warn">Provider Not Connected Yet</span>
+        <h4>Direct Text Message</h4>
+        <span class="pill blue">Twilio Connected</span>
       </div>
-      <div class="helper-text">Once texting is connected, this is where the office will send the intake link directly to the phone number above.</div>
+      <div class="helper-text">Save the intake and send its secure link directly to the employee. Carrier delivery begins when Twilio finishes its approval.</div>
       <div class="newhire-text-actions">
-        <div class="helper-text">For now, save the request and use Copy Text Message.</div>
-        <button class="btn-save" type="button" disabled title="Text messaging provider has not been connected yet.">Send Text</button>
+        <div class="helper-text">Copy Text Message remains available as a backup.</div>
+        <button class="btn-save" id="send-newhire-text-btn" type="button" onclick="sendNewHireIntakeText()">Save &amp; Send Text</button>
       </div>
     </div>
     <div class="modal-actions">
@@ -3481,6 +3481,7 @@
   const storage = getStorage(app);
   const functions = getFunctions(app, 'us-central1');
   const sendAppEmailCallable = httpsCallable(functions, 'sendAppEmail');
+  const sendAppTextCallable = httpsCallable(functions, 'sendAppText');
   const generateSafetyDraftCallable = httpsCallable(functions, 'generateSafetyDraft');
   const PAL_PUBLIC_PROJECTS_URL = 'https://pennjohn12.github.io/PAL-SAFETY-HUB/projects.html';
   const PAL_ADMIN_EMAILS = [
@@ -3676,6 +3677,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   window.openNewHireIntakeModal = openNewHireIntakeModal;
   window.saveNewHireIntake = saveNewHireIntake;
+  window.sendNewHireIntakeText = sendNewHireIntakeText;
   window.loadNewHireIntakes = loadNewHireIntakes;
   window.loadEmployeeOnboarding = loadEmployeeOnboarding;
   window.switchOnboardingTab = switchOnboardingTab;
@@ -11229,12 +11231,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     document.getElementById('modal-newhire-intake')?.classList.add('open');
   }
 
-  async function saveNewHireIntake() {
+  async function saveNewHireIntake(options = {}) {
     if (!requireCloudConnection('create an intake request')) return;
     if (!currentUser) return toast('Please sign in first.');
     const btn = document.getElementById('save-newhire-btn');
     const data = getNewHireFormData();
-    if (!data.name) return toast('Employee name is required.');
+    if (!data.name) { toast('Employee name is required.'); return null; }
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const docRef = await addDoc(collection(db, 'newHireIntakes'), {
@@ -11254,15 +11256,42 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         projectName: data.projectName || '',
         status: data.status || 'Pending'
       });
-      closeModal('modal-newhire-intake');
+      if (options.closeAfter !== false) closeModal('modal-newhire-intake');
       toast('New hire intake request created.');
       await loadNewHireIntakes(true);
-      copyNewHireIntakeTextById(docRef.id);
+      if (options.copyAfter !== false) copyNewHireIntakeTextById(docRef.id);
+      return { id: docRef.id, ...data, intakeLink };
     } catch (e) {
       console.error(e);
       toast('Could not save intake request.');
+      return null;
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Intake Request'; }
+    }
+  }
+
+  async function sendNewHireIntakeText() {
+    if (!requireCloudConnection('send an intake text')) return;
+    const data = getNewHireFormData();
+    if (!data.phone) return toast('Enter the employee phone number first.');
+    const btn = document.getElementById('send-newhire-text-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      const intake = await saveNewHireIntake({ closeAfter: false, copyAfter: false });
+      if (!intake) return;
+      if (btn) btn.textContent = 'Sending...';
+      await sendAppTextCallable({
+        feature: 'new-hire-intake', to: intake.phone, intakeId: intake.id,
+        intakeUrl: intake.intakeLink, employeeName: intake.name,
+        projectName: intake.projectName
+      });
+      closeModal('modal-newhire-intake');
+      toast('Intake text queued for delivery.');
+    } catch (e) {
+      console.error(e);
+      toast(e?.message || 'Could not send the intake text. Use Copy Text Message for now.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save & Send Text'; }
     }
   }
 
