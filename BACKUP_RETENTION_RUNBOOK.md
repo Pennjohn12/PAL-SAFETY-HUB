@@ -32,33 +32,25 @@ It does not include:
 - A full point-in-time restore system.
 - A guaranteed 10 to 20 year archive by itself.
 
-## Required Production Backup Setup
+## Active Production Recovery Setup
 
-Before PAL relies on this app for long-term company records, set up these cloud-side protections in Firebase/Google Cloud.
+The following cloud protections were enabled on July 1, 2026 for project `pal-safety-hub`.
 
 ### Firestore Records
 
-Turn on scheduled Firestore backups or managed exports.
-
-Recommended production posture:
-
-- Daily backup for recent recovery.
-- Monthly backup for long-term record checkpoints.
-- Store backups in a dedicated Google Cloud Storage backup bucket.
-- Keep backup bucket access limited to owners/admins only.
-- Test a restore into a separate test project before relying on it.
+- Point-in-time recovery is active with a seven-day recovery window.
+- Daily backups are active and retained for 14 days.
+- Weekly backups run on Monday and are retained for 98 days, the supported maximum.
+- Backups contain Firestore data and index configurations, but not Firebase Security Rules or Storage file bytes.
+- A controlled restore must be tested after the first backup is available.
 
 ### Firebase Storage / Google Cloud Storage Files
 
-Turn on bucket retention/version protection for uploaded files.
-
-Recommended production posture:
-
-- Enable object versioning for the Storage bucket that holds project and employee files.
-- Add lifecycle rules only after the company decides the legal retention schedule.
-- Consider a separate archive bucket for long-term copies.
-- Restrict archive bucket access to admin/owner accounts.
-- Do not allow normal app users to permanently delete files.
+- Cloud Storage soft delete is active for `pal-safety-hub.firebasestorage.app` with a 90-day recovery window.
+- Storage Security Rules block normal app users from permanently deleting uploaded files.
+- Object versioning remains off because current uploads use distinct paths and indefinite noncurrent versions would add cost without an approved lifecycle policy.
+- No locked bucket retention policy has been applied. PAL management/legal must approve the formal retention period before any irreversible lock is enabled.
+- A separate archive project or bucket remains a future option for protection against complete project/account deletion.
 
 ### Retention Schedule
 
@@ -98,8 +90,8 @@ Once per quarter:
 
 The app should not be treated as final production record storage until:
 
-- Firestore scheduled backups are enabled.
-- Storage file retention/versioning is enabled.
+- Firestore scheduled backups and point-in-time recovery remain enabled.
+- Storage soft delete remains enabled at 90 days.
 - Admin/owner access to backups is confirmed.
 - A restore test has been completed.
 - PAL has approved the retention schedule.

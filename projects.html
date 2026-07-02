@@ -2428,12 +2428,14 @@
         </div>
       </div>
       <div class="detail-card">
-        <h3>Production Backup Setup</h3>
-        <div class="helper-text" style="margin-bottom:12px;">For 10 to 20 year record protection, this app also needs Google Cloud backup and Storage retention enabled outside the app.</div>
+        <h3>Production Recovery Protection</h3>
+        <div class="helper-text" style="margin-bottom:12px;">Cloud recovery protection is active. Original project and workforce records remain in the app; these controls provide additional recovery points after mistakes or unwanted changes.</div>
         <div class="report-grid">
-          <div class="report-field"><span class="k">Firestore</span><div class="v">Enable scheduled database backups or managed exports for project, workforce, access, and activity records.</div></div>
-          <div class="report-field"><span class="k">Storage Files</span><div class="v">Enable file retention/versioning for uploaded PDFs, photos, certs, JHAs, tickets, and onboarding files.</div></div>
-          <div class="report-field"><span class="k">Recovery Test</span><div class="v">Test restoring records and downloading stored files before PAL relies on the app as the official record system.</div></div>
+          <div class="report-field"><span class="k">Firestore Recovery</span><div class="v"><span class="pill active">Active</span> Seven-day point-in-time recovery for recent database changes.</div></div>
+          <div class="report-field"><span class="k">Scheduled Backups</span><div class="v"><span class="pill active">Active</span> Daily backups retained 14 days; Monday backups retained 98 days.</div></div>
+          <div class="report-field"><span class="k">Storage File Recovery</span><div class="v"><span class="pill active">Active</span> Deleted files and bucket data recoverable for 90 days.</div></div>
+          <div class="report-field"><span class="k">Permanent Deletion</span><div class="v">Blocked for normal app users. Archive records instead of deleting them.</div></div>
+          <div class="report-field"><span class="k">Recovery Test</span><div class="v">Complete a controlled restore test after the first scheduled backup appears, then repeat quarterly.</div></div>
           <div class="report-field"><span class="k">Monthly Check</span><div class="v">Download this snapshot, confirm cloud backups completed, and save the export in a secure company location.</div></div>
         </div>
       </div>
