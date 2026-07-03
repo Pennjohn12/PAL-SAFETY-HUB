@@ -88,6 +88,63 @@ function cleanText(value, maxLength = 1200) {
   return String(value || '').replace(/\s+/g, ' ').trim().slice(0, maxLength);
 }
 
+async function recordIntegrationFailure(payload = {}) {
+  await db.collection('integrationFailureLogs').add({
+    service: cleanText(payload.service, 40) || 'unknown',
+    feature: cleanText(payload.feature, 80) || 'unknown',
+    code: cleanText(payload.code, 80),
+    message: cleanText(payload.message, 300) || 'Provider request failed.',
+    actorUid: cleanText(payload.actorUid, 160),
+    actorEmail: cleanEmail(payload.actorEmail),
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+async function getIntegrationHealthData() {
+  const usageId = currentUsageId();
+  const [usageSnap, settingsSnap, failuresSnap] = await Promise.all([
+    db.collection('usage').doc(usageId).get(),
+    db.collection('integrationSettings').doc('pal').get(),
+    db.collection('integrationFailureLogs').orderBy('createdAt', 'desc').limit(12).get()
+  ]);
+  const usage = usageSnap.data() || {};
+  const settings = settingsSnap.data() || {};
+  const service = (key, used, configuredLimit, defaultLimit, warningPercent) => {
+    const limit = Number(configuredLimit || defaultLimit);
+    const safeLimit = Number.isFinite(limit) && limit > 0 ? limit : defaultLimit;
+    const safeUsed = Math.max(0, Number(used || 0));
+    const percent = Math.min(100, Math.round((safeUsed / safeLimit) * 100));
+    return {
+      key, used: safeUsed, limit: safeLimit, percent, warningPercent,
+      state: safeUsed >= safeLimit ? 'limit' : (percent >= warningPercent ? 'warning' : 'healthy')
+    };
+  };
+  return {
+    usageId,
+    services: [
+      service('email', usage.emailSent, settings.emailMonthlyLimit || usage.emailMonthlyLimit, 3000, 80),
+      service('sms', usage.smsSent, settings.smsMonthlyLimit || usage.smsMonthlyLimit, 1000, 75),
+      service('ai', usage.aiGenerations, settings.aiMonthlyLimit || usage.aiMonthlyLimit, 500, 75)
+    ],
+    recentFailures: failuresSnap.docs.map(doc => {
+      const row = doc.data() || {};
+      return {
+        id: doc.id, service: cleanText(row.service, 40), feature: cleanText(row.feature, 80),
+        code: cleanText(row.code, 80), message: cleanText(row.message, 300),
+        createdAt: row.createdAt?.toDate ? row.createdAt.toDate().toISOString() : ''
+      };
+    })
+  };
+}
+
+function localDateInTimeZone(value, timeZone = 'America/New_York') {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(value ? new Date(value) : new Date());
+  const part = type => parts.find(item => item.type === type)?.value || '';
+  return `${part('year')}-${part('month')}-${part('day')}`;
+}
+
 function getResponseOutputText(result) {
   if (typeof result?.output_text === 'string' && result.output_text.trim()) {
     return result.output_text.trim();
@@ -108,6 +165,31 @@ function isUsableSafetyDraft(draft) {
     && cleanText(draft.hazard2, 20).length >= 5
     && cleanText(draft.control2, 20).length >= 10;
 }
+
+const PAL_SAFETY_DRAFT_INSTRUCTIONS = `You draft PAL Environmental Services daily construction safety meetings for competent-foreman review.
+
+FACT CONTROL
+- Use only facts supplied by the user. Never invent tasks, locations, equipment, certifications, measurements, incidents, completed inspections, permits, regulations, OSHA citations, or site conditions.
+- Connect every task to its stated floor, room, elevation, work zone, or other supplied location. If a location or critical condition is missing, say it must be confirmed before work instead of guessing.
+- Do not state that a permit, inspection, training, fit test, rescue plan, competent person, or protective system exists unless the input says so. State it as a required verification when relevant.
+
+OUTPUT STANDARD
+- Select two distinct highest-priority hazards supported by the work plan. Hazard labels must identify the exposure, task, and location; avoid labels such as "be careful," "PPE," or "general safety."
+- Each matching control must contain 4 to 6 concise, actionable sentences, normally 80 to 160 words total. Put controls in the order the crew should apply them: eliminate/substitute, isolate or engineer, plan/coordinate, inspect, use PPE, then stop work/escalate.
+- Name who must act when useful: operator, foreman, fire watch, competent person, or crew. Include a pre-task condition check and a clear stop-work trigger.
+- Do not claim PPE alone eliminates a hazard. Do not use generic filler or repeat the same control under both hazards.
+
+PAL HIGH-RISK GUIDANCE (apply only when supported by the supplied work)
+- Falls, harnesses, aerial lifts, scaffolds, edges, or openings: identify the actual fall exposure; require inspection before use; protect openings/edges; maintain required access and housekeeping; use only approved anchorage/designated lift tie-off points and compatible connectors when tie-off is required; keep lift gates closed and feet on the platform floor; never tie to rails, piping, conduit, or unapproved points; stop work if the anchor, equipment condition, rescue method, or required protection is unclear.
+- Ladders: apply PAL's Ladder Last hierarchy when access equipment is discussed: scaffold first, mechanical lift second, podium ladder third, and A-frame ladder only after safer options are not feasible. Require the correct inspected ladder on firm level footing, three points of contact, no standing above the permitted step, no overreaching, and removal from service if damaged.
+- Hot work, torching, welding, or grinding: verify authorization/permit requirements, isolate combustibles, control sparks and slag, provide the correct extinguisher, assign and maintain fire watch when required, protect nearby workers, inspect the area after work, and stop if fire protection or ventilation is inadequate.
+- Spray-applied fireproofing, SOFP, chemicals, dust, or respiratory exposure: verify the product/SDS and exposure controls, isolate the work zone, use ventilation and dust/overspray control, protect skin and eyes, and use respiratory protection only under the employer's respiratory program with required medical clearance, fit testing, training, and correct filters/cartridges.
+- Mechanical lifts or mobile equipment: require authorized operators, pre-use inspection, manufacturer limits, stable travel/work surfaces, overhead and crush-zone checks, barricades/spotters where needed, controlled movement, and removal from service for defects.
+- Material handling: plan the route, keep it clear, assess weight/shape, use carts or mechanical assistance, team-lift awkward loads, keep hands out of pinch points, lift with the legs while keeping the load close, and stop if the load cannot be controlled.
+- Electrical or temporary power: inspect cords/tools, use required GFCI protection, keep connections dry and protected, avoid damaged equipment and energized exposure, maintain clearance, and remove defective equipment from service.
+- Housekeeping: maintain clear walkways and egress, control cords/hoses and trip hazards, stack materials securely, remove debris throughout the shift, keep access to extinguishers/electrical panels clear, and correct changing conditions immediately.
+
+Write professional field-ready text that is specific, thorough, and easy to read aloud. This is an editable draft; never imply that AI approval replaces review by PAL's competent foreman before the meeting, crew signatures, or work begins.`;
 
 async function reserveAiGeneration() {
   const usageId = currentUsageId();
@@ -318,16 +400,29 @@ exports.sendAppEmail = onCall({
   const from = process.env.RESEND_FROM_EMAIL || 'PAL Safety Hub <notifications@jobsiteresources.com>';
   const replyTo = process.env.RESEND_REPLY_TO || access.email || undefined;
 
-  const result = await resend.emails.send({
-    from,
-    to: recipients,
-    subject,
-    html: html || undefined,
-    text: text || undefined,
-    replyTo
-  });
+  let result;
+  try {
+    result = await resend.emails.send({
+      from,
+      to: recipients,
+      subject,
+      html: html || undefined,
+      text: text || undefined,
+      replyTo
+    });
+  } catch (error) {
+    await recordIntegrationFailure({
+      service: 'email', feature, code: error?.code, message: error?.message,
+      actorUid: request.auth.uid, actorEmail: access.email
+    }).catch(logError => console.error('Email failure logging failed', logError));
+    throw new HttpsError('internal', 'The email provider could not be reached. Try again shortly.');
+  }
 
   if (result.error) {
+    await recordIntegrationFailure({
+      service: 'email', feature, code: result.error.name, message: result.error.message,
+      actorUid: request.auth.uid, actorEmail: access.email
+    }).catch(logError => console.error('Email failure logging failed', logError));
     throw new HttpsError('internal', result.error.message || 'Email provider failed.');
   }
 
@@ -361,6 +456,20 @@ exports.sendAppEmail = onCall({
     recipientCount: recipients.length,
     usageId
   };
+});
+
+exports.getIntegrationHealth = onCall({
+  region: 'us-central1',
+  invoker: 'public',
+  enforceAppCheck: false,
+  timeoutSeconds: 30,
+  memory: '256MiB'
+}, async request => {
+  const access = await assertOfficeAccess(request.auth);
+  if (!access.adminAccess) {
+    throw new HttpsError('permission-denied', 'Only administrators can view integration health.');
+  }
+  return { ok: true, ...(await getIntegrationHealthData()) };
 });
 
 exports.sendAppText = onCall({
@@ -424,6 +533,10 @@ exports.sendAppText = onCall({
     return { ok: true, providerId: result.sid || '', status: result.status || 'queued', usageId: usage.usageId };
   } catch (error) {
     await releaseSmsMessage(usage.usageId).catch(refundError => console.error('SMS usage refund failed', refundError));
+    await recordIntegrationFailure({
+      service: 'sms', feature, code: error?.code, message: error?.message,
+      actorUid: request.auth.uid, actorEmail: access.email
+    }).catch(logError => console.error('SMS failure logging failed', logError));
     if (error instanceof HttpsError) throw error;
     console.error('Text send failed', error);
     throw new HttpsError('internal', 'The text could not be sent. Try again shortly.');
@@ -464,7 +577,7 @@ exports.generateSafetyDraft = onCall({
       },
       body: JSON.stringify({
         model: 'gpt-5.4-mini',
-        instructions: `You draft PAL Environmental Services daily construction safety meetings. Use only the facts supplied by the user. Never invent tasks, locations, equipment, certifications, measurements, incidents, completed inspections, regulations, or OSHA citations. Connect each task to its stated location. Select two distinct, highest-priority hazards supported by the input and give specific, actionable controls using the hierarchy of controls where practical. Include stop-work and supervisor-escalation language when conditions are unsafe or unclear. Write professional field-ready text that is detailed but easy to read aloud. This is an editable draft and must be reviewed by the competent foreman before use.`,
+        instructions: PAL_SAFETY_DRAFT_INSTRUCTIONS,
         input: `Create the safety meeting draft from this project information:\n${JSON.stringify(input)}`,
         text: {
           format: {
@@ -476,10 +589,14 @@ exports.generateSafetyDraft = onCall({
               additionalProperties: false,
               properties: {
                 project_name: { type: 'string' }, date: { type: 'string' }, trade: { type: 'string' },
-                foreman: { type: 'string' }, tasks_locations: { type: 'string' },
-                items_discussed: { type: 'string' }, hazard1: { type: 'string' },
-                control1: { type: 'string' }, hazard2: { type: 'string' },
-                control2: { type: 'string' }, inspection_hazards: { type: 'string' }
+                foreman: { type: 'string' },
+                tasks_locations: { type: 'string', description: 'Specific task-to-location plan using only supplied facts.' },
+                items_discussed: { type: 'string', description: 'Short meeting agenda covering the planned work, coordination, and required pre-task verification.' },
+                hazard1: { type: 'string', description: 'Highest-priority supported exposure tied to its task and location.' },
+                control1: { type: 'string', description: 'Four to six ordered, concrete actions controlling hazard 1, including a stop-work trigger.' },
+                hazard2: { type: 'string', description: 'Second distinct supported exposure tied to its task and location.' },
+                control2: { type: 'string', description: 'Four to six ordered, concrete actions controlling hazard 2, including a stop-work trigger.' },
+                inspection_hazards: { type: 'string', description: 'Additional changing-condition checks and escalation instructions; do not invent inspection results.' }
               },
               required: ['project_name', 'date', 'trade', 'foreman', 'tasks_locations',
                 'items_discussed', 'hazard1', 'control1', 'hazard2', 'control2', 'inspection_hazards']
@@ -505,6 +622,7 @@ exports.generateSafetyDraft = onCall({
     }
     await db.collection('integrationAiLogs').add({
       feature: 'daily-safety-draft', model: 'gpt-5.4-mini', projectName: input.projectName,
+      promptVersion: 'pal-safety-v2',
       actorUid: request.auth.uid, actorEmail: access.email, usageId: usage.usageId,
       inputTokens: Number(result.usage?.input_tokens || 0),
       outputTokens: Number(result.usage?.output_tokens || 0),
@@ -513,36 +631,42 @@ exports.generateSafetyDraft = onCall({
     return { ok: true, draft, usageId: usage.usageId };
   } catch (error) {
     await releaseAiGeneration(usage.usageId).catch(refundError => console.error('AI usage refund failed', refundError));
+    await recordIntegrationFailure({
+      service: 'ai', feature: 'daily-safety-draft', code: error?.code, message: error?.message,
+      actorUid: request.auth.uid, actorEmail: access.email
+    }).catch(logError => console.error('AI failure logging failed', logError));
     console.error('Safety draft generation failed', error);
     throw new HttpsError('internal', 'The AI draft could not be generated. Try again shortly.');
   }
 });
 
-exports.sendCertWatchDemo = onSchedule({
+exports.sendWeeklyCertWatch = onSchedule({
   region: 'us-central1',
-  schedule: '0 9 30 6 *',
+  schedule: '0 9 * * 1',
   timeZone: 'America/New_York',
   secrets: [resendApiKey],
   retryCount: 0,
   timeoutSeconds: 60,
   memory: '256MiB'
 }, async event => {
-  const dateParts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).formatToParts(event.scheduleTime ? new Date(event.scheduleTime) : new Date());
-  const datePart = type => dateParts.find(part => part.type === type)?.value || '';
-  const localDate = `${datePart('year')}-${datePart('month')}-${datePart('day')}`;
-  if (localDate !== '2026-06-30') return;
+  const localDate = localDateInTimeZone(event.scheduleTime);
+  const settingsSnap = await db.collection('integrationSettings').doc('pal').get();
+  const recipients = normalizeRecipients(settingsSnap.data()?.certWatchRecipients || ['rblake@palcorp.com']);
+  if (!recipients.length) {
+    console.warn('Weekly certification watch skipped because no recipients are configured.');
+    return;
+  }
 
-  const runId = 'cert-watch-demo-2026-06-30-0900-et';
+  const runId = `cert-watch-weekly-${localDate}`;
   const runRef = db.collection('automationRuns').doc(runId);
   let claimed = false;
   await db.runTransaction(async transaction => {
     const run = await transaction.get(runRef);
     if (run.exists) return;
     transaction.create(runRef, {
-      type: 'certification-watch-demo', status: 'sending', scheduledFor: '2026-06-30T09:00:00-04:00',
-      recipient: 'rblake@palcorp.com', createdAt: admin.firestore.FieldValue.serverTimestamp()
+      type: 'certification-watch-weekly', status: 'sending',
+      scheduledFor: event.scheduleTime || '', recipients,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
     claimed = true;
   });
@@ -551,19 +675,19 @@ exports.sendCertWatchDemo = onSchedule({
   try {
     const employeeSnap = await db.collection('employees').get();
     const report = buildScheduledCertWatch(employeeSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })), localDate);
-    const { usageId, monthlyLimit } = await checkEmailUsage(1);
+    const { usageId, monthlyLimit } = await checkEmailUsage(recipients.length);
     const resend = new Resend(resendApiKey.value());
     const result = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'PAL Safety Hub <notifications@jobsiteresources.com>',
-      to: ['rblake@palcorp.com'],
+      to: recipients,
       subject: 'PAL Certification Watch - Expired and 30-Day Certs',
       text: report.text
     });
     if (result.error) throw new Error(result.error.message || 'Email provider failed.');
-    await recordEmailUsage(usageId, 1, monthlyLimit);
+    await recordEmailUsage(usageId, recipients.length, monthlyLimit);
     await db.collection('integrationEmailLogs').add({
-      provider: 'resend', providerId: result.data?.id || '', feature: 'certification-watch-demo',
-      to: ['rblake@palcorp.com'], subject: 'PAL Certification Watch - Expired and 30-Day Certs',
+      provider: 'resend', providerId: result.data?.id || '', feature: 'certification-watch-weekly',
+      to: recipients, subject: 'PAL Certification Watch - Expired and 30-Day Certs',
       sentByUid: 'system', sentByEmail: 'automation@jobsiteresources.com', usageId,
       sentAt: admin.firestore.FieldValue.serverTimestamp()
     });
@@ -573,16 +697,103 @@ exports.sendCertWatchDemo = onSchedule({
     }, { merge: true });
     await logEmailEvent({
       actorUid: 'system', actorEmail: 'automation@jobsiteresources.com',
-      feature: 'certification-watch-demo', recipientCount: 1,
+      feature: 'certification-watch-weekly', recipientCount: recipients.length,
       subject: 'PAL Certification Watch - Expired and 30-Day Certs',
       providerId: result.data?.id || '', usageId
     });
   } catch (error) {
+    await recordIntegrationFailure({
+      service: 'email', feature: 'certification-watch-weekly',
+      code: error?.code, message: error?.message,
+      actorUid: 'system', actorEmail: 'automation@jobsiteresources.com'
+    }).catch(logError => console.error('Weekly certification failure logging failed', logError));
     await runRef.set({
       status: 'failed', error: cleanText(error?.message, 300),
       failedAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
-    console.error('Certification watch demo failed', error);
+    console.error('Weekly certification watch failed', error);
     throw error;
+  }
+});
+
+exports.monitorIntegrationHealth = onSchedule({
+  region: 'us-central1',
+  schedule: '0 8 * * *',
+  timeZone: 'America/New_York',
+  secrets: [resendApiKey],
+  retryCount: 0,
+  timeoutSeconds: 60,
+  memory: '256MiB'
+}, async event => {
+  const health = await getIntegrationHealthData();
+  const since = Date.now() - 24 * 60 * 60 * 1000;
+  const failures = health.recentFailures.filter(item => item.createdAt && Date.parse(item.createdAt) >= since);
+  const warnings = health.services.filter(item => item.state !== 'healthy');
+  if (!failures.length && !warnings.length) return;
+
+  const localDate = localDateInTimeZone(event.scheduleTime);
+  const runRef = db.collection('automationRuns').doc(`integration-health-alert-${localDate}`);
+  let claimed = false;
+  await db.runTransaction(async transaction => {
+    const run = await transaction.get(runRef);
+    if (run.exists) return;
+    transaction.create(runRef, {
+      type: 'integration-health-alert', status: 'sending',
+      usageId: health.usageId, warningCount: warnings.length, failureCount: failures.length,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    claimed = true;
+  });
+  if (!claimed) return;
+
+  const settingsSnap = await db.collection('integrationSettings').doc('pal').get();
+  const recipients = normalizeRecipients(settingsSnap.data()?.ownerAlertRecipients || ['jvpanettiere@gmail.com']);
+  if (!recipients.length) {
+    await runRef.set({ status: 'skipped', reason: 'No owner alert recipients configured.' }, { merge: true });
+    return;
+  }
+
+  const serviceLabel = { email: 'Email', sms: 'Text messaging', ai: 'AI generation' };
+  const lines = ['PAL Safety Hub - Integration Health Alert', ''];
+  warnings.forEach(item => lines.push(
+    `${serviceLabel[item.key] || item.key}: ${item.used} of ${item.limit} used (${item.percent}%) - ${item.state === 'limit' ? 'LIMIT REACHED' : 'WARNING'}`
+  ));
+  if (warnings.length && failures.length) lines.push('');
+  failures.forEach(item => lines.push(
+    `${(serviceLabel[item.service] || item.service).toUpperCase()} FAILURE - ${item.feature} - ${item.message}`
+  ));
+  lines.push('', 'Open the admin Integrations tab for current usage and failure history. No provider pricing or credentials are included in this alert.');
+
+  try {
+    const { usageId, monthlyLimit } = await checkEmailUsage(recipients.length);
+    const resend = new Resend(resendApiKey.value());
+    const result = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || 'PAL Safety Hub <notifications@jobsiteresources.com>',
+      to: recipients,
+      subject: 'PAL Safety Hub - Integration Usage or Failure Alert',
+      text: lines.join('\n')
+    });
+    if (result.error) throw new Error(result.error.message || 'Email provider failed.');
+    await recordEmailUsage(usageId, recipients.length, monthlyLimit);
+    await db.collection('integrationEmailLogs').add({
+      provider: 'resend', providerId: result.data?.id || '', feature: 'integration-health-alert',
+      to: recipients, subject: 'PAL Safety Hub - Integration Usage or Failure Alert',
+      sentByUid: 'system', sentByEmail: 'automation@jobsiteresources.com', usageId,
+      sentAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    await runRef.set({
+      status: 'sent', recipients, providerId: result.data?.id || '',
+      sentAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  } catch (error) {
+    await recordIntegrationFailure({
+      service: 'email', feature: 'integration-health-alert', code: error?.code,
+      message: error?.message, actorUid: 'system', actorEmail: 'automation@jobsiteresources.com'
+    }).catch(logError => console.error('Health alert failure logging failed', logError));
+    await runRef.set({
+      status: 'failed', error: cleanText(error?.message, 300),
+      failedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    console.error('Integration health alert failed', error);
   }
 });

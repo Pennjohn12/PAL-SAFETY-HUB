@@ -1,5 +1,13 @@
 # PAL Safety Hub Backup And Retention Runbook
 
+## BOOKMARK - PAL Retention Policy Approval Required
+
+Before applying any irreversible Google Cloud retention lock, PAL management should approve a written retention schedule for each record category, including safety documents, JHAs, incident records, employee orientation/certifications, payroll/expenses, project photos, tickets, and general project files.
+
+Status: **Pending PAL management/safety/accounting/legal review.**
+
+Until that policy is approved, active records remain stored indefinitely through current app behavior, permanent deletion remains blocked in the normal app, and deleted Storage objects have a 90-day recovery window. Do not enable or lock a fixed-year bucket retention policy without written approval.
+
 This app can hold safety records, employee records, project documents, photos, tickets, payroll forms, expense forms, JHAs, and onboarding records. Those records need two layers of protection:
 
 1. App-side protection so users cannot casually delete important records.

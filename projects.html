@@ -2268,7 +2268,7 @@
           <button class="btn-add" onclick="copyCertEmailPreview()">Copy Email</button>
         </div>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Preview the expired and 30-day certification email before this becomes an automatic weekly or monthly send.</div>
+      <div class="helper-text" style="margin-bottom:14px;"><span class="pill active">Automatic</span> The certification report is scheduled for every Monday at 9:00 AM Eastern to rblake@palcorp.com. Use this page to preview or manually send an additional copy.</div>
       <div id="cert-email-summary"></div>
       <div class="cert-email-panel">
         <div class="cert-email-meta">
@@ -2446,36 +2446,36 @@
       <div class="page-header">
         <h2>Service Integrations</h2>
       </div>
-      <div class="helper-text" style="margin-bottom:14px;">Admin-only setup map for paid services. These are intentionally marked as not connected until backend functions, provider accounts, and monthly caps are turned on.</div>
+      <div class="helper-text" style="margin-bottom:14px;">Admin-only status and monthly safeguards for connected production services.</div>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="label">Email Automation</div>
-          <div class="value" style="font-size:24px;">Not Connected</div>
-          <div class="sub">Target: weekly cert report, intake review alerts, approved/missing-info notices.</div>
+          <div class="value" style="font-size:24px;">Connected</div>
+          <div class="sub">Resend active. Weekly certification report runs Monday at 9:00 AM Eastern.</div>
         </div>
         <div class="stat-card">
           <div class="label">Text Messaging</div>
-          <div class="value" style="font-size:24px;">Not Connected</div>
-          <div class="sub">Target cap: 1,000 SMS segments/month before admin override.</div>
+          <div class="value" style="font-size:24px;">Approval Pending</div>
+          <div class="sub">Twilio connected; A2P brand review must clear before live delivery.</div>
         </div>
         <div class="stat-card">
           <div class="label">AI Assistance</div>
-          <div class="value" style="font-size:24px;">Not Connected</div>
-          <div class="sub">Target cap: 500 generations/month for safety sheets and daily reports.</div>
+          <div class="value" style="font-size:24px;">Connected</div>
+          <div class="sub">OpenAI drafting active with a 500-generation monthly limit.</div>
         </div>
         <div class="stat-card">
           <div class="label">Backend Guardrail</div>
-          <div class="value" style="font-size:24px;">Required</div>
-          <div class="sub">Provider keys must live in Firebase backend secrets, never inside this public app.</div>
+          <div class="value" style="font-size:24px;">Active</div>
+          <div class="sub">Provider keys are protected in Firebase backend secrets and excluded from the public app.</div>
         </div>
       </div>
       <div class="detail-card">
-        <h3>Launch Order</h3>
+        <h3>Production Status</h3>
         <div class="report-grid">
-          <div class="report-field"><span class="k">1. Email</span><div class="v">Connect provider, set office/safety recipients, then automate the weekly cert expiration report.</div></div>
-          <div class="report-field"><span class="k">2. SMS</span><div class="v">Connect Twilio for intake/correction links with a hard monthly cap and audit log entries.</div></div>
-          <div class="report-field"><span class="k">3. AI</span><div class="v">Move AI drafting to a protected backend endpoint with project/user tracking and monthly limits.</div></div>
-          <div class="report-field"><span class="k">4. Usage Review</span><div class="v">Show monthly usage and warnings before any service can run past its included allowance.</div></div>
+          <div class="report-field"><span class="k">Email</span><div class="v">Production sending and Monday certification automation are active.</div></div>
+          <div class="report-field"><span class="k">SMS</span><div class="v">Backend, monthly cap, and audit logging are active; carrier approval is pending.</div></div>
+          <div class="report-field"><span class="k">AI</span><div class="v">Protected drafting endpoint, project/user tracking, and monthly limit are active.</div></div>
+          <div class="report-field"><span class="k">Next</span><div class="v">Add usage warnings and operational failure alerts for administrators.</div></div>
         </div>
       </div>
       <div class="detail-card">
