@@ -1,0 +1,8 @@
+# Large orientation videos are deployed to Firebase Hosting, not stored in GitHub.
+media/*.mp4
+media/*.mov
+media/*.m4v
+media/*.webm
+
+# Generated Firebase deployment cache.
+.firebase/

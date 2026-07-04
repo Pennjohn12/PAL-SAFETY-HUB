@@ -121,6 +121,15 @@
     .field textarea:focus, .field select:focus, .inline-select:focus, .search-input:focus { border-color: var(--navy); }
     .search-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
     .search-row .search-input { flex: 1; min-width: 220px; }
+    .integration-meter { height:8px; background:#e5e7eb; border-radius:4px; overflow:hidden; margin:12px 0 8px; }
+    .integration-meter > span { display:block; height:100%; width:0; background:var(--green); transition:width .2s ease; }
+    .integration-meter > span.warning { background:var(--orange); }
+    .integration-meter > span.limit { background:var(--red); }
+    .integration-state { font-size:12px; font-weight:800; color:var(--muted); }
+    .integration-failure-list { display:grid; gap:8px; margin-top:12px; }
+    .integration-failure-item { padding:12px; border:1px solid #fecaca; border-left:4px solid var(--red); border-radius:8px; background:#fff7f7; }
+    .integration-failure-item strong { display:block; color:var(--red); font-size:13px; }
+    .integration-failure-item span { display:block; color:var(--muted); font-size:12px; margin-top:4px; overflow-wrap:anywhere; }
     .project-filter-panel {
       background:#fff;
       border:1px solid var(--line);
@@ -1403,18 +1412,24 @@
     .orientation-module-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; padding:14px 16px; background:#fff; border-bottom:1px solid var(--line); }
     .orientation-module-head h4 { color:var(--navy); margin:0 0 4px; }
     .orientation-module-head p { color:var(--muted); font-size:13px; line-height:1.45; margin:0; }
-    .draft-pill { border:1px solid #f59e0b; background:#fffbeb; color:#92400e; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.35px; }
-    .orientation-slide { display:none; min-height:220px; padding:22px; background:linear-gradient(135deg,#f8fafc,#eef4fa); border-bottom:1px solid var(--line); }
-    .orientation-slide.active { display:block; }
-    .orientation-slide small { display:block; color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
-    .orientation-slide h3 { color:var(--navy); font-size:24px; margin:0 0 10px; }
-    .orientation-slide p { color:var(--text); line-height:1.6; margin:0 0 12px; }
-    .orientation-slide ul { margin-left:20px; line-height:1.7; color:var(--text); }
-    .orientation-controls { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 16px; background:#fff; }
-    .orientation-controls .step-label { color:var(--muted); font-size:12px; font-weight:800; }
-    .orientation-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .orientation-language { min-width:150px; }
+    .orientation-video-wrap { background:#071a2d; aspect-ratio:16/9; width:100%; }
+    .orientation-video-wrap video { display:block; width:100%; height:100%; object-fit:contain; background:#071a2d; }
+    .orientation-progress { padding:12px 16px; background:#fff; border-top:1px solid var(--line); }
+    .orientation-progress-track { height:8px; overflow:hidden; background:#e5e7eb; border-radius:4px; }
+    .orientation-progress-fill { height:100%; width:0; background:var(--green); transition:width .2s ease; }
+    .orientation-progress-copy { display:flex; justify-content:space-between; gap:12px; margin-top:7px; color:var(--muted); font-size:12px; font-weight:800; }
+    .orientation-quiz { display:none; padding:16px; background:#fff; border-top:1px solid var(--line); }
+    .orientation-quiz.active { display:block; }
+    .orientation-quiz h4 { color:var(--navy); margin:0 0 8px; }
+    .orientation-quiz p { margin:0 0 12px; line-height:1.45; }
+    .orientation-answer { display:flex; gap:10px; align-items:flex-start; width:100%; margin:8px 0; padding:12px; border:1px solid var(--line); border-radius:7px; background:#f8fafc; color:var(--text); text-align:left; font-weight:700; }
+    .orientation-answer:hover { border-color:var(--navy); background:#eef4fa; }
+    .orientation-feedback { display:none; margin-top:10px; padding:10px 12px; border-radius:7px; background:#fff7ed; border:1px solid #fdba74; color:#9a3412; font-size:13px; line-height:1.45; }
+    .orientation-feedback.show { display:block; }
     .orientation-ack { padding:12px 16px; background:#fff; border-top:1px solid var(--line); display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text); line-height:1.45; }
     .orientation-ack input { margin-top:3px; width:18px; height:18px; accent-color:var(--green); }
+    .orientation-ack.locked { color:var(--muted); background:#f8fafc; }
     .doc-review-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; }
     .doc-review-box h4 { color:var(--navy); margin-bottom:8px; }
     .doc-review-box ul { margin-left:20px; line-height:1.6; color:var(--text); }
@@ -2445,22 +2460,29 @@
     <div class="tab-pane" id="main-integrations">
       <div class="page-header">
         <h2>Service Integrations</h2>
+        <div class="header-actions"><button class="btn-outline" id="integration-refresh-btn" type="button" onclick="loadIntegrationHealth()">Refresh Status</button></div>
       </div>
       <div class="helper-text" style="margin-bottom:14px;">Admin-only status and monthly safeguards for connected production services.</div>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="label">Email Automation</div>
-          <div class="value" style="font-size:24px;">Connected</div>
+          <div class="value" id="integration-email-value" style="font-size:24px;">Loading...</div>
+          <div class="integration-meter"><span id="integration-email-meter"></span></div>
+          <div class="integration-state" id="integration-email-state">Checking monthly usage...</div>
           <div class="sub">Resend active. Weekly certification report runs Monday at 9:00 AM Eastern.</div>
         </div>
         <div class="stat-card">
           <div class="label">Text Messaging</div>
-          <div class="value" style="font-size:24px;">Approval Pending</div>
+          <div class="value" id="integration-sms-value" style="font-size:24px;">Loading...</div>
+          <div class="integration-meter"><span id="integration-sms-meter"></span></div>
+          <div class="integration-state" id="integration-sms-state">Checking monthly usage...</div>
           <div class="sub">Twilio connected; A2P brand review must clear before live delivery.</div>
         </div>
         <div class="stat-card">
           <div class="label">AI Assistance</div>
-          <div class="value" style="font-size:24px;">Connected</div>
+          <div class="value" id="integration-ai-value" style="font-size:24px;">Loading...</div>
+          <div class="integration-meter"><span id="integration-ai-meter"></span></div>
+          <div class="integration-state" id="integration-ai-state">Checking monthly usage...</div>
           <div class="sub">OpenAI drafting active with a 500-generation monthly limit.</div>
         </div>
         <div class="stat-card">
@@ -2468,6 +2490,12 @@
           <div class="value" style="font-size:24px;">Active</div>
           <div class="sub">Provider keys are protected in Firebase backend secrets and excluded from the public app.</div>
         </div>
+      </div>
+      <div class="detail-card">
+        <h3>Recent Service Failures</h3>
+        <div class="helper-text">Provider failures are visible only to administrators. The owner receives one daily alert when a new failure or usage warning exists.</div>
+        <div id="integration-failure-list" class="integration-failure-list"><div class="helper-text">Loading service history...</div></div>
+        <div class="loaded-stamp" id="integration-health-stamp" style="margin-top:12px;"></div>
       </div>
       <div class="detail-card">
         <h3>Production Status</h3>
@@ -3249,91 +3277,34 @@
         <div class="orientation-module" id="pal-orientation-module">
           <div class="orientation-module-head">
             <div>
-              <h4>PAL Safety Orientation Module</h4>
-              <p>Temporary in-app orientation preview for office/safety review. Final content should be approved by PAL safety leadership before permanent use.</p>
+              <h4>PAL Employee Safety Orientation</h4>
+              <p>Watch each chapter and answer its safety question correctly to continue.</p>
             </div>
-            <span class="draft-pill">Draft</span>
+            <select id="nh-orientation-language" class="select orientation-language" aria-label="Orientation language">
+              <option value="en">English</option>
+              <option value="es" disabled>Spanish - Coming Soon</option>
+              <option value="pl" disabled>Polish - Coming Soon</option>
+            </select>
           </div>
-          <div class="orientation-slide active" data-orientation-slide="0">
-            <small>Slide 1 of 7</small>
-            <h3>Welcome to PAL</h3>
-            <p>PAL employees are expected to work safely, follow site rules, and stop work when a condition could hurt someone.</p>
-            <ul>
-              <li>Report to your foreman or supervisor before starting work.</li>
-              <li>Ask questions when a task or hazard is unclear.</li>
-              <li>Do not begin work until required training and certifications are reviewed.</li>
-            </ul>
+          <div class="orientation-video-wrap">
+            <video id="nh-orientation-video" controls playsinline preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture>
+              <source src="media/pal-orientation-en-2026.mp4" type="video/mp4" />
+              Your device does not support this orientation video.
+            </video>
           </div>
-          <div class="orientation-slide" data-orientation-slide="1">
-            <small>Slide 2 of 7</small>
-            <h3>Required PPE</h3>
-            <p>Wear required PPE at all times as directed by PAL, the site, and the task hazard assessment.</p>
-            <ul>
-              <li>Hard hat, safety glasses, gloves, and proper work boots.</li>
-              <li>High-visibility clothing or vest when required.</li>
-              <li>Respiratory protection only when trained, fit tested, and authorized.</li>
-            </ul>
+          <div class="orientation-progress">
+            <div class="orientation-progress-track"><div class="orientation-progress-fill" id="nh-orientation-progress-fill"></div></div>
+            <div class="orientation-progress-copy"><span id="nh-orientation-progress-label">Chapter 1 of 5</span><span id="nh-orientation-check-label">0 of 5 checks complete</span></div>
           </div>
-          <div class="orientation-slide" data-orientation-slide="2">
-            <small>Slide 3 of 7</small>
-            <h3>Fall Protection</h3>
-            <p>Falls are a leading construction hazard. Use fall protection whenever required by PAL policy, site rules, or OSHA requirements.</p>
-            <ul>
-              <li>Inspect harnesses, lanyards, and lifelines before use.</li>
-              <li>Use approved anchor points only.</li>
-              <li>Report missing guardrails, holes, unsafe ladders, and fall hazards immediately.</li>
-            </ul>
+          <div class="orientation-quiz" id="nh-orientation-quiz">
+            <h4 id="nh-orientation-question-title">Knowledge Check</h4>
+            <p id="nh-orientation-question"></p>
+            <div id="nh-orientation-answers"></div>
+            <div class="orientation-feedback" id="nh-orientation-feedback"></div>
           </div>
-          <div class="orientation-slide" data-orientation-slide="3">
-            <small>Slide 4 of 7</small>
-            <h3>Scaffolds, Lifts, and Equipment</h3>
-            <p>Only trained and authorized employees may operate lifts, work from scaffolds, or use specialized equipment.</p>
-            <ul>
-              <li>Complete pre-use inspections before operating equipment.</li>
-              <li>Follow load limits, access rules, and manufacturer instructions.</li>
-              <li>Tag damaged or unsafe equipment out of service.</li>
-            </ul>
-          </div>
-          <div class="orientation-slide" data-orientation-slide="4">
-            <small>Slide 5 of 7</small>
-            <h3>Hazards and Housekeeping</h3>
-            <p>A clean, controlled work area helps prevent injuries and keeps the job moving safely.</p>
-            <ul>
-              <li>Keep walkways, exits, and work areas clear.</li>
-              <li>Control dust, debris, cords, hoses, and trip hazards.</li>
-              <li>Use SDS/HazCom information when working around chemicals or materials.</li>
-            </ul>
-          </div>
-          <div class="orientation-slide" data-orientation-slide="5">
-            <small>Slide 6 of 7</small>
-            <h3>Report Incidents and Near Misses</h3>
-            <p>PAL expects employees to report injuries, near misses, damaged equipment, and unsafe conditions right away.</p>
-            <ul>
-              <li>Notify your foreman/supervisor immediately.</li>
-              <li>Get first aid or medical help when needed.</li>
-              <li>Do not hide hazards or incidents. Reporting helps prevent repeat injuries.</li>
-            </ul>
-          </div>
-          <div class="orientation-slide" data-orientation-slide="6">
-            <small>Slide 7 of 7</small>
-            <h3>Ready to Work Safely</h3>
-            <p>Before reporting to site, PAL must have required documents, certifications, and orientation records on file.</p>
-            <ul>
-              <li>Certifications must be current and readable.</li>
-              <li>Follow PAL policies and site-specific rules.</li>
-              <li>Ask for help before performing work you are not trained or authorized to perform.</li>
-            </ul>
-          </div>
-          <div class="orientation-controls">
-            <span class="step-label" id="orientation-step-label">Slide 1 / 7</span>
-            <div class="orientation-actions">
-              <button type="button" class="btn-secondary" onclick="moveOrientationSlide(-1)">Back</button>
-              <button type="button" class="btn-save" onclick="moveOrientationSlide(1)">Next</button>
-            </div>
-          </div>
-          <label class="orientation-ack">
-            <input id="nh-orient-module-complete" type="checkbox" />
-            <span>I reviewed the temporary PAL Safety Orientation module above. I understand final approved orientation requirements may be updated by PAL safety leadership.</span>
+          <label class="orientation-ack locked" id="nh-orient-ack-wrap">
+            <input id="nh-orient-module-complete" type="checkbox" disabled />
+            <span>I watched the complete PAL orientation, answered all five knowledge checks, and understand that I must stop and ask for help whenever I am not trained, authorized, equipped, or certain the work can be performed safely.</span>
           </label>
         </div>
         <div class="doc-review-box">
@@ -3485,6 +3456,7 @@
   const sendAppEmailCallable = httpsCallable(functions, 'sendAppEmail');
   const sendAppTextCallable = httpsCallable(functions, 'sendAppText');
   const generateSafetyDraftCallable = httpsCallable(functions, 'generateSafetyDraft');
+  const getIntegrationHealthCallable = httpsCallable(functions, 'getIntegrationHealth');
   const PAL_PUBLIC_PROJECTS_URL = 'https://pennjohn12.github.io/PAL-SAFETY-HUB/projects.html';
   const PAL_ADMIN_EMAILS = [
     'jvpanettiere@gmail.com',
@@ -3670,6 +3642,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.sendCertEmailNow = sendCertEmailNow;
   window.openCertEmailDraft = openCertEmailDraft;
   window.downloadCertEmailPreview = downloadCertEmailPreview;
+  window.loadIntegrationHealth = loadIntegrationHealth;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
   window.editCertification = editCertification;
@@ -3693,7 +3666,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.setNewHireStatus = setNewHireStatus;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
-  window.moveOrientationSlide = moveOrientationSlide;
+  window.answerOrientationCheckpoint = answerOrientationCheckpoint;
   window.openPublicNewHireOrientationForm = openPublicNewHireOrientationForm;
   window.openNewHireDrugConsentForm = openNewHireDrugConsentForm;
   window.saveNewHireDrugConsentForm = saveNewHireDrugConsentForm;
@@ -10742,6 +10715,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
+    if (id === 'modal-newhire-orientation-form') {
+      document.getElementById('nh-orientation-video')?.pause();
+      saveOrientationLocalProgress();
+    }
     if (id === 'modal-warehouse-item') {
       editingWarehouseProjectId=null; editingWarehouseItemId=null;
       const ps = document.getElementById('warehouse-project-select'); if (ps) ps.disabled = false;
@@ -11672,23 +11649,175 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
-  function moveOrientationSlide(direction) {
-    const slides = Array.from(document.querySelectorAll('#pal-orientation-module .orientation-slide'));
-    if (!slides.length) return;
-    const current = slides.findIndex(slide => slide.classList.contains('active'));
-    const next = Math.max(0, Math.min(slides.length - 1, (current < 0 ? 0 : current) + direction));
-    slides.forEach((slide, index) => slide.classList.toggle('active', index === next));
-    const label = document.getElementById('orientation-step-label');
-    if (label) label.textContent = `Slide ${next + 1} / ${slides.length}`;
+  const ORIENTATION_VERSION = 'pal-en-2026-06-28';
+  const ORIENTATION_CHECKPOINTS = [150, 300, 450, 600, 750];
+  const ORIENTATION_QUESTIONS = [
+    {
+      question: 'When may an employee use a respirator for PAL work?',
+      answers: ['Whenever dust is visible', 'After the required medical clearance, fit test, training, and authorization', 'Whenever a coworker has an extra respirator', 'Only after the shift has started'],
+      correct: 1,
+      correction: 'Respirators require medical clearance, fit testing, training, and authorization. Stop and speak with supervision if respiratory protection may be needed.'
+    },
+    {
+      question: "Under PAL's Ladders Last Policy, what is the required equipment-selection order?",
+      answers: ['Traditional ladder, podium ladder, scaffold, aerial lift', 'Aerial lift, scaffolding, podium or platform ladder, traditional portable ladder last when permitted', 'Podium ladder, traditional ladder, aerial lift, scaffolding', 'The employee may choose any option without supervisor review'],
+      correct: 1,
+      correction: 'PAL requires safer work platforms to be evaluated first. Traditional portable ladders are the last resort and may be used only when permitted.'
+    },
+    {
+      question: 'What must you do if you find an unlabeled chemical container?',
+      answers: ['Smell it to identify the contents', 'Use it carefully and label it later', 'Do not use it; isolate it and notify supervision', 'Pour it into a different container'],
+      correct: 2,
+      correction: 'Never use an unknown or unlabeled material. Stop, isolate the container if safe, and notify supervision.'
+    },
+    {
+      question: 'What should you do before entering a confined space?',
+      answers: ['Enter briefly to check whether it seems safe', 'Enter only when specifically trained, authorized, and working under the required procedure', 'Ask a coworker to wait outside', 'Wear a dust mask and proceed'],
+      correct: 1,
+      correction: 'This orientation does not authorize confined-space entry. Specialized training, authorization, equipment, and an approved procedure are required.'
+    },
+    {
+      question: 'When must an accident, injury, environmental release, or near miss be reported?',
+      answers: ['At the end of the week', 'Only when medical treatment is required', 'Immediately, even when it appears minor', 'Only when property was damaged'],
+      correct: 2,
+      correction: 'Report every incident and near miss immediately to your supervisor and PAL EH&S, even when it appears minor.'
+    }
+  ];
+  let orientationSession = null;
+
+  function orientationProgressKey() {
+    return `pal-orientation:${currentNewHireOrientationId || 'unknown'}:${ORIENTATION_VERSION}`;
   }
 
-  function resetOrientationModule(complete = false) {
-    const slides = Array.from(document.querySelectorAll('#pal-orientation-module .orientation-slide'));
-    slides.forEach((slide, index) => slide.classList.toggle('active', index === 0));
-    const label = document.getElementById('orientation-step-label');
-    if (label) label.textContent = `Slide 1 / ${slides.length || 7}`;
+  function saveOrientationLocalProgress() {
+    if (!orientationSession || !currentNewHireOrientationId) return;
+    try {
+      localStorage.setItem(orientationProgressKey(), JSON.stringify({
+        answers: orientationSession.answers,
+        attempts: orientationSession.attempts,
+        lastTime: orientationSession.video?.currentTime || 0,
+        ended: orientationSession.ended,
+        savedAt: Date.now()
+      }));
+    } catch (_) {}
+  }
+
+  function updateOrientationProgressUI() {
+    if (!orientationSession) return;
+    const completed = orientationSession.answers.filter(Boolean).length;
+    const duration = orientationSession.video?.duration || 779;
+    const watched = orientationSession.ended ? duration : Math.min(orientationSession.video?.currentTime || 0, duration);
+    const fill = document.getElementById('nh-orientation-progress-fill');
+    const progressLabel = document.getElementById('nh-orientation-progress-label');
+    const checkLabel = document.getElementById('nh-orientation-check-label');
+    if (fill) fill.style.width = `${Math.min(100, (watched / duration) * 100)}%`;
+    if (progressLabel) progressLabel.textContent = orientationSession.ended ? 'Video complete' : `Chapter ${Math.min(5, completed + 1)} of 5`;
+    if (checkLabel) checkLabel.textContent = `${completed} of 5 checks complete`;
+    const ready = orientationSession.ended && completed === ORIENTATION_QUESTIONS.length;
     const ack = document.getElementById('nh-orient-module-complete');
-    if (ack) ack.checked = !!complete;
+    const wrap = document.getElementById('nh-orient-ack-wrap');
+    if (ack) ack.disabled = !ready;
+    if (wrap) wrap.classList.toggle('locked', !ready);
+  }
+
+  function showOrientationCheckpoint(index) {
+    if (!orientationSession || index < 0 || index >= ORIENTATION_QUESTIONS.length) return;
+    orientationSession.activeQuestion = index;
+    orientationSession.video.pause();
+    const item = ORIENTATION_QUESTIONS[index];
+    const quiz = document.getElementById('nh-orientation-quiz');
+    const title = document.getElementById('nh-orientation-question-title');
+    const question = document.getElementById('nh-orientation-question');
+    const answers = document.getElementById('nh-orientation-answers');
+    const feedback = document.getElementById('nh-orientation-feedback');
+    if (title) title.textContent = `Knowledge Check ${index + 1} of 5`;
+    if (question) question.textContent = item.question;
+    if (answers) {
+      answers.replaceChildren();
+      item.answers.forEach((answer, answerIndex) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'orientation-answer';
+        button.textContent = `${String.fromCharCode(65 + answerIndex)}. ${answer}`;
+        button.addEventListener('click', () => answerOrientationCheckpoint(answerIndex));
+        answers.appendChild(button);
+      });
+    }
+    if (feedback) { feedback.textContent = ''; feedback.classList.remove('show'); }
+    if (quiz) { quiz.classList.add('active'); quiz.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    saveOrientationLocalProgress();
+  }
+
+  function answerOrientationCheckpoint(answerIndex) {
+    if (!orientationSession || orientationSession.activeQuestion < 0) return;
+    const index = orientationSession.activeQuestion;
+    const item = ORIENTATION_QUESTIONS[index];
+    orientationSession.attempts[index] = (orientationSession.attempts[index] || 0) + 1;
+    if (answerIndex !== item.correct) {
+      const feedback = document.getElementById('nh-orientation-feedback');
+      if (feedback) { feedback.textContent = item.correction; feedback.classList.add('show'); }
+      saveOrientationLocalProgress();
+      return;
+    }
+    orientationSession.answers[index] = true;
+    orientationSession.activeQuestion = -1;
+    const quiz = document.getElementById('nh-orientation-quiz');
+    if (quiz) quiz.classList.remove('active');
+    updateOrientationProgressUI();
+    saveOrientationLocalProgress();
+    orientationSession.video.play().catch(() => {});
+  }
+
+  function resetOrientationModule(form = {}) {
+    const video = document.getElementById('nh-orientation-video');
+    if (!video) return;
+    let local = {};
+    try { local = JSON.parse(localStorage.getItem(orientationProgressKey()) || '{}'); } catch (_) {}
+    const savedAnswers = Array.isArray(form.orientationAnswers) ? form.orientationAnswers : local.answers;
+    const savedAttempts = Array.isArray(form.orientationAttempts) ? form.orientationAttempts : local.attempts;
+    orientationSession = {
+      video,
+      answers: Array.from({ length: 5 }, (_, i) => !!savedAnswers?.[i]),
+      attempts: Array.from({ length: 5 }, (_, i) => Number(savedAttempts?.[i] || 0)),
+      activeQuestion: -1,
+      ended: !!form.orientationVideoCompleted || !!local.ended,
+      lastSavedSecond: -1
+    };
+    const quiz = document.getElementById('nh-orientation-quiz');
+    if (quiz) quiz.classList.remove('active');
+    const ack = document.getElementById('nh-orient-module-complete');
+    if (ack) ack.checked = !!form.orientationModuleReviewed;
+    video.ontimeupdate = () => {
+      if (!orientationSession || orientationSession.activeQuestion >= 0) return;
+      const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && video.currentTime >= time);
+      if (pendingIndex >= 0) return showOrientationCheckpoint(pendingIndex);
+      const wholeSecond = Math.floor(video.currentTime);
+      if (wholeSecond > 0 && wholeSecond % 5 === 0 && wholeSecond !== orientationSession.lastSavedSecond) {
+        orientationSession.lastSavedSecond = wholeSecond;
+        saveOrientationLocalProgress();
+      }
+      updateOrientationProgressUI();
+    };
+    video.onseeking = () => {
+      if (!orientationSession) return;
+      const firstPending = orientationSession.answers.findIndex(answered => !answered);
+      const maxAllowed = firstPending < 0 ? (video.duration || 779) : ORIENTATION_CHECKPOINTS[firstPending];
+      if (video.currentTime > maxAllowed + 1) video.currentTime = Math.max(0, maxAllowed - 0.25);
+    };
+    video.onended = () => {
+      orientationSession.ended = orientationSession.answers.every(Boolean);
+      updateOrientationProgressUI();
+      saveOrientationLocalProgress();
+    };
+    video.onloadedmetadata = () => {
+      const firstPending = orientationSession.answers.findIndex(answered => !answered);
+      const maxAllowed = firstPending < 0 ? video.duration : ORIENTATION_CHECKPOINTS[firstPending];
+      const resumeAt = form.orientationVideoCompleted ? video.duration : Number(local.lastTime || 0);
+      video.currentTime = Math.min(Math.max(0, resumeAt), Math.max(0, maxAllowed - 0.25));
+      updateOrientationProgressUI();
+    };
+    video.load();
+    updateOrientationProgressUI();
   }
 
   function openNewHireOrientationForm(id) {
@@ -11703,7 +11832,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     set('nh-orient-notes', form.notes || '');
     set('nh-orient-signature', form.signature || x.name || '');
     set('nh-orient-date-signed', form.dateSigned || todayISO());
-    resetOrientationModule(!!form.orientationModuleReviewed);
+    resetOrientationModule(form);
     const btn = document.getElementById('save-newhire-orientation-btn');
     if (btn) { btn.disabled = false; btn.textContent = 'Save Orientation Form'; }
     document.getElementById('modal-newhire-orientation-form')?.classList.add('open');
@@ -11717,6 +11846,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
     const signature = val('nh-orient-signature');
     if (!signature) return toast('Employee signature / typed name is required.');
+    if (!orientationSession?.ended || !orientationSession.answers.every(Boolean)) return toast('Please finish the video and all five knowledge checks.');
+    if (!document.getElementById('nh-orient-module-complete')?.checked) return toast('Please confirm the final orientation acknowledgement.');
     const orientationForm = {
       completed: true,
       employeeName: val('nh-orient-employee-name'),
@@ -11726,7 +11857,13 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       signature,
       dateSigned: val('nh-orient-date-signed'),
       orientationModuleReviewed: !!document.getElementById('nh-orient-module-complete')?.checked,
-      orientationModuleVersion: 'draft-review-2026-06-08',
+      orientationVideoCompleted: true,
+      orientationLanguage: document.getElementById('nh-orientation-language')?.value || 'en',
+      orientationAnswers: [...orientationSession.answers],
+      orientationAttempts: [...orientationSession.attempts],
+      orientationScore: orientationSession.answers.filter(Boolean).length,
+      orientationModuleVersion: ORIENTATION_VERSION,
+      orientationCompletedAt: new Date().toISOString(),
       savedAt: new Date().toISOString(),
       savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
     };
@@ -11736,6 +11873,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         orientationForm,
         updatedAt: serverTimestamp()
       });
+      try { localStorage.removeItem(orientationProgressKey()); } catch (_) {}
       toast('Orientation form saved to intake packet.');
       closeModal('modal-newhire-orientation-form');
       if (publicNewHireIntakeId) {
@@ -12096,6 +12234,49 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (stamp) stamp.textContent = `Loaded ${(allEmployees || []).length} employees and ${(allNewHireIntakes || []).length} intake packets at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
   }
 
+  async function loadIntegrationHealth() {
+    if (!isAdminRole()) return toast('Only administrators can view integration health.');
+    if (!requireCloudConnection('load integration health')) return;
+    const btn = document.getElementById('integration-refresh-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Refreshing...'; }
+      const response = await getIntegrationHealthCallable({});
+      const data = response.data || {};
+      (data.services || []).forEach(service => {
+        const value = document.getElementById(`integration-${service.key}-value`);
+        const meter = document.getElementById(`integration-${service.key}-meter`);
+        const state = document.getElementById(`integration-${service.key}-state`);
+        if (value) value.textContent = `${Number(service.used || 0).toLocaleString()} / ${Number(service.limit || 0).toLocaleString()}`;
+        if (meter) {
+          meter.style.width = `${Math.max(0, Math.min(100, Number(service.percent || 0)))}%`;
+          meter.className = service.state === 'healthy' ? '' : service.state;
+        }
+        if (state) {
+          const label = service.state === 'limit' ? 'Monthly limit reached'
+            : service.state === 'warning' ? `Warning threshold reached (${service.warningPercent}%)`
+              : `Healthy - ${service.percent}% used`;
+          state.textContent = label;
+          state.style.color = service.state === 'limit' ? 'var(--red)'
+            : service.state === 'warning' ? 'var(--orange)' : 'var(--muted)';
+        }
+      });
+
+      const failures = document.getElementById('integration-failure-list');
+      const rows = Array.isArray(data.recentFailures) ? data.recentFailures : [];
+      if (failures) failures.innerHTML = rows.length ? rows.map(item => {
+        const date = item.createdAt ? new Date(item.createdAt).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }) : 'Time unavailable';
+        return `<div class="integration-failure-item"><strong>${esc(String(item.service || 'Service').toUpperCase())} - ${esc(item.feature || 'Operation')}</strong><span>${esc(item.message || 'Provider request failed.')}</span><span>${esc(date)}${item.code ? ` - Code: ${esc(item.code)}` : ''}</span></div>`;
+      }).join('') : '<div class="helper-text">No provider failures have been recorded.</div>';
+      const stamp = document.getElementById('integration-health-stamp');
+      if (stamp) stamp.textContent = `Usage month ${data.usageId || ''} - refreshed ${new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })}`;
+    } catch (error) {
+      console.error('Integration health load failed', error);
+      toast(error?.message || 'Could not load integration health.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Refresh Status'; }
+    }
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     const supportTabMap = {
@@ -12117,6 +12298,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-cert-email-preview') loadCertEmailPreview(true);
     if (tabId === 'main-activity-log') loadActivityLog(true);
     if (tabId === 'main-user-access') loadUserAccessPanel(true);
+    if (tabId === 'main-integrations') loadIntegrationHealth();
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();
       setTimeout(() => openExtraWorkTicketModal(), 0);
