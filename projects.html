@@ -2459,6 +2459,8 @@
       <div class="page-header">
         <h2>Backup Export</h2>
         <div class="header-actions">
+          <input id="backup-verify-file" type="file" accept="application/json,.json" hidden onchange="verifyBackupSnapshotFile(this.files?.[0])" />
+          <button class="btn-outline" id="backup-verify-btn" type="button" onclick="document.getElementById('backup-verify-file').click()">Verify Backup File</button>
           <button class="btn-save" id="backup-export-btn" type="button" onclick="exportAdminDataSnapshot()">Download Backup Snapshot</button>
         </div>
       </div>
@@ -2484,6 +2486,7 @@
           <div class="report-field"><span class="k">Monthly Check</span><div class="v">Download this snapshot, confirm cloud backups completed, and save the export in a secure company location.</div></div>
         </div>
       </div>
+      <div class="detail-card" id="backup-verify-result" style="display:none;"></div>
       <div class="loaded-stamp" id="backup-export-status" style="margin-top:12px;">Ready to export.</div>
     </div>
 
@@ -3757,6 +3760,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.renderActivityLog = renderActivityLog;
   window.clearActivityLogFilters = clearActivityLogFilters;
   window.exportAdminDataSnapshot = exportAdminDataSnapshot;
+  window.verifyBackupSnapshotFile = verifyBackupSnapshotFile;
   window.changeOrientationLanguage = changeOrientationLanguage;
   window.copySafetyCrewSignatureLink = copySafetyCrewSignatureLink;
   window.submitPublicSafetySignature = submitPublicSafetySignature;
@@ -8319,7 +8323,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       'safety.crew_signature_link.created': 'Crew safety signature link created',
       'safety.crew_signature_link.reused': 'Crew safety signature link reused',
       'safety.crew_signature.synced': 'Crew safety signature synced',
-      'backup.snapshot.exported': 'Backup snapshot exported'
+      'backup.snapshot.exported': 'Backup snapshot exported',
+      'backup.snapshot.verified': 'Backup snapshot verified'
     };
     return labels[action] || String(action || 'Activity').replaceAll('_', ' ').replaceAll('.', ' ');
   }
@@ -8429,6 +8434,60 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return snap.docs.map(docSnap => ({ id: docSnap.id, ...backupPlainValue(docSnap.data()) }));
   }
 
+  async function backupSha256(value) {
+    const bytes = new TextEncoder().encode(value);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  function backupDetailedCounts(data = {}) {
+    const projects = Array.isArray(data.projects) ? data.projects : [];
+    return {
+      projects: projects.length,
+      fieldForms: projects.reduce((sum, project) => sum + (Array.isArray(project.fieldForms) ? project.fieldForms.length : 0), 0),
+      reports: projects.reduce((sum, project) => sum + (Array.isArray(project.reports) ? project.reports.length : 0), 0),
+      employees: Array.isArray(data.employees) ? data.employees.length : 0,
+      newHireIntakes: Array.isArray(data.newHireIntakes) ? data.newHireIntakes.length : 0,
+      users: Array.isArray(data.users) ? data.users.length : 0,
+      userAccessGrants: Array.isArray(data.userAccessGrants) ? data.userAccessGrants.length : 0,
+      auditLogs: Array.isArray(data.auditLogs) ? data.auditLogs.length : 0
+    };
+  }
+
+  async function verifyBackupSnapshotFile(file) {
+    const input = document.getElementById('backup-verify-file');
+    const result = document.getElementById('backup-verify-result');
+    const status = document.getElementById('backup-export-status');
+    if (!isAdminRole()) return toast('Only admin can verify backup snapshots.');
+    if (!file) return;
+    if (result) { result.style.display = 'block'; result.innerHTML = '<h3>Verifying Backup...</h3><p class="helper-text">Checking file structure and integrity.</p>'; }
+    try {
+      if (file.size > 100 * 1024 * 1024) throw new Error('Backup JSON exceeds the 100 MB verification limit.');
+      const snapshot = JSON.parse(await file.text());
+      if (snapshot.app !== 'PAL Safety Hub' || snapshot.type !== 'manual-admin-backup-snapshot') throw new Error('This is not a PAL Safety Hub backup snapshot.');
+      if (!snapshot.schemaVersion || !snapshot.data || !Array.isArray(snapshot.data.projects)) throw new Error('This backup uses an unsupported or incomplete format.');
+      const expectedHash = String(snapshot.integrity?.sha256 || '');
+      if (!expectedHash) throw new Error('This older backup has no integrity signature. Create a new snapshot and verify that file.');
+      const checkCopy = { ...snapshot };
+      delete checkCopy.integrity;
+      const actualHash = await backupSha256(JSON.stringify(checkCopy));
+      if (actualHash !== expectedHash) throw new Error('Integrity check failed. The backup may be damaged or altered.');
+      const counts = backupDetailedCounts(snapshot.data);
+      const countRows = Object.entries(counts).map(([key, value]) => `<div class="report-field"><span class="k">${esc(prettyFieldLabel(key))}</span><div class="v">${esc(value)}</div></div>`).join('');
+      if (result) result.innerHTML = `<h3>Backup Verified</h3><p class="helper-text" style="margin-bottom:12px;"><span class="pill active">Valid</span> ${esc(file.name)} passed structure and SHA-256 integrity checks.<br>Exported ${esc(formatDate(snapshot.exportedAt) || snapshot.exportedAt || 'Unknown date')}.</p><div class="report-grid">${countRows}</div>`;
+      if (status) status.textContent = `Backup verified at ${new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })}. No live data was changed.`;
+      await logAuditEvent('backup.snapshot.verified', { fileName: file.name, exportedAt: snapshot.exportedAt || '', ...counts });
+      toast('Backup file verified successfully.');
+    } catch (e) {
+      console.error('Backup verification failed', e);
+      if (result) result.innerHTML = `<h3>Backup Verification Failed</h3><p class="helper-text">${esc(e?.message || 'The selected backup could not be verified.')}</p>`;
+      if (status) status.textContent = 'Backup verification failed. No live data was changed.';
+      toast('Backup verification failed.');
+    } finally {
+      if (input) input.value = '';
+    }
+  }
+
   async function exportAdminDataSnapshot() {
     if (!isAdminRole()) return toast('Only admin can export backup snapshots.');
     if (!requireCloudConnection('export a backup snapshot')) return;
@@ -8447,6 +8506,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const snapshot = {
         app: 'PAL Safety Hub',
         type: 'manual-admin-backup-snapshot',
+        schemaVersion: 2,
         exportedAt: new Date().toISOString(),
         exportedBy: {
           uid: currentUser?.uid || '',
@@ -8468,7 +8528,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           auditLogs: await backupCollection('auditLogs', { orderBy: 'createdAt', limit: 500 })
         }
       };
-      Object.entries(snapshot.data).forEach(([key, value]) => { snapshot.counts[key] = Array.isArray(value) ? value.length : 0; });
+      snapshot.counts = backupDetailedCounts(snapshot.data);
+      snapshot.integrity = {
+        algorithm: 'SHA-256',
+        sha256: await backupSha256(JSON.stringify(snapshot))
+      };
 
       const json = JSON.stringify(snapshot, null, 2);
       const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
