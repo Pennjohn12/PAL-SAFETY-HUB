@@ -1731,6 +1731,36 @@
   </div>
 </div>
 
+<!-- PUBLIC DAILY SAFETY CREW SIGNATURE - NO LOGIN REQUIRED -->
+<div class="view" id="view-public-safety-sign">
+  <div class="header">
+    <a class="brand" href="index.html">
+      <div class="pal-badge">PAL</div>
+      <div class="brand-text"><h1>PAL Safety Hub</h1><p>Daily Safety Sign-In</p></div>
+    </a>
+  </div>
+  <div class="page-wrap">
+    <div class="project-header-card">
+      <h2>Daily Safety Meeting Sign-In</h2>
+      <div class="meta">Review this safety meeting and add your signature.</div>
+    </div>
+    <div class="detail-card" id="public-safety-status-card">
+      <h3>Loading Safety Sheet...</h3>
+      <p class="helper-text">Please wait while PAL Safety Hub loads the sheet.</p>
+    </div>
+    <div class="detail-card" id="public-safety-review-card" style="display:none;">
+      <div id="public-safety-paper"></div>
+      <div class="report-grid" style="margin-top:16px;">
+        <div class="field"><label>Print Name</label><input id="public-safety-signer-name" autocomplete="name" placeholder="Your full name" /></div>
+        <div class="field"><label>Signature / Typed Name</label><input id="public-safety-typed-signature" class="ai-signature-input" autocomplete="name" placeholder="Type your full name" /></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-save" id="public-safety-submit-btn" type="button" onclick="submitPublicSafetySignature()">Submit Signature to PAL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 
      PROJECT LIST VIEW
  -->
@@ -2005,7 +2035,7 @@
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
           <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
         </div>
-        <div class="ai-safety-note">Foreman must review and edit the generated text before presenting it to the crew. Employee phone sign-in links can be added in a later patch.</div>
+        <div class="ai-safety-note">Foreman must review and edit the generated text before presenting it to the crew. After saving, open the sheet in the project to share a secure crew signature link.</div>
       </div>
       </div>
 
@@ -3280,10 +3310,10 @@
               <h4>PAL Employee Safety Orientation</h4>
               <p>Watch each chapter and answer its safety question correctly to continue.</p>
             </div>
-            <select id="nh-orientation-language" class="select orientation-language" aria-label="Orientation language">
+            <select id="nh-orientation-language" class="select orientation-language" aria-label="Orientation language" onchange="changeOrientationLanguage(this.value)">
               <option value="en">English</option>
-              <option value="es" disabled>Spanish - Coming Soon</option>
-              <option value="pl" disabled>Polish - Coming Soon</option>
+              <option value="es">Spanish</option>
+              <option value="pl">Polish</option>
             </select>
           </div>
           <div class="orientation-video-wrap">
@@ -3457,7 +3487,7 @@
   const sendAppTextCallable = httpsCallable(functions, 'sendAppText');
   const generateSafetyDraftCallable = httpsCallable(functions, 'generateSafetyDraft');
   const getIntegrationHealthCallable = httpsCallable(functions, 'getIntegrationHealth');
-  const PAL_PUBLIC_PROJECTS_URL = 'https://pennjohn12.github.io/PAL-SAFETY-HUB/projects.html';
+  const PAL_PUBLIC_PROJECTS_URL = 'https://pal-safety-hub.web.app/projects.html';
   const PAL_ADMIN_EMAILS = [
     'jvpanettiere@gmail.com',
     'jvpanettiere@outlook.com',
@@ -3513,6 +3543,9 @@
   const publicTicketSignProjectId = publicTicketSignParams.get('ticketProjectId') || '';
   const publicTicketSignTicketId = publicTicketSignParams.get('ticketId') || '';
   const publicTicketSignToken = publicTicketSignParams.get('ticketToken') || '';
+  const publicSafetySignProjectId = publicTicketSignParams.get('safetyProjectId') || '';
+  const publicSafetySignFormId = publicTicketSignParams.get('safetyFormId') || '';
+  const publicSafetySignToken = publicTicketSignParams.get('safetyToken') || '';
 // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
   const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
@@ -3527,6 +3560,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let currentPublicNewHireIntake = null;
   let publicTicketSignatureLoaded = false;
   let currentPublicTicketSignature = null;
+  let publicSafetySignatureLoaded = false;
+  let currentPublicSafetySignature = null;
   let foremanToolClearTimer = null;
   document.title = 'PAL Safety Hub';
 
@@ -3722,12 +3757,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.renderActivityLog = renderActivityLog;
   window.clearActivityLogFilters = clearActivityLogFilters;
   window.exportAdminDataSnapshot = exportAdminDataSnapshot;
+  window.changeOrientationLanguage = changeOrientationLanguage;
+  window.copySafetyCrewSignatureLink = copySafetyCrewSignatureLink;
+  window.submitPublicSafetySignature = submitPublicSafetySignature;
 
   //  Auth state 
   onAuthStateChanged(auth, async user => {
     // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
     // If an employee opens any public new-hire route, bypass the foreman/office login wall.
     const palPublicParams = new URLSearchParams(window.location.search);
+    if (publicSafetySignProjectId && publicSafetySignFormId && publicSafetySignToken) {
+      currentUser = user || null;
+      showView('view-public-safety-sign');
+      if (!publicSafetySignatureLoaded) loadPublicSafetySignature();
+      return;
+    }
     if (publicTicketSignProjectId && publicTicketSignTicketId && publicTicketSignToken) {
       currentUser = user || null;
       showView('view-public-ticket-sign');
@@ -7715,6 +7759,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ...row,
         submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : row.submittedAt
       }));
+      await syncSignedSafetyRequestsForForms(projectId, currentProjectFieldForms);
       updateProjectFieldFormSummary(currentProjectFieldForms);
       renderProjectFieldFormsList();
     } catch(e) {
@@ -7905,6 +7950,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       grid.innerHTML = `
         <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
           <button class="btn-save" type="button" onclick="editFieldFormDailySafety('${form.id}')">Edit / Add Signatures</button>
+          <button class="btn-outline" type="button" onclick="copySafetyCrewSignatureLink('${form.id}')">Share Crew Signature Link</button>
           <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Print</button>
           <button class="btn-outline" type="button" onclick="printFieldFormSafetySheet('${form.id}')">Print / PDF</button>
           <button class="btn-save" type="button" onclick="saveFieldFormDocumentToFiles('${form.id}')">Save to Files</button>
@@ -8270,6 +8316,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       'ticket.gc_signature.synced': 'GC signature synced',
       'ticket.gc_signature_link.created': 'GC signature link created',
       'ticket.gc_signature_link.reused': 'GC signature link reused',
+      'safety.crew_signature_link.created': 'Crew safety signature link created',
+      'safety.crew_signature_link.reused': 'Crew safety signature link reused',
+      'safety.crew_signature.synced': 'Crew safety signature synced',
       'backup.snapshot.exported': 'Backup snapshot exported'
     };
     return labels[action] || String(action || 'Activity').replaceAll('_', ' ').replaceAll('.', ' ');
@@ -10343,6 +10392,164 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
   }
 
+  function getSafetySignatureLink(projectId, formId, token) {
+    const url = new URL(getShareableProjectsPageUrl());
+    url.search = '';
+    url.hash = '';
+    url.searchParams.set('safetyProjectId', projectId);
+    url.searchParams.set('safetyFormId', formId);
+    url.searchParams.set('safetyToken', token);
+    return url.toString();
+  }
+
+  async function copySafetyCrewSignatureLink(formId) {
+    if (!requireCloudConnection('create a crew signature link')) return;
+    const form = findProjectFieldForm(formId);
+    if (!form || !currentProject?.id) return toast('Safety sheet not found. Refresh and try again.');
+    if (!['daily-safety-meeting', 'ai-daily-safety'].includes(form.formKey)) return toast('Crew signature links are only available for daily safety sheets.');
+    try {
+      const data = { ...(form.documentData || {}) };
+      const token = generateSecureToken();
+      const expiresDate = gcSignatureExpiryDate(7);
+      const requestRef = doc(db, 'publicSafetySignatures', token);
+      await setDoc(requestRef, {
+        token,
+        projectId: currentProject.id,
+        formId,
+        status: 'Pending',
+        projectName: form.projectName || currentProject.name || '',
+        formTitle: form.formTitle || 'Daily Safety Meeting',
+        safetyData: data,
+        createdAt: new Date().toISOString(),
+        expiresAt: Timestamp.fromDate(expiresDate),
+        expiresAtText: expiresDate.toISOString(),
+        createdBy: currentUser?.uid || '',
+        createdByName: currentUser?.displayName || currentUser?.email || '',
+        updatedAt: new Date().toISOString()
+      });
+      const signatureTokens = Array.from(new Set([...(Array.isArray(data._crewSignatureTokens) ? data._crewSignatureTokens : []), token]));
+      const updatedData = { ...data, _crewSignatureToken: token, _crewSignatureTokens: signatureTokens, _crewSignatureExpiresAt: expiresDate.toISOString() };
+      await updateDoc(doc(db, 'projects', currentProject.id, 'fieldForms', formId), {
+        documentData: updatedData,
+        updatedAt: serverTimestamp(),
+        updatedBy: currentUser?.uid || '',
+        updatedByName: currentUser?.displayName || currentUser?.email || ''
+      });
+      form.documentData = updatedData;
+      const link = getSafetySignatureLink(currentProject.id, formId, token);
+      const copied = await writeClipboardText(link);
+      await logAuditEvent('safety.crew_signature_link.created', {
+        projectId: currentProject.id,
+        projectName: currentProject.name || '',
+        formId,
+        expiresAt: expiresDate.toISOString()
+      });
+      toast(copied ? 'Crew signature link copied. Send it by text or email.' : 'Crew signature link created.');
+    } catch (e) {
+      console.error(e);
+      toast('Could not create crew signature link: ' + e.message);
+    }
+  }
+
+  async function syncSignedSafetyRequestsForForms(projectId, forms) {
+    for (const form of forms) {
+      const data = form.documentData || {};
+      const tokens = Array.from(new Set([...(Array.isArray(data._crewSignatureTokens) ? data._crewSignatureTokens : []), data._crewSignatureToken].filter(Boolean)));
+      for (const token of tokens) {
+        try {
+          const snap = await getDoc(doc(db, 'publicSafetySignatures', token));
+          if (!snap.exists()) continue;
+          const request = snap.data() || {};
+          if (request.status !== 'Signed' || request.projectId !== projectId || request.formId !== form.id) continue;
+          const incomingRows = Array.isArray(request.safetyData?.signIns) ? request.safetyData.signIns.filter(row => row.source === 'crew-link') : [];
+          const currentRows = Array.isArray(form.documentData?.signIns) ? form.documentData.signIns : [];
+          const combinedRows = currentRows.slice();
+          incomingRows.forEach(row => {
+            const duplicate = combinedRows.some(existing => existing.signedAt && row.signedAt && existing.signedAt === row.signedAt);
+            if (!duplicate) combinedRows.push({ ...row, row: combinedRows.length + 1 });
+          });
+          if (combinedRows.length === currentRows.length) continue;
+          const mergedData = { ...(form.documentData || {}), signIns: combinedRows, _crewSignatureToken: token, _crewSignatureTokens: tokens };
+          await updateDoc(doc(db, 'projects', projectId, 'fieldForms', form.id), {
+            documentData: mergedData,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser?.uid || '',
+            updatedByName: currentUser?.displayName || currentUser?.email || ''
+          });
+          form.documentData = mergedData;
+          await logAuditEvent('safety.crew_signature.synced', { projectId, formId: form.id, signedBy: request.signedBy || '' });
+        } catch (e) {
+          console.warn('Could not sync crew safety signature', form.id, e);
+        }
+      }
+    }
+  }
+
+  async function loadPublicSafetySignature() {
+    publicSafetySignatureLoaded = true;
+    const statusCard = document.getElementById('public-safety-status-card');
+    const reviewCard = document.getElementById('public-safety-review-card');
+    try {
+      const snap = await getDoc(doc(db, 'publicSafetySignatures', publicSafetySignToken));
+      if (!snap.exists()) throw new Error('Safety sheet link is no longer active.');
+      const request = { id: snap.id, ...snap.data() };
+      if (request.token !== publicSafetySignToken || request.projectId !== publicSafetySignProjectId || request.formId !== publicSafetySignFormId) throw new Error('Safety sheet link is invalid or expired.');
+      if (isDateExpired(request.expiresAt || request.expiresAtText)) throw new Error('This signature link has expired. Please ask your foreman for a new link.');
+      currentPublicSafetySignature = request;
+      if (statusCard) statusCard.style.display = 'none';
+      if (reviewCard) reviewCard.style.display = 'block';
+      const form = { id: request.formId, projectName: request.projectName || '', formTitle: request.formTitle || 'Daily Safety Meeting', documentData: request.safetyData || {} };
+      const paper = document.getElementById('public-safety-paper');
+      if (paper) paper.innerHTML = dailySafetySheetDetailHTML(form);
+      if (request.status === 'Signed') {
+        if (reviewCard) reviewCard.innerHTML = `<h3>Signature Already Submitted</h3><p class="helper-text">Your signature was sent to PAL.</p>${dailySafetySheetDetailHTML(form)}`;
+      }
+    } catch (e) {
+      currentPublicSafetySignature = null;
+      if (reviewCard) reviewCard.style.display = 'none';
+      if (statusCard) {
+        statusCard.style.display = 'block';
+        statusCard.innerHTML = `<h3>Safety Sheet Link Unavailable</h3><p class="helper-text">${esc(e.message || 'This signature link could not be loaded.')}</p>`;
+      }
+    }
+  }
+
+  async function submitPublicSafetySignature() {
+    if (!requireCloudConnection('submit the signature')) return;
+    if (!currentPublicSafetySignature) return toast('Safety sheet is not loaded yet.');
+    const signerName = document.getElementById('public-safety-signer-name')?.value.trim() || '';
+    const typedSignature = document.getElementById('public-safety-typed-signature')?.value.trim() || '';
+    if (!signerName || !typedSignature) return toast('Enter your printed name and typed signature.');
+    const btn = document.getElementById('public-safety-submit-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+    try {
+      const requestRef = doc(db, 'publicSafetySignatures', publicSafetySignToken);
+      const snap = await getDoc(requestRef);
+      if (!snap.exists()) throw new Error('Safety sheet link is no longer active.');
+      const request = { id: snap.id, ...snap.data() };
+      if (request.status !== 'Pending' || request.projectId !== publicSafetySignProjectId || request.formId !== publicSafetySignFormId) throw new Error('This link is invalid or has already been used.');
+      if (isDateExpired(request.expiresAt || request.expiresAtText)) throw new Error('This signature link has expired.');
+      const safetyData = { ...(request.safetyData || {}) };
+      const rows = Array.isArray(safetyData.signIns) ? safetyData.signIns.slice() : [];
+      rows.push({ row: rows.length + 1, printName: signerName, signature: typedSignature, signedAt: new Date().toISOString(), source: 'crew-link' });
+      safetyData.signIns = rows;
+      await updateDoc(requestRef, {
+        status: 'Signed', safetyData, signedBy: signerName, typedSignature,
+        signedAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+      });
+      currentPublicSafetySignature = { ...request, status: 'Signed', safetyData };
+      const reviewCard = document.getElementById('public-safety-review-card');
+      const form = { projectName: request.projectName || '', formTitle: request.formTitle || 'Daily Safety Meeting', documentData: safetyData };
+      if (reviewCard) reviewCard.innerHTML = `<h3>Signature Submitted</h3><p class="helper-text">Thank you. Your signature has been sent to PAL.</p>${dailySafetySheetDetailHTML(form)}`;
+      toast('Signature submitted to PAL.');
+    } catch (e) {
+      console.error(e);
+      toast('Signature submit failed: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Signature to PAL'; }
+    }
+  }
+
   function generateSecureToken() {
     try {
       const bytes = new Uint8Array(24);
@@ -11649,7 +11856,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
-  const ORIENTATION_VERSION = 'pal-en-2026-06-28';
+  const ORIENTATION_VERSION = 'pal-2026-07-06';
+  const ORIENTATION_VIDEO_SOURCES = {
+    en: 'media/pal-orientation-en-2026.mp4',
+    es: 'media/pal-orientation-es-2026.mp4',
+    pl: 'media/pal-orientation-pl-2026.mp4'
+  };
   const ORIENTATION_CHECKPOINTS = [150, 300, 450, 600, 750];
   const ORIENTATION_QUESTIONS = [
     {
@@ -11685,8 +11897,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   ];
   let orientationSession = null;
 
-  function orientationProgressKey() {
-    return `pal-orientation:${currentNewHireOrientationId || 'unknown'}:${ORIENTATION_VERSION}`;
+  function selectedOrientationLanguage() {
+    return document.getElementById('nh-orientation-language')?.value || 'en';
+  }
+
+  function orientationProgressKey(language = orientationSession?.language || selectedOrientationLanguage()) {
+    return `pal-orientation:${currentNewHireOrientationId || 'unknown'}:${ORIENTATION_VERSION}:${language}`;
   }
 
   function saveOrientationLocalProgress() {
@@ -11771,16 +11987,22 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function resetOrientationModule(form = {}) {
     const video = document.getElementById('nh-orientation-video');
     if (!video) return;
+    const language = selectedOrientationLanguage();
+    const source = ORIENTATION_VIDEO_SOURCES[language] || ORIENTATION_VIDEO_SOURCES.en;
+    const sourceEl = video.querySelector('source');
+    if (sourceEl && !sourceEl.getAttribute('src')?.endsWith(source.replace('media/', ''))) sourceEl.setAttribute('src', source);
     let local = {};
-    try { local = JSON.parse(localStorage.getItem(orientationProgressKey()) || '{}'); } catch (_) {}
-    const savedAnswers = Array.isArray(form.orientationAnswers) ? form.orientationAnswers : local.answers;
-    const savedAttempts = Array.isArray(form.orientationAttempts) ? form.orientationAttempts : local.attempts;
+    try { local = JSON.parse(localStorage.getItem(orientationProgressKey(language)) || '{}'); } catch (_) {}
+    const sameSavedLanguage = !form.orientationLanguage || form.orientationLanguage === language;
+    const savedAnswers = sameSavedLanguage && Array.isArray(form.orientationAnswers) ? form.orientationAnswers : local.answers;
+    const savedAttempts = sameSavedLanguage && Array.isArray(form.orientationAttempts) ? form.orientationAttempts : local.attempts;
     orientationSession = {
       video,
+      language,
       answers: Array.from({ length: 5 }, (_, i) => !!savedAnswers?.[i]),
       attempts: Array.from({ length: 5 }, (_, i) => Number(savedAttempts?.[i] || 0)),
       activeQuestion: -1,
-      ended: !!form.orientationVideoCompleted || !!local.ended,
+      ended: !!(sameSavedLanguage && form.orientationVideoCompleted) || !!local.ended,
       lastSavedSecond: -1
     };
     const quiz = document.getElementById('nh-orientation-quiz');
@@ -11812,7 +12034,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     video.onloadedmetadata = () => {
       const firstPending = orientationSession.answers.findIndex(answered => !answered);
       const maxAllowed = firstPending < 0 ? video.duration : ORIENTATION_CHECKPOINTS[firstPending];
-      const resumeAt = form.orientationVideoCompleted ? video.duration : Number(local.lastTime || 0);
+      const resumeAt = sameSavedLanguage && form.orientationVideoCompleted ? video.duration : Number(local.lastTime || 0);
       video.currentTime = Math.min(Math.max(0, resumeAt), Math.max(0, maxAllowed - 0.25));
       updateOrientationProgressUI();
     };
@@ -11820,11 +12042,20 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     updateOrientationProgressUI();
   }
 
+  function changeOrientationLanguage(language) {
+    if (!ORIENTATION_VIDEO_SOURCES[language]) return;
+    saveOrientationLocalProgress();
+    const intake = allNewHireIntakes.find(i => i.id === currentNewHireOrientationId) || (currentPublicNewHireIntake?.id === currentNewHireOrientationId ? currentPublicNewHireIntake : null);
+    resetOrientationModule(intake?.orientationForm || {});
+  }
+
   function openNewHireOrientationForm(id) {
     const x = allNewHireIntakes.find(i => i.id === id) || (currentPublicNewHireIntake?.id === id ? currentPublicNewHireIntake : null);
     if (!x) return toast('Intake request not found.');
     currentNewHireOrientationId = id;
     const form = x.orientationForm || {};
+    const languageSelect = document.getElementById('nh-orientation-language');
+    if (languageSelect) languageSelect.value = ORIENTATION_VIDEO_SOURCES[form.orientationLanguage] ? form.orientationLanguage : 'en';
     const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
     set('nh-orient-employee-name', form.employeeName || x.name || '');
     set('nh-orient-date', form.date || todayISO());

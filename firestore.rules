@@ -287,6 +287,33 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /publicSafetySignatures/{signatureId} {
+      allow get: if (
+        resource.data.token == signatureId
+        && resource.data.status in ['Pending', 'Signed']
+        && resource.data.expiresAt is timestamp
+        && request.time < resource.data.expiresAt
+      ) || (signedIn() && isProjectMemberById(resource.data.projectId));
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.token == signatureId
+        && request.resource.data.status == 'Pending'
+        && request.resource.data.expiresAt is timestamp
+        && request.time < request.resource.data.expiresAt
+        && isProjectMemberById(request.resource.data.projectId);
+      allow update: if (
+        resource.data.token == signatureId
+        && resource.data.status == 'Pending'
+        && resource.data.expiresAt is timestamp
+        && request.time < resource.data.expiresAt
+        && request.resource.data.status == 'Signed'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'safetyData', 'signedBy', 'typedSignature', 'signedAt', 'updatedAt'
+        ])
+      ) || (signedIn() && isProjectMemberById(resource.data.projectId));
+      allow delete: if isAdmin();
+    }
+
     match /integrationSettings/{settingsId} {
       allow read: if isAdmin();
       allow create, update: if isAdmin();
