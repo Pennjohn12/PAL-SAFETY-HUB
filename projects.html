@@ -65,8 +65,24 @@
     }
     .btn-icon {
       background: rgba(255,255,255,.12); border: none; color: white;
-      border-radius: 8px; width: 36px; height: 36px; cursor: pointer;
-      display: grid; place-items: center; font-size: 18px;
+      border-radius: 8px; min-width: 36px; width: auto; height: 36px; cursor: pointer;
+      display: grid; place-items: center; font-size: 13px; font-weight: 800; padding: 0 9px;
+    }
+    .app-lang-switch {
+      position: fixed; top: 72px; right: 14px; z-index: 2200;
+      display: flex; gap: 5px; padding: 5px;
+      background: rgba(255,255,255,.96); border: 1px solid var(--line);
+      border-radius: 999px; box-shadow: 0 8px 22px rgba(16,24,40,.14);
+    }
+    .app-lang-switch button {
+      border: none; border-radius: 999px; min-width: 38px; min-height: 34px;
+      background: transparent; color: var(--navy); font-weight: 900; cursor: pointer;
+      font-size: 12px;
+    }
+    .app-lang-switch button.active { background: var(--green); color: var(--navy); }
+    @media(max-width:680px){
+      .app-lang-switch { top:auto; right:10px; bottom:12px; box-shadow:0 8px 24px rgba(16,24,40,.22); }
+      .toast { bottom:74px; }
     }
     .back-btn {
       background: rgba(255,255,255,.12); border: none; color: white;
@@ -1507,6 +1523,12 @@
 </head>
 <body>
 
+<div class="app-lang-switch" aria-label="App language">
+  <button type="button" data-lang-btn="en" onclick="setAppLanguage('en')">EN</button>
+  <button type="button" data-lang-btn="es" onclick="setAppLanguage('es')">ES</button>
+  <button type="button" data-lang-btn="pl" onclick="setAppLanguage('pl')">PL</button>
+</div>
+
 <div class="connection-banner" id="connection-banner">Offline mode: cloud saves, uploads, and submissions need internet. Reconnect before sending work to PAL.</div>
 
 <!-- 
@@ -2536,7 +2558,16 @@
           <div class="report-field"><span class="k">Email</span><div class="v">Production sending and Monday certification automation are active.</div></div>
           <div class="report-field"><span class="k">SMS</span><div class="v">Backend, monthly cap, and audit logging are active; carrier approval is pending.</div></div>
           <div class="report-field"><span class="k">AI</span><div class="v">Protected drafting endpoint, project/user tracking, and monthly limit are active.</div></div>
-          <div class="report-field"><span class="k">Next</span><div class="v">Add usage warnings and operational failure alerts for administrators.</div></div>
+          <div class="report-field"><span class="k">Backups</span><div class="v">Manual export verification and Google Cloud retention notes are active for launch review.</div></div>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>Launch Readiness</h3>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">Ready</span><div class="v">Firebase hosting, custom domain site, role-based access, backup verification, email automation, and OpenAI drafting.</div></div>
+          <div class="report-field"><span class="k">Waiting</span><div class="v">Twilio A2P brand approval before employee intake text delivery can be switched live.</div></div>
+          <div class="report-field"><span class="k">Before PAL Rollout</span><div class="v">Remove sample project records or clearly label them as training records, then run one iPhone and one iPad field test.</div></div>
+          <div class="report-field"><span class="k">Retention Note</span><div class="v">PAL should approve a written retention schedule before any document purge policy is enabled.</div></div>
         </div>
       </div>
       <div class="detail-card">
@@ -3310,8 +3341,8 @@
         <div class="orientation-module" id="pal-orientation-module">
           <div class="orientation-module-head">
             <div>
-              <h4>PAL Employee Safety Orientation</h4>
-              <p>Watch each chapter and answer its safety question correctly to continue.</p>
+              <h4 id="nh-orientation-module-title">PAL Employee Safety Orientation</h4>
+              <p id="nh-orientation-module-copy">Watch each chapter and answer its safety question correctly to continue.</p>
             </div>
             <select id="nh-orientation-language" class="select orientation-language" aria-label="Orientation language" onchange="changeOrientationLanguage(this.value)">
               <option value="en">English</option>
@@ -3337,13 +3368,13 @@
           </div>
           <label class="orientation-ack locked" id="nh-orient-ack-wrap">
             <input id="nh-orient-module-complete" type="checkbox" disabled />
-            <span>I watched the complete PAL orientation, answered all five knowledge checks, and understand that I must stop and ask for help whenever I am not trained, authorized, equipped, or certain the work can be performed safely.</span>
+            <span id="nh-orient-ack-copy">I watched the complete PAL orientation, answered all five knowledge checks, and understand that I must stop and ask for help whenever I am not trained, authorized, equipped, or certain the work can be performed safely.</span>
           </label>
         </div>
         <div class="doc-review-box">
-          <h4>Employee Review</h4>
-          <p class="helper-text" style="margin-bottom:8px;">Please read and acknowledge the basic PAL orientation items below before signing.</p>
-          <ul>
+          <h4 id="nh-orient-review-title">Employee Review</h4>
+          <p class="helper-text" id="nh-orient-review-copy" style="margin-bottom:8px;">Please read and acknowledge the basic PAL orientation items below before signing.</p>
+          <ul id="nh-orient-review-list">
             <li>I understand that I must follow PAL Environmental Services safety policies and site-specific rules at all times.</li>
             <li>I understand that required PPE must be worn as directed, including hard hat, safety glasses, work boots, gloves, and high-visibility clothing/vest when required.</li>
             <li>I understand that I must attend required safety meetings, toolbox talks, and site orientation before performing work.</li>
@@ -3567,8 +3598,294 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let currentPublicSafetySignature = null;
   let foremanToolClearTimer = null;
   document.title = 'PAL Safety Hub';
+  const APP_LANGUAGE_KEY = 'pal-language';
+  const APP_I18N = {
+    es: {
+      text: {
+        'Offline mode: cloud saves, uploads, and submissions need internet. Reconnect before sending work to PAL.': 'Modo sin conexión: los guardados en la nube, cargas y envíos requieren internet. Vuelva a conectarse antes de enviar trabajo a PAL.',
+        'Environmental Services': 'Servicios Ambientales',
+        'Sign In': 'Iniciar Sesión',
+        'Access your projects - field or office': 'Acceda a sus proyectos - campo u oficina',
+        'Email': 'Correo Electrónico',
+        'Password': 'Contraseña',
+        "Don't have an account?": '¿No tiene una cuenta?',
+        'Create one': 'Crear una',
+        'Create Account': 'Crear Cuenta',
+        'Set up your PAL Projects access': 'Configure su acceso a Proyectos PAL',
+        'Full Name': 'Nombre Completo',
+        'Role': 'Rol',
+        'Employee / Intake Only': 'Empleado / Intake Solamente',
+        'Foreman': 'Capataz',
+        'Office / Project Manager': 'Oficina / Gerente de Proyecto',
+        'Admin / Owner': 'Administrador / Dueño',
+        'Min. 6 characters': 'Mínimo 6 caracteres',
+        'Already have an account?': '¿Ya tiene una cuenta?',
+        'Sign in': 'Iniciar sesión',
+        'New Hire Intake': 'Ingreso de Nuevo Empleado',
+        'New Hire / Pre-Site Packet': 'Paquete de Nuevo Empleado / Antes del Sitio',
+        'Employee access only - no login required.': 'Acceso solo para empleado - no requiere inicio de sesión.',
+        'Foreman / office dashboard stays protected behind sign-in.': 'El panel de capataz/oficina permanece protegido con inicio de sesión.',
+        'Loading Intake Request...': 'Cargando solicitud de ingreso...',
+        'Please wait while PAL Safety Hub loads your pre-site packet.': 'Espere mientras PAL Safety Hub carga su paquete antes del sitio.',
+        'Employee Information': 'Información del Empleado',
+        'Phone Number': 'Número de Teléfono',
+        'Trade / Role': 'Oficio / Rol',
+        'Emergency Contact Name': 'Nombre del Contacto de Emergencia',
+        'Emergency Contact Phone': 'Teléfono del Contacto de Emergencia',
+        'Notes / Missing Information': 'Notas / Información Faltante',
+        'New Hire Packet Forms': 'Formularios del Paquete de Nuevo Empleado',
+        'Open each form separately, review it, complete it, and save it back to your intake packet.': 'Abra cada formulario por separado, revíselo, complételo y guárdelo en su paquete de ingreso.',
+        'Open Orientation Form': 'Abrir Formulario de Orientación',
+        'Open Drug & Alcohol Consent': 'Abrir Consentimiento de Drogas y Alcohol',
+        'Open Safety Agreement': 'Abrir Acuerdo de Seguridad',
+        'Open Certification Uploads': 'Abrir Carga de Certificaciones',
+        'Open Payroll / ID Uploads': 'Abrir Carga de Nómina / ID',
+        'Orientation Form: Pending': 'Formulario de Orientación: Pendiente',
+        'Drug & Alcohol Consent: Pending': 'Consentimiento de Drogas y Alcohol: Pendiente',
+        'Safety Agreement: Pending': 'Acuerdo de Seguridad: Pendiente',
+        'Certification Uploads: Pending': 'Carga de Certificaciones: Pendiente',
+        'Payroll / ID Uploads: Pending': 'Carga de Nómina / ID: Pendiente',
+        'Packet Checklist & Final Submit': 'Lista del Paquete y Envío Final',
+        'Complete each required section, then submit the full packet to PAL office for review.': 'Complete cada sección requerida y luego envíe el paquete completo a la oficina de PAL para revisión.',
+        'Orientation': 'Orientación',
+        'Drug Consent': 'Consentimiento de Drogas',
+        'Safety Agreement': 'Acuerdo de Seguridad',
+        'Cert Uploads': 'Carga de Certificaciones',
+        'Payroll / ID Uploads': 'Carga de Nómina / ID',
+        'Packet Status': 'Estado del Paquete',
+        'Pending': 'Pendiente',
+        'Not Submitted': 'No Enviado',
+        'Submit Full Packet to PAL Office': 'Enviar Paquete Completo a la Oficina de PAL',
+        'Submit Intake to PAL': 'Enviar Ingreso a PAL',
+        'Back to Safety Hub': 'Volver a Safety Hub',
+        'Projects': 'Proyectos',
+        'Foreman / Supervisor Tools': 'Herramientas de Capataz / Supervisor',
+        'JHA': 'JHA',
+        'Onboarding': 'Ingreso',
+        'Employees': 'Empleados',
+        'Tickets': 'Tickets',
+        'Warehouse': 'Almacén',
+        'Activity Log': 'Registro de Actividad',
+        'Backup Export': 'Exportar Respaldo',
+        'Integrations': 'Integraciones',
+        'User Access': 'Acceso de Usuarios',
+        '+ New Project': '+ Nuevo Proyecto',
+        'Clear': 'Limpiar',
+        'Projects will load here.': 'Los proyectos se cargarán aquí.',
+        'Showing': 'Mostrando',
+        'of': 'de',
+        'project': 'proyecto',
+        'projects': 'proyectos',
+        'All': 'Todos',
+        'Active': 'Activo',
+        'Job': 'Trabajo',
+        'Docs': 'Docs',
+        'Photos': 'Fotos',
+        'Foremen': 'Capataz',
+        'Sign out': 'Cerrar sesión',
+        'No projects yet': 'Todavía no hay proyectos',
+        'Tap "New Project" to get started': 'Toque "Nuevo Proyecto" para comenzar',
+        'Job Hazard Analysis': 'Análisis de Riesgos del Trabajo',
+        'Refresh': 'Actualizar',
+        'Previous Worksite JHAs': 'JHAs de Sitios Anteriores',
+        'Open Library': 'Abrir Biblioteca',
+        'Create New JHA': 'Crear Nuevo JHA',
+        'Upload New JHA': 'Subir Nuevo JHA',
+        'Daily Safety Sheet': 'Hoja Diaria de Seguridad',
+        'AI Safety Sheet': 'Hoja de Seguridad con AI',
+        'Daily Report': 'Reporte Diario',
+        'AI Daily Report': 'Reporte Diario con AI',
+        'Extra Work Ticket': 'Ticket de Trabajo Extra',
+        'Daily Payroll': 'Nómina Diaria',
+        'Weekly Payroll': 'Nómina Semanal',
+        'Expense Report': 'Reporte de Gastos',
+        'Service Integrations': 'Integraciones de Servicio',
+        'Launch Readiness': 'Preparación de Lanzamiento',
+        'Text Messaging': 'Mensajes de Texto',
+        'Email Automation': 'Automatización de Correo',
+        'AI Assistance': 'Asistencia de AI',
+        'Production Status': 'Estado de Producción',
+        'Default Monthly Limits': 'Límites Mensuales Predeterminados',
+        'Daily Safety Meeting Sign-In': 'Firma de Reunión Diaria de Seguridad',
+        'Review this safety meeting and add your signature.': 'Revise esta reunión de seguridad y agregue su firma.',
+        'Loading Safety Sheet...': 'Cargando hoja de seguridad...',
+        'Print Name': 'Nombre en Letra de Molde',
+        'Signature / Typed Name': 'Firma / Nombre Escrito',
+        'Submit Signature to PAL': 'Enviar Firma a PAL',
+        'Extra Work Ticket Signature': 'Firma de Ticket de Trabajo Extra',
+        'Review the ticket, sign, and submit back to PAL.': 'Revise el ticket, firme y envíelo de vuelta a PAL.',
+        'Signer Name': 'Nombre del Firmante',
+        'Company / Title': 'Compañía / Título',
+        'GC / Contractor Signature': 'Firma de GC / Contratista',
+        'Save Orientation Form': 'Guardar Formulario de Orientación',
+        'Cancel': 'Cancelar'
+      },
+      placeholder: {
+        'you@palcorp.com': 'usted@palcorp.com',
+        'Your name': 'Su nombre',
+        'Your full name': 'Su nombre completo',
+        'Your phone number': 'Su número de teléfono',
+        'Your email': 'Su correo electrónico',
+        'Laborer, Fire Watch, Sprayer, etc.': 'Obrero, fire watch, rociador, etc.',
+        'Emergency contact': 'Contacto de emergencia',
+        'Emergency contact phone': 'Teléfono del contacto de emergencia',
+        'Anything PAL should know before you arrive on site...': 'Cualquier cosa que PAL deba saber antes de que llegue al sitio...',
+        'Search projects by name, job number, location, or foreman...': 'Buscar proyectos por nombre, número de trabajo, ubicación o capataz...',
+        'Print your name': 'Escriba su nombre',
+        'Company and title': 'Compañía y título',
+        'Type full name as signature': 'Escriba su nombre completo como firma',
+        'Type your full name': 'Escriba su nombre completo',
+        'Your full name': 'Su nombre completo'
+      },
+      title: {
+        'Sign out': 'Cerrar sesión'
+      }
+    },
+    pl: {
+      text: {
+        'Offline mode: cloud saves, uploads, and submissions need internet. Reconnect before sending work to PAL.': 'Tryb offline: zapisy w chmurze, przesyłanie plików i wysyłanie formularzy wymagają internetu. Połącz się ponownie przed wysłaniem pracy do PAL.',
+        'Environmental Services': 'Usługi Środowiskowe',
+        'Sign In': 'Zaloguj się',
+        'Access your projects - field or office': 'Dostęp do projektów - teren lub biuro',
+        'Email': 'Email',
+        'Password': 'Hasło',
+        "Don't have an account?": 'Nie masz konta?',
+        'Create one': 'Utwórz konto',
+        'Create Account': 'Utwórz Konto',
+        'Set up your PAL Projects access': 'Skonfiguruj dostęp do Projektów PAL',
+        'Full Name': 'Imię i Nazwisko',
+        'Role': 'Rola',
+        'Employee / Intake Only': 'Pracownik / Tylko Intake',
+        'Foreman': 'Brygadzista',
+        'Office / Project Manager': 'Biuro / Kierownik Projektu',
+        'Admin / Owner': 'Administrator / Właściciel',
+        'Min. 6 characters': 'Min. 6 znaków',
+        'Already have an account?': 'Masz już konto?',
+        'Sign in': 'Zaloguj się',
+        'New Hire Intake': 'Przyjęcie Nowego Pracownika',
+        'New Hire / Pre-Site Packet': 'Pakiet Nowego Pracownika / Przed Budową',
+        'Employee access only - no login required.': 'Dostęp tylko dla pracownika - logowanie nie jest wymagane.',
+        'Foreman / office dashboard stays protected behind sign-in.': 'Panel brygadzisty/biura pozostaje chroniony logowaniem.',
+        'Loading Intake Request...': 'Ładowanie wniosku intake...',
+        'Please wait while PAL Safety Hub loads your pre-site packet.': 'Poczekaj, aż PAL Safety Hub załaduje pakiet przed budową.',
+        'Employee Information': 'Informacje Pracownika',
+        'Phone Number': 'Numer Telefonu',
+        'Trade / Role': 'Zawód / Rola',
+        'Emergency Contact Name': 'Kontakt Alarmowy - Imię i Nazwisko',
+        'Emergency Contact Phone': 'Telefon Kontaktu Alarmowego',
+        'Notes / Missing Information': 'Uwagi / Brakujące Informacje',
+        'New Hire Packet Forms': 'Formularze Pakietu Nowego Pracownika',
+        'Open each form separately, review it, complete it, and save it back to your intake packet.': 'Otwórz każdy formularz osobno, sprawdź go, wypełnij i zapisz z powrotem w pakiecie intake.',
+        'Open Orientation Form': 'Otwórz Formularz Szkolenia',
+        'Open Drug & Alcohol Consent': 'Otwórz Zgodę na Testy Narkotykowe i Alkoholowe',
+        'Open Safety Agreement': 'Otwórz Oświadczenie BHP',
+        'Open Certification Uploads': 'Otwórz Przesyłanie Certyfikatów',
+        'Open Payroll / ID Uploads': 'Otwórz Przesyłanie Payroll / ID',
+        'Orientation Form: Pending': 'Formularz Szkolenia: Oczekuje',
+        'Drug & Alcohol Consent: Pending': 'Zgoda na Testy: Oczekuje',
+        'Safety Agreement: Pending': 'Oświadczenie BHP: Oczekuje',
+        'Certification Uploads: Pending': 'Certyfikaty: Oczekuje',
+        'Payroll / ID Uploads: Pending': 'Payroll / ID: Oczekuje',
+        'Packet Checklist & Final Submit': 'Lista Pakietu i Końcowe Wysłanie',
+        'Complete each required section, then submit the full packet to PAL office for review.': 'Wypełnij każdą wymaganą część, a następnie wyślij cały pakiet do biura PAL do sprawdzenia.',
+        'Orientation': 'Szkolenie',
+        'Drug Consent': 'Zgoda na Testy',
+        'Safety Agreement': 'Oświadczenie BHP',
+        'Cert Uploads': 'Certyfikaty',
+        'Payroll / ID Uploads': 'Payroll / ID',
+        'Packet Status': 'Status Pakietu',
+        'Pending': 'Oczekuje',
+        'Not Submitted': 'Nie Wysłano',
+        'Submit Full Packet to PAL Office': 'Wyślij Pełny Pakiet do Biura PAL',
+        'Submit Intake to PAL': 'Wyślij Intake do PAL',
+        'Back to Safety Hub': 'Powrót do Safety Hub',
+        'Projects': 'Projekty',
+        'Foreman / Supervisor Tools': 'Narzędzia Brygadzisty / Nadzoru',
+        'JHA': 'JHA',
+        'Onboarding': 'Onboarding',
+        'Employees': 'Pracownicy',
+        'Tickets': 'Tickety',
+        'Warehouse': 'Magazyn',
+        'Activity Log': 'Dziennik Aktywności',
+        'Backup Export': 'Eksport Kopii',
+        'Integrations': 'Integracje',
+        'User Access': 'Dostęp Użytkowników',
+        '+ New Project': '+ Nowy Projekt',
+        'Clear': 'Wyczyść',
+        'Projects will load here.': 'Projekty zostaną tutaj załadowane.',
+        'Showing': 'Pokazano',
+        'of': 'z',
+        'project': 'projekt',
+        'projects': 'projekty',
+        'All': 'Wszystkie',
+        'Active': 'Aktywny',
+        'Job': 'Praca',
+        'Docs': 'Dokumenty',
+        'Photos': 'Zdjęcia',
+        'Foremen': 'Brygadziści',
+        'Sign out': 'Wyloguj',
+        'No projects yet': 'Brak projektów',
+        'Tap "New Project" to get started': 'Kliknij "Nowy Projekt", aby rozpocząć',
+        'Job Hazard Analysis': 'Analiza Zagrożeń Pracy',
+        'Refresh': 'Odśwież',
+        'Previous Worksite JHAs': 'Poprzednie JHA z Budów',
+        'Open Library': 'Otwórz Bibliotekę',
+        'Create New JHA': 'Utwórz Nowe JHA',
+        'Upload New JHA': 'Prześlij Nowe JHA',
+        'Daily Safety Sheet': 'Dzienna Karta BHP',
+        'AI Safety Sheet': 'Karta BHP z AI',
+        'Daily Report': 'Raport Dzienny',
+        'AI Daily Report': 'Raport Dzienny z AI',
+        'Extra Work Ticket': 'Ticket Pracy Dodatkowej',
+        'Daily Payroll': 'Dzienny Payroll',
+        'Weekly Payroll': 'Tygodniowy Payroll',
+        'Expense Report': 'Raport Wydatków',
+        'Service Integrations': 'Integracje Usług',
+        'Launch Readiness': 'Gotowość do Startu',
+        'Text Messaging': 'Wiadomości SMS',
+        'Email Automation': 'Automatyzacja Email',
+        'AI Assistance': 'Pomoc AI',
+        'Production Status': 'Status Produkcyjny',
+        'Default Monthly Limits': 'Domyślne Limity Miesięczne',
+        'Daily Safety Meeting Sign-In': 'Podpis Dziennego Spotkania BHP',
+        'Review this safety meeting and add your signature.': 'Sprawdź to spotkanie BHP i dodaj podpis.',
+        'Loading Safety Sheet...': 'Ładowanie karty BHP...',
+        'Print Name': 'Imię i Nazwisko Drukiem',
+        'Signature / Typed Name': 'Podpis / Wpisane Imię i Nazwisko',
+        'Submit Signature to PAL': 'Wyślij Podpis do PAL',
+        'Extra Work Ticket Signature': 'Podpis Ticketu Pracy Dodatkowej',
+        'Review the ticket, sign, and submit back to PAL.': 'Sprawdź ticket, podpisz i odeślij do PAL.',
+        'Signer Name': 'Imię i Nazwisko Podpisującego',
+        'Company / Title': 'Firma / Stanowisko',
+        'GC / Contractor Signature': 'Podpis GC / Wykonawcy',
+        'Save Orientation Form': 'Zapisz Formularz Szkolenia',
+        'Cancel': 'Anuluj'
+      },
+      placeholder: {
+        'you@palcorp.com': 'ty@palcorp.com',
+        'Your name': 'Twoje imię i nazwisko',
+        'Your full name': 'Twoje imię i nazwisko',
+        'Your phone number': 'Twój numer telefonu',
+        'Your email': 'Twój email',
+        'Laborer, Fire Watch, Sprayer, etc.': 'Pracownik, fire watch, sprayer, itp.',
+        'Emergency contact': 'Kontakt alarmowy',
+        'Emergency contact phone': 'Telefon kontaktu alarmowego',
+        'Anything PAL should know before you arrive on site...': 'Wszystko, co PAL powinien wiedzieć przed Twoim przyjazdem na budowę...',
+        'Search projects by name, job number, location, or foreman...': 'Szukaj projektów po nazwie, numerze pracy, lokalizacji lub brygadziście...',
+        'Print your name': 'Wpisz imię i nazwisko drukiem',
+        'Company and title': 'Firma i stanowisko',
+        'Type full name as signature': 'Wpisz imię i nazwisko jako podpis',
+        'Type your full name': 'Wpisz swoje imię i nazwisko'
+      },
+      title: {
+        'Sign out': 'Wyloguj'
+      }
+    }
+  };
+  const originalTextNodes = new WeakMap();
 
   //  Expose functions to global scope 
+  window.setAppLanguage = setAppLanguage;
   window.doLogin = doLogin;
   window.doRegister = doRegister;
   window.doLogout = doLogout;
@@ -3764,6 +4081,117 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.changeOrientationLanguage = changeOrientationLanguage;
   window.copySafetyCrewSignatureLink = copySafetyCrewSignatureLink;
   window.submitPublicSafetySignature = submitPublicSafetySignature;
+
+  let appLanguageApplying = false;
+  let appLanguageObserverQueued = false;
+
+  function getAppLanguage() {
+    const stored = localStorage.getItem(APP_LANGUAGE_KEY) || 'en';
+    return APP_I18N[stored] || stored === 'en' ? stored : 'en';
+  }
+
+  function translatedValue(type, original, language = getAppLanguage()) {
+    if (language === 'en') return original;
+    const dictionary = APP_I18N[language]?.[type] || {};
+    return dictionary[original] || original;
+  }
+
+  function appText(original) {
+    return translatedValue('text', original, getAppLanguage());
+  }
+
+  function translateTextNode(node, language) {
+    const raw = node.nodeValue || '';
+    const originalRaw = originalTextNodes.get(node) || raw;
+    const trimmed = originalRaw.trim();
+    if (!trimmed) return;
+    if (!originalTextNodes.has(node)) originalTextNodes.set(node, originalRaw);
+    const translated = translatedValue('text', trimmed, language);
+    const leading = originalRaw.match(/^\s*/)?.[0] || '';
+    const trailing = originalRaw.match(/\s*$/)?.[0] || '';
+    const nextValue = `${leading}${translated}${trailing}`;
+    if (node.nodeValue !== nextValue) node.nodeValue = nextValue;
+  }
+
+  function translateElementAttributes(root, language) {
+    root.querySelectorAll('[placeholder], [title], option').forEach(el => {
+      ['placeholder', 'title'].forEach(attr => {
+        if (!el.hasAttribute(attr)) return;
+        const storeAttr = `data-i18n-original-${attr}`;
+        if (!el.hasAttribute(storeAttr)) el.setAttribute(storeAttr, el.getAttribute(attr) || '');
+        const original = el.getAttribute(storeAttr) || '';
+        const nextValue = translatedValue(attr, original, language);
+        if (el.getAttribute(attr) !== nextValue) el.setAttribute(attr, nextValue);
+      });
+    });
+  }
+
+  function applyAppLanguage(root = document.body) {
+    if (!root || appLanguageApplying) return;
+    appLanguageApplying = true;
+    try {
+      const language = getAppLanguage();
+      document.documentElement.lang = language;
+      document.querySelectorAll('[data-lang-btn]').forEach(btn => btn.classList.toggle('active', btn.dataset.langBtn === language));
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const parent = node.parentElement;
+          if (!parent || parent.closest('script,style,noscript,.no-translate')) return NodeFilter.FILTER_REJECT;
+          return node.nodeValue?.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => translateTextNode(node, language));
+      translateElementAttributes(root.nodeType === Node.ELEMENT_NODE ? root : document.body, language);
+    } finally {
+      appLanguageApplying = false;
+    }
+  }
+
+  function queueAppLanguageRefresh() {
+    if (appLanguageObserverQueued) return;
+    appLanguageObserverQueued = true;
+    requestAnimationFrame(() => {
+      appLanguageObserverQueued = false;
+      applyAppLanguage();
+    });
+  }
+
+  function setAppLanguage(language) {
+    const nextLanguage = language === 'es' || language === 'pl' ? language : 'en';
+    localStorage.setItem(APP_LANGUAGE_KEY, nextLanguage);
+    refreshLocalizedDynamicViews();
+    applyAppLanguage();
+    if (document.getElementById('nh-orientation-language') && ORIENTATION_VIDEO_SOURCES[nextLanguage]) {
+      const select = document.getElementById('nh-orientation-language');
+      if (select && !currentNewHireOrientationId) select.value = nextLanguage;
+    }
+  }
+
+  function refreshLocalizedDynamicViews() {
+    try {
+      if (document.getElementById('projects-list') && Array.isArray(allProjects)) renderProjectsList();
+      if (currentProject?.id) updateProjectSummary();
+      if (document.getElementById('jha-template-list')) renderJhaTemplateList();
+      if (document.getElementById('main-tickets')?.classList.contains('active')) renderMainTickets();
+      if (document.getElementById('main-warehouse')?.classList.contains('active')) renderWarehouse();
+    } catch (e) {
+      console.warn('Language refresh skipped for one dynamic view', e);
+    }
+  }
+
+  function initializeAppLanguage() {
+    if (!localStorage.getItem(APP_LANGUAGE_KEY)) localStorage.setItem(APP_LANGUAGE_KEY, 'en');
+    applyAppLanguage();
+    const observer = new MutationObserver(mutations => {
+      if (appLanguageApplying || getAppLanguage() === 'en') return;
+      if (mutations.some(m => m.addedNodes?.length || m.type === 'characterData')) queueAppLanguageRefresh();
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+
+  initializeAppLanguage();
 
   //  Auth state 
   onAuthStateChanged(auth, async user => {
@@ -4259,7 +4687,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const available = new Set((projects || []).map(p => String(p.name || '').trim().charAt(0).toUpperCase()).filter(ch => /[A-Z]/.test(ch)));
     const hasNumbered = (projects || []).some(p => /^[^A-Z]/i.test(String(p.name || '').trim().charAt(0)));
     const button = (value, label, disabled = false) => `<button class="project-alpha-btn ${projectAlphaFilter === value ? 'active' : ''}" type="button" ${disabled ? 'disabled' : ''} onclick="setProjectAlphaFilter('${value}')">${label}</button>`;
-    row.innerHTML = button('all', 'All') + button('#', '#', !hasNumbered) + letters.map(letter => button(letter, letter, !available.has(letter))).join('');
+    row.innerHTML = button('all', appText('All')) + button('#', '#', !hasNumbered) + letters.map(letter => button(letter, letter, !available.has(letter))).join('');
   }
 
   function renderProjectsList() {
@@ -4277,7 +4705,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
     const count = document.getElementById('project-filter-count');
     if (count) {
-      const parts = [`Showing ${filtered.length} of ${allProjects.length} project${allProjects.length === 1 ? '' : 's'}`];
+      const projectLabel = appText(allProjects.length === 1 ? 'project' : 'projects');
+      const parts = [`${appText('Showing')} ${filtered.length} ${appText('of')} ${allProjects.length} ${projectLabel}`];
       if (projectAlphaFilter !== 'all') parts.push(`Letter: ${projectAlphaFilter}`);
       if (search) parts.push('Search active');
       count.textContent = parts.join(' | ');
@@ -4304,12 +4733,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="project-info">
           <h3>${esc(p.name)}</h3>
           <div class="project-meta">
-            <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${capitalize(p.status || 'active')}</span>
-            ${p.jobNumber ? `<span>Job ${esc(p.jobNumber)}</span>` : ''}
+            <span><span class="status-dot ${p.status === 'active' ? '' : 'inactive'}"></span> ${p.status === 'active' ? appText('Active') : capitalize(p.status || 'active')}</span>
+            ${p.jobNumber ? `<span>${appText('Job')} ${esc(p.jobNumber)}</span>` : ''}
             ${p.location ? `<span>${esc(p.location)}</span>` : ''}
-            <span>Docs ${docCount}</span>
-            <span>Photos ${photoCount}</span>
-            <span>Foremen ${foremanCount}${foremanNames ? ` - ${esc(foremanNames)}${foremanCount > 2 ? ' +' + (foremanCount - 2) : ''}` : ''}</span>
+            <span>${appText('Docs')} ${docCount}</span>
+            <span>${appText('Photos')} ${photoCount}</span>
+            <span>${appText('Foremen')} ${foremanCount}${foremanNames ? ` - ${esc(foremanNames)}${foremanCount > 2 ? ' +' + (foremanCount - 2) : ''}` : ''}</span>
           </div>
         </div>
         <span class="chevron">&gt;</span>`;
@@ -11927,42 +12356,195 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     pl: 'media/pal-orientation-pl-2026.mp4'
   };
   const ORIENTATION_CHECKPOINTS = [150, 300, 450, 600, 750];
-  const ORIENTATION_QUESTIONS = [
-    {
-      question: 'When may an employee use a respirator for PAL work?',
-      answers: ['Whenever dust is visible', 'After the required medical clearance, fit test, training, and authorization', 'Whenever a coworker has an extra respirator', 'Only after the shift has started'],
-      correct: 1,
-      correction: 'Respirators require medical clearance, fit testing, training, and authorization. Stop and speak with supervision if respiratory protection may be needed.'
+  const ORIENTATION_COPY = {
+    en: {
+      moduleTitle: 'PAL Employee Safety Orientation',
+      moduleCopy: 'Watch each chapter and answer its safety question correctly to continue.',
+      completeLabel: 'Video complete',
+      chapterLabel: chapter => `Chapter ${chapter} of 5`,
+      checkLabel: count => `${count} of 5 checks complete`,
+      questionTitle: index => `Knowledge Check ${index + 1} of 5`,
+      ack: 'I watched the complete PAL orientation, answered all five knowledge checks, and understand that I must stop and ask for help whenever I am not trained, authorized, equipped, or certain the work can be performed safely.',
+      reviewTitle: 'Employee Review',
+      reviewCopy: 'Please read and acknowledge the basic PAL orientation items below before signing.',
+      reviewItems: [
+        'I understand that I must follow PAL Environmental Services safety policies and site-specific rules at all times.',
+        'I understand that required PPE must be worn as directed, including hard hat, safety glasses, work boots, gloves, and high-visibility clothing/vest when required.',
+        'I understand that I must attend required safety meetings, toolbox talks, and site orientation before performing work.',
+        'I understand that I must report hazards, incidents, near misses, injuries, damaged equipment, and unsafe conditions immediately to my foreman/supervisor.',
+        'I understand that I may not operate equipment, work from lifts, perform scaffold work, or perform specialized work unless properly trained/authorized.',
+        'I understand that certifications and required documents must be clear, readable, current, and provided to PAL before I am cleared to work.'
+      ],
+      questions: [
+        {
+          question: 'When may an employee use a respirator for PAL work?',
+          answers: ['Whenever dust is visible', 'After the required medical clearance, fit test, training, and authorization', 'Whenever a coworker has an extra respirator', 'Only after the shift has started'],
+          correct: 1,
+          correction: 'Respirators require medical clearance, fit testing, training, and authorization. Stop and speak with supervision if respiratory protection may be needed.'
+        },
+        {
+          question: "Under PAL's Ladders Last Policy, what is the required equipment-selection order?",
+          answers: ['Traditional ladder, podium ladder, scaffold, aerial lift', 'Aerial lift, scaffolding, podium or platform ladder, traditional portable ladder last when permitted', 'Podium ladder, traditional ladder, aerial lift, scaffolding', 'The employee may choose any option without supervisor review'],
+          correct: 1,
+          correction: 'PAL requires safer work platforms to be evaluated first. Traditional portable ladders are the last resort and may be used only when permitted.'
+        },
+        {
+          question: 'What must you do if you find an unlabeled chemical container?',
+          answers: ['Smell it to identify the contents', 'Use it carefully and label it later', 'Do not use it; isolate it and notify supervision', 'Pour it into a different container'],
+          correct: 2,
+          correction: 'Never use an unknown or unlabeled material. Stop, isolate the container if safe, and notify supervision.'
+        },
+        {
+          question: 'What should you do before entering a confined space?',
+          answers: ['Enter briefly to check whether it seems safe', 'Enter only when specifically trained, authorized, and working under the required procedure', 'Ask a coworker to wait outside', 'Wear a dust mask and proceed'],
+          correct: 1,
+          correction: 'This orientation does not authorize confined-space entry. Specialized training, authorization, equipment, and an approved procedure are required.'
+        },
+        {
+          question: 'When must an accident, injury, environmental release, or near miss be reported?',
+          answers: ['At the end of the week', 'Only when medical treatment is required', 'Immediately, even when it appears minor', 'Only when property was damaged'],
+          correct: 2,
+          correction: 'Report every incident and near miss immediately to your supervisor and PAL EH&S, even when it appears minor.'
+        }
+      ]
     },
-    {
-      question: "Under PAL's Ladders Last Policy, what is the required equipment-selection order?",
-      answers: ['Traditional ladder, podium ladder, scaffold, aerial lift', 'Aerial lift, scaffolding, podium or platform ladder, traditional portable ladder last when permitted', 'Podium ladder, traditional ladder, aerial lift, scaffolding', 'The employee may choose any option without supervisor review'],
-      correct: 1,
-      correction: 'PAL requires safer work platforms to be evaluated first. Traditional portable ladders are the last resort and may be used only when permitted.'
+    es: {
+      moduleTitle: 'Orientación de Seguridad para Empleados de PAL',
+      moduleCopy: 'Mire cada capítulo y conteste correctamente la pregunta de seguridad para continuar.',
+      completeLabel: 'Video completo',
+      chapterLabel: chapter => `Capítulo ${chapter} de 5`,
+      checkLabel: count => `${count} de 5 preguntas completas`,
+      questionTitle: index => `Pregunta de Seguridad ${index + 1} de 5`,
+      ack: 'Vi la orientación completa de PAL, contesté correctamente las cinco preguntas de seguridad y entiendo que debo detenerme y pedir ayuda cuando no esté capacitado, autorizado, equipado o seguro de que el trabajo se puede realizar de manera segura.',
+      reviewTitle: 'Revisión del Empleado',
+      reviewCopy: 'Lea y confirme los puntos básicos de orientación de PAL antes de firmar.',
+      reviewItems: [
+        'Entiendo que debo seguir en todo momento las políticas de seguridad de PAL Environmental Services y las reglas específicas del sitio.',
+        'Entiendo que debo usar el PPE requerido según se indique, incluyendo casco, gafas de seguridad, botas de trabajo, guantes y chaleco o ropa de alta visibilidad cuando sea requerido.',
+        'Entiendo que debo asistir a las reuniones de seguridad, charlas de seguridad y orientación del sitio requeridas antes de realizar trabajo.',
+        'Entiendo que debo reportar inmediatamente a mi capataz/supervisor los peligros, incidentes, casi accidentes, lesiones, equipo dañado y condiciones inseguras.',
+        'Entiendo que no puedo operar equipos, trabajar desde elevadores, realizar trabajo en andamios o realizar trabajo especializado a menos que esté debidamente capacitado y autorizado.',
+        'Entiendo que las certificaciones y documentos requeridos deben estar claros, legibles, vigentes y entregados a PAL antes de que se me autorice a trabajar.'
+      ],
+      questions: [
+        {
+          question: '¿Cuándo puede un empleado usar un respirador para trabajo de PAL?',
+          answers: ['Cuando se vea polvo', 'Después de la aprobación médica, prueba de ajuste, capacitación y autorización requeridas', 'Cuando un compañero tenga un respirador extra', 'Solo después de comenzar el turno'],
+          correct: 1,
+          correction: 'Los respiradores requieren aprobación médica, prueba de ajuste, capacitación y autorización. Deténgase y hable con supervisión si puede necesitar protección respiratoria.'
+        },
+        {
+          question: 'Según la política Ladders Last de PAL, ¿cuál es el orden requerido para escoger el equipo?',
+          answers: ['Escalera tradicional, escalera de plataforma, andamio, elevador aéreo', 'Elevador aéreo, andamio, escalera de plataforma o podio, escalera portátil tradicional como último recurso cuando esté permitido', 'Escalera de podio, escalera tradicional, elevador aéreo, andamio', 'El empleado puede escoger cualquier opción sin revisión del supervisor'],
+          correct: 1,
+          correction: 'PAL requiere evaluar primero plataformas de trabajo más seguras. Las escaleras portátiles tradicionales son el último recurso y solo pueden usarse cuando estén permitidas.'
+        },
+        {
+          question: '¿Qué debe hacer si encuentra un envase químico sin etiqueta?',
+          answers: ['Olerlo para identificarlo', 'Usarlo con cuidado y etiquetarlo después', 'No usarlo; aislarlo y avisar a supervisión', 'Verterlo en otro envase'],
+          correct: 2,
+          correction: 'Nunca use un material desconocido o sin etiqueta. Deténgase, aísle el envase si es seguro hacerlo y avise a supervisión.'
+        },
+        {
+          question: '¿Qué debe hacer antes de entrar a un espacio confinado?',
+          answers: ['Entrar brevemente para ver si parece seguro', 'Entrar solo si está específicamente capacitado, autorizado y trabajando bajo el procedimiento requerido', 'Pedir a un compañero que espere afuera', 'Usar una mascarilla contra polvo y continuar'],
+          correct: 1,
+          correction: 'Esta orientación no autoriza la entrada a espacios confinados. Se requiere capacitación especializada, autorización, equipo y un procedimiento aprobado.'
+        },
+        {
+          question: '¿Cuándo se debe reportar un accidente, lesión, derrame ambiental o casi accidente?',
+          answers: ['Al final de la semana', 'Solo cuando se necesite tratamiento médico', 'Inmediatamente, aunque parezca menor', 'Solo cuando haya daño a propiedad'],
+          correct: 2,
+          correction: 'Reporte inmediatamente todos los incidentes y casi accidentes a su supervisor y a PAL EH&S, aunque parezcan menores.'
+        }
+      ]
     },
-    {
-      question: 'What must you do if you find an unlabeled chemical container?',
-      answers: ['Smell it to identify the contents', 'Use it carefully and label it later', 'Do not use it; isolate it and notify supervision', 'Pour it into a different container'],
-      correct: 2,
-      correction: 'Never use an unknown or unlabeled material. Stop, isolate the container if safe, and notify supervision.'
-    },
-    {
-      question: 'What should you do before entering a confined space?',
-      answers: ['Enter briefly to check whether it seems safe', 'Enter only when specifically trained, authorized, and working under the required procedure', 'Ask a coworker to wait outside', 'Wear a dust mask and proceed'],
-      correct: 1,
-      correction: 'This orientation does not authorize confined-space entry. Specialized training, authorization, equipment, and an approved procedure are required.'
-    },
-    {
-      question: 'When must an accident, injury, environmental release, or near miss be reported?',
-      answers: ['At the end of the week', 'Only when medical treatment is required', 'Immediately, even when it appears minor', 'Only when property was damaged'],
-      correct: 2,
-      correction: 'Report every incident and near miss immediately to your supervisor and PAL EH&S, even when it appears minor.'
+    pl: {
+      moduleTitle: 'Szkolenie BHP dla Pracowników PAL',
+      moduleCopy: 'Obejrzyj każdy rozdział i odpowiedz poprawnie na pytanie bezpieczeństwa, aby kontynuować.',
+      completeLabel: 'Film ukończony',
+      chapterLabel: chapter => `Rozdział ${chapter} z 5`,
+      checkLabel: count => `${count} z 5 pytań ukończonych`,
+      questionTitle: index => `Pytanie Kontrolne ${index + 1} z 5`,
+      ack: 'Obejrzałem całe szkolenie PAL, poprawnie odpowiedziałem na pięć pytań kontrolnych i rozumiem, że muszę zatrzymać pracę i poprosić o pomoc, gdy nie jestem przeszkolony, upoważniony, wyposażony lub pewny, że praca może być wykonana bezpiecznie.',
+      reviewTitle: 'Potwierdzenie Pracownika',
+      reviewCopy: 'Przeczytaj i potwierdź podstawowe punkty szkolenia PAL przed podpisaniem.',
+      reviewItems: [
+        'Rozumiem, że muszę zawsze przestrzegać zasad bezpieczeństwa PAL Environmental Services oraz zasad obowiązujących na danym miejscu pracy.',
+        'Rozumiem, że wymagane PPE musi być noszone zgodnie z poleceniami, w tym kask, okulary ochronne, buty robocze, rękawice oraz odzież lub kamizelka o wysokiej widoczności, gdy jest wymagana.',
+        'Rozumiem, że przed rozpoczęciem pracy muszę uczestniczyć w wymaganych spotkaniach BHP, rozmowach toolbox talk i szkoleniu stanowiskowym.',
+        'Rozumiem, że muszę natychmiast zgłaszać brygadziście lub przełożonemu zagrożenia, zdarzenia, sytuacje potencjalnie wypadkowe, urazy, uszkodzony sprzęt i niebezpieczne warunki.',
+        'Rozumiem, że nie mogę obsługiwać sprzętu, pracować z podnośników, wykonywać pracy na rusztowaniach ani pracy specjalistycznej bez odpowiedniego przeszkolenia i upoważnienia.',
+        'Rozumiem, że certyfikaty i wymagane dokumenty muszą być wyraźne, czytelne, aktualne i dostarczone do PAL, zanim zostanę dopuszczony do pracy.'
+      ],
+      questions: [
+        {
+          question: 'Kiedy pracownik może używać respiratora podczas pracy dla PAL?',
+          answers: ['Zawsze, gdy widać pył', 'Po wymaganej zgodzie medycznej, teście dopasowania, szkoleniu i upoważnieniu', 'Gdy współpracownik ma dodatkowy respirator', 'Dopiero po rozpoczęciu zmiany'],
+          correct: 1,
+          correction: 'Respiratory wymagają zgody medycznej, testu dopasowania, szkolenia i upoważnienia. Zatrzymaj pracę i porozmawiaj z przełożonym, jeśli ochrona dróg oddechowych może być potrzebna.'
+        },
+        {
+          question: 'Zgodnie z polityką PAL Ladders Last, jaka jest wymagana kolejność wyboru sprzętu?',
+          answers: ['Zwykła drabina, drabina podium, rusztowanie, podnośnik', 'Podnośnik, rusztowanie, drabina podium lub platformowa, tradycyjna przenośna drabina jako ostatnia opcja, gdy jest dozwolona', 'Drabina podium, zwykła drabina, podnośnik, rusztowanie', 'Pracownik może wybrać dowolną opcję bez zgody przełożonego'],
+          correct: 1,
+          correction: 'PAL wymaga najpierw oceny bezpieczniejszych platform roboczych. Tradycyjne przenośne drabiny są ostatecznością i mogą być używane tylko wtedy, gdy jest to dozwolone.'
+        },
+        {
+          question: 'Co należy zrobić, gdy znajdziesz nieopisany pojemnik z chemikaliami?',
+          answers: ['Powąchać go, aby rozpoznać zawartość', 'Użyć ostrożnie i oznaczyć później', 'Nie używać; odizolować go i powiadomić przełożonego', 'Przelać do innego pojemnika'],
+          correct: 2,
+          correction: 'Nigdy nie używaj nieznanego lub nieopisanego materiału. Zatrzymaj się, odizoluj pojemnik, jeśli jest to bezpieczne, i powiadom przełożonego.'
+        },
+        {
+          question: 'Co należy zrobić przed wejściem do przestrzeni zamkniętej?',
+          answers: ['Wejść na chwilę, aby sprawdzić, czy wygląda bezpiecznie', 'Wejść tylko wtedy, gdy jesteś specjalnie przeszkolony, upoważniony i pracujesz zgodnie z wymaganą procedurą', 'Poprosić współpracownika, aby poczekał na zewnątrz', 'Założyć maskę przeciwpyłową i wejść'],
+          correct: 1,
+          correction: 'To szkolenie nie upoważnia do wejścia do przestrzeni zamkniętych. Wymagane są specjalistyczne szkolenie, upoważnienie, sprzęt i zatwierdzona procedura.'
+        },
+        {
+          question: 'Kiedy należy zgłosić wypadek, uraz, wyciek środowiskowy lub sytuację potencjalnie wypadkową?',
+          answers: ['Pod koniec tygodnia', 'Tylko gdy potrzebne jest leczenie', 'Natychmiast, nawet jeśli wydaje się drobne', 'Tylko gdy uszkodzono mienie'],
+          correct: 2,
+          correction: 'Każde zdarzenie i sytuację potencjalnie wypadkową zgłoś natychmiast przełożonemu oraz PAL EH&S, nawet jeśli wydaje się drobna.'
+        }
+      ]
     }
-  ];
+  };
   let orientationSession = null;
 
   function selectedOrientationLanguage() {
     return document.getElementById('nh-orientation-language')?.value || 'en';
+  }
+
+  function orientationCopy(language = selectedOrientationLanguage()) {
+    return ORIENTATION_COPY[language] || ORIENTATION_COPY.en;
+  }
+
+  function orientationQuestions(language = selectedOrientationLanguage()) {
+    return orientationCopy(language).questions || ORIENTATION_COPY.en.questions;
+  }
+
+  function applyOrientationLanguageText(language = selectedOrientationLanguage()) {
+    const copy = orientationCopy(language);
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    setText('nh-orientation-module-title', copy.moduleTitle);
+    setText('nh-orientation-module-copy', copy.moduleCopy);
+    setText('nh-orient-ack-copy', copy.ack);
+    setText('nh-orient-review-title', copy.reviewTitle);
+    setText('nh-orient-review-copy', copy.reviewCopy);
+    const list = document.getElementById('nh-orient-review-list');
+    if (list) {
+      list.replaceChildren(...copy.reviewItems.map(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        return li;
+      }));
+    }
+    updateOrientationProgressUI();
   }
 
   function orientationProgressKey(language = orientationSession?.language || selectedOrientationLanguage()) {
@@ -11984,6 +12566,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function updateOrientationProgressUI() {
     if (!orientationSession) return;
+    const copy = orientationCopy(orientationSession.language);
+    const questions = orientationQuestions(orientationSession.language);
     const completed = orientationSession.answers.filter(Boolean).length;
     const duration = orientationSession.video?.duration || 779;
     const watched = orientationSession.ended ? duration : Math.min(orientationSession.video?.currentTime || 0, duration);
@@ -11991,9 +12575,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const progressLabel = document.getElementById('nh-orientation-progress-label');
     const checkLabel = document.getElementById('nh-orientation-check-label');
     if (fill) fill.style.width = `${Math.min(100, (watched / duration) * 100)}%`;
-    if (progressLabel) progressLabel.textContent = orientationSession.ended ? 'Video complete' : `Chapter ${Math.min(5, completed + 1)} of 5`;
-    if (checkLabel) checkLabel.textContent = `${completed} of 5 checks complete`;
-    const ready = orientationSession.ended && completed === ORIENTATION_QUESTIONS.length;
+    if (progressLabel) progressLabel.textContent = orientationSession.ended ? copy.completeLabel : copy.chapterLabel(Math.min(questions.length, completed + 1));
+    if (checkLabel) checkLabel.textContent = copy.checkLabel(completed);
+    const ready = orientationSession.ended && completed === questions.length;
     const ack = document.getElementById('nh-orient-module-complete');
     const wrap = document.getElementById('nh-orient-ack-wrap');
     if (ack) ack.disabled = !ready;
@@ -12001,16 +12585,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   function showOrientationCheckpoint(index) {
-    if (!orientationSession || index < 0 || index >= ORIENTATION_QUESTIONS.length) return;
+    const questions = orientationQuestions(orientationSession?.language);
+    if (!orientationSession || index < 0 || index >= questions.length) return;
     orientationSession.activeQuestion = index;
     orientationSession.video.pause();
-    const item = ORIENTATION_QUESTIONS[index];
+    const copy = orientationCopy(orientationSession.language);
+    const item = questions[index];
     const quiz = document.getElementById('nh-orientation-quiz');
     const title = document.getElementById('nh-orientation-question-title');
     const question = document.getElementById('nh-orientation-question');
     const answers = document.getElementById('nh-orientation-answers');
     const feedback = document.getElementById('nh-orientation-feedback');
-    if (title) title.textContent = `Knowledge Check ${index + 1} of 5`;
+    if (title) title.textContent = copy.questionTitle(index);
     if (question) question.textContent = item.question;
     if (answers) {
       answers.replaceChildren();
@@ -12031,7 +12617,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function answerOrientationCheckpoint(answerIndex) {
     if (!orientationSession || orientationSession.activeQuestion < 0) return;
     const index = orientationSession.activeQuestion;
-    const item = ORIENTATION_QUESTIONS[index];
+    const item = orientationQuestions(orientationSession.language)[index];
     orientationSession.attempts[index] = (orientationSession.attempts[index] || 0) + 1;
     if (answerIndex !== item.correct) {
       const feedback = document.getElementById('nh-orientation-feedback');
@@ -12052,6 +12638,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const video = document.getElementById('nh-orientation-video');
     if (!video) return;
     const language = selectedOrientationLanguage();
+    applyOrientationLanguageText(language);
     const source = ORIENTATION_VIDEO_SOURCES[language] || ORIENTATION_VIDEO_SOURCES.en;
     const sourceEl = video.querySelector('source');
     if (sourceEl && !sourceEl.getAttribute('src')?.endsWith(source.replace('media/', ''))) sourceEl.setAttribute('src', source);
@@ -12063,8 +12650,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     orientationSession = {
       video,
       language,
-      answers: Array.from({ length: 5 }, (_, i) => !!savedAnswers?.[i]),
-      attempts: Array.from({ length: 5 }, (_, i) => Number(savedAttempts?.[i] || 0)),
+      answers: Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedAnswers?.[i]),
+      attempts: Array.from({ length: orientationQuestions(language).length }, (_, i) => Number(savedAttempts?.[i] || 0)),
       activeQuestion: -1,
       ended: !!(sameSavedLanguage && form.orientationVideoCompleted) || !!local.ended,
       lastSavedSecond: -1
@@ -12109,6 +12696,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function changeOrientationLanguage(language) {
     if (!ORIENTATION_VIDEO_SOURCES[language]) return;
     saveOrientationLocalProgress();
+    applyOrientationLanguageText(language);
     const intake = allNewHireIntakes.find(i => i.id === currentNewHireOrientationId) || (currentPublicNewHireIntake?.id === currentNewHireOrientationId ? currentPublicNewHireIntake : null);
     resetOrientationModule(intake?.orientationForm || {});
   }
@@ -12119,7 +12707,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     currentNewHireOrientationId = id;
     const form = x.orientationForm || {};
     const languageSelect = document.getElementById('nh-orientation-language');
-    if (languageSelect) languageSelect.value = ORIENTATION_VIDEO_SOURCES[form.orientationLanguage] ? form.orientationLanguage : 'en';
+    if (languageSelect) {
+      const preferredLanguage = ORIENTATION_VIDEO_SOURCES[form.orientationLanguage] ? form.orientationLanguage : getAppLanguage();
+      languageSelect.value = ORIENTATION_VIDEO_SOURCES[preferredLanguage] ? preferredLanguage : 'en';
+    }
     const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
     set('nh-orient-employee-name', form.employeeName || x.name || '');
     set('nh-orient-date', form.date || todayISO());

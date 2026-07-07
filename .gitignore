@@ -6,3 +6,9 @@ media/*.webm
 
 # Generated Firebase deployment cache.
 .firebase/
+
+# Local/generated files that should not ship with app source.
+.DS_Store
+files.zip
+PAL-projects-updated.html
+PAL_Orientation_Draft_Video.avi
