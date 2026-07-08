@@ -84,6 +84,8 @@
       .app-lang-switch { top:auto; right:10px; bottom:12px; box-shadow:0 8px 24px rgba(16,24,40,.22); }
       .toast { bottom:74px; }
     }
+    body:has(.modal-overlay.open) .app-lang-switch,
+    body:has(.project-section-window.open) .app-lang-switch { display:none; }
     .back-btn {
       background: rgba(255,255,255,.12); border: none; color: white;
       border-radius: 8px; padding: 7px 12px; cursor: pointer;
@@ -751,6 +753,9 @@
     }
     .modal h3 { font-size: 20px; color: var(--navy); margin-bottom: 20px; }
     .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+    .modal-titlebar { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
+    .modal-titlebar h3 { margin:0; }
+    .ticket-modal-close-top { float:right; margin:0 0 12px 12px; }
     .btn-secondary {
       background: white; color: var(--navy); border: 1.5px solid var(--line);
       border-radius: 10px; padding: 10px 18px; font: inherit; font-weight: 700;
@@ -2571,6 +2576,17 @@
         </div>
       </div>
       <div class="detail-card">
+        <h3>Final Launch Gate</h3>
+        <div class="report-grid">
+          <div class="report-field"><span class="k">Live App</span><div class="v"><span class="pill active">Ready</span> Firebase Hosting, security headers, custom domain routing, and protected sign-in are in place.</div></div>
+          <div class="report-field"><span class="k">Company Data</span><div class="v"><span class="pill active">Ready</span> Projects, workforce records, JHAs, tickets, orientation packets, certs, and uploaded files stay protected behind role-based access.</div></div>
+          <div class="report-field"><span class="k">Cost Controls</span><div class="v"><span class="pill active">Ready</span> Email, text, and AI usage are tracked with monthly caps and admin-visible status.</div></div>
+          <div class="report-field"><span class="k">Long-Term Records</span><div class="v"><span class="pill active">Ready</span> Backup export, backup verification, soft-delete archive behavior, and retention-policy notes are documented.</div></div>
+          <div class="report-field"><span class="k">Mobile Field Use</span><div class="v"><span class="pill active">Ready</span> Current project, form, ticket, JHA, orientation, and tablet/phone flows have been field-tested.</div></div>
+          <div class="report-field"><span class="k">Open Items</span><div class="v"><span class="pill pending">Waiting</span> Twilio carrier approval, PAL's official retention policy, and controlled document translation batches.</div></div>
+        </div>
+      </div>
+      <div class="detail-card">
         <h3>Default Monthly Limits</h3>
         <div class="report-grid">
           <div class="report-field"><span class="k">Email</span><div class="v">3,000 emails/month, warning at 80%.</div></div>
@@ -3701,11 +3717,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         'Expense Report': 'Reporte de Gastos',
         'Service Integrations': 'Integraciones de Servicio',
         'Launch Readiness': 'Preparación de Lanzamiento',
+        'Final Launch Gate': 'Control Final de Lanzamiento',
         'Text Messaging': 'Mensajes de Texto',
         'Email Automation': 'Automatización de Correo',
         'AI Assistance': 'Asistencia de AI',
         'Production Status': 'Estado de Producción',
         'Default Monthly Limits': 'Límites Mensuales Predeterminados',
+        'Live App': 'App En Vivo',
+        'Company Data': 'Datos de la Empresa',
+        'Cost Controls': 'Controles de Costo',
+        'Long-Term Records': 'Registros a Largo Plazo',
+        'Mobile Field Use': 'Uso Móvil en Campo',
+        'Open Items': 'Puntos Pendientes',
+        'Ready': 'Listo',
+        'Waiting': 'En Espera',
         'Daily Safety Meeting Sign-In': 'Firma de Reunión Diaria de Seguridad',
         'Review this safety meeting and add your signature.': 'Revise esta reunión de seguridad y agregue su firma.',
         'Loading Safety Sheet...': 'Cargando hoja de seguridad...',
@@ -3842,11 +3867,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         'Expense Report': 'Raport Wydatków',
         'Service Integrations': 'Integracje Usług',
         'Launch Readiness': 'Gotowość do Startu',
+        'Final Launch Gate': 'Końcowa Kontrola Startu',
         'Text Messaging': 'Wiadomości SMS',
         'Email Automation': 'Automatyzacja Email',
         'AI Assistance': 'Pomoc AI',
         'Production Status': 'Status Produkcyjny',
         'Default Monthly Limits': 'Domyślne Limity Miesięczne',
+        'Live App': 'Aplikacja Live',
+        'Company Data': 'Dane Firmy',
+        'Cost Controls': 'Kontrola Kosztów',
+        'Long-Term Records': 'Długoterminowe Rekordy',
+        'Mobile Field Use': 'Użycie Mobilne w Terenie',
+        'Open Items': 'Otwarte Punkty',
+        'Ready': 'Gotowe',
+        'Waiting': 'Oczekuje',
         'Daily Safety Meeting Sign-In': 'Podpis Dziennego Spotkania BHP',
         'Review this safety meeting and add your signature.': 'Sprawdź to spotkanie BHP i dodaj podpis.',
         'Loading Safety Sheet...': 'Ładowanie karty BHP...',
@@ -10550,7 +10584,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     openExtraWorkTicketModal(projectId);
   }
 
+  function ensureTicketModalCloseButton() {
+    const modal = document.querySelector('#modal-extra-ticket .modal');
+    if (!modal || modal.querySelector('.ticket-modal-close-top')) return;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn-secondary ticket-modal-close-top';
+    button.textContent = 'Back / Close';
+    button.addEventListener('click', () => closeModal('modal-extra-ticket'));
+    const title = modal.querySelector('h3');
+    if (title) title.insertAdjacentElement('afterend', button);
+    else modal.prepend(button);
+  }
+
   function openExtraWorkTicketModal(projectId = '', existingTicket = null) {
+    ensureTicketModalCloseButton();
     refreshTicketProjectOptions();
 
     editingTicketOriginal = existingTicket || null;
