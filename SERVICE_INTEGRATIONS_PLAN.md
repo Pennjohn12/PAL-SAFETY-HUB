@@ -13,7 +13,7 @@ This phase covers the paid services that make the app feel fully production-read
 
 Recommended provider: Resend or SendGrid.
 
-Current direction: Resend account created. Firebase Functions scaffold added for secure backend sending.
+Current direction: Resend is connected through Firebase Functions for secure backend sending.
 
 Recommended first use cases:
 
@@ -36,6 +36,8 @@ Reason:
 ### Text Messaging
 
 Recommended provider: Twilio.
+
+Current direction: Twilio number and Messaging Service are connected. The Sole Proprietor A2P campaign has been submitted and is waiting on carrier approval before live employee intake text delivery is switched on.
 
 Recommended first use cases:
 
@@ -142,13 +144,13 @@ Add an admin-only settings screen for:
 
 ## Build Order
 
-1. Add admin-only integration settings and usage display.
-2. Add backend Cloud Functions shell with no secrets committed to the repo. Done for Resend email.
-3. Add email sending first. Backend scaffold done; app buttons and deployed secret are next.
-4. Add weekly certification email automation.
-5. Add SMS sending for new-hire intake links.
-6. Add OpenAI backend endpoint for AI safety/daily report generation.
-7. Add usage caps and audit logs around all paid calls.
+1. Add admin-only integration settings and usage display. Done.
+2. Add backend Cloud Functions shell with no secrets committed to the repo. Done.
+3. Add email sending first. Done through Resend.
+4. Add weekly certification email automation. Done for Monday 9:00 AM Eastern.
+5. Add SMS sending for new-hire intake links. Backend/app wiring is done; Twilio carrier approval is pending.
+6. Add OpenAI backend endpoint for AI safety/daily report generation. Done.
+7. Add usage caps and audit logs around all paid calls. Done.
 
 ## Production Rule
 

@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "pal-safety-hub"
-  }
+  },
+  "targets": {
+    "pal-safety-hub": {
+      "hosting": {
+        "jobsiteresources": [
+          "jobsiteresources"
+        ],
+        "pal-safety-hub": [
+          "pal-safety-hub"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

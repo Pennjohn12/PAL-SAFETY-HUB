@@ -1,0 +1,467 @@
+{"kind":"deck","id":"pr/d19n7l","name":"Deck"}
+{"kind":"layout","layoutId":"57bcc4a7-0801-4ea7-ba6d-082d74b34185","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"ab33ec9e-fe3c-408c-b9e8-cd53040f0d73","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/qee478","slide":1,"title":"PAL ENVIRONMENTAL SERVICES","textShapes":6}
+{"kind":"shape","id":"sh/hoza1gvy","slide":1,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/s36hcrmh","slide":1,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/za1gvy90","slide":1,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/ap4r65wj","slide":1,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/hgn29gr2","slide":1,"text":"PAL ENVIRONMENTAL SERVICES","textPreview":"PAL ENVIRONMENTAL SERVICES","textChars":26,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/svu9knih","slide":1,"text":"Employee Safety Orientation","textPreview":"Employee Safety Orientation","textChars":27,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/3ylc7u54","slide":1,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/adsji5sn","slide":1,"text":"Safety","textPreview":"Safety","textChars":6,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/w7mp0bi9","slide":1,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/psfil0rq","slide":1,"text":"Compliance","textPreview":"Compliance","textChars":10,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/e1w7mp0b","slide":1,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":1,"text":"Communication","textPreview":"Communication","textChars":13,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/wval87ed","slide":1,"text":"PAL Environmental Services  |  Employee Orientation  |  01","textPreview":"PAL Environmental Services  |  Employee Orientation  |  01","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/z61032ls","slide":1,"name":"","alt":"Opening PAL title slide with a clean jobsite training look.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/qee478","slide":1,"text":"Narration: Welcome to PAL Environmental Services orientation. This training introduces the safety expectations, required training records, jobsite rules, and reporting procedures every PAL employee must understand before working on a project.\nImage-first scene: Opening PAL title slide with a clean jobsite training look."}
+{"kind":"slide","id":"sl/llbfaw","slide":2,"title":"ORIENTATION GOALS","textShapes":6}
+{"kind":"shape","id":"sh/58z25kb6","slide":2,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/gn29gr2p","slide":2,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/nuxc3ylc","slide":2,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/y90je9cv","slide":2,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":2,"text":"ORIENTATION GOALS","textPreview":"ORIENTATION GOALS","textChars":17,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":2,"text":"PAL safety starts with five expectations.","textPreview":"PAL safety starts with five expectations.","textChars":41,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/nqxs72x4","slide":2,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/u54zidon","slide":2,"text":"Protection","textPreview":"Protection","textChars":10,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/cbulwval","slide":2,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/5sneloj2","slide":2,"text":"Prevention","textPreview":"Prevention","textChars":10,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/u54zidon","slide":2,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/nqxs72x4","slide":2,"text":"Education","textPreview":"Education","textChars":9,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/czed8v6p","slide":2,"text":"PAL Environmental Services  |  Employee Orientation  |  02","textPreview":"PAL Environmental Services  |  Employee Orientation  |  02","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/nap4r65w","slide":2,"name":"","alt":"Show five simple goal words around a supervisor speaking with a crew.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/llbfaw","slide":2,"text":"Narration: PAL orientation is built around five goals: protecting employee health and safety, preventing accidents through planning and risk assessment, educating employees, meeting or exceeding safety requirements, and keeping clear communication.\nImage-first scene: Show five simple goal words around a supervisor speaking with a crew."}
+{"kind":"slide","id":"sl/47hs4o","slide":3,"title":"TRAINING RECORDS","textShapes":6}
+{"kind":"shape","id":"sh/yhgn29gr","slide":3,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/n29gr2p8","slide":3,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":3,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":3,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":3,"text":"TRAINING RECORDS","textPreview":"TRAINING RECORDS","textChars":16,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":3,"text":"Workers must have the training required for the task.","textPreview":"Workers must have the training required for the task.","textChars":53,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/cbulwval","slide":3,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/5sneloj2","slide":3,"text":"NYC SST or OSHA training when required","textPreview":"NYC SST or OSHA training when required","textChars":38,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/tcj6tova","slide":3,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":3,"text":"Fall prevention and scaffold user training when required","textPreview":"Fall prevention and scaffold user training when required","textChars":56,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/b6xkf6dc","slide":3,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":3,"text":"Fit test and medical clearance before respirator use","textPreview":"Fit test and medical clearance before respirator use","textChars":52,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":3,"text":"PAL Environmental Services  |  Employee Orientation  |  03","textPreview":"PAL Environmental Services  |  Employee Orientation  |  03","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/orytsvu9","slide":3,"name":"","alt":"Safety coordinator reviewing training records with a worker.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/47hs4o","slide":3,"text":"Narration: Before working on a PAL project, employees must have the required training records for the work they will perform. Watching this video does not replace those credentials.\nImage-first scene: Safety coordinator reviewing training records with a worker."}
+{"kind":"slide","id":"sl/4va4l6","slide":4,"title":"PPE REQUIRED","textShapes":6}
+{"kind":"shape","id":"sh/mhk3q5o7","slide":4,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/b2hwfyxo","slide":4,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/4byhgn29","slide":4,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/twra5gbq","slide":4,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":4,"text":"PPE REQUIRED","textPreview":"PPE REQUIRED","textChars":12,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/bq1oryts","slide":4,"text":"Minimum PPE is required before work starts.","textPreview":"Minimum PPE is required before work starts.","textChars":43,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/47y1kre1","slide":4,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/tsvu9kni","slide":4,"text":"Hard Hat","textPreview":"Hard Hat","textChars":8,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/90je9cvi","slide":4,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":4,"text":"Glasses","textPreview":"Glasses","textChars":7,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/rytsvu9k","slide":4,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/yd0z6103","slide":4,"text":"Gloves","textPreview":"Gloves","textChars":6,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":4,"text":"PAL Environmental Services  |  Employee Orientation  |  04","textPreview":"PAL Environmental Services  |  Employee Orientation  |  04","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/kzupwb2h","slide":4,"name":"","alt":"Crew at site entry wearing proper PPE while a supervisor performs a check.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/4va4l6","slide":4,"text":"Narration: PAL employees must report to the job prepared with required personal protective equipment. Minimum PPE includes approved head, eye, hand, foot, leg, and visibility protection as required by the site and task.\nImage-first scene: Crew at site entry wearing proper PPE while a supervisor performs a check."}
+{"kind":"slide","id":"sl/2b6f3k","slide":5,"title":"TASK-SPECIFIC PPE","textShapes":6}
+{"kind":"shape","id":"sh/72x4nap4","slide":5,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/ih4byhgn","slide":5,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/pkzupwb2","slide":5,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/0z61032l","slide":5,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":5,"text":"TASK-SPECIFIC PPE","textPreview":"TASK-SPECIFIC PPE","textChars":17,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":5,"text":"Some work requires more protection.","textPreview":"Some work requires more protection.","textChars":35,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/pwb2hwfy","slide":5,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":5,"text":"Face shields, hearing protection, and coveralls may be required","textPreview":"Face shields, hearing protection, and coveralls may be required","textChars":63,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/u18jqh0f","slide":5,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/jm1cfa9w","slide":5,"text":"Rubber gloves or boots may be required for specific hazards","textPreview":"Rubber gloves or boots may be required for specific hazards","textChars":59,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/c7u54zid","slide":5,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/1orytsvu","slide":5,"text":"Respirators require medical clearance, fit test, training, and authorization","textPreview":"Respirators require medical clearance, fit test, training, and authorization","textChars":76,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/u9knih4b","slide":5,"text":"PAL Environmental Services  |  Employee Orientation  |  05","textPreview":"PAL Environmental Services  |  Employee Orientation  |  05","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/pwb2hwfy","slide":5,"name":"","alt":"Show task-specific PPE neatly arranged, with respirator stored properly.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/2b6f3k","slide":5,"text":"Narration: Depending on the work, additional protection may include a face shield, hearing protection, coveralls, rubber gloves or boots, and respiratory protection.\nImage-first scene: Show task-specific PPE neatly arranged, with respirator stored properly."}
+{"kind":"slide","id":"sl/1n64zv","slide":6,"title":"RESPIRATORS","textShapes":6}
+{"kind":"shape","id":"sh/yhgn29gr","slide":6,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/n29gr2p8","slide":6,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":6,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":6,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":6,"text":"RESPIRATORS","textPreview":"RESPIRATORS","textChars":11,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":6,"text":"Respirators cannot be used without authorization.","textPreview":"Respirators cannot be used without authorization.","textChars":49,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/cbulwval","slide":6,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/5sneloj2","slide":6,"text":"Medical clearance","textPreview":"Medical clearance","textChars":17,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/tcj6tova","slide":6,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":6,"text":"Annual fit test","textPreview":"Annual fit test","textChars":15,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/b6xkf6dc","slide":6,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":6,"text":"Training and PAL authorization","textPreview":"Training and PAL authorization","textChars":30,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":6,"text":"PAL Environmental Services  |  Employee Orientation  |  06","textPreview":"PAL Environmental Services  |  Employee Orientation  |  06","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/4r65wjud","slide":6,"name":"","alt":"Respirator authorization checklist. Do not show casual respirator use.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/1n64zv","slide":6,"text":"Narration: Do not use a respirator until you have received the required medical clearance, annual fit test, training, and authorization.\nImage-first scene: Respirator authorization checklist. Do not show casual respirator use."}
+{"kind":"slide","id":"sl/6aydf6","slide":7,"title":"FALL PROTECTION","textShapes":6}
+{"kind":"shape","id":"sh/xobm58z2","slide":7,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/83itgfml","slide":7,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/fu18jqh0","slide":7,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/m94fu18j","slide":7,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":7,"text":"FALL PROTECTION","textPreview":"FALL PROTECTION","textChars":15,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":7,"text":"Fall hazards begin at six feet or greater.","textPreview":"Fall hazards begin at six feet or greater.","textChars":42,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/f6dcbulw","slide":7,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":7,"text":"Open edges, lifts, scaffolds, and walkway gaps","textPreview":"Open edges, lifts, scaffolds, and walkway gaps","textChars":46,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":7,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":7,"text":"Guardrails and hole covers must be installed and secured","textPreview":"Guardrails and hole covers must be installed and secured","textChars":56,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/y90je9cv","slide":7,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":7,"text":"Barricade below when overhead work creates exposure","textPreview":"Barricade below when overhead work creates exposure","textChars":51,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":7,"text":"PAL Environmental Services  |  Employee Orientation  |  07","textPreview":"PAL Environmental Services  |  Employee Orientation  |  07","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/zidonyd0","slide":7,"name":"","alt":"Guarded edge, secured hole cover, and barricaded work below.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/6aydf6","slide":7,"text":"Narration: Fall protection is required when an employee is exposed to a fall hazard of six feet or greater.\nImage-first scene: Guarded edge, secured hole cover, and barricaded work below."}
+{"kind":"slide","id":"sl/ar4eia","slide":8,"title":"HARNESS INSPECTION","textShapes":6}
+{"kind":"shape","id":"sh/nyd0z610","slide":8,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/udg7adsj","slide":8,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/5gbq1ory","slide":8,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/cvixczed","slide":8,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/nap4r65w","slide":8,"text":"HARNESS INSPECTION","textPreview":"HARNESS INSPECTION","textChars":18,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/upwb2hwf","slide":8,"text":"Inspect fall protection before every use.","textPreview":"Inspect fall protection before every use.","textChars":41,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/1orytsvu","slide":8,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/c7u54zid","slide":8,"text":"Check harness, lanyard, connectors, and anchor point","textPreview":"Check harness, lanyard, connectors, and anchor point","textChars":52,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/6xkf6dcb","slide":8,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":8,"text":"Use only approved anchor points","textPreview":"Use only approved anchor points","textChars":31,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/oza1gvy9","slide":8,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":8,"text":"Stop work if the setup is unclear or defective","textPreview":"Stop work if the setup is unclear or defective","textChars":46,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/65wjudg7","slide":8,"text":"PAL Environmental Services  |  Employee Orientation  |  08","textPreview":"PAL Environmental Services  |  Employee Orientation  |  08","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/54zidony","slide":8,"name":"","alt":"Worker inspecting harness and tying off to an approved point in a lift.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/ar4eia","slide":8,"text":"Narration: Personal fall arrest equipment must be inspected before every use, and anchor points must meet the required rating.\nImage-first scene: Worker inspecting harness and tying off to an approved point in a lift."}
+{"kind":"slide","id":"sl/c297x3","slide":9,"title":"PAL LADDERS LAST","textShapes":6}
+{"kind":"shape","id":"sh/p4r65wju","slide":9,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/wjudg7ad","slide":9,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/7qpg3ex0","slide":9,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/i5sneloj","slide":9,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":9,"text":"PAL LADDERS LAST","textPreview":"PAL LADDERS LAST","textChars":16,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":9,"text":"Portable ladders are the last option.","textPreview":"Portable ladders are the last option.","textChars":37,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/7ed8bat4","slide":9,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":9,"text":"Aerial lift","textPreview":"Aerial lift","textChars":11,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/cvixczed","slide":9,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/5gbq1ory","slide":9,"text":"Scaffolding","textPreview":"Scaffolding","textChars":11,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/upwb2hwf","slide":9,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/nap4r65w","slide":9,"text":"Podium or platform ladder","textPreview":"Podium or platform ladder","textChars":25,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/cj6tovah","slide":9,"text":"PAL Environmental Services  |  Employee Orientation  |  09","textPreview":"PAL Environmental Services  |  Employee Orientation  |  09","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/jm1cfa9w","slide":9,"name":"","alt":"Show the PAL Ladder Last hierarchy clearly from safer option to last resort.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/c297x3","slide":9,"text":"Narration: PAL takes its Ladders Last Policy seriously. Traditional portable ladders must not be the primary work platform when a safer option is feasible.\nImage-first scene: Show the PAL Ladder Last hierarchy clearly from safer option to last resort."}
+{"kind":"slide","id":"sl/eamd9m","slide":10,"title":"LADDER PLANNING","textShapes":6}
+{"kind":"shape","id":"sh/mtwra5gb","slide":10,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/fepkzupw","slide":10,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/4r65wjud","slide":10,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/xc3ylc7u","slide":10,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":10,"text":"LADDER PLANNING","textPreview":"LADDER PLANNING","textChars":15,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/f6dcbulw","slide":10,"text":"Select access equipment before the task starts.","textPreview":"Select access equipment before the task starts.","textChars":47,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/4fu18jqh","slide":10,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":10,"text":"Supervisors choose the safest feasible platform","textPreview":"Supervisors choose the safest feasible platform","textChars":47,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/lkjm1cfa","slide":10,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/szqtcj6t","slide":10,"text":"Do not overreach or work outside side rails","textPreview":"Do not overreach or work outside side rails","textChars":43,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/3ex0nuxc","slide":10,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":10,"text":"Stop if the selected equipment is not safe for the work","textPreview":"Stop if the selected equipment is not safe for the work","textChars":55,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":10,"text":"PAL Environmental Services  |  Employee Orientation  |  10","textPreview":"PAL Environmental Services  |  Employee Orientation  |  10","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/crmhk3q5","slide":10,"name":"","alt":"Supervisor and worker choosing access equipment during pre-task planning.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/eamd9m","slide":10,"text":"Narration: Supervisors must select the proper access equipment during pre-task planning. If the selected equipment does not allow the work to be performed safely, stop and notify supervision.\nImage-first scene: Supervisor and worker choosing access equipment during pre-task planning."}
+{"kind":"slide","id":"sl/om9uxf","slide":11,"title":"ELECTRICAL SAFETY","textShapes":6}
+{"kind":"shape","id":"sh/xc3ylc7u","slide":11,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/4r65wjud","slide":11,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/fepkzupw","slide":11,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/mtwra5gb","slide":11,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":11,"text":"ELECTRICAL SAFETY","textPreview":"ELECTRICAL SAFETY","textChars":17,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/4zidonyd","slide":11,"text":"Inspect cords and protect against shock.","textPreview":"Inspect cords and protect against shock.","textChars":40,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/fil0rqd4","slide":11,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":11,"text":"Use heavy-duty grounded cords","textPreview":"Use heavy-duty grounded cords","textChars":29,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/0bi9s36h","slide":11,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":11,"text":"Use and test GFCI protection","textPreview":"Use and test GFCI protection","textChars":28,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/i5sneloj","slide":11,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":11,"text":"Remove damaged electrical equipment from service","textPreview":"Remove damaged electrical equipment from service","textChars":48,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/wjudg7ad","slide":11,"text":"PAL Environmental Services  |  Employee Orientation  |  11","textPreview":"PAL Environmental Services  |  Employee Orientation  |  11","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/j2t83itg","slide":11,"name":"","alt":"Worker inspecting cord and testing GFCI; damaged cord tagged out.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/om9uxf","slide":11,"text":"Narration: Inspect extension cords, plugs, temporary wiring, and ground-fault circuit interrupters before use.\nImage-first scene: Worker inspecting cord and testing GFCI; damaged cord tagged out."}
+{"kind":"slide","id":"sl/wimc27","slide":12,"title":"TOOLS AND LOTO","textShapes":6}
+{"kind":"shape","id":"sh/0fepkzup","slide":12,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/p0bi9s36","slide":12,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/ixczed8v","slide":12,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/bi9s36hc","slide":12,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/032lszqt","slide":12,"text":"TOOLS AND LOTO","textPreview":"TOOLS AND LOTO","textChars":14,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/tovahoza","slide":12,"text":"Use tools only when trained and protected.","textPreview":"Use tools only when trained and protected.","textChars":42,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/il0rqd4v","slide":12,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":12,"text":"Inspect tools, guards, cords, and accessories","textPreview":"Inspect tools, guards, cords, and accessories","textChars":45,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/32lszqtc","slide":12,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":12,"text":"Disconnect power before changing attachments","textPreview":"Disconnect power before changing attachments","textChars":44,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/l87ed8ba","slide":12,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":12,"text":"Lockout/tagout requires authorized personnel","textPreview":"Lockout/tagout requires authorized personnel","textChars":44,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":12,"text":"PAL Environmental Services  |  Employee Orientation  |  12","textPreview":"PAL Environmental Services  |  Employee Orientation  |  12","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/mhk3q5o7","slide":12,"name":"","alt":"Tool inspection beside lock and tag applied to isolated equipment.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/wimc27","slide":12,"text":"Narration: Only trained employees may operate hand and power tools. Hazardous energy must be properly de-energized, verified, locked, and tagged by authorized personnel.\nImage-first scene: Tool inspection beside lock and tag applied to isolated equipment."}
+{"kind":"slide","id":"sl/vlbvqw","slide":13,"title":"MATERIAL HANDLING","textShapes":6}
+{"kind":"shape","id":"sh/nih4byhg","slide":13,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/yxobm58z","slide":13,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/9cvixcze","slide":13,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/gr2p8nqx","slide":13,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/r65wjudg","slide":13,"text":"MATERIAL HANDLING","textPreview":"MATERIAL HANDLING","textChars":17,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":13,"text":"Plan the lift before touching the load.","textPreview":"Plan the lift before touching the load.","textChars":39,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/90je9cvi","slide":13,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":13,"text":"Know the weight, size, and shape","textPreview":"Know the weight, size, and shape","textChars":32,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/65wjudg7","slide":13,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":13,"text":"Use pallet jacks, dollies, hoists, forklifts, or team lifting when practical","textPreview":"Use pallet jacks, dollies, hoists, forklifts, or team lifting when practical","textChars":76,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/obm58z25","slide":13,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":13,"text":"Stop and get help if the load is too heavy or awkward","textPreview":"Stop and get help if the load is too heavy or awkward","textChars":53,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/6xkf6dcb","slide":13,"text":"PAL Environmental Services  |  Employee Orientation  |  13","textPreview":"PAL Environmental Services  |  Employee Orientation  |  13","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/9knih4by","slide":13,"name":"","alt":"Crew planning a lift and using a pallet jack.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/vlbvqw","slide":13,"text":"Narration: Plan every lift. Know the load's weight, size, and shape. Use mechanical help when practical.\nImage-first scene: Crew planning a lift and using a pallet jack."}
+{"kind":"slide","id":"sl/p3aikh","slide":14,"title":"SAFE LIFTING","textShapes":6}
+{"kind":"shape","id":"sh/94fu18jq","slide":14,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/kjm1cfa9","slide":14,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/ra5gbq1o","slide":14,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/2p8nqxs7","slide":14,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":14,"text":"SAFE LIFTING","textPreview":"SAFE LIFTING","textChars":12,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/gvy90je9","slide":14,"text":"Keep the load close and avoid twisting.","textPreview":"Keep the load close and avoid twisting.","textChars":39,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/re1w7mp0","slide":14,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/2t83itgf","slide":14,"text":"Set your feet before lifting","textPreview":"Set your feet before lifting","textChars":28,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/sneloj2t","slide":14,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":14,"text":"Lift with your legs","textPreview":"Lift with your legs","textChars":19,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/ahoza1gv","slide":14,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/32lszqtc","slide":14,"text":"Secure material so it cannot shift","textPreview":"Secure material so it cannot shift","textChars":34,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/szqtcj6t","slide":14,"text":"PAL Environmental Services  |  Employee Orientation  |  14","textPreview":"PAL Environmental Services  |  Employee Orientation  |  14","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/fmlkjm1c","slide":14,"name":"","alt":"Worker lifting bags from a pallet jack with proper body position.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/p3aikh","slide":14,"text":"Narration: Keep the load close, lift with your legs, avoid twisting, secure material against movement, and maintain clear communication.\nImage-first scene: Worker lifting bags from a pallet jack with proper body position."}
+{"kind":"slide","id":"sl/jxagff","slide":15,"title":"FIRE SAFETY","textShapes":6}
+{"kind":"shape","id":"sh/nyd0z610","slide":15,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/udg7adsj","slide":15,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/5gbq1ory","slide":15,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/cvixczed","slide":15,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/nap4r65w","slide":15,"text":"FIRE SAFETY","textPreview":"FIRE SAFETY","textChars":11,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/upwb2hwf","slide":15,"text":"Control ignition sources and keep an exit route.","textPreview":"Control ignition sources and keep an exit route.","textChars":48,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/1orytsvu","slide":15,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/c7u54zid","slide":15,"text":"Hot work requires an approved permit and controls","textPreview":"Hot work requires an approved permit and controls","textChars":49,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/6xkf6dcb","slide":15,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":15,"text":"Call 911 and evacuate if the fire is too large","textPreview":"Call 911 and evacuate if the fire is too large","textChars":46,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/oza1gvy9","slide":15,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":15,"text":"Use PASS only if trained and conditions allow","textPreview":"Use PASS only if trained and conditions allow","textChars":45,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/65wjudg7","slide":15,"text":"PAL Environmental Services  |  Employee Orientation  |  15","textPreview":"PAL Environmental Services  |  Employee Orientation  |  15","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/p4r65wju","slide":15,"name":"","alt":"Hot-work controls, clear extinguisher access, and safe exit path.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/jxagff","slide":15,"text":"Narration: Fire prevention means controlling ignition sources and combustible materials. If a fire is too large to control safely, call 911 and evacuate.\nImage-first scene: Hot-work controls, clear extinguisher access, and safe exit path."}
+{"kind":"slide","id":"sl/27t2ll","slide":16,"title":"HOUSEKEEPING","textShapes":6}
+{"kind":"shape","id":"sh/ex0nuxc3","slide":16,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/3itgfmlk","slide":16,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/wb2hwfyx","slide":16,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/lwval87e","slide":16,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/e9cvixcz","slide":16,"text":"HOUSEKEEPING","textPreview":"HOUSEKEEPING","textChars":12,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/3q5o7qpg","slide":16,"text":"A clean jobsite prevents injuries.","textPreview":"A clean jobsite prevents injuries.","textChars":34,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/sneloj2t","slide":16,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":16,"text":"Keep walkways, stairs, doors, and emergency equipment clear","textPreview":"Keep walkways, stairs, doors, and emergency equipment clear","textChars":59,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/5kb6xkf6","slide":16,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/czed8v6p","slide":16,"text":"Clean spills or isolate the area","textPreview":"Clean spills or isolate the area","textChars":32,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/neloj2t8","slide":16,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/ytsvu9kn","slide":16,"text":"Store materials so they cannot fall, shift, or block access","textPreview":"Store materials so they cannot fall, shift, or block access","textChars":59,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/5sneloj2","slide":16,"text":"PAL Environmental Services  |  Employee Orientation  |  16","textPreview":"PAL Environmental Services  |  Employee Orientation  |  16","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/knih4byh","slide":16,"name":"","alt":"Crew member cleaning debris and keeping the pathway clear.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/27t2ll","slide":16,"text":"Narration: Good housekeeping is required every day. Keep access clear, clean spills immediately, and store materials so they do not create hazards.\nImage-first scene: Crew member cleaning debris and keeping the pathway clear."}
+{"kind":"slide","id":"sl/cz5qim","slide":17,"title":"HAZCOM AND SDS","textShapes":6}
+{"kind":"shape","id":"sh/mlkjm1cf","slide":17,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/f6dcbulw","slide":17,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/4zidonyd","slide":17,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/xkf6dcbu","slide":17,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":17,"text":"HAZCOM AND SDS","textPreview":"HAZCOM AND SDS","textChars":14,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/fepkzupw","slide":17,"text":"Never use an unknown material.","textPreview":"Never use an unknown material.","textChars":30,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/83itgfml","slide":17,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":17,"text":"Know where SDS and Right-to-Know information are located","textPreview":"Know where SDS and Right-to-Know information are located","textChars":56,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/dcbulwva","slide":17,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":17,"text":"Every container must be labeled","textPreview":"Every container must be labeled","textChars":31,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/val87ed8","slide":17,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":17,"text":"Isolate unlabeled material and notify supervision","textPreview":"Isolate unlabeled material and notify supervision","textChars":49,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":17,"text":"PAL Environmental Services  |  Employee Orientation  |  17","textPreview":"PAL Environmental Services  |  Employee Orientation  |  17","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/kf6dcbul","slide":17,"name":"","alt":"Worker checking a labeled container against an SDS binder or tablet.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/cz5qim","slide":17,"text":"Narration: Hazard Communication and GHS help employees understand chemical hazards. Never use an unknown or unlabeled material.\nImage-first scene: Worker checking a labeled container against an SDS binder or tablet."}
+{"kind":"slide","id":"sl/hi161q","slide":18,"title":"SCAFFOLDS","textShapes":6}
+{"kind":"shape","id":"sh/bq1oryts","slide":18,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/m58z25kb","slide":18,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/t83itgfm","slide":18,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/4nap4r65","slide":18,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/b2hwfyxo","slide":18,"text":"SCAFFOLDS","textPreview":"SCAFFOLDS","textChars":9,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/mhk3q5o7","slide":18,"text":"Scaffolds require competent-person inspection.","textPreview":"Scaffolds require competent-person inspection.","textChars":46,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/tgfmlkjm","slide":18,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/4vmtwra5","slide":18,"text":"Erected and inspected under competent-person control","textPreview":"Erected and inspected under competent-person control","textChars":52,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/i5sneloj","slide":18,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":18,"text":"Daily inspection must be documented","textPreview":"Daily inspection must be documented","textChars":35,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/0bi9s36h","slide":18,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":18,"text":"Never stand, sit, or rest on guardrails","textPreview":"Never stand, sit, or rest on guardrails","textChars":39,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/ed8v6psf","slide":18,"text":"PAL Environmental Services  |  Employee Orientation  |  18","textPreview":"PAL Environmental Services  |  Employee Orientation  |  18","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/l0rqd4vm","slide":18,"name":"","alt":"Competent person reviewing scaffold tag and checklist.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/hi161q","slide":18,"text":"Narration: Scaffolds must be erected by a competent person, installed according to manufacturer requirements, and inspected and documented daily.\nImage-first scene: Competent person reviewing scaffold tag and checklist."}
+{"kind":"slide","id":"sl/h223p7","slide":19,"title":"LIFTS","textShapes":6}
+{"kind":"shape","id":"sh/tgfmlkjm","slide":19,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/4vmtwra5","slide":19,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/bm58z25k","slide":19,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/m1cfa9w3","slide":19,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/tsvu9kni","slide":19,"text":"LIFTS","textPreview":"LIFTS","textChars":5,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/47y1kre1","slide":19,"text":"Only trained employees may operate lifts.","textPreview":"Only trained employees may operate lifts.","textChars":41,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/bq1oryts","slide":19,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":19,"text":"Conduct and document the pre-use inspection","textPreview":"Conduct and document the pre-use inspection","textChars":43,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/o7qpg3ex","slide":19,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/dsji5sne","slide":19,"text":"Use approved tie-off points when required","textPreview":"Use approved tie-off points when required","textChars":41,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/61032lsz","slide":19,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/vmtwra5g","slide":19,"text":"Keep both feet on the platform floor","textPreview":"Keep both feet on the platform floor","textChars":36,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/oj2t83it","slide":19,"text":"PAL Environmental Services  |  Employee Orientation  |  19","textPreview":"PAL Environmental Services  |  Employee Orientation  |  19","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/zidonyd0","slide":19,"name":"","alt":"Scissor lift inspection and worker tied off to designated point.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/h223p7","slide":19,"text":"Narration: Only trained and authorized employees may operate mobile elevating work platforms or scissor lifts.\nImage-first scene: Scissor lift inspection and worker tied off to designated point."}
+{"kind":"slide","id":"sl/klqjif","slide":20,"title":"HEAVY EQUIPMENT","textShapes":6}
+{"kind":"shape","id":"sh/8z25kb6x","slide":20,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/1gvy90je","slide":20,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/q1orytsv","slide":20,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/fmlkjm1c","slide":20,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/87ed8bat","slide":20,"text":"HEAVY EQUIPMENT","textPreview":"HEAVY EQUIPMENT","textChars":15,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/xs72x4na","slide":20,"text":"Stay visible and out of the equipment path.","textPreview":"Stay visible and out of the equipment path.","textChars":43,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/qd4vmtwr","slide":20,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/fyxobm58","slide":20,"text":"Stay out of blind spots and loading areas","textPreview":"Stay out of blind spots and loading areas","textChars":41,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/7mp0bi9s","slide":20,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/e1w7mp0b","slide":20,"text":"Make eye contact with the operator before approaching","textPreview":"Make eye contact with the operator before approaching","textChars":53,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/psfil0rq","slide":20,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/w7mp0bi9","slide":20,"text":"Watch overhead power lines and underground utilities","textPreview":"Watch overhead power lines and underground utilities","textChars":52,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/7adsji5s","slide":20,"text":"PAL Environmental Services  |  Employee Orientation  |  20","textPreview":"PAL Environmental Services  |  Employee Orientation  |  20","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/epkzupwb","slide":20,"name":"","alt":"Worker outside swing radius making eye contact with equipment operator.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/klqjif","slide":20,"text":"Narration: When working near heavy equipment, remain alert and stay out of blind spots and loading areas.\nImage-first scene: Worker outside swing radius making eye contact with equipment operator."}
+{"kind":"slide","id":"sl/amgplc","slide":21,"title":"CONFINED SPACE","textShapes":6}
+{"kind":"shape","id":"sh/l0rqd4vm","slide":21,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/wfyxobm5","slide":21,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/36hcrmhk","slide":21,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/eloj2t83","slide":21,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/lc7u54zi","slide":21,"text":"CONFINED SPACE","textPreview":"CONFINED SPACE","textChars":14,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":21,"text":"This orientation does not authorize entry.","textPreview":"This orientation does not authorize entry.","textChars":42,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/7adsji5s","slide":21,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/epkzupwb","slide":21,"text":"Confined spaces require specialized training","textPreview":"Confined spaces require specialized training","textChars":44,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/8jqh0fep","slide":21,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":21,"text":"Hazards may include atmosphere, engulfment, or entrapment","textPreview":"Hazards may include atmosphere, engulfment, or entrapment","textChars":57,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/qd4vmtwr","slide":21,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/fyxobm58","slide":21,"text":"Do not enter unless trained, authorized, and equipped","textPreview":"Do not enter unless trained, authorized, and equipped","textChars":53,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/8v6psfil","slide":21,"text":"PAL Environmental Services  |  Employee Orientation  |  21","textPreview":"PAL Environmental Services  |  Employee Orientation  |  21","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/vahoza1g","slide":21,"name":"","alt":"Permit-required confined-space warning with untrained worker stopped outside.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/amgplc","slide":21,"text":"Narration: Never enter a confined space unless PAL has determined the requirements and you are specifically trained, authorized, and properly equipped.\nImage-first scene: Permit-required confined-space warning with untrained worker stopped outside."}
+{"kind":"slide","id":"sl/xmg5xc","slide":22,"title":"ASBESTOS, LEAD, AND SILICA","textShapes":6}
+{"kind":"shape","id":"sh/3ex0nuxc","slide":22,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/at47y1kr","slide":22,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/l87ed8ba","slide":22,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/sneloj2t","slide":22,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/32lszqtc","slide":22,"text":"ASBESTOS, LEAD, AND SILICA","textPreview":"ASBESTOS, LEAD, AND SILICA","textChars":26,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":22,"text":"Specialized hazards require authorized controls.","textPreview":"Specialized hazards require authorized controls.","textChars":48,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/lwval87e","slide":22,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/wb2hwfyx","slide":22,"text":"Only trained authorized personnel may disturb asbestos or lead","textPreview":"Only trained authorized personnel may disturb asbestos or lead","textChars":62,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/2lszqtcj","slide":22,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/v6psfil0","slide":22,"text":"Follow the task-specific silica exposure control plan","textPreview":"Follow the task-specific silica exposure control plan","textChars":53,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/knih4byh","slide":22,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":22,"text":"Use wet methods, HEPA vacuums, dust collection, and PPE as required","textPreview":"Use wet methods, HEPA vacuums, dust collection, and PPE as required","textChars":67,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/29gr2p8n","slide":22,"text":"PAL Environmental Services  |  Employee Orientation  |  22","textPreview":"PAL Environmental Services  |  Employee Orientation  |  22","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/lkjm1cfa","slide":22,"name":"","alt":"Controlled regulated area with HEPA vacuum and wet dust control.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/xmg5xc","slide":22,"text":"Narration: Only authorized and trained personnel may disturb asbestos-containing material or lead. Respirable crystalline silica can cause serious illness and must be controlled.\nImage-first scene: Controlled regulated area with HEPA vacuum and wet dust control."}
+{"kind":"slide","id":"sl/kkbbg6","slide":23,"title":"ENVIRONMENTAL PROTECTION","textShapes":6}
+{"kind":"shape","id":"sh/wb2hwfyx","slide":23,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/lwval87e","slide":23,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/ex0nuxc3","slide":23,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/3itgfmlk","slide":23,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/w3m94fu1","slide":23,"text":"ENVIRONMENTAL PROTECTION","textPreview":"ENVIRONMENTAL PROTECTION","textChars":24,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/loj2t83i","slide":23,"text":"Regulated waste does not go in the regular dumpster.","textPreview":"Regulated waste does not go in the regular dumpster.","textChars":52,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/at47y1kr","slide":23,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":23,"text":"Use labeled waste streams and closed containers","textPreview":"Use labeled waste streams and closed containers","textChars":47,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/3itgfmlk","slide":23,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/ex0nuxc3","slide":23,"text":"Keep spill kits where waste is generated","textPreview":"Keep spill kits where waste is generated","textChars":40,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/loj2t83i","slide":23,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/w3m94fu1","slide":23,"text":"Ask supervision before disposal when uncertain","textPreview":"Ask supervision before disposal when uncertain","textChars":46,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/3q5o7qpg","slide":23,"text":"PAL Environmental Services  |  Employee Orientation  |  23","textPreview":"PAL Environmental Services  |  Employee Orientation  |  23","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/udg7adsj","slide":23,"name":"","alt":"Labeled waste containers, spill kit, and supervisor directing disposal.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/kkbbg6","slide":23,"text":"Narration: Batteries, fluorescent lamps, chemicals, aerosol cans, used oil, and other regulated materials must be handled and disposed of correctly.\nImage-first scene: Labeled waste containers, spill kit, and supervisor directing disposal."}
+{"kind":"slide","id":"sl/wuo3sx","slide":24,"title":"EMERGENCY ACTION PLAN","textShapes":6}
+{"kind":"shape","id":"sh/adsji5sn","slide":24,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/3ylc7u54","slide":24,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/s72x4nap","slide":24,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/lszqtcj6","slide":24,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":24,"text":"EMERGENCY ACTION PLAN","textPreview":"EMERGENCY ACTION PLAN","textChars":21,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":24,"text":"Know the plan before work begins.","textPreview":"Know the plan before work begins.","textChars":33,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/s36hcrmh","slide":24,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":24,"text":"Know alarms, emergency contacts, route, and muster point","textPreview":"Know alarms, emergency contacts, route, and muster point","textChars":56,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/58z25kb6","slide":24,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":24,"text":"Walk, do not run","textPreview":"Walk, do not run","textChars":16,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/n29gr2p8","slide":24,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":24,"text":"Remain at the muster point until released","textPreview":"Remain at the muster point until released","textChars":41,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":24,"text":"PAL Environmental Services  |  Employee Orientation  |  24","textPreview":"PAL Environmental Services  |  Employee Orientation  |  24","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/0rqd4vmt","slide":24,"name":"","alt":"Workers calmly walking to a muster point while supervisor takes headcount.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/wuo3sx","slide":24,"text":"Narration: Every project must post a site-specific Emergency Action Plan. Before beginning work, know the alarms, emergency contacts, evacuation route, and muster point.\nImage-first scene: Workers calmly walking to a muster point while supervisor takes headcount."}
+{"kind":"slide","id":"sl/fz9xmv","slide":25,"title":"REPORTING","textShapes":6}
+{"kind":"shape","id":"sh/byhgn29g","slide":25,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/idonyd0z","slide":25,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/tcj6tova","slide":25,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/0rqd4vmt","slide":25,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":25,"text":"REPORTING","textPreview":"REPORTING","textChars":9,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":25,"text":"Report incidents and near misses immediately.","textPreview":"Report incidents and near misses immediately.","textChars":45,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/tovahoza","slide":25,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/032lszqt","slide":25,"text":"Injuries, illnesses, property damage, releases, and near misses","textPreview":"Injuries, illnesses, property damage, releases, and near misses","textChars":63,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/61032lsz","slide":25,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/vmtwra5g","slide":25,"text":"Report even when it appears minor","textPreview":"Report even when it appears minor","textChars":33,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/o7qpg3ex","slide":25,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/dsji5sne","slide":25,"text":"Same-day review corrects hazards and prevents repeat events","textPreview":"Same-day review corrects hazards and prevents repeat events","textChars":59,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":25,"text":"PAL Environmental Services  |  Employee Orientation  |  25","textPreview":"PAL Environmental Services  |  Employee Orientation  |  25","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/x0nuxc3y","slide":25,"name":"","alt":"Worker calmly reporting a near miss to supervisor.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/fz9xmv","slide":25,"text":"Narration: All accidents, injuries, illnesses, property damage, environmental releases, and near misses must be reported immediately.\nImage-first scene: Worker calmly reporting a near miss to supervisor."}
+{"kind":"slide","id":"sl/afmacf","slide":26,"title":"STOP WORK AUTHORITY","textShapes":6}
+{"kind":"shape","id":"sh/1kre1w7m","slide":26,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/c3ylc7u5","slide":26,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/j6tovaho","slide":26,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/ulwval87","slide":26,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":26,"text":"STOP WORK AUTHORITY","textPreview":"STOP WORK AUTHORITY","textChars":19,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":26,"text":"No one has the right to put you in an unsafe situation.","textPreview":"No one has the right to put you in an unsafe situation.","textChars":55,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/j2t83itg","slide":26,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":26,"text":"Stop the work","textPreview":"Stop the work","textChars":13,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/s36hcrmh","slide":26,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":26,"text":"Move to a safe location","textPreview":"Move to a safe location","textChars":23,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/a1gvy90j","slide":26,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/zidonyd0","slide":26,"text":"Notify supervision","textPreview":"Notify supervision","textChars":18,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/svu9knih","slide":26,"text":"PAL Environmental Services  |  Employee Orientation  |  26","textPreview":"PAL Environmental Services  |  Employee Orientation  |  26","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/nqxs72x4","slide":26,"name":"","alt":"Worker stopping a task and speaking with foreman before continuing.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/afmacf","slide":26,"text":"Narration: Employees will not be penalized for refusing work they reasonably believe is unsafe. Stop the work, move to a safe location, and notify supervision.\nImage-first scene: Worker stopping a task and speaking with foreman before continuing."}
+{"kind":"slide","id":"sl/717sy1","slide":27,"title":"WORKPLACE RULES","textShapes":6}
+{"kind":"shape","id":"sh/psfil0rq","slide":27,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/w7mp0bi9","slide":27,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/7adsji5s","slide":27,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/epkzupwb","slide":27,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/pg3ex0nu","slide":27,"text":"WORKPLACE RULES","textPreview":"WORKPLACE RULES","textChars":15,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/wval87ed","slide":27,"text":"PAL maintains a drug-free and alcohol-free workplace.","textPreview":"PAL maintains a drug-free and alcohol-free workplace.","textChars":53,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/36hcrmhk","slide":27,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/eloj2t83","slide":27,"text":"No alcohol during the workday, including lunch","textPreview":"No alcohol during the workday, including lunch","textChars":46,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/wra5gbq1","slide":27,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/lc7u54zi","slide":27,"text":"No illegal drugs, controlled substances, or reporting impaired","textPreview":"No illegal drugs, controlled substances, or reporting impaired","textChars":62,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/eloj2t83","slide":27,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":27,"text":"Testing may include pre-assignment, random, post-accident, or reasonable-suspicion testing","textPreview":"Testing may include pre-assignment, random, post-accident, or reasonable-suspicion testing","textChars":90,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/wfyxobm5","slide":27,"text":"PAL Environmental Services  |  Employee Orientation  |  27","textPreview":"PAL Environmental Services  |  Employee Orientation  |  27","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/r65wjudg","slide":27,"name":"","alt":"Drug-free workplace notice and worker signing policy acknowledgement.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/717sy1","slide":27,"text":"Narration: PAL maintains a drug-free and alcohol-free workplace. Employees and applicants must comply with PAL testing policy.\nImage-first scene: Drug-free workplace notice and worker signing policy acknowledgement."}
+{"kind":"slide","id":"sl/hfvxaf","slide":28,"title":"QUESTIONS","textShapes":6}
+{"kind":"shape","id":"sh/0fepkzup","slide":28,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/p0bi9s36","slide":28,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/ixczed8v","slide":28,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/bi9s36hc","slide":28,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/032lszqt","slide":28,"text":"QUESTIONS","textPreview":"QUESTIONS","textChars":9,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/tovahoza","slide":28,"text":"When you are unsure, stop and ask.","textPreview":"When you are unsure, stop and ask.","textChars":34,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/il0rqd4v","slide":28,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":28,"text":"Supervisor","textPreview":"Supervisor","textChars":10,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/32lszqtc","slide":28,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":28,"text":"Foreman or general superintendent","textPreview":"Foreman or general superintendent","textChars":33,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/l87ed8ba","slide":28,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":28,"text":"PAL EH&S representative","textPreview":"PAL EH&S representative","textChars":23,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":28,"text":"PAL Environmental Services  |  Employee Orientation  |  28","textPreview":"PAL Environmental Services  |  Employee Orientation  |  28","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/adsji5sn","slide":28,"name":"","alt":"Foreman answering worker questions during a jobsite meeting.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/hfvxaf","slide":28,"text":"Narration: Safety depends on communication. When you are uncertain, stop and ask.\nImage-first scene: Foreman answering worker questions during a jobsite meeting."}
+{"kind":"slide","id":"sl/m2ymy2","slide":29,"title":"FINAL ACKNOWLEDGEMENT","textShapes":6}
+{"kind":"shape","id":"sh/fu18jqh0","slide":29,"bbox":[0,0,1280,720]}
+{"kind":"shape","id":"sh/m94fu18j","slide":29,"bbox":[0,0,1280,90]}
+{"kind":"shape","id":"sh/xobm58z2","slide":29,"bbox":[0,90,1280,8]}
+{"kind":"shape","id":"sh/83itgfml","slide":29,"bbox":[0,618,1280,102]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":29,"text":"FINAL ACKNOWLEDGEMENT","textPreview":"FINAL ACKNOWLEDGEMENT","textChars":21,"textLines":1,"bbox":[56,24,420,22]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":29,"text":"Orientation is complete only after acknowledgement and review.","textPreview":"Orientation is complete only after acknowledgement and review.","textChars":62,"textLines":1,"bbox":[56,540,900,58]}
+{"kind":"shape","id":"sh/xkf6dcbu","slide":29,"bbox":[56,628,14,14]}
+{"kind":"textbox","id":"sh/4zidonyd","slide":29,"text":"Watch the full video in the selected language","textPreview":"Watch the full video in the selected language","textChars":45,"textLines":1,"bbox":[80,622,320,36]}
+{"kind":"shape","id":"sh/mhk3q5o7","slide":29,"bbox":[431,628,14,14]}
+{"kind":"textbox","id":"sh/b2hwfyxo","slide":29,"text":"Answer all knowledge checks","textPreview":"Answer all knowledge checks","textChars":27,"textLines":1,"bbox":[455,622,320,36]}
+{"kind":"shape","id":"sh/4nap4r65","slide":29,"bbox":[806,628,14,14]}
+{"kind":"textbox","id":"sh/t83itgfm","slide":29,"text":"Sign and submit for PAL review","textPreview":"Sign and submit for PAL review","textChars":30,"textLines":1,"bbox":[830,622,320,36]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":29,"text":"PAL Environmental Services  |  Employee Orientation  |  29","textPreview":"PAL Environmental Services  |  Employee Orientation  |  29","textChars":58,"textLines":1,"bbox":[56,690,760,18]}
+{"kind":"image","id":"im/pg3ex0nu","slide":29,"name":"","alt":"Clean final screen with acknowledgement and PAL review message.","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/m2ymy2","slide":29,"text":"Narration: Require the employee to enter their name, sign, and submit the acknowledgement. Completion does not grant access to a project until the office or authorized reviewer confirms all required credentials.\nImage-first scene: Clean final screen with acknowledgement and PAL review message."}
