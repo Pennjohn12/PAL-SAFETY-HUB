@@ -3513,40 +3513,50 @@
      FIREBASE + APP LOGIC
  -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+  import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80",
-    authDomain: "pal-safety-hub.firebaseapp.com",
-    projectId: "pal-safety-hub",
-    storageBucket: "pal-safety-hub.firebasestorage.app",
-    messagingSenderId: "461653262208",
-    appId: "1:461653262208:web:fb88dc50ea0a2f68630b65"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-  const functions = getFunctions(app, 'us-central1');
-  const sendAppEmailCallable = httpsCallable(functions, 'sendAppEmail');
-  const sendAppTextCallable = httpsCallable(functions, 'sendAppText');
-  const generateSafetyDraftCallable = httpsCallable(functions, 'generateSafetyDraft');
-  const getIntegrationHealthCallable = httpsCallable(functions, 'getIntegrationHealth');
-  const PAL_PUBLIC_PROJECTS_URL = 'https://pal-safety-hub.web.app/projects.html';
-  const PAL_ADMIN_EMAILS = [
-    'jvpanettiere@gmail.com',
-    'jvpanettiere@outlook.com',
-    'adilorenzo@palcorp.com',
-    'jpanettiere@palcorp.com',
-    'john.panettiere@palcorp.com',
-    'pennj@palcorp.com'
-  ];
+  import {
+    PAL_ADMIN_EMAILS,
+    PAL_PUBLIC_PROJECTS_URL,
+    auth,
+    db,
+    storage,
+    sendAppEmailCallable,
+    sendAppTextCallable,
+    generateSafetyDraftCallable,
+    getIntegrationHealthCallable
+  } from "./assets/js/config/pal-firebase.js";
+  import {
+    capitalize,
+    docIcon,
+    esc,
+    exportSlug,
+    formatDate,
+    getCleanFileName,
+    money,
+    safeFileUrl
+  } from "./assets/js/utils/format.js";
+  import {
+    addDays,
+    formatShortDate,
+    getMonthWeekRanges,
+    projectHistoryItemMatches,
+    projectHistoryLabels
+  } from "./assets/js/projects/project-history.js";
+  import {
+    accessGrantIdForEmail,
+    accessRoleClass as baseAccessRoleClass,
+    accessRoleLabel as baseAccessRoleLabel,
+    accessRoleValue as baseAccessRoleValue,
+    cleanAccessText,
+    profileIsAdminRole,
+    profileIsDisabledRole,
+    profileIsEmployeeOnlyRole,
+    profileIsOfficeRole,
+    rolePayloadForAccess
+  } from "./assets/js/security/roles.js";
 
   //  State 
   let currentUser = null;
@@ -4025,27 +4035,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return await normalizeAccessProfile(user, { uid: user.uid, email: user.email, name: user.displayName || user.email, role: 'employee', accessLevel: 'employee' });
   }
 
-  function cleanAccessText(value) {
-    return String(value || '').trim().toLowerCase();
-  }
-
-  function accessGrantIdForEmail(email) {
-    return cleanAccessText(email).replace(/\//g, '_');
-  }
-
-  function rolePayloadForAccess(access) {
-    const key = cleanAccessText(access);
-    const rolePayloads = {
-      employee: { role: 'employee', accessLevel: 'employee', admin: false, isAdmin: false, disabled: false },
-      foreman: { role: 'foreman', accessLevel: 'foreman', admin: false, isAdmin: false, disabled: false },
-      supervisor: { role: 'supervisor', accessLevel: 'supervisor', admin: false, isAdmin: false, disabled: false },
-      office: { role: 'office', accessLevel: 'office', admin: false, isAdmin: false, disabled: false },
-      admin: { role: 'admin', accessLevel: 'admin', admin: true, isAdmin: true, disabled: false },
-      disabled: { role: 'disabled', accessLevel: 'disabled', admin: false, isAdmin: false, disabled: true }
-    };
-    return rolePayloads[key] || rolePayloads.foreman;
-  }
-
   async function logAuditEvent(action, details = {}) {
     if (!currentUser || !action) return;
     try {
@@ -4131,37 +4120,31 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function isOfficeRole() {
-    const role = cleanAccessText(currentUserProfile?.role);
-    const accessLevel = cleanAccessText(currentUserProfile?.accessLevel);
-    return ['office', 'admin', 'administrator', 'owner', 'project manager', 'project_manager'].includes(role)
-      || ['office', 'admin', 'owner'].includes(accessLevel)
-      || currentUserProfile?.admin === true
-      || currentUserProfile?.isAdmin === true
-      || isKnownAdminProfile();
+    return profileIsOfficeRole(currentUserProfile, isKnownAdminProfile());
   }
 
   function isAdminRole(profile = currentUserProfile) {
-    const role = cleanAccessText(profile?.role);
-    const accessLevel = cleanAccessText(profile?.accessLevel);
-    return ['admin', 'administrator', 'owner'].includes(role)
-      || ['admin', 'owner'].includes(accessLevel)
-      || profile?.admin === true
-      || profile?.isAdmin === true
-      || isKnownAdminProfile(profile);
+    return profileIsAdminRole(profile, isKnownAdminProfile(profile));
   }
 
   function isDisabledRole(profile = currentUserProfile) {
-    return profile?.disabled === true
-      || cleanAccessText(profile?.role) === 'disabled'
-      || cleanAccessText(profile?.accessLevel) === 'disabled';
+    return profileIsDisabledRole(profile);
   }
 
   function isEmployeeOnlyRole(profile = currentUserProfile) {
-    const role = cleanAccessText(profile?.role);
-    const accessLevel = cleanAccessText(profile?.accessLevel);
-    return !isOfficeRole()
-      && !isAdminRole(profile)
-      && (role === 'employee' || accessLevel === 'employee' || role === 'intake' || accessLevel === 'intake');
+    return profileIsEmployeeOnlyRole(profile, isOfficeRole(), isAdminRole(profile));
+  }
+
+  function accessRoleLabel(profile = {}) {
+    return baseAccessRoleLabel(profile, isKnownAdminProfile(profile));
+  }
+
+  function accessRoleValue(profile = {}) {
+    return baseAccessRoleValue(profile, isKnownAdminProfile(profile));
+  }
+
+  function accessRoleClass(profile = {}) {
+    return baseAccessRoleClass(profile, isKnownAdminProfile(profile));
   }
 
   function applyRoleUI() {
@@ -5727,13 +5710,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function isSafeForemanExportTool() {
     return safeForemanExportTools.includes(activeForemanToolId);
-  }
-
-  function exportSlug(value) {
-    return String(value || 'document')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '') || 'document';
   }
 
   function exportField(label, value = '') {
@@ -7375,22 +7351,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.getElementById('main-jha')?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
-  function getCleanFileName(name = 'PAL-Project-File') {
-    return String(name || 'PAL-Project-File')
-      .replace(/[\\/:*?"<>|]+/g, '-')
-      .replace(/\s+/g, ' ')
-      .trim() || 'PAL-Project-File';
-  }
-
-  const projectHistoryLabels = {
-    docs: 'Documents',
-    photos: 'Photos',
-    reports: 'Daily Reports',
-    fieldForms: 'Field Forms',
-    tickets: 'Tickets',
-    warehouse: 'Warehouse'
-  };
-
   function setupProjectHistoryFilter(kind) {
     const host = document.getElementById(`${kind}-history-filter`);
     if (!host || host.dataset.ready === '1') return;
@@ -7455,86 +7415,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     applyProjectHistoryFilter(kind);
   }
 
-  function getMonthWeekRanges(monthValue) {
-    const [year, month] = String(monthValue || '').split('-').map(Number);
-    if (!year || !month) return [];
-    const monthStart = new Date(year, month - 1, 1);
-    const monthEnd = new Date(year, month, 1);
-    const ranges = [];
-    let start = startOfWeek(monthStart);
-    while (start < monthEnd) {
-      const end = addDays(start, 7);
-      ranges.push({ start: toDateInput(start < monthStart ? monthStart : start), end: toDateInput(end > monthEnd ? monthEnd : end) });
-      start = end;
-    }
-    return ranges;
-  }
-
-  function startOfWeek(date) {
-    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const day = d.getDay();
-    d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
-    return d;
-  }
-
-  function addDays(value, days) {
-    const d = typeof value === 'string' ? new Date(value + 'T00:00:00') : new Date(value);
-    d.setDate(d.getDate() + days);
-    return d;
-  }
-
-  function toDateInput(date) {
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-
-  function formatShortDate(value) {
-    try { return new Date(value + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
-    catch { return value; }
-  }
-
-  function projectRecordDate(item = {}, kind = '') {
-    const data = item.documentData || {};
-    const value = kind === 'fieldForms'
-      ? (data.date || data.reportDate || data.inspection_date || data.sup_date || data.week_start || item.localSubmittedAt || item.submittedAt)
-      : kind === 'docs'
-        ? (item.uploadedAt || item.createdAt)
-        : kind === 'photos'
-          ? (item.uploadedAt || item.createdAt)
-          : kind === 'reports'
-            ? (item.date || item.submittedAt || item.createdAt)
-            : kind === 'tickets'
-              ? (item.date || item.createdAt)
-              : (item.date || item.movedAt || item.createdAt || item.updatedAt);
-    return normalizeProjectDate(value);
-  }
-
-  function normalizeProjectDate(value) {
-    if (!value) return null;
-    if (value.toDate) return value.toDate();
-    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(value + 'T00:00:00');
-    const d = new Date(value);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
   function projectHistoryMatches(item, kind) {
     setupProjectHistoryFilter(kind);
     const month = document.getElementById(`${kind}-filter-month`)?.value || '';
     const week = document.getElementById(`${kind}-filter-week`)?.value || 'all';
     const search = (document.getElementById(`${kind}-filter-search`)?.value || '').trim().toLowerCase();
-    const d = projectRecordDate(item, kind);
-    if (month) {
-      if (!d) return false;
-      const itemMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}`;
-      if (itemMonth !== month) return false;
-    }
-    if (week && week !== 'all') {
-      if (!d) return false;
-      const [start, end] = week.split('|').map(v => new Date(v + 'T00:00:00'));
-      if (d < start || d >= end) return false;
-    }
-    if (search && !JSON.stringify(item).toLowerCase().includes(search)) return false;
-    return true;
+    return projectHistoryItemMatches(item, kind, { month, week, search });
   }
 
   function setProjectHistoryCount(kind, showing, total) {
@@ -8305,35 +8191,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       console.error('Add foreman failed:', e);
       toast('Could not add foreman: ' + e.message);
     }
-  }
-
-  function accessRoleLabel(profile = {}) {
-    if (profile.disabled === true || cleanAccessText(profile.role) === 'disabled' || cleanAccessText(profile.accessLevel) === 'disabled') return 'Disabled';
-    if (isAdminRole(profile)) return 'Admin';
-    const role = cleanAccessText(profile.role || profile.accessLevel);
-    if (['office', 'project manager', 'project_manager'].includes(role) || cleanAccessText(profile.accessLevel) === 'office') return 'Office';
-    if (['supervisor'].includes(role) || cleanAccessText(profile.accessLevel) === 'supervisor') return 'Supervisor';
-    if (['employee', 'intake', 'intake-only', 'intake_only'].includes(role) || cleanAccessText(profile.accessLevel) === 'employee') return 'Employee / Intake Only';
-    return 'Foreman';
-  }
-
-  function accessRoleValue(profile = {}) {
-    const label = accessRoleLabel(profile);
-    if (label === 'Admin') return 'admin';
-    if (label === 'Office') return 'office';
-    if (label === 'Supervisor') return 'supervisor';
-    if (label === 'Disabled') return 'disabled';
-    if (label === 'Employee / Intake Only') return 'employee';
-    return 'foreman';
-  }
-
-  function accessRoleClass(profile = {}) {
-    const value = accessRoleValue(profile);
-    if (value === 'admin') return 'admin';
-    if (value === 'office') return 'office';
-    if (value === 'disabled') return 'disabled';
-    if (value === 'employee') return 'disabled';
-    return 'field';
   }
 
   async function loadUserAccessPanel(force = false) {
@@ -11145,10 +11002,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  function money(n) {
-    return new Intl.NumberFormat('en-US', { style:'currency', currency:'USD' }).format(Number(n || 0));
-  }
-
   //  UI HELPERS 
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -12977,38 +12830,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       'auth/request-timeout': 'Sign-in timed out. Check your connection and try again.'
     };
     return map[code] || 'Something went wrong. Please try again.';
-  }
-
-  function esc(str) {
-    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function safeFileUrl(url) {
-    const value = String(url || '').trim();
-    if (!value) return '#';
-    try {
-      const parsed = new URL(value, window.location.origin);
-      if (parsed.protocol === 'https:') return parsed.href;
-    } catch (e) {}
-    return '#';
-  }
-
-  function capitalize(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; }
-
-  function formatDate(iso) {
-    if (!iso) return '';
-    try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-    catch { return iso; }
-  }
-
-  function docIcon(name) {
-    if (!name) return '';
-    const ext = name.split('.').pop().toLowerCase();
-    if (['pdf'].includes(ext)) return '';
-    if (['doc','docx'].includes(ext)) return '';
-    if (['xls','xlsx'].includes(ext)) return '';
-    if (['jpg','jpeg','png','gif','webp'].includes(ext)) return '';
-    return '';
   }
 
   // Close modal on overlay click
