@@ -1482,19 +1482,29 @@
   </style>
 
 <script>
-  // PUBLIC_NEWHIRE_EARLY_VIEW_FORCE_2026_05_23
+  // PUBLIC_LINK_EARLY_VIEW_FORCE_2026_07_20
   (function(){
     var params = new URLSearchParams(window.location.search);
     var isPublicNewHire = params.get('newhire') || params.get('intake') || params.get('publicStart');
-    if (!isPublicNewHire) return;
+    var isPublicTicket = params.get('ticketProjectId') && params.get('ticketId') && params.get('ticketToken');
+    var isPublicSafety = params.get('safetyProjectId') && params.get('safetyFormId') && params.get('safetyToken');
+    if (!isPublicNewHire && !isPublicTicket && !isPublicSafety) return;
     document.addEventListener('DOMContentLoaded', function(){
       document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-      var pub = document.getElementById('view-public-newhire-intake');
+      var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : 'view-public-newhire-intake');
+      var pub = document.getElementById(viewId);
       if (pub) pub.classList.add('active');
+      var login = document.getElementById('view-login');
+      if (login) login.classList.remove('active');
       var status = document.getElementById('public-intake-status-card');
-      if (status && !status.dataset.publicHardFix) {
+      if (isPublicNewHire && status && !status.dataset.publicHardFix) {
         status.dataset.publicHardFix = '1';
         status.innerHTML = '<h3>PAL New Hire Packet</h3><p class="helper-text">Public employee packet opened. No office login required.</p>';
+      }
+      var ticketStatus = document.getElementById('public-ticket-status-card');
+      if (isPublicTicket && ticketStatus && !ticketStatus.dataset.publicHardFix) {
+        ticketStatus.dataset.publicHardFix = '1';
+        ticketStatus.innerHTML = '<h3>Opening Guest Ticket Signature</h3><p class="helper-text">No PAL account is required. This link only opens this ticket for review and signature.</p>';
       }
     });
   })();
@@ -1502,17 +1512,21 @@
 
 
 <script>
-  // LAPTOP_PUBLIC_NEWHIRE_ROUTE_FORCE_2026_05_23
+  // LAPTOP_PUBLIC_ROUTE_FORCE_2026_07_20
   (function(){
     var p = new URLSearchParams(window.location.search);
-    var isPublic = p.get('newhire') || p.get('intake') || p.get('publicStart') || p.get('noLogin');
+    var isPublicTicket = p.get('ticketProjectId') && p.get('ticketId') && p.get('ticketToken');
+    var isPublicSafety = p.get('safetyProjectId') && p.get('safetyFormId') && p.get('safetyToken');
+    var isPublicNewHire = p.get('newhire') || p.get('intake') || p.get('publicStart') || p.get('noLogin');
+    var isPublic = isPublicTicket || isPublicSafety || isPublicNewHire;
     if (!isPublic) return;
 
     // If this is a public route, never leave the login view active.
     function forcePublicView(){
       try {
         document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-        var pub = document.getElementById('view-public-newhire-intake');
+        var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : 'view-public-newhire-intake');
+        var pub = document.getElementById(viewId);
         if (pub) pub.classList.add('active');
         var login = document.getElementById('view-login');
         if (login) login.classList.remove('active');
@@ -1730,12 +1744,12 @@
   <div class="page-wrap">
     <div class="project-header-card">
       <h2>Extra Work Ticket Signature</h2>
-      <div class="meta">Review the ticket, sign, and submit back to PAL.</div>
+      <div class="meta">Guest access - no PAL account required. Review this ticket only, sign, and submit back to PAL.</div>
     </div>
 
     <div class="detail-card" id="public-ticket-status-card">
       <h3>Loading Ticket...</h3>
-      <p class="helper-text">Please wait while PAL Safety Hub loads the ticket for signature.</p>
+      <p class="helper-text">Please wait while PAL Safety Hub opens the guest signature page. No login is required.</p>
     </div>
 
     <div class="detail-card" id="public-ticket-review-card" style="display:none;">
@@ -10898,7 +10912,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const paper = document.getElementById('public-ticket-paper');
       if (paper) paper.innerHTML = ticketPaperHTML(currentPublicTicketSignature.ticket);
       const reviewCard = document.getElementById('public-ticket-review-card');
-      if (reviewCard) reviewCard.innerHTML = `<h3>Signature Submitted</h3><p class="helper-text">Thank you. This signed ticket has been sent back to PAL.</p>${ticketPaperHTML(currentPublicTicketSignature.ticket)}`;
+      if (reviewCard) reviewCard.innerHTML = `<h3>Signature Submitted</h3><p class="helper-text">Thank you. This signed ticket has been sent back to PAL. You can close this page.</p><div class="modal-actions"><button class="btn-secondary" type="button" onclick="window.close()">Close Page</button></div>${ticketPaperHTML(currentPublicTicketSignature.ticket)}`;
       toast('Signature submitted to PAL.');
     } catch(e) {
       console.error(e);

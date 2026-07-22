@@ -23,6 +23,10 @@
   <style>
     :root {
       --navy: #1b3a5c;
+      --pal-brand-blue: var(--navy);
+      --pal-brand-blue-dark: #14304d;
+      --pal-brand-green: #76b900;
+      --pal-brand-green-dark: #639c00;
       --green-accent: #78c240;
       --bg: #f4f6f8;
       --card: #ffffff;
@@ -62,12 +66,32 @@
       padding: 10px 12px; background: white; border-bottom: 1px solid var(--line);
     }
     .tab {
-      border: 0; background: white; color: #475569; padding: 10px 14px; border-radius: 10px; cursor: pointer;
-      border-bottom: 3px solid transparent; font-weight: 600;
+      border: 1px solid transparent; background: white; color: var(--navy); padding: 10px 14px; border-radius: 10px; cursor: pointer;
+      border-bottom: 3px solid transparent; font-weight: 700;
+      transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
     }
-    .tab.active { color: var(--navy); border-bottom-color: var(--green-accent); }
-    .tab.foreman { background: var(--navy); color: var(--green-accent); }
+    .tab:hover, .tab:focus-visible {
+      background: var(--pal-brand-green);
+      color: white;
+      outline: 2px solid transparent;
+    }
+    .tab.active {
+      background: var(--pal-brand-green);
+      color: white;
+      border-color: var(--pal-brand-green);
+      border-bottom-color: var(--pal-brand-green-dark);
+      box-shadow: 0 3px 10px rgba(118,185,0,.18);
+    }
+    .tab.active:hover, .tab.active:focus-visible { color: white; background: var(--pal-brand-green-dark); }
+    .tab.foreman { background: white; color: var(--navy); }
     .tab.foreman.active { border-bottom-color: var(--green-accent); }
+    .tab.primary-action,
+    .tab.protected-action { background: white; color: var(--navy); font-weight: 900; }
+    .tab.primary-action:hover,
+    .tab.protected-action:hover,
+    .tab.primary-action:focus-visible,
+    .tab.protected-action:focus-visible { background: var(--pal-brand-green-dark); color: white; }
+    body.home-view .tabs { display: none; }
     .page-wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px 92px; }
     .page { display: none; }
     .page.active { display: block; }
@@ -96,9 +120,15 @@
     .kit-section-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; margin: 24px 0 12px; color: var(--navy); }
     .kit-card {
       background: white; border: 1px solid var(--line); border-left: 6px solid var(--green-accent); border-radius: 16px; padding: 16px; cursor: pointer;
-      transition: transform .15s ease, box-shadow .15s ease;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease, box-shadow .15s ease;
     }
-    .kit-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
+    .kit-card:hover, .kit-card:focus-visible {
+      background: #f5faed;
+      border-color: var(--pal-brand-green);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(16,24,40,.08);
+      outline: 2px solid transparent;
+    }
     .kit-card.green { border-left-color: var(--green); }
     .kit-card.orange { border-left-color: var(--orange); }
     .kit-card.red { border-left-color: var(--red); }
@@ -206,9 +236,19 @@
     .pill { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #eef2f7; color: var(--navy); font-size: 12px; font-weight: 700; }
     .save-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
     .toolbox-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
-    .topic-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 16px; cursor: pointer; }
+    .topic-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 16px; cursor: pointer; transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+    .topic-card:hover, .topic-card:focus-visible {
+      background: var(--pal-brand-green);
+      border-color: var(--pal-brand-green-dark);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(16,24,40,.12);
+      outline: 2px solid transparent;
+    }
     .topic-card small { color: var(--muted); display: block; margin-bottom: 6px; }
     .topic-card strong { color: var(--navy); }
+    .topic-card:hover small, .topic-card:hover strong,
+    .topic-card:focus-visible small, .topic-card:focus-visible strong { color: white; }
     .talk-section { border-left: 5px solid var(--green-accent); }
     .cloud-panel {
       background: linear-gradient(180deg, #f7fbff, #eef5fb);
@@ -339,47 +379,70 @@
       .scaffold-table td, .scaffold-table th { padding: 6px 8px; }
       .scaffold-table .yn-cell label { margin: 0 2px; font-size: 9px; }
     }
-    /* Home dashboard patch â€” left-aligned Foreman's Kit menu + fireproofing image */
+    /* PAL branded home dashboard */
     #cover .home-dashboard {
       display: grid;
-      grid-template-columns: minmax(260px, 0.9fr) minmax(280px, 1.1fr);
       gap: 18px;
-      align-items: stretch;
     }
     #cover .home-panel {
-      background: linear-gradient(145deg, var(--navy), #254d78);
+      background: var(--navy);
       color: white;
-      border-radius: 22px;
+      border-radius: 8px;
       padding: 24px;
-      box-shadow: 0 12px 30px rgba(26,39,68,.2);
+      box-shadow: 0 12px 30px rgba(0,91,132,.2);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 460px;
+      min-height: auto;
     }
     #cover .home-panel h2 { margin: 0 0 8px; font-size: 30px; line-height: 1.05; }
     #cover .home-panel p { margin: 0; color: rgba(255,255,255,.86); line-height: 1.55; font-size: 14px; }
-    #cover .home-menu { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 22px; width: 100%; }
-    #cover .home-menu button {
-      width: 100%; text-align: left; border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.1); color: white; border-radius: 14px; padding: 13px 14px;
-      font: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    #cover .home-menu {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+      width: 100%;
     }
-    #cover .home-menu button:hover { background: var(--green-accent); color: var(--navy); }
+    #cover .home-menu button {
+      width: 100%; min-height: 74px; text-align: left; border: 1px solid #d7e2ea;
+      background: white; color: var(--pal-brand-blue); border-radius: 8px; padding: 14px;
+      font: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+      display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 8px;
+      transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    #cover .home-menu button small {
+      color: #506575;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+    #cover .home-menu button:hover,
+    #cover .home-menu button:focus-visible {
+      background: var(--pal-brand-green);
+      color: white;
+      border-color: var(--pal-brand-green-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(0,0,0,.16);
+      outline: 2px solid transparent;
+    }
+    #cover .home-menu button:hover small,
+    #cover .home-menu button:focus-visible small {
+      color: white;
+    }
     #cover .home-menu .arrow { opacity: .75; font-size: 18px; }
     #cover .home-visual {
-      border-radius: 22px; overflow: hidden; min-height: 460px; background: #dbe7ef;
+      border-radius: 8px; overflow: hidden; min-height: 260px; background: #dbe7ef;
       border: 1px solid var(--line); box-shadow: 0 12px 30px rgba(26,39,68,.16); position: relative;
     }
-    #cover .home-visual img { width: 100%; height: 100%; min-height: 460px; object-fit: cover; display: block; }
+    #cover .home-visual img { width: 100%; height: 100%; min-height: 260px; object-fit: cover; display: block; }
     #cover .home-visual-label {
       position: absolute; left: 14px; bottom: 14px; background: rgba(27,58,92,.92); color: white;
-      border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: 800;
+      border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 800;
     }
     #cover .home-company-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 18px; }
     @media (max-width: 760px) {
-      #cover .home-dashboard { grid-template-columns: 1fr; }
+      #cover .home-menu { grid-template-columns: 1fr; }
       #cover .home-panel, #cover .home-visual, #cover .home-visual img { min-height: auto; }
       #cover .home-visual img { aspect-ratio: 4 / 3; }
       #cover .home-company-grid { grid-template-columns: 1fr; }
@@ -619,7 +682,9 @@
     .clean-checklist-section h3{margin:0 0 6px;color:var(--navy);font-size:18px}
     .clean-checklist-section p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
     .clean-checklist-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .clean-checklist-btn{display:block;width:100%;border:1px solid var(--line);border-left:5px solid #16a34a;background:#f8fafc;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font:inherit;color:var(--text);min-height:80px}
+    .clean-checklist-btn{display:block;width:100%;border:1px solid var(--line);border-left:5px solid #16a34a;background:#f8fafc;border-radius:16px;padding:14px;text-align:left;cursor:pointer;font:inherit;color:var(--text);min-height:80px;transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .clean-checklist-btn:hover,.clean-checklist-btn:focus-visible{background:var(--pal-brand-green);border-color:var(--pal-brand-green-dark);color:white;transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,24,40,.12);outline:2px solid transparent}
+    .clean-checklist-btn:hover strong,.clean-checklist-btn:hover small,.clean-checklist-btn:focus-visible strong,.clean-checklist-btn:focus-visible small{color:white}
     .clean-checklist-btn strong{display:block;color:var(--navy);font-size:15px;margin-bottom:4px}
     .clean-checklist-btn small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
     .clean-checklist-btn.soon{border-left-color:#d97706}
@@ -1023,7 +1088,7 @@
   };
 </script>
 </head>
-<body>
+<body class="home-view">
   <div class="pal-modal-overlay" id="pal-modal-overlay" role="dialog" aria-modal="true">
     <div class="pal-modal-box">
       <h3 id="pal-modal-title">PAL Safety Hub</h3>
@@ -1081,17 +1146,18 @@
       <div class="home-dashboard">
         <div class="home-panel">
           <div>
-            <h2 data-en="PAL Safety Hub" data-es="Centro de Seguridad PAL" data-pl="Centrum Bezpieczenstwa PAL">PAL Safety Hub</h2>
-            <p data-en="Quick access to PAL safety checklists, toolbox talks, policies, and new-hire orientation. Office, supervisor, and project tools stay protected behind sign-in." data-es="Acceso rapido a listas de seguridad, charlas, politicas y orientacion de nuevos empleados de PAL. Las herramientas de oficina, supervision y proyectos permanecen protegidas con inicio de sesion." data-pl="Szybki dostep do list kontrolnych PAL, odpraw BHP, zasad i orientacji nowych pracownikow. Narzedzia biura, nadzoru i projektow pozostaja chronione logowaniem.">Quick access to PAL safety checklists, toolbox talks, policies, and new-hire orientation. Office, supervisor, and project tools stay protected behind sign-in.</p>
+            <h2 data-en="PAL Safety Hub & Jobsite Resources" data-es="Centro de Seguridad PAL y Recursos de Obra" data-pl="Centrum Bezpieczenstwa PAL i Zasoby Budowy">PAL Safety Hub &amp; Jobsite Resources</h2>
+            <p data-en="Quick access to PAL new hire orientation, checklists, toolbox talks, field documents, and project resources. Office, supervisor, and project tools stay protected behind sign-in." data-es="Acceso rapido a orientacion de nuevos empleados, listas de seguridad, charlas, documentos de campo y recursos de proyectos de PAL. Las herramientas de oficina, supervision y proyectos permanecen protegidas con inicio de sesion." data-pl="Szybki dostep do orientacji nowych pracownikow PAL, list kontrolnych, odpraw BHP, dokumentow terenowych i zasobow projektowych. Narzedzia biura, nadzoru i projektow pozostaja chronione logowaniem.">Quick access to PAL new hire orientation, checklists, toolbox talks, field documents, and project resources. Office, supervisor, and project tools stay protected behind sign-in.</p>
             <div class="home-menu" aria-label="Home Navigation">
-              <button onclick="startPublicNewHireIntake()"><span>New Hire Orientation</span><span class="arrow">&gt;</span></button>
-              <button onclick="showPage('employee-safety')"><span>Checklists and Field Forms</span><span class="arrow">&gt;</span></button>
-              <button onclick="showPage('toolbox-talks')"><span>Toolbox Talks</span><span class="arrow">&gt;</span></button>
-              <button onclick="showPage('pal-policies')"><span>PAL Policies</span><span class="arrow">&gt;</span></button>
-              <button onclick="window.location.href='projects.html'"><span>Office / Supervisor Login</span><span class="arrow">&gt;</span></button>
+              <button onclick="startPublicNewHireIntake()"><span data-en="New Hire Orientation" data-es="Orientacion de Nuevo Empleado" data-pl="Orientacja Nowego Pracownika">New Hire Orientation</span><small data-en="Start or continue packet" data-es="Iniciar o continuar paquete" data-pl="Rozpocznij lub kontynuuj pakiet">Start or continue packet</small><span class="arrow">&gt;</span></button>
+              <button onclick="showPage('employee-safety')"><span data-en="Safety Checklists" data-es="Listas de Seguridad" data-pl="Listy Kontrolne BHP">Safety Checklists</span><small data-en="Open blank field forms" data-es="Abrir formularios en blanco" data-pl="Otworz puste formularze terenowe">Open blank field forms</small><span class="arrow">&gt;</span></button>
+              <button onclick="showPage('toolbox-talks')"><span data-en="Toolbox Talks" data-es="Charlas de Seguridad" data-pl="Rozmowy BHP">Toolbox Talks</span><small data-en="Review safety topics" data-es="Revisar temas de seguridad" data-pl="Przegladaj tematy BHP">Review safety topics</small><span class="arrow">&gt;</span></button>
+              <button onclick="window.location.href='projects.html'"><span data-en="Project Access" data-es="Acceso a Proyectos" data-pl="Dostep do Projektow">Project Access</span><small data-en="Foreman / office login" data-es="Ingreso de capataz / oficina" data-pl="Logowanie brygadzisty / biura">Foreman / office login</small><span class="arrow">&gt;</span></button>
+              <button onclick="showPage('pal-policies')"><span data-en="Document Library" data-es="Biblioteca de Documentos" data-pl="Biblioteka Dokumentow">Document Library</span><small data-en="PAL forms and policies" data-es="Formularios y politicas PAL" data-pl="Formularze i zasady PAL">PAL forms and policies</small><span class="arrow">&gt;</span></button>
+              <button onclick="openHomeHelp()"><span data-en="Help" data-es="Ayuda" data-pl="Pomoc">Help</span><small data-en="Guided support" data-es="Soporte guiado" data-pl="Wsparcie krok po kroku">Guided support</small><span class="arrow">&gt;</span></button>
             </div>
           </div>
-          <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
+          <div data-en="PAL Environmental Services | Employee Safety | New Hire Orientation | Protected Office Tools" data-es="PAL Environmental Services | Seguridad de Empleados | Orientacion de Nuevos Empleados | Herramientas Protegidas de Oficina" data-pl="PAL Environmental Services | Bezpieczenstwo Pracownikow | Orientacja Nowych Pracownikow | Chronione Narzedzia Biura" style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.72);line-height:1.45;">
             PAL Environmental Services | Employee Safety | New Hire Orientation | Protected Office Tools
           </div>
         </div>
@@ -3220,7 +3286,7 @@
     const navTabs = [
       ['cover', { en: 'Home', es: 'Inicio', pl: 'Start' }],
       ['new-hire-public-link', { en: 'New Hire Orientation', es: 'Orientacion Nuevo Empleado', pl: 'Orientacja Nowego Pracownika' }],
-      ['employee-safety', { en: 'Checklists', es: 'Listas de Seguridad', pl: 'Listy Kontrolne' }, true],
+      ['employee-safety', { en: 'Checklists', es: 'Listas de Seguridad', pl: 'Listy Kontrolne' }],
       ['toolbox-talks', { en: 'Toolbox Talks', es: 'Charlas de Seguridad', pl: 'Odprawy BHP' }],
       ['pal-policies', { en: 'PAL Policies', es: 'Politicas PAL', pl: 'Zasady PAL' }],
       ['projects-link', { en: 'Office Login', es: 'Acceso Oficina', pl: 'Logowanie Biura' }]
@@ -3332,6 +3398,74 @@
         savePrint: 'Zapisz i Drukuj'
       }
     };
+    const toolboxUi = {
+      en: {
+        categoryTitles: ['Safety Mindset', 'Reporting & Response', 'Body & Physical Health', 'Falls & Elevated Work', 'Hazards & Equipment', 'Housekeeping & Materials'],
+        intro: 'Choose a topic to view the full talk and access the sign-in sheet.',
+        overview: 'Overview',
+        guide: 'Guide for Discussion',
+        remember: 'Remember',
+        back: 'Back',
+        signIn: 'Attendee Sign-In',
+        date: 'Date',
+        job: 'Job / Project',
+        jobNo: 'PAL Job No.',
+        conductedBy: 'Conducted By',
+        printName: 'Print Name',
+        signature: 'Signature',
+        addCrew: '+ Add Crew Row',
+        supervisorName: 'Supervisor / Foreman Printed Name',
+        supervisorSignature: 'Supervisor Signature',
+        submitProject: 'Submit to Project',
+        print: 'Print',
+        printPdf: 'Print / PDF',
+        saveFiles: 'Save to Files'
+      },
+      es: {
+        categoryTitles: ['Mentalidad de Seguridad', 'Reporte y Respuesta', 'Salud Fisica', 'Caidas y Trabajo Elevado', 'Peligros y Equipo', 'Orden y Materiales'],
+        intro: 'Elija un tema para ver la charla completa y usar la hoja de firmas.',
+        overview: 'Resumen',
+        guide: 'Guia para la Discusion',
+        remember: 'Recordatorio',
+        back: 'Volver',
+        signIn: 'Registro de Asistencia',
+        date: 'Fecha',
+        job: 'Trabajo / Proyecto',
+        jobNo: 'Numero de Trabajo PAL',
+        conductedBy: 'Dirigido Por',
+        printName: 'Nombre en Letra de Molde',
+        signature: 'Firma',
+        addCrew: '+ Agregar Fila',
+        supervisorName: 'Nombre del Supervisor / Capataz',
+        supervisorSignature: 'Firma del Supervisor',
+        submitProject: 'Enviar al Proyecto',
+        print: 'Imprimir',
+        printPdf: 'Imprimir / PDF',
+        saveFiles: 'Guardar en Archivos'
+      },
+      pl: {
+        categoryTitles: ['Nastawienie BHP', 'Zglaszanie i Reakcja', 'Zdrowie Fizyczne', 'Upadki i Praca na Wysokosci', 'Zagrozenia i Sprzet', 'Porzadek i Materialy'],
+        intro: 'Wybierz temat, aby zobaczyc pelna odprawe i uzyc listy podpisow.',
+        overview: 'Przeglad',
+        guide: 'Przewodnik do Omowienia',
+        remember: 'Pamietaj',
+        back: 'Powrot',
+        signIn: 'Lista Obecnosci',
+        date: 'Data',
+        job: 'Praca / Projekt',
+        jobNo: 'Nr Pracy PAL',
+        conductedBy: 'Prowadzacy',
+        printName: 'Imie i Nazwisko',
+        signature: 'Podpis',
+        addCrew: '+ Dodaj Wiersz',
+        supervisorName: 'Imie i Nazwisko Brygadzisty / Nadzoru',
+        supervisorSignature: 'Podpis Nadzoru',
+        submitProject: 'Wyslij do Projektu',
+        print: 'Drukuj',
+        printPdf: 'Drukuj / PDF',
+        saveFiles: 'Zapisz do Plikow'
+      }
+    };
     const talkData = {
       whose: { title: 'Whose Responsibility Is It?', page: 'p.6', overview: 'After an accident occurs, it is common to hear someone say it was somebody else\'s fault. Safety only works when responsibility is shared by everyone on the job.', guide: 'Responsibility belongs to management, supervisors, each worker, safety staff, and the company as a whole. If it is unsafe for you, it is unsafe for the next person too. Correct hazards, report them, and remember your responsibility to yourself, your family, your co-workers, and your company.', remember: 'Without cooperation from everyone on the worksite, the job will never be as safe as it should be.' },
       deadly: { title: 'The Deadly Dozen', page: 'p.7', overview: 'Every accident comes from an unsafe act or unsafe condition. Knowing the common causes helps crews recognize and stop hazards before someone gets hurt.', guide: 'Unsafe acts include using defective tools, working too fast, lifting wrong, failing to use PPE, and standing in dangerous positions. Unsafe conditions include poor housekeeping, poor lighting, fire hazards, lack of guards, inadequate warning systems, and improper storage.', remember: 'Be alert to the conditions on the job. Identify them, report them, and correct them.' },
@@ -3359,17 +3493,76 @@
       confined_space_talk: { title: 'Confined Space Awareness', page: 'Field', overview: 'Confined spaces kill multiple workers every year â€” often because rescuers enter without equipment and become victims themselves.', guide: 'Never enter a permit-required confined space without a written permit, atmospheric testing, and a trained attendant outside. Test for oxygen (19.5â€“23.5%), flammable gas (below 10% LEL), and toxic gases before and during entry. If the alarm sounds, exit immediately. Do NOT enter to rescue â€” call 911.', remember: 'If someone collapses inside a confined space, do NOT go in after them. Call 911.' },
       fall_protection_talk: { title: 'Fall Protection Awareness', page: 'Field', overview: 'Falls are the number one killer in construction. At PAL, fall protection is required at 6 feet or greater â€” no exceptions.', guide: 'Know your options: guardrails, personal fall arrest systems, safety nets. Inspect your harness before every use. Anchor points must be rated 5,000 lbs. Tie off before you reach the edge â€” not after. Guardrails must be 42 inches high and withstand 200 lbs of force.', remember: 'One second of inattention at height can end your career or your life. Tie off every time.' }
     };
+    const talkTranslations = {
+      es: {
+        whose: { title: 'De Quien Es la Responsabilidad?', overview: 'Despues de un accidente, muchas veces alguien dice que fue culpa de otra persona. La seguridad solo funciona cuando todos en el trabajo comparten la responsabilidad.', guide: 'La responsabilidad pertenece a la gerencia, supervisores, cada trabajador, el personal de seguridad y la compania. Si algo no es seguro para usted, tampoco es seguro para el proximo trabajador. Corrija los peligros, reportelos y recuerde su responsabilidad con usted, su familia, sus companeros y la compania.', remember: 'Sin cooperacion de todos en la obra, el trabajo nunca sera tan seguro como debe ser.' },
+        deadly: { title: 'Los Doce Peligros Principales', overview: 'Todo accidente viene de un acto inseguro o una condicion insegura. Conocer las causas comunes ayuda a detener peligros antes de que alguien se lastime.', guide: 'Los actos inseguros incluyen usar herramientas defectuosas, trabajar demasiado rapido, levantar mal, no usar EPP y pararse en posiciones peligrosas. Las condiciones inseguras incluyen mala limpieza, poca luz, peligro de incendio, falta de guardas, advertencias inadecuadas y almacenamiento incorrecto.', remember: 'Este alerta a las condiciones del trabajo. Identifiquelas, reportelas y corrijalas.' },
+        unsafe: { title: 'Reconocer Condiciones Inseguras', overview: 'Reconocer condiciones inseguras es responsabilidad de todos, no solamente de la gerencia o del comite de seguridad.', guide: 'Las causas comunes incluyen mala limpieza, almacenamiento incorrecto, herramientas defectuosas, guardas faltantes, falta de EPP, clima, falta de entrenamiento y no seguir instrucciones. Si es seguro corregirlo, corrijalo. Si no, reportelo y de seguimiento.', remember: 'Corrijalo, reportelo y dele seguimiento.' },
+        shop: { title: 'Seguridad en el Taller', overview: 'El taller y el patio pueden ser tan peligrosos como la obra. Las lesiones ocurren cuando la gente baja la guardia en un lugar conocido.', guide: 'Mantenga el taller limpio y organizado. Guarde materiales en areas designadas. Use tecnicas correctas para levantar. No opere equipo sin entrenamiento. Mantenga pasillos libres. Use EPP en el taller y reporte equipo danado de inmediato.', remember: 'La familiaridad crea confianza excesiva. Mantengase alerta en el taller igual que en la obra.' },
+        accident_cost: { title: 'Cuanto Cuesta un Accidente?', overview: 'Los accidentes cuestan mucho mas de lo que parece. Los costos visibles son solo el comienzo; los costos ocultos pueden ser muchas veces mayores.', guide: 'Los costos directos incluyen gastos medicos, compensacion laboral y dano a equipo. Los indirectos incluyen perdida de produccion, entrenar reemplazos, investigacion, aumento de seguro y baja moral. Un accidente serio puede costar mucho dinero y ninguna cantidad compensa una lesion grave.', remember: 'El mejor accidente es el que nunca ocurre. Prevenir siempre cuesta menos que el accidente.' },
+        near_miss: { title: 'Casi Accidentes', overview: 'Un casi accidente es un evento no planeado que no causo lesion, pero pudo haberlo hecho. Es una advertencia.', guide: 'Todo casi accidente debe reportarse al supervisor inmediatamente. No lo minimice ni se vaya. Investigue la causa, corrija el peligro y comparta la leccion con la cuadrilla. Reportar no es para culpar; es para prevenir.', remember: 'Un casi accidente hoy puede ser un accidente serio manana. Reportelo siempre.' },
+        care_injured: { title: 'Atencion al Lesionado', overview: 'La respuesta en los primeros minutos despues de un accidente puede cambiar el resultado. Sepa que hacer antes de que ocurra.', guide: 'Mantenga la calma. No mueva al trabajador lesionado salvo peligro inmediato. Llame al 911 si es serio. Avise al supervisor. Mantenga a la persona comoda y abrigada. No de comida ni agua. Solo personal entrenado debe dar primeros auxilios. Si hubo quimicos, lleve la SDS al hospital.', remember: 'Llame a Richardo Blake (347-844-0476) inmediatamente despues de cualquier lesion en una obra PAL.' },
+        avoidable: { title: 'Los Accidentes Se Pueden Evitar', overview: 'La mayoria de los accidentes no solo pasan; son causados. Si son causados, se pueden prevenir.', guide: 'La raiz suele ser un acto inseguro, una condicion insegura o ambos. Los actos inseguros incluyen atajos, prisa, ignorar el EPP y mal juicio. Las condiciones inseguras incluyen mala limpieza, equipo defectuoso y protecciones inadecuadas. Tome el tiempo para hacerlo bien.', remember: 'No hay tarea tan urgente que no pueda hacerse de manera segura.' },
+        listening: { title: 'Seguridad Auditiva', overview: 'La perdida de audicion por ruido es permanente y acumulativa. Cuando la nota, el dano ya puede ser grande.', guide: 'Use proteccion auditiva cuando haya ruido fuerte: esmeriles, martillos, equipo pesado o sierras. Si tiene que levantar la voz para hablar con alguien cerca, necesita proteccion auditiva. Quitela solo cuando este fuera del ruido.', remember: 'Su audicion no vuelve a crecer. Protejala todos los dias.' },
+        incident_reporting: { title: 'Reporte de Accidentes / Incidentes', overview: 'Todo accidente, lesion, casi accidente y condicion insegura debe reportarse de inmediato. No reportar viola la politica PAL.', guide: 'Reporte al supervisor inmediatamente. Complete el Reporte de Incidente PAL dentro de 24 horas. Preserve la escena y obtenga informacion de testigos. Si necesita atencion medica, avise antes de irse. Los reportes mejoran la seguridad, no son para castigar.', remember: 'Reportelo. Siempre. Sin excepciones.' },
+        common_sense: { title: 'La Seguridad Es Sentido Comun', overview: 'Muchas reglas de seguridad son sentido comun aplicado todos los dias. El reto es mantener la disciplina.', guide: 'Piense antes de actuar. Preguntese: Es esta la manera mas segura? Tengo el EPP correcto? El area esta libre? Estoy entrenado? El equipo esta bien? Si la respuesta es no, detengase y arreglelo primero.', remember: 'Si algo no se siente bien, probablemente no lo esta. Hable.' },
+        keeping_shape: { title: 'Mantenerse en Forma', overview: 'La construccion es trabajo fisico. Un trabajador cansado o que no se cuida tiene mas riesgo de lesion.', guide: 'Duerma lo suficiente. Mantengase hidratado, especialmente con calor. Coma bien antes y durante el turno. Estire antes del trabajo fisico. Tome descansos programados. Conozca sus limites y avise si esta enfermo, con dolor o agotado.', remember: 'Su cuerpo es su herramienta mas importante. Cuidelo.' },
+        warming_up: { title: 'Calentamiento', overview: 'Musculos frios y articulaciones rigidas se lesionan mas facil. Dos minutos de calentamiento pueden evitar dias perdidos.', guide: 'Antes de empezar, haga estiramientos ligeros de espalda, piernas, hombros y munecas. Mueva el cuello suavemente. Haga circulos con brazos y hombros. Empiece las primeras tareas a ritmo moderado, especialmente en la manana o despues de un descanso.', remember: 'Dos minutos de estiramiento pueden prevenir semanas de recuperacion.' },
+        lifting: { title: 'Levantar Correctamente', overview: 'Las lesiones de espalda se acumulan. Levantar mal muchas veces causa una lesion grande con el tiempo.', guide: 'Piense antes de levantar. Pida ayuda si hace falta. Mantenga la carga cerca del cuerpo, doble las piernas, mantenga la espalda recta y no gire mientras carga. Use ayudas mecanicas cuando esten disponibles.', remember: 'Su espalda no reemplaza a un montacargas.' },
+        ladders: { title: 'Escaleras', overview: 'Las caidas de escaleras son una de las causas mas comunes de lesiones en construccion.', guide: 'Use la escalera correcta. Inspeccionela antes de usar. Coloquela en base firme. Asegure la parte superior. Mantenga areas libres arriba y abajo. No suba con herramientas en las manos. Mire hacia la escalera y mantenga tres puntos de contacto.', remember: 'Cuando esta en una escalera, puede caer. Usela con seguridad siempre.' },
+        pfas: { title: 'Arneses / Lineas de Vida (PFAS)', overview: 'Arnes, conector, linea de vida y anclaje trabajan juntos como sistema personal de detencion de caidas.', guide: 'Inspeccione todo equipo de proteccion contra caidas antes de usar. Use solo equipo certificado. El anclaje debe ser de 5,000 lb. No modifique el equipo. Retire equipo danado. Todo arnes que detuvo una caida debe retirarse de servicio.', remember: 'Protejase contra caidas. La vida que salva puede ser la suya.' },
+        housekeeping: { title: 'Orden y Limpieza', overview: 'Buen orden mejora seguridad, moral y productividad en cada obra.', guide: 'Mantenga basura y escombros en pilas ordenadas, retire desperdicios, mantenga pasillos libres, guarde materiales en areas designadas y mantenga cables fuera de las rutas de paso. Esto previene cortes, tropiezos, caidas e incendios.', remember: 'El buen orden ayuda a todos y hace el trabajo mas seguro.' },
+        nails: { title: 'Los Clavos Tambien Son Peligrosos', overview: 'Punciones, raspaduras y cortes por clavos son lesiones comunes en la obra.', guide: 'Use el martillo y herramientas correctas. Golpee los clavos de frente. Saque o doble clavos al desmontar. Mantenga madera con clavos fuera de pasillos. Nunca deje tablas con clavos expuestos donde alguien pueda pisarlas.', remember: 'Trate los clavos con respeto o pueden lastimarlo rapido.' },
+        heat_stress: { title: 'Estres por Calor', overview: 'Trabajar con calor puede causar enfermedad grave o fatal rapidamente.', guide: 'Tome agua cada 15 a 20 minutos, no espere a tener sed. Descanse en sombra. Conozca signos de agotamiento por calor: sudor excesivo, debilidad, piel fria, nausea. Golpe de calor es emergencia: confusion, pulso rapido, piel caliente o seca; llame al 911.', remember: 'Agua. Descanso. Sombra. En ese orden.' },
+        cold_weather: { title: 'Seguridad en Clima Frio', overview: 'El frio crea peligros faciles de subestimar. Hipotermia, congelacion y superficies resbalosas pueden aparecer rapido.', guide: 'Vista en capas. Cubra manos, cabeza y pies. Mantengase seco. Revise hielo en superficies, escaleras y andamios. Tome descansos para calentarse. Conozca signos de hipotermia: temblores, habla lenta, torpeza y confusion.', remember: 'El frio exige mas vigilancia. Vaya despacio y mire donde pisa.' },
+        ppe_talk: { title: 'Equipo de Proteccion Personal', overview: 'El EPP es la ultima defensa. Usarlo correctamente no es opcional en PAL.', guide: 'Minimo PAL: casco, lentes de seguridad ANSI Z87+, chaleco de alta visibilidad, botas y guantes. Inspeccione el EPP antes de usar. EPP danado debe reemplazarse. Agregue EPP especifico segun el peligro: respirador, arnes, careta. Negarse a usar EPP puede causar retiro de la obra.', remember: 'El EPP solo funciona si lo usa. Usarlo mal casi es igual a no usarlo.' },
+        electrical_talk: { title: 'Peligros Electricos', overview: 'La electricidad puede matar al instante. En construccion, los peligros electricos estan en todas partes.', guide: 'Use siempre GFCI en energia temporal y pruebe al inicio del turno. Inspeccione extensiones: sin aislamiento danado ni empalmes. Nunca trabaje cerca de lineas aereas sin confirmar distancia. Asuma que todas las lineas estan energizadas. No use escaleras metalicas cerca de electricidad.', remember: 'La electricidad no da segundas oportunidades. Trate cada cable como energizado.' },
+        silica_talk: { title: 'Conciencia Sobre Polvo de Silice', overview: 'El polvo de silice es invisible y puede causar silicosis, una enfermedad pulmonar incurable y fatal.', guide: 'Nunca corte, perfore o esmerile concreto en seco sin controles. Use agua o aspiradora HEPA. Use minimo N95; una mascarilla de papel no protege. Nunca barra polvo de silice en seco. Lavese manos y cara antes de comer o salir.', remember: 'No se siente la silice entrando al pulmon. Cuando hay sintomas, el dano ya puede ser serio.' },
+        confined_space_talk: { title: 'Espacios Confinados', overview: 'Los espacios confinados matan trabajadores cada ano, muchas veces porque rescatistas entran sin equipo.', guide: 'Nunca entre a un espacio confinado con permiso requerido sin permiso escrito, prueba atmosferica y un asistente entrenado afuera. Pruebe oxigeno, gases inflamables y gases toxicos antes y durante la entrada. Si suena la alarma, salga. No entre a rescatar; llame al 911.', remember: 'Si alguien cae dentro de un espacio confinado, no entre. Llame al 911.' },
+        fall_protection_talk: { title: 'Proteccion Contra Caidas', overview: 'Las caidas son una causa principal de muerte en construccion. En PAL, se requiere proteccion contra caidas a 6 pies o mas.', guide: 'Conozca sus opciones: barandas, sistemas personales de detencion de caidas y redes. Inspeccione el arnes antes de cada uso. Los anclajes deben ser de 5,000 lb. Asegurese antes de llegar al borde. Las barandas deben medir 42 pulgadas y resistir 200 lb.', remember: 'Un segundo de descuido en altura puede cambiar su vida. Asegurese siempre.' }
+      },
+      pl: {
+        whose: { title: 'Czyja To Odpowiedzialnosc?', overview: 'Po wypadku czesto ktos mowi, ze to byla wina kogos innego. Bezpieczenstwo dziala tylko wtedy, gdy kazdy na budowie bierze odpowiedzialnosc.', guide: 'Odpowiedzialnosc ma kierownictwo, nadzor, kazdy pracownik, dzial BHP i cala firma. Jesli cos jest niebezpieczne dla ciebie, jest tez niebezpieczne dla nastepnej osoby. Popraw zagrozenia, zglaszaj je i pamietaj o odpowiedzialnosci wobec siebie, rodziny, wspolpracownikow i firmy.', remember: 'Bez wspolpracy wszystkich budowa nigdy nie bedzie tak bezpieczna, jak powinna.' },
+        deadly: { title: 'Dwunastka Najwiekszych Zagrozen', overview: 'Kazdy wypadek wynika z niebezpiecznego zachowania lub niebezpiecznego stanu. Znajomosc przyczyn pomaga zatrzymac zagrozenia.', guide: 'Niebezpieczne zachowania to wadliwe narzedzia, praca zbyt szybko, zle podnoszenie, brak PPE i stanie w zlym miejscu. Niebezpieczne warunki to balagan, slabe oswietlenie, zagrozenia pozarowe, brak oslon, slabe ostrzezenia i zle skladowanie.', remember: 'Obserwuj warunki pracy. Rozpoznaj, zglos i popraw.' },
+        unsafe: { title: 'Rozpoznawanie Niebezpiecznych Warunkow', overview: 'Rozpoznawanie zagrozen to odpowiedzialnosc kazdego, nie tylko kierownictwa lub komisji BHP.', guide: 'Typowe przyczyny to balagan, zle skladowanie, wadliwe narzedzia, brak oslon, brak PPE, pogoda, brak szkolenia i niestosowanie instrukcji. Jesli mozesz bezpiecznie poprawic, popraw. Jesli nie, zglos i dopilnuj.', remember: 'Popraw, zglos i dopilnuj.' },
+        shop: { title: 'Bezpieczenstwo w Warsztacie', overview: 'Warsztat i plac sa tak samo niebezpieczne jak budowa. Urazy zdarzaja sie, gdy ludzie traca czujnosc.', guide: 'Utrzymuj warsztat w czystosci. Skladuj materialy w wyznaczonych miejscach. Podnos prawidlowo. Nie obsluguj sprzetu bez szkolenia. Utrzymuj przejscia wolne. Nos PPE i zglaszaj uszkodzony sprzet.', remember: 'Znane miejsce moze uspic czujnosc. Badz uwazny w warsztacie jak na budowie.' },
+        accident_cost: { title: 'Ile Kosztuje Wypadek?', overview: 'Wypadki kosztuja duzo wiecej, niz widac. Widoczne koszty to tylko poczatek.', guide: 'Koszty bezposrednie to leczenie, odszkodowania i uszkodzony sprzet. Koszty ukryte to utrata produkcji, szkolenie zastepstwa, dochodzenie, wyzsze ubezpieczenie i gorsze morale. Jeden powazny wypadek moze kosztowac bardzo duzo, a pieniadze nie cofna urazu.', remember: 'Najlepszy wypadek to ten, ktory sie nie wydarzy. Zapobieganie zawsze kosztuje mniej.' },
+        near_miss: { title: 'Zdarzenia Potencjalnie Wypadkowe', overview: 'Near miss to zdarzenie bez urazu, ale z potencjalem urazu. To ostrzezenie.', guide: 'Kazde takie zdarzenie zglos natychmiast supervisorowi. Nie lekcewaz. Sprawdz przyczyne, popraw zagrozenie i podziel sie lekcja z zaloga. Zglaszanie nie jest obwinianiem; chodzi o zapobieganie.', remember: 'Near miss dzis moze byc powaznym wypadkiem jutro. Zglaszaj zawsze.' },
+        care_injured: { title: 'Pomoc Poszkodowanemu', overview: 'Pierwsze minuty po wypadku moga zmienic wynik. Wiedz, co robic, zanim cos sie stanie.', guide: 'Zachowaj spokoj. Nie przenos poszkodowanego, chyba ze grozi mu natychmiastowe niebezpieczenstwo. Przy powaznym urazie dzwon 911. Powiadom nadzor. Utrzymaj osobe w cieple i komforcie. Nie dawaj jedzenia ani wody. Pierwszej pomocy udzielaja tylko osoby przeszkolone. Przy chemikaliach SDS jedzie do szpitala.', remember: 'Po kazdym urazie na budowie PAL natychmiast dzwon do Richardo Blake (347-844-0476).' },
+        avoidable: { title: 'Wypadkow Mozna Uniknac', overview: 'Wiekszosc wypadkow nie dzieje sie sama; ma przyczyne. Jesli ma przyczyne, mozna mu zapobiec.', guide: 'Przyczyna to zwykle niebezpieczne zachowanie, niebezpieczny stan albo oba. Niebezpieczne zachowania to skroty, pospiech, ignorowanie PPE i zla ocena. Niebezpieczne warunki to balagan, wadliwy sprzet i brak zabezpieczen.', remember: 'Nie ma tak pilnej pracy, ktorej nie mozna wykonac bezpiecznie.' },
+        listening: { title: 'Ochrona Sluchu', overview: 'Utrata sluchu od halasu jest trwala i narasta z czasem.', guide: 'Nos ochrone sluchu przy glosnym halasie: szlifowanie, mloty, ciezki sprzet, pily. Jesli musisz podnosic glos, aby rozmawiac z osoba obok, potrzebujesz ochrony sluchu. Zdejmuj ja tylko poza strefa halasu.', remember: 'Sluch nie odrosnie. Chron go kazdego dnia.' },
+        incident_reporting: { title: 'Zglaszanie Wypadkow / Incydentow', overview: 'Kazdy wypadek, uraz, near miss i niebezpieczny stan musi byc zgloszony natychmiast.', guide: 'Zglos supervisorowi od razu. Wypelnij raport PAL w ciagu 24 godzin. Zabezpiecz miejsce i zbierz informacje od swiadkow. Jesli potrzebujesz leczenia, powiadom supervisor przed wyjsciem. Raporty poprawiaja bezpieczenstwo.', remember: 'Zglaszaj. Zawsze. Bez wyjatkow.' },
+        common_sense: { title: 'Bezpieczenstwo To Zdrowy Rozsadek', overview: 'Wiele zasad BHP to zdrowy rozsadek stosowany konsekwentnie.', guide: 'Pomysl zanim zaczniesz. Czy to najbezpieczniejszy sposob? Czy mam wlasciwe PPE? Czy miejsce jest czyste? Czy jestem przeszkolony? Czy sprzet jest sprawny? Jesli nie, zatrzymaj sie i popraw.', remember: 'Jesli cos wydaje sie nie tak, prawdopodobnie tak jest. Powiedz o tym.' },
+        keeping_shape: { title: 'Utrzymanie Formy', overview: 'Budowa to ciezka praca fizyczna. Zmeczony pracownik ma wieksze ryzyko urazu.', guide: 'Spij wystarczajaco. Pij wode, szczegolnie w cieple. Jedz dobrze przed i w trakcie zmiany. Rozciagaj sie przed praca fizyczna. Rob przerwy. Znaj swoje granice i zglaszaj chorobe, bol lub wyczerpanie.', remember: 'Twoje cialo to najwazniejsze narzedzie. Dbaj o nie.' },
+        warming_up: { title: 'Rozgrzewka', overview: 'Zimne miesnie i sztywne stawy latwiej ulegaja urazom. Dwie minuty rozgrzewki moga oszczedzic wiele dni straty.', guide: 'Przed praca rozciagnij plecy, nogi, ramiona i nadgarstki. Delikatnie porusz szyja. Zrob krazenia ramion. Zacznij pierwsze zadania spokojniej, zwlaszcza rano lub po przerwie.', remember: 'Dwie minuty rozciagania moga zapobiec tygodniom leczenia.' },
+        lifting: { title: 'Prawidlowe Podnoszenie', overview: 'Urazy plecow narastaja. Male zle podnoszenia moga z czasem doprowadzic do duzego urazu.', guide: 'Pomysl przed podniesieniem. Popros o pomoc. Trzymaj ladunek blisko ciala, uginaj nogi, trzymaj proste plecy i nie skrecaj sie z ladunkiem. Uzywaj pomocy mechanicznych, gdy sa dostepne.', remember: 'Twoje plecy nie sa zamiennikiem wozka widlowego.' },
+        ladders: { title: 'Drabiny', overview: 'Upadki z drabin sa jedna z najczestszych przyczyn urazow w budownictwie.', guide: 'Uzyj wlasciwej drabiny. Sprawdz ja przed uzyciem. Ustaw na stabilnym podlozu. Zabezpiecz gore. Utrzymuj wolne miejsce u gory i na dole. Nie wchodz z narzedziami w rekach. Patrz na drabine i utrzymuj trzy punkty kontaktu.', remember: 'Na drabinie mozesz spasc. Uzywaj jej bezpiecznie za kazdym razem.' },
+        pfas: { title: 'Szelki / Linki Zycia (PFAS)', overview: 'Szelki, lacznik, linka i punkt kotwiczenia tworza system zatrzymania upadku.', guide: 'Sprawdz caly sprzet przed uzyciem. Uzywaj tylko certyfikowanego sprzetu. Punkt kotwiczenia musi miec 5,000 lb. Nie modyfikuj sprzetu. Uszkodzony sprzet wycofaj. Szelki po zatrzymaniu upadku wycofaj z uzycia.', remember: 'Zabezpiecz sie przed upadkiem. Zycie, ktore ratujesz, moze byc twoje.' },
+        housekeeping: { title: 'Porzadek na Budowie', overview: 'Dobry porzadek poprawia bezpieczenstwo, morale i wydajnosc.', guide: 'Trzymaj odpady i gruz w uporzadkowanych miejscach, usuwaj smieci, utrzymuj przejscia wolne, skladuj materialy w wyznaczonych miejscach i trzymaj przewody poza przejsciami. To zapobiega skaleczeniom, potknieciom, upadkom i pozarom.', remember: 'Dobry porzadek pomaga wszystkim i czyni prace bezpieczniejsza.' },
+        nails: { title: 'Gwozdzie Tez Sa Niebezpieczne', overview: 'Przebicia, zadrapania i skaleczenia od gwozdzi sa czestymi urazami.', guide: 'Uzywaj wlasciwego mlotka i narzedzi. Uderzaj prosto. Wyciagaj lub zaginaj gwozdzie przy rozbiorce. Nie zostawiaj desek z wystajacymi gwozdziami w przejsciach.', remember: 'Traktuj gwozdzie powaznie, bo szybko moga zranic.' },
+        heat_stress: { title: 'Stres Cieplny', overview: 'Praca w upale moze szybko doprowadzic do powaznej lub smiertelnej choroby.', guide: 'Pij wode co 15 do 20 minut, nie czekaj na pragnienie. Odpoczywaj w cieniu. Znaj objawy wyczerpania cieplnego: duze pocenie, slabosc, chlodna skora, nudnosci. Udar cieplny to nagly wypadek: zamieszanie, szybki puls, goraca skora; dzwon 911.', remember: 'Woda. Odpoczynek. Cien. W tej kolejnosci.' },
+        cold_weather: { title: 'Bezpieczenstwo w Zimnie', overview: 'Zimno tworzy zagrozenia, ktore latwo zlekcewazyc: hipotermia, odmrozenia i poslizgniecia.', guide: 'Ubieraj sie warstwowo. Chron rece, glowe i stopy. Pozostan suchy. Sprawdz lod na powierzchniach, drabinach i rusztowaniach. Rob przerwy na ogrzanie. Znaj objawy hipotermii: dreszcze, niewyrazna mowa, niezgrabnosc, dezorientacja.', remember: 'Zimno wymaga wiekszej uwagi. Zwolnij i patrz pod nogi.' },
+        ppe_talk: { title: 'Srodki Ochrony Osobistej', overview: 'PPE to ostatnia linia obrony. W PAL prawidlowe noszenie nie jest opcjonalne.', guide: 'Minimum PAL: kask, okulary ANSI Z87+, kamizelka odblaskowa, buty i rekawice. Sprawdz PPE przed uzyciem. Uszkodzone PPE wymien. Dodaj PPE zalezne od zagrozenia: respirator, szelki, przylbica. Odmowa noszenia PPE moze oznaczac usuniecie z budowy.', remember: 'PPE dziala tylko, gdy je nosisz. Zle noszenie jest prawie jak brak PPE.' },
+        electrical_talk: { title: 'Zagrozenia Elektryczne', overview: 'Elektrycznosc moze zabic natychmiast. Na budowie zagrozenia elektryczne sa wszedzie.', guide: 'Zawsze uzywaj GFCI przy zasilaniu tymczasowym i testuj na poczatku zmiany. Sprawdz przedluzacze: brak uszkodzen i laczen. Nie pracuj przy liniach napowietrznych bez potwierdzenia odleglosci. Zakladaj, ze wszystkie linie sa pod napieciem. Nie uzywaj metalowych drabin przy elektryce.', remember: 'Elektrycznosc nie daje drugiej szansy. Traktuj kazdy przewod jak pod napieciem.' },
+        silica_talk: { title: 'Swiadomosc Pylu Krzemionki', overview: 'Pyl krzemionki jest niewidoczny i moze powodowac krzemice, nieuleczalna chorobe pluc.', guide: 'Nigdy nie tnij, wierc ani szlifuj betonu na sucho bez kontroli. Uzywaj wody lub odkurzacza HEPA. Nos minimum N95; zwykla maska papierowa nie chroni. Nie zamiataj pylu na sucho. Umyj rece i twarz przed jedzeniem lub wyjsciem.', remember: 'Nie czujesz krzemionki w plucach. Gdy pojawiaja sie objawy, szkody moga byc powazne.' },
+        confined_space_talk: { title: 'Przestrzenie Zamkniete', overview: 'Przestrzenie zamkniete co roku zabijaja pracownikow, czesto gdy ratownicy wchodza bez sprzetu.', guide: 'Nie wchodz do przestrzeni wymagajacej pozwolenia bez pisemnego pozwolenia, badania atmosfery i przeszkolonego obserwatora na zewnatrz. Testuj tlen, gazy palne i toksyczne przed i w trakcie wejscia. Jesli alarm sie wlaczy, wyjdz. Nie wchodz ratowac; dzwon 911.', remember: 'Jesli ktos upadnie w przestrzeni zamknietej, nie wchodz. Dzwon 911.' },
+        fall_protection_talk: { title: 'Ochrona Przed Upadkiem', overview: 'Upadki sa jedna z glownych przyczyn smierci w budownictwie. W PAL ochrona przed upadkiem jest wymagana od 6 stop.', guide: 'Znaj opcje: barierki, systemy zatrzymania upadku i siatki. Sprawdz szelki przed kazdym uzyciem. Punkty kotwiczenia musza miec 5,000 lb. Przypnij sie zanim dojdziesz do krawedzi. Barierki musza miec 42 cale i wytrzymac 200 lb.', remember: 'Jedna sekunda nieuwagi na wysokosci moze zmienic zycie. Przypinaj sie zawsze.' }
+      }
+    };
     function buildTabs() {
       const tabs = document.getElementById('tabs');
       tabs.innerHTML = navTabs.map(([id, label, foreman]) => {
         if (id === 'new-hire-public-link') {
-          return `<button class="tab" style="background:#78c240;color:#1b3a5c;font-weight:900;" onclick="startPublicNewHireIntake()">${label[currentLang]}</button>`;
+          return `<button class="tab primary-action" onclick="startPublicNewHireIntake()">${label[currentLang]}</button>`;
         }
         if (id === 'projects-link') {
-          return `<button class="tab" style="background:#1b3a5c;color:#78c240;font-weight:900;" onclick="window.location.href='projects.html'">${label[currentLang]}</button>`;
+          return `<button class="tab protected-action" onclick="window.location.href='projects.html'">${label[currentLang]}</button>`;
         }
         return `<button class="tab ${foreman ? 'foreman' : ''} ${id==='cover' ? 'active' : ''}" data-page="${id}" onclick="showPage('${id}')">${label[currentLang]}</button>`;
       }).join('');
+    }
+    function openHomeHelp() {
+      palNotice('Help is being built into PAL Safety Hub. For now, use New Hire Orientation for intake packets, Safety Checklists for blank forms, Project Access for foreman and office tools, or contact the PAL office/safety team for support.', 'Help');
     }
     function applyTranslations() {
       const t = uiText[currentLang];
@@ -3425,6 +3618,7 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const page = document.getElementById(id);
       if (page) page.classList.add('active');
+      document.body.classList.toggle('home-view', id === 'cover');
       document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === id));
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // init ALL sig pad canvases on this page (not just .signature-cell)
@@ -3501,6 +3695,10 @@
       });
       buildTabs();
       applyTranslations();
+      applyToolboxTranslations();
+      if (activeToolboxTalkKey && !document.getElementById('talk-detail-view')?.classList.contains('hidden')) {
+        openTalk(activeToolboxTalkKey);
+      }
       const activeTab = document.querySelector(`.tab[data-page="${document.querySelector('.page.active')?.id || 'cover'}"]`);
       if (activeTab) activeTab.classList.add('active');
     }
@@ -4258,8 +4456,8 @@ function returnToApp() {
 }
 </style>
 <!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
-     Standardizes every form/document footer to 4 buttons:
-     Submit to Project / Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
+     Standardizes every form/document footer:
+     Submit to Project / Print / Print PDF / Save to Files. Applies to existing and future sticky-actions bars. -->
 <style>
   .sticky-actions.pal-standard-footer {
     display: flex;
@@ -4345,9 +4543,9 @@ function returnToApp() {
       bar.classList.add('pal-standard-footer');
       bar.innerHTML = '' +
         '<button class="btn submit-project" type="button" onclick="submitActiveDocumentToProject()">Submit to Project</button>' +
-        '<button class="btn secondary" type="button" onclick="palPreviewDocument()">ðŸ“„ Preview</button>' +
-        '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">ðŸ“¥ Save PDF</button>' +
-        '<button class="btn share" type="button" onclick="palShareDocument()">ðŸ“¤ Share</button>';
+        '<button class="btn secondary" type="button" onclick="palPreviewDocument()">Print</button>' +
+        '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">Print / PDF</button>' +
+        '<button class="btn share" type="button" onclick="saveCurrentPageToFiles()">Save to Files</button>';
     });
   };
   const originalSetLanguage = window.setLanguage;
@@ -4482,6 +4680,60 @@ function returnToApp() {
       }
       openCleanPrintWindow();
     }
+    let activeToolboxTalkKey = '';
+    function getToolboxUi() {
+      return toolboxUi[currentLang] || toolboxUi.en;
+    }
+    function getTalk(key) {
+      return Object.assign({}, talkData[key] || {}, (talkTranslations[currentLang] && talkTranslations[currentLang][key]) || {});
+    }
+    function getTalkKeyFromCard(card) {
+      const onclick = card.getAttribute('onclick') || '';
+      const match = onclick.match(/openTalk\('([^']+)'\)/);
+      return match ? match[1] : '';
+    }
+    function applyToolboxTranslations() {
+      const ui = getToolboxUi();
+      const toolboxPage = document.getElementById('toolbox-talks');
+      if (!toolboxPage) return;
+      const header = toolboxPage.querySelector('#talk-grid-view .card');
+      if (header) {
+        const title = header.querySelector('h2');
+        const copy = header.querySelector('p');
+        if (title) title.textContent = uiText[currentLang]?.toolboxTitle || uiText.en.toolboxTitle;
+        if (copy) copy.textContent = ui.intro;
+      }
+      toolboxPage.querySelectorAll('#talk-grid-view .section-title').forEach((heading, index) => {
+        if (ui.categoryTitles[index]) heading.textContent = ui.categoryTitles[index];
+      });
+      toolboxPage.querySelectorAll('.topic-card').forEach(card => {
+        const key = getTalkKeyFromCard(card);
+        const talk = getTalk(key);
+        const small = card.querySelector('small');
+        const strong = card.querySelector('strong');
+        if (small && talk.page) small.textContent = talk.page;
+        if (strong && talk.title) strong.textContent = talk.title;
+      });
+    }
+    function saveCurrentPageToFiles() {
+      saveActiveFormSilently();
+      const title = (typeof getCleanDocumentTitle === 'function' ? getCleanDocumentTitle() : 'PAL-Safety-Document')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '') || 'pal-safety-document';
+      const html = typeof getCleanPrintableHTML === 'function' ? getCleanPrintableHTML() : document.documentElement.outerHTML;
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      if (typeof toastPalMessage === 'function') toastPalMessage('Document saved to files.');
+      else palNotice('Document saved to files.');
+    }
 function syncJobNumber(value) {
       document.querySelectorAll('.job-number-field').forEach(field => {
         if (field.value !== value) field.value = value;
@@ -4489,7 +4741,9 @@ function syncJobNumber(value) {
       localStorage.setItem('pal-shared-job-number', value || '');
     }
     function openTalk(key) {
-  const talk = talkData[key];
+  activeToolboxTalkKey = key;
+  const talk = getTalk(key);
+  const ui = getToolboxUi();
   const container = document.getElementById('talk-detail-view');
   document.getElementById('talk-grid-view').classList.add('hidden');
   container.classList.remove('hidden');
@@ -4497,41 +4751,42 @@ function syncJobNumber(value) {
     return '<tr><td>' + (i + 1) + '</td><td><input name="attendee_' + (i + 1) + '" style="width:100%"></td><td><div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div></td></tr>';
   }).join('');
   container.innerHTML =
-    '<div class="toolbar"><button class="btn secondary" onclick="closeTalk()">â† Back</button></div>' +
+    '<div class="toolbar"><button class="btn secondary" onclick="closeTalk()">' + ui.back + '</button></div>' +
     '<div class="card"><span class="pill">' + talk.page + '</span><h2 style="color:var(--navy);">' + talk.title + '</h2></div>' +
     '<div class="grid" style="margin-top:12px;">' +
-      '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">Overview</h3><p>' + talk.overview + '</p></div>' +
-      '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">Guide for Discussion</h3><p>' + talk.guide + '</p></div>' +
-      '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">Remember</h3><p>' + talk.remember + '</p></div>' +
+      '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">' + ui.overview + '</h3><p>' + talk.overview + '</p></div>' +
+      '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">' + ui.guide + '</h3><p>' + talk.guide + '</p></div>' +
+      '<div class="card talk-section"><h3 style="margin-top:0;color:var(--navy);">' + ui.remember + '</h3><p>' + talk.remember + '</p></div>' +
     '</div>' +
     '<form class="form-shell" data-save-key="toolbox-talk-' + key + '" style="margin-top:14px;">' +
-      '<div class="form-head"><h2>Attendee Sign-In</h2><p>' + talk.title + '</p></div>' +
+      '<div class="form-head"><h2>' + ui.signIn + '</h2><p>' + talk.title + '</p></div>' +
       '<div class="form-body">' +
         '<input type="hidden" name="toolbox_topic" value="' + talk.title + '">' +
         '<input type="hidden" name="toolbox_page" value="' + talk.page + '">' +
         '<div class="form-grid">' +
-          '<div class="field"><label>Date</label><input type="date" name="date"></div>' +
-          '<div class="field"><label>Job / Project</label><input name="linked_project"></div>' +
-          '<div class="field"><label>PAL Job No.</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" inputmode="numeric"></div>' +
-          '<div class="field"><label>Conducted By</label><input name="submitted_by"></div>' +
+          '<div class="field"><label>' + ui.date + '</label><input type="date" name="date"></div>' +
+          '<div class="field"><label>' + ui.job + '</label><input name="linked_project"></div>' +
+          '<div class="field"><label>' + ui.jobNo + '</label><input name="linked_job_number" class="job-number-field" oninput="syncJobNumber(this.value)" inputmode="numeric"></div>' +
+          '<div class="field"><label>' + ui.conductedBy + '</label><input name="submitted_by"></div>' +
         '</div>' +
-        '<table style="margin-top:12px;"><tr><th>#</th><th>Print Name</th><th>Signature</th></tr><tbody id="toolbox-talk-detail-rows">' + rows + '</tbody></table>' +
-        '<p style="margin-top:8px;"><button class="btn secondary" type="button" onclick="addSignatureRow(\'toolbox-talk-detail-rows\')">+ Add Crew Row</button></p>' +
+        '<table style="margin-top:12px;"><tr><th>#</th><th>' + ui.printName + '</th><th>' + ui.signature + '</th></tr><tbody id="toolbox-talk-detail-rows">' + rows + '</tbody></table>' +
+        '<p style="margin-top:8px;"><button class="btn secondary" type="button" onclick="addSignatureRow(\'toolbox-talk-detail-rows\')">' + ui.addCrew + '</button></p>' +
         '<div style="margin-top:24px;border-top:2px solid #dde3ea;padding-top:16px;">' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">' +
-            '<div class="field"><label>Supervisor / Foreman Printed Name</label><input name="sup_name" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
-            '<div class="field"><label>Date</label><input type="date" name="sup_date" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
+            '<div class="field"><label>' + ui.supervisorName + '</label><input name="sup_name" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
+            '<div class="field"><label>' + ui.date + '</label><input type="date" name="sup_date" style="width:100%;border:none;border-bottom:2px solid #a9b8c8;"></div>' +
           '</div>' +
-          '<label style="font-size:13px;font-weight:700;color:#1b3a5c;display:block;margin-bottom:6px;">Supervisor Signature</label>' +
+          '<label style="font-size:13px;font-weight:700;color:#1b3a5c;display:block;margin-bottom:6px;">' + ui.supervisorSignature + '</label>' +
           '<div class="sig-pad-wrap"><canvas></canvas><button class="sig-clear" type="button" onclick="clearSig(this)">Clear</button></div>' +
         '</div>' +
       '</div>' +
-      '<div class="sticky-actions"><button class="btn secondary" onclick="printPage()">ðŸ“„ Preview</button><button class="btn pdf" onclick="exportCurrentPagePDF()">ðŸ“¥ Save PDF</button><button class="btn share" onclick="shareCurrentPage()">ðŸ“¤ Share</button></div>' +
+      '<div class="sticky-actions pal-standard-footer" data-pal-standard-footer="true"><button class="btn submit-project" type="button" onclick="submitActiveDocumentToProject()">' + ui.submitProject + '</button><button class="btn secondary" type="button" onclick="printPage()">' + ui.print + '</button><button class="btn pdf" type="button" onclick="exportCurrentPagePDF()">' + ui.printPdf + '</button><button class="btn share" type="button" onclick="saveCurrentPageToFiles()">' + ui.saveFiles + '</button></div>' +
     '</form>';
   container.querySelectorAll('canvas').forEach(initSigPad);
   if (typeof standardizePalFormFooters === 'function') standardizePalFormFooters();
 }
 function closeTalk() {
+  activeToolboxTalkKey = '';
   document.getElementById('talk-grid-view').classList.remove('hidden');
   document.getElementById('talk-detail-view').classList.add('hidden');
 }
@@ -5389,8 +5644,8 @@ applyProjectSelectionFromStorage();
 }
 </style>
 <!-- PAL_STANDARD_FORM_FOOTER_2026_05_24
-     Standardizes every form/document footer to 4 buttons:
-     Submit to Project / Preview / Save PDF / Share. Applies to existing and future sticky-actions bars. -->
+     Standardizes every form/document footer:
+     Submit to Project / Print / Print PDF / Save to Files. Applies to existing and future sticky-actions bars. -->
 <style>
   .sticky-actions.pal-standard-footer {
     display: flex;
@@ -5476,9 +5731,9 @@ applyProjectSelectionFromStorage();
       bar.classList.add('pal-standard-footer');
       bar.innerHTML = '' +
         '<button class="btn submit-project" type="button" onclick="submitActiveDocumentToProject()">Submit to Project</button>' +
-        '<button class="btn secondary" type="button" onclick="palPreviewDocument()">ðŸ“„ Preview</button>' +
-        '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">ðŸ“¥ Save PDF</button>' +
-        '<button class="btn share" type="button" onclick="palShareDocument()">ðŸ“¤ Share</button>';
+        '<button class="btn secondary" type="button" onclick="palPreviewDocument()">Print</button>' +
+        '<button class="btn pdf" type="button" onclick="palSavePdfDocument()">Print / PDF</button>' +
+        '<button class="btn share" type="button" onclick="saveCurrentPageToFiles()">Save to Files</button>';
     });
   };
   const originalSetLanguage = window.setLanguage;
