@@ -1451,6 +1451,32 @@
     .orientation-ack { padding:12px 16px; background:#fff; border-top:1px solid var(--line); display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text); line-height:1.45; }
     .orientation-ack input { margin-top:3px; width:18px; height:18px; accent-color:var(--green); }
     .orientation-ack.locked { color:var(--muted); background:#f8fafc; }
+    .newhire-wizard-shell { display:grid; grid-template-columns:260px minmax(0,1fr); gap:18px; align-items:start; }
+    .newhire-wizard-rail { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:12px; position:sticky; top:12px; }
+    .newhire-wizard-step { display:flex; gap:10px; align-items:flex-start; padding:10px; border-radius:10px; color:var(--muted); border:1px solid transparent; }
+    .newhire-wizard-step .num { flex:0 0 30px; width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#e5e7eb; color:var(--navy); font-weight:900; }
+    .newhire-wizard-step strong { display:block; color:var(--navy); font-size:13px; }
+    .newhire-wizard-step small { display:block; font-size:11.5px; line-height:1.35; margin-top:2px; }
+    .newhire-wizard-step.active { background:#fff; border-color:var(--green); box-shadow:0 5px 14px rgba(16,24,40,.07); }
+    .newhire-wizard-step.active .num { background:var(--green); }
+    .newhire-wizard-step.done .num { background:#dcfce7; color:#166534; }
+    .newhire-wizard-pane { display:none; }
+    .newhire-wizard-pane.active { display:block; }
+    .newhire-wizard-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 4px 14px rgba(16,24,40,.05); }
+    .newhire-wizard-card h3 { color:var(--navy); margin-bottom:8px; }
+    .newhire-wizard-card .lead { color:var(--muted); line-height:1.55; margin-bottom:14px; }
+    .newhire-required-list { display:grid; gap:8px; margin:12px 0; }
+    .newhire-required-list div { border:1px solid var(--line); border-left:4px solid var(--green); border-radius:10px; padding:10px 12px; background:#f8fafc; font-size:13px; line-height:1.45; }
+    .newhire-step-actions { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:16px; }
+    .newhire-step-actions .right { display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; }
+    .newhire-wizard-alert { display:none; border:1px solid #fca5a5; background:#fff1f2; color:#991b1b; border-radius:12px; padding:10px 12px; font-weight:800; font-size:13px; line-height:1.45; margin:12px 0; }
+    .newhire-wizard-alert.show { display:block; }
+    .newhire-upload-guidance { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:12px 0; }
+    .newhire-upload-guidance .box { border:1px solid var(--line); border-radius:12px; padding:12px; background:#f8fafc; }
+    .newhire-upload-guidance h4 { color:var(--navy); margin-bottom:6px; }
+    .newhire-upload-guidance p { color:var(--muted); font-size:13px; line-height:1.45; }
+    @media(max-width:820px){ .newhire-wizard-shell { grid-template-columns:1fr; } .newhire-wizard-rail { position:static; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .newhire-upload-guidance { grid-template-columns:1fr; } }
+    @media(max-width:560px){ .newhire-wizard-rail { grid-template-columns:1fr; } .newhire-step-actions, .newhire-step-actions .right { display:grid; grid-template-columns:1fr; width:100%; } .newhire-step-actions button { width:100%; min-height:44px; } }
     .doc-review-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; }
     .doc-review-box h4 { color:var(--navy); margin-bottom:8px; }
     .doc-review-box ul { margin-left:20px; line-height:1.6; color:var(--text); }
@@ -1654,75 +1680,148 @@
     </div>
 
     <div class="detail-card" id="public-intake-form-card" style="display:none;">
-      <h3>Employee Information</h3>
-      <div class="report-grid">
-        <div class="field"><label>Full Name</label><input id="pub-nh-name" placeholder="Your full name" /></div>
-        <div class="field"><label>Phone Number</label><input id="pub-nh-phone" placeholder="Your phone number" /></div>
-        <div class="field"><label>Email</label><input id="pub-nh-email" type="email" placeholder="Your email" /></div>
-        <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Laborer, Fire Watch, Sprayer, etc." /></div>
-        <div class="field"><label>Emergency Contact Name</label><input id="pub-nh-emergency-name" placeholder="Emergency contact" /></div>
-        <div class="field"><label>Emergency Contact Phone</label><input id="pub-nh-emergency-phone" placeholder="Emergency contact phone" /></div>
-        <div class="field span-2"><label>Notes / Missing Information</label><textarea id="pub-nh-notes" rows="3" placeholder="Anything PAL should know before you arrive on site..."></textarea></div>
-      </div>
+      <div class="newhire-wizard-shell">
+        <aside class="newhire-wizard-rail" id="public-newhire-wizard-rail">
+          <div class="newhire-wizard-step active" data-step="0"><span class="num">1</span><div><strong>Welcome</strong><small>Read what will happen.</small></div></div>
+          <div class="newhire-wizard-step" data-step="1"><span class="num">2</span><div><strong>Basic Info</strong><small>Name, phone, emergency contact.</small></div></div>
+          <div class="newhire-wizard-step" data-step="2"><span class="num">3</span><div><strong>Orientation Video</strong><small>Watch and answer 5 questions.</small></div></div>
+          <div class="newhire-wizard-step" data-step="3"><span class="num">4</span><div><strong>Forms</strong><small>Review and sign required forms.</small></div></div>
+          <div class="newhire-wizard-step" data-step="4"><span class="num">5</span><div><strong>Uploads</strong><small>Certs, license, payroll ID.</small></div></div>
+          <div class="newhire-wizard-step" data-step="5"><span class="num">6</span><div><strong>Submit</strong><small>Send packet to PAL office.</small></div></div>
+        </aside>
 
-      <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
-        <h3 style="margin-bottom:8px;">New Hire Packet Forms</h3>
-        <div class="helper-text" style="margin-bottom:10px;">Open each form separately, review it, complete it, and save it back to your intake packet.</div>
-        <div class="newhire-actions">
-          <button class="btn-save" type="button" onclick="openPublicNewHireOrientationForm()">Open Orientation Form</button>
-          <button class="btn-secondary" type="button" onclick="openPublicNewHireDrugConsentForm()">Open Drug & Alcohol Consent</button>
-          <button class="btn-secondary" type="button" onclick="openPublicNewHireSafetyAgreementForm()">Open Safety Agreement</button>
-          <button class="btn-secondary" type="button" onclick="openPublicNewHireCertUploadForm()">Open Certification Uploads</button>
-          <button class="btn-secondary" type="button" onclick="openPublicNewHirePayrollIdUploadForm()">Open Payroll / ID Uploads</button>
-        </div>
-        <div class="mini-note" id="public-orientation-status" style="margin-top:8px;">Orientation Form: Pending</div>
-        <div class="mini-note" id="public-drug-status" style="margin-top:4px;">Drug & Alcohol Consent: Pending</div>
-        <div class="mini-note" id="public-safety-status" style="margin-top:4px;">Safety Agreement: Pending</div>
-        <div class="mini-note" id="public-cert-upload-status" style="margin-top:4px;">Certification Uploads: Pending</div>
-        <div class="mini-note" id="public-payroll-id-status" style="margin-top:4px;">Payroll / ID Uploads: Pending</div>
-      </div>
+        <div>
+          <div class="newhire-wizard-alert" id="public-newhire-wizard-alert"></div>
 
-      <!-- PACKET_FINAL_REVIEW_PHASE7_2026_05_15 -->
-      <div class="detail-card" style="margin-top:14px;background:#fff;border-left:5px solid var(--green);">
-        <h3 style="margin-bottom:8px;">Packet Checklist & Final Submit</h3>
-        <div class="helper-text" style="margin-bottom:10px;">Complete each required section, then submit the full packet to PAL office for review.</div>
-        <div id="public-packet-checklist" class="report-grid">
-          <div class="report-field"><span class="k">Orientation</span><div class="v">Pending</div></div>
-          <div class="report-field"><span class="k">Drug Consent</span><div class="v">Pending</div></div>
-          <div class="report-field"><span class="k">Safety Agreement</span><div class="v">Pending</div></div>
-          <div class="report-field"><span class="k">Cert Uploads</span><div class="v">Pending</div></div>
-          <div class="report-field"><span class="k">Payroll / ID Uploads</span><div class="v">Pending</div></div>
-          <div class="report-field"><span class="k">Packet Status</span><div class="v">Not Submitted</div></div>
-        </div>
-        <div class="modal-actions" style="justify-content:flex-start;margin-top:14px;">
-          <button class="btn-save" id="public-final-submit-btn" type="button" onclick="finalSubmitPublicNewHirePacket()">Submit Full Packet to PAL Office</button>
-        </div>
-        <div class="mini-note">After submitting, PAL office/foreman will review the packet and mark it Good To Work or Missing Info.</div>
-      </div>
+          <section class="newhire-wizard-pane active" data-step-pane="0">
+            <div class="newhire-wizard-card">
+              <h3>Welcome to PAL Employee Orientation</h3>
+              <p class="lead">You are about to start your PAL new-hire orientation packet. Follow each step in order. You can use Back at any time to return to the previous step.</p>
+              <div class="newhire-required-list">
+                <div><strong>Step 1:</strong> Fill out your basic information.</div>
+                <div><strong>Step 2:</strong> Watch the PAL orientation video. During the video, you will answer five questions. Please do not skip ahead.</div>
+                <div><strong>Step 3:</strong> Review and sign the required orientation forms.</div>
+                <div><strong>Step 4:</strong> Upload safety certifications such as OSHA, SST, fall protection, scaffold, G60, fire watch, or any other PAL-required certs.</div>
+                <div><strong>Step 5:</strong> Upload payroll and ID documents, including driver license/photo ID, Social Security card, union card/book if applicable, and any other requested payroll document.</div>
+              </div>
+              <p class="helper-text">If something required is missing, PAL Safety Hub will stop you and show what needs to be fixed before you can move forward.</p>
+              <div class="newhire-step-actions">
+                <button class="btn-secondary" type="button" onclick="window.location.href='index.html'">Back to Safety Hub</button>
+                <div class="right"><button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Start Orientation Packet</button></div>
+              </div>
+            </div>
+          </section>
 
-      <div class="detail-card" style="margin-top:14px;background:#f8fafc;">
-        <h3 style="margin-bottom:8px;">Certification Uploads / Payroll ID</h3>
-        <div class="helper-text" style="margin-bottom:10px;">Preferred method: use the separate form buttons above so each upload saves back to this employee packet. These quick upload fields remain as a backup.</div>
-        <div class="field span-2">
-          <label>Upload Certification Photos / Documents</label>
-          <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" />
-          <div class="helper-text">Upload clear photos or PDFs of OSHA, SST, scaffold, G60, fire watch, or any certs requested by PAL.</div>
-        </div>
-        <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px;">
-          <h4 style="color:var(--navy);margin:0 0 6px;">Payroll / ID Uploads</h4>
-          <div class="helper-text" style="margin-bottom:10px;">These documents are for payroll/onboarding review. Treat them as office-sensitive documents.</div>
-          <div class="report-grid">
-            <div class="field"><label>Driver License / Photo ID</label><input id="pub-nh-driver-id" type="file" accept=".pdf,image/*" /></div>
-            <div class="field"><label>Union Book / Union Card</label><input id="pub-nh-union-book" type="file" accept=".pdf,image/*" /></div>
-            <div class="field"><label>Social Security Card</label><input id="pub-nh-ss-card" type="file" accept=".pdf,image/*" /></div>
-            <div class="field"><label>Additional Payroll / ID Document</label><input id="pub-nh-payroll-extra" type="file" accept=".pdf,image/*" /></div>
-          </div>
-        </div>
-      </div>
+          <section class="newhire-wizard-pane" data-step-pane="1">
+            <div class="newhire-wizard-card">
+              <h3>Basic Employee Information</h3>
+              <p class="lead">Enter your information exactly as PAL should review it. Required fields must be completed before continuing.</p>
+              <div class="report-grid">
+                <div class="field"><label>Full Name</label><input id="pub-nh-name" placeholder="Your full name" /></div>
+                <div class="field"><label>Phone Number</label><input id="pub-nh-phone" placeholder="Your phone number" /></div>
+                <div class="field"><label>Email</label><input id="pub-nh-email" type="email" placeholder="Your email" /></div>
+                <div class="field"><label>Trade / Role</label><input id="pub-nh-trade" placeholder="Laborer, Fire Watch, Sprayer, etc." /></div>
+                <div class="field"><label>Emergency Contact Name</label><input id="pub-nh-emergency-name" placeholder="Emergency contact" /></div>
+                <div class="field"><label>Emergency Contact Phone</label><input id="pub-nh-emergency-phone" placeholder="Emergency contact phone" /></div>
+                <div class="field span-2"><label>Notes / Missing Information</label><textarea id="pub-nh-notes" rows="3" placeholder="Anything PAL should know before you arrive on site..."></textarea></div>
+              </div>
+              <div class="newhire-step-actions">
+                <button class="btn-secondary" type="button" onclick="publicNewHireWizardBack()">Back</button>
+                <div class="right"><button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Save Info & Continue</button></div>
+              </div>
+            </div>
+          </section>
 
-      <div class="modal-actions">
-        <button class="btn-secondary" type="button" onclick="window.location.href='index.html'">Back to Safety Hub</button>
-        <button class="btn-save" id="pub-submit-intake-btn" type="button" onclick="submitPublicNewHireIntake()">Submit Intake to PAL</button>
+          <section class="newhire-wizard-pane" data-step-pane="2">
+            <div class="newhire-wizard-card">
+              <h3>PAL Orientation Video</h3>
+              <p class="lead">Open the video section, watch the full orientation, answer all five questions, check the final acknowledgement, then save the orientation form.</p>
+              <div class="newhire-required-list">
+                <div id="public-orientation-status">Orientation Form: Pending</div>
+              </div>
+              <div class="newhire-step-actions">
+                <button class="btn-secondary" type="button" onclick="publicNewHireWizardBack()">Back</button>
+                <div class="right">
+                  <button class="btn-secondary" type="button" onclick="openPublicNewHireOrientationForm()">Open Orientation Video</button>
+                  <button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Continue</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="newhire-wizard-pane" data-step-pane="3">
+            <div class="newhire-wizard-card">
+              <h3>Required Orientation Forms</h3>
+              <p class="lead">Open each form, read it, answer any required questions, type your name as your signature, and save it back to this packet.</p>
+              <div class="newhire-required-list">
+                <div id="public-drug-status">Drug & Alcohol Consent: Pending</div>
+                <div id="public-safety-status">Safety Agreement: Pending</div>
+              </div>
+              <div class="newhire-step-actions">
+                <button class="btn-secondary" type="button" onclick="publicNewHireWizardBack()">Back</button>
+                <div class="right">
+                  <button class="btn-secondary" type="button" onclick="openPublicNewHireDrugConsentForm()">Open Drug & Alcohol Consent</button>
+                  <button class="btn-secondary" type="button" onclick="openPublicNewHireSafetyAgreementForm()">Open Safety Agreement</button>
+                  <button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Continue</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="newhire-wizard-pane" data-step-pane="4">
+            <div class="newhire-wizard-card">
+              <h3>Certifications, Payroll, and ID Uploads</h3>
+              <p class="lead">Upload clear photos or PDFs. Make sure the whole card/document is readable before saving.</p>
+              <div class="newhire-upload-guidance">
+                <div class="box">
+                  <h4>Safety Certifications</h4>
+                  <p>Examples: OSHA 10/30, SST, scaffold, fall protection, fire watch, G60, equipment cards, or any PAL-requested safety cert.</p>
+                  <div class="mini-note" id="public-cert-upload-status">Certification Uploads: Pending</div>
+                </div>
+                <div class="box">
+                  <h4>Payroll / ID Documents</h4>
+                  <p>Examples: driver license/photo ID, Social Security card, union book/card if applicable, W-4/payroll documents, and other office-requested files.</p>
+                  <div class="mini-note" id="public-payroll-id-status">Payroll / ID Uploads: Pending</div>
+                </div>
+              </div>
+              <div class="newhire-step-actions">
+                <button class="btn-secondary" type="button" onclick="publicNewHireWizardBack()">Back</button>
+                <div class="right">
+                  <button class="btn-secondary" type="button" onclick="openPublicNewHireCertUploadForm()">Open Certification Uploads</button>
+                  <button class="btn-secondary" type="button" onclick="openPublicNewHirePayrollIdUploadForm()">Open Payroll / ID Uploads</button>
+                  <button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Continue</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="newhire-wizard-pane" data-step-pane="5">
+            <div class="newhire-wizard-card">
+              <h3>Final Review and Submit</h3>
+              <p class="lead">Review the packet checklist below. When everything shows complete, submit the full packet to PAL office for review.</p>
+              <div id="public-packet-checklist" class="report-grid">
+                <div class="report-field"><span class="k">Orientation</span><div class="v">Pending</div></div>
+                <div class="report-field"><span class="k">Drug Consent</span><div class="v">Pending</div></div>
+                <div class="report-field"><span class="k">Safety Agreement</span><div class="v">Pending</div></div>
+                <div class="report-field"><span class="k">Cert Uploads</span><div class="v">Pending</div></div>
+                <div class="report-field"><span class="k">Payroll / ID Uploads</span><div class="v">Pending</div></div>
+                <div class="report-field"><span class="k">Packet Status</span><div class="v">Not Submitted</div></div>
+              </div>
+              <div class="newhire-step-actions">
+                <button class="btn-secondary" type="button" onclick="publicNewHireWizardBack()">Back</button>
+                <div class="right"><button class="btn-save" id="public-final-submit-btn" type="button" onclick="finalSubmitPublicNewHirePacket()">Submit Full Packet to PAL Office</button></div>
+              </div>
+              <div class="mini-note">After submitting, PAL office/foreman will review the packet and mark it Good To Work or Missing Info.</div>
+            </div>
+          </section>
+
+          <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" style="display:none;" />
+          <input id="pub-nh-driver-id" type="file" accept=".pdf,image/*" style="display:none;" />
+          <input id="pub-nh-union-book" type="file" accept=".pdf,image/*" style="display:none;" />
+          <input id="pub-nh-ss-card" type="file" accept=".pdf,image/*" style="display:none;" />
+          <input id="pub-nh-payroll-extra" type="file" accept=".pdf,image/*" style="display:none;" />
+          <button id="pub-submit-intake-btn" type="button" onclick="submitPublicNewHireIntake()" style="display:none;">Submit Intake to PAL</button>
+        </div>
       </div>
     </div>
   </div>
@@ -3820,6 +3919,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openPublicNewHireSafetyAgreementForm = openPublicNewHireSafetyAgreementForm;
   window.openPublicNewHireCertUploadForm = openPublicNewHireCertUploadForm;
   window.openPublicNewHirePayrollIdUploadForm = openPublicNewHirePayrollIdUploadForm;
+  window.publicNewHireWizardNext = publicNewHireWizardNext;
+  window.publicNewHireWizardBack = publicNewHireWizardBack;
+  window.showPublicNewHireWizardStep = showPublicNewHireWizardStep;
   window.saveNewHireCertUploads = saveNewHireCertUploads;
   window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
   window.submitPublicNewHireIntake = submitPublicNewHireIntake;
@@ -10985,6 +11087,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const ds = document.getElementById('public-drug-status');
         if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
         updatePublicPacketChecklist(currentPublicNewHireIntake);
+        showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
         return;
       }
       currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
@@ -11004,6 +11107,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       set('pub-nh-phone', x.phone || '');
       set('pub-nh-email', x.email || '');
       set('pub-nh-trade', x.trade || '');
+      set('pub-nh-emergency-name', x.emergencyContactName || '');
+      set('pub-nh-emergency-phone', x.emergencyContactPhone || '');
+      set('pub-nh-notes', x.employeeNotes || x.notes || '');
       const os = document.getElementById('public-orientation-status');
       if (os) os.textContent = `Orientation Form: ${x.orientationForm?.completed ? 'Completed' : 'Pending'}`;
       const ds = document.getElementById('public-drug-status');
@@ -11015,6 +11121,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const ps = document.getElementById('public-payroll-id-status');
       if (ps) ps.textContent = `Payroll / ID Uploads: ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
       updatePublicPacketChecklist(x);
+      showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
       // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
@@ -11034,6 +11141,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const ds = document.getElementById('public-drug-status'); if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
       const ss = document.getElementById('public-safety-status'); if (ss) ss.textContent = 'Safety Agreement: Pending';
       updatePublicPacketChecklist(currentPublicNewHireIntake);
+      showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     }
   }
 
@@ -11081,6 +11189,135 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const label = document.getElementById('newhire-payroll-id-label');
     if (label) label.textContent = `Linked to intake/person packet: ${publicNewHireIntakeId}`;
     document.getElementById('modal-newhire-payroll-id-form')?.classList.add('open');
+  }
+
+  const PUBLIC_NEWHIRE_WIZARD_STEPS = ['welcome', 'info', 'orientation', 'forms', 'uploads', 'review'];
+  let publicNewHireWizardStep = 0;
+
+  function setPublicNewHireWizardAlert(message = '') {
+    const alert = document.getElementById('public-newhire-wizard-alert');
+    if (!alert) return;
+    alert.textContent = message;
+    alert.classList.toggle('show', !!message);
+    if (message) alert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function publicNewHireMissingBasicFields() {
+    if (isPublicNewHireDemoMode()) return [];
+    const fields = [
+      ['pub-nh-name', 'Full Name'],
+      ['pub-nh-phone', 'Phone Number'],
+      ['pub-nh-email', 'Email'],
+      ['pub-nh-trade', 'Trade / Role'],
+      ['pub-nh-emergency-name', 'Emergency Contact Name'],
+      ['pub-nh-emergency-phone', 'Emergency Contact Phone']
+    ];
+    return fields.filter(([id]) => !(document.getElementById(id)?.value || '').trim()).map(([, label]) => label);
+  }
+
+  function isPublicNewHireDemoMode() {
+    return (document.getElementById('pub-nh-name')?.value || '').trim().toUpperCase() === 'ADMIN104';
+  }
+
+  function publicNewHireRequiredMessage(step = publicNewHireWizardStep) {
+    if (isPublicNewHireDemoMode()) return '';
+    const x = currentPublicNewHireIntake || {};
+    const c = getNewHirePacketChecklist(x);
+    if (step === 1) {
+      const missing = publicNewHireMissingBasicFields();
+      return missing.length ? `Please complete: ${missing.join(', ')}.` : '';
+    }
+    if (step === 2 && !c.orientation) return 'Please open the orientation video, watch it, answer all five questions, sign it, and save the orientation form.';
+    if (step === 3) {
+      const missing = [];
+      if (!c.drug) missing.push('Drug & Alcohol Consent');
+      if (!c.safety) missing.push('Safety Agreement');
+      return missing.length ? `Please complete and save: ${missing.join(' and ')}.` : '';
+    }
+    if (step === 4) {
+      const missing = [];
+      if (!c.certs) missing.push('safety certification uploads');
+      if (!c.payroll) missing.push('payroll / ID uploads');
+      return missing.length ? `Please complete ${missing.join(' and ')} before submitting.` : '';
+    }
+    if (step === 5) {
+      const missing = [];
+      if (!c.orientation) missing.push('Orientation');
+      if (!c.drug) missing.push('Drug Consent');
+      if (!c.safety) missing.push('Safety Agreement');
+      if (!c.certs) missing.push('Cert Uploads');
+      if (!c.payroll) missing.push('Payroll / ID Uploads');
+      return missing.length ? `Before submitting, finish: ${missing.join(', ')}.` : '';
+    }
+    return '';
+  }
+
+  async function savePublicNewHireBasicInfoQuiet() {
+    if (!publicNewHireIntakeId) return false;
+    const data = {
+      name: document.getElementById('pub-nh-name')?.value.trim() || '',
+      phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
+      email: document.getElementById('pub-nh-email')?.value.trim() || '',
+      trade: document.getElementById('pub-nh-trade')?.value.trim() || '',
+      emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
+      emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
+      employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
+      updatedAt: serverTimestamp(),
+      source: 'public-guided-intake'
+    };
+    try {
+      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), data, { merge: true });
+      currentPublicNewHireIntake = { ...(currentPublicNewHireIntake || {}), id: publicNewHireIntakeId, ...data };
+      if (!allNewHireIntakes.some(x => x.id === publicNewHireIntakeId)) allNewHireIntakes.push(currentPublicNewHireIntake);
+      return true;
+    } catch (e) {
+      console.error('Could not save public new hire basic info', e);
+      return false;
+    }
+  }
+
+  function showPublicNewHireWizardStep(step) {
+    publicNewHireWizardStep = Math.max(0, Math.min(PUBLIC_NEWHIRE_WIZARD_STEPS.length - 1, Number(step) || 0));
+    document.querySelectorAll('[data-step-pane]').forEach(pane => {
+      pane.classList.toggle('active', Number(pane.dataset.stepPane) === publicNewHireWizardStep);
+    });
+    const checklist = getNewHirePacketChecklist(currentPublicNewHireIntake || {});
+    const doneByStep = [
+      true,
+      !publicNewHireMissingBasicFields().length,
+      checklist.orientation,
+      checklist.drug && checklist.safety,
+      checklist.certs && checklist.payroll,
+      checklist.submitted
+    ];
+    document.querySelectorAll('#public-newhire-wizard-rail .newhire-wizard-step').forEach(item => {
+      const i = Number(item.dataset.step);
+      item.classList.toggle('active', i === publicNewHireWizardStep);
+      item.classList.toggle('done', !!doneByStep[i]);
+    });
+    setPublicNewHireWizardAlert('');
+    updatePublicPacketChecklist(currentPublicNewHireIntake);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function publicNewHireWizardNext() {
+    if (publicNewHireWizardStep === 1) {
+      const missing = publicNewHireRequiredMessage(1);
+      if (missing) return setPublicNewHireWizardAlert(missing);
+      if (isPublicNewHireDemoMode()) return showPublicNewHireWizardStep(publicNewHireWizardStep + 1);
+      if (!requireCloudConnection('save basic employee information')) return;
+      const saved = await savePublicNewHireBasicInfoQuiet();
+      if (!saved) return setPublicNewHireWizardAlert('PAL Safety Hub could not save the basic information. Please check your connection and try again.');
+      await refreshCurrentPublicIntakeQuiet();
+    } else {
+      const missing = publicNewHireRequiredMessage(publicNewHireWizardStep);
+      if (missing) return setPublicNewHireWizardAlert(missing);
+    }
+    showPublicNewHireWizardStep(publicNewHireWizardStep + 1);
+  }
+
+  function publicNewHireWizardBack() {
+    showPublicNewHireWizardStep(publicNewHireWizardStep - 1);
   }
 
   async function uploadNewHireFormFile(inputId, label, folder) {
@@ -11210,20 +11447,30 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function updatePublicPacketChecklist(x) {
     const el = document.getElementById('public-packet-checklist');
-    if (!el) return;
     x = x || currentPublicNewHireIntake || {};
     const c = getNewHirePacketChecklist(x);
     const certDetail = (x.certFiles || []).length ? `${(x.certFiles || []).length} file(s)` : '';
     const payrollDetail = (x.payrollIdFiles || []).length ? `${(x.payrollIdFiles || []).length} file(s)` : '';
     const completeCount = [c.orientation, c.drug, c.safety, c.certs, c.payroll].filter(Boolean).length;
-    el.innerHTML = [
-      packetStatusHTML(c.orientation, 'Orientation'),
-      packetStatusHTML(c.drug, 'Drug Consent'),
-      packetStatusHTML(c.safety, 'Safety Agreement'),
-      packetStatusHTML(c.certs, 'Cert Uploads', certDetail),
-      packetStatusHTML(c.payroll, 'Payroll / ID Uploads', payrollDetail),
-      `<div class="report-field"><span class="k">Packet Status</span><div class="v"><span class="pill ${c.submitted ? 'active' : 'pending'}">${c.submitted ? 'Submitted to PAL' : 'Not Submitted'}</span><div class="mini-note">${completeCount}/5 sections complete</div></div></div>`
-    ].join('');
+    if (el) {
+      el.innerHTML = [
+        packetStatusHTML(c.orientation, 'Orientation'),
+        packetStatusHTML(c.drug, 'Drug Consent'),
+        packetStatusHTML(c.safety, 'Safety Agreement'),
+        packetStatusHTML(c.certs, 'Cert Uploads', certDetail),
+        packetStatusHTML(c.payroll, 'Payroll / ID Uploads', payrollDetail),
+        `<div class="report-field"><span class="k">Packet Status</span><div class="v"><span class="pill ${c.submitted ? 'active' : 'pending'}">${c.submitted ? 'Submitted to PAL' : 'Not Submitted'}</span><div class="mini-note">${completeCount}/5 sections complete</div></div></div>`
+      ].join('');
+    }
+    const setStatus = (id, label, done, detail = '') => {
+      const node = document.getElementById(id);
+      if (node) node.textContent = `${label}: ${done ? 'Completed' : (detail || 'Pending')}`;
+    };
+    setStatus('public-orientation-status', 'Orientation Form', c.orientation);
+    setStatus('public-drug-status', 'Drug & Alcohol Consent', c.drug);
+    setStatus('public-safety-status', 'Safety Agreement', c.safety);
+    setStatus('public-cert-upload-status', 'Certification Uploads', c.certs, certDetail ? `${certDetail} uploaded` : 'Pending');
+    setStatus('public-payroll-id-status', 'Payroll / ID Uploads', c.payroll, payrollDetail ? `${payrollDetail} uploaded` : 'Pending');
     const btn = document.getElementById('public-final-submit-btn');
     if (btn) {
       btn.textContent = c.submitted ? 'Packet Submitted to PAL Office' : 'Submit Full Packet to PAL Office';
@@ -11248,11 +11495,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function finalSubmitPublicNewHirePacket() {
     if (!requireCloudConnection('submit the intake packet')) return;
     if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    if (isPublicNewHireDemoMode()) {
+      setPublicNewHireWizardAlert('Demo mode is active. You can preview every section, but demo mode will not submit a packet to PAL.');
+      return;
+    }
     const btn = document.getElementById('public-final-submit-btn');
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
       await refreshCurrentPublicIntakeQuiet();
       const checklist = getNewHirePacketChecklist(currentPublicNewHireIntake || {});
+      const missing = publicNewHireRequiredMessage(5);
+      if (missing) {
+        setPublicNewHireWizardAlert(missing);
+        if (btn) { btn.disabled = false; btn.textContent = 'Submit Full Packet to PAL Office'; }
+        return;
+      }
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         packetChecklist: checklist,
         packetSubmitted: true,
@@ -12772,6 +13029,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 </script>
 <script>
   if ('serviceWorker' in navigator) {
+    let palSafetyRefreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (palSafetyRefreshing) return;
+      palSafetyRefreshing = true;
+      window.location.reload();
+    });
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').then(registration => {
         registration.update().catch(() => {});

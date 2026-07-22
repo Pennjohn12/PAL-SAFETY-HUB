@@ -5559,8 +5559,16 @@ function closeTalk() {
   <script>
     // Register service worker for offline support + PWA installability on Android
     if ('serviceWorker' in navigator) {
+      let palSafetyRefreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (palSafetyRefreshing) return;
+        palSafetyRefreshing = true;
+        window.location.reload();
+      });
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {
+        navigator.serviceWorker.register('sw.js').then(registration => {
+          registration.update().catch(() => {});
+        }).catch(() => {
           // Service worker not available (e.g. file:// protocol) - app still works normally
         });
       });
@@ -6647,6 +6655,17 @@ applyProjectSelectionFromStorage();
   const PAL_HOME_LANGUAGE_KEY = 'pal-language';
   const PAL_HOME_TEXT_ORIGINALS = new WeakMap();
   const PAL_HOME_ATTRS = ['placeholder', 'title', 'alt', 'aria-label'];
+  const PAL_HOME_SPECIAL_TRANSLATION_SECTIONS = [
+    '#employee-safety',
+    '#harness-checklist',
+    '#scaffold-checklist',
+    '#scissor-lift-inspection',
+    '#incident-report',
+    '#decon-setup-checklist',
+    '#ppe-inspection-checklist',
+    '#respirator-checklist',
+    '#demolition-safety-checklist'
+  ].join(',');
   let palHomeTranslating = false;
 
   function palHomeLanguage() {
@@ -6680,6 +6699,7 @@ applyProjectSelectionFromStorage();
   function palHomeTranslateAttributes(root, lang) {
     const nodes = root.querySelectorAll?.('*') || [];
     nodes.forEach(el => {
+      if (el.closest(PAL_HOME_SPECIAL_TRANSLATION_SECTIONS)) return;
       PAL_HOME_ATTRS.forEach(attr => {
         if (!el.hasAttribute(attr)) return;
         const key = `palOriginal${attr.replace(/[^a-z]/gi, '')}`;
@@ -6709,6 +6729,7 @@ applyProjectSelectionFromStorage();
       acceptNode(node) {
         const parent = node.parentElement;
         if (!parent || parent.closest('script, style, svg, canvas')) return NodeFilter.FILTER_REJECT;
+        if (parent.closest(PAL_HOME_SPECIAL_TRANSLATION_SECTIONS)) return NodeFilter.FILTER_REJECT;
         if (parent.closest('input, textarea')) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
@@ -6726,10 +6747,12 @@ applyProjectSelectionFromStorage();
       window.__palHomeLanguageBridge = true;
       window.setLanguage = function(lang, btn) {
         const nextLang = ['en', 'es', 'pl'].includes(lang) ? lang : 'en';
-        localStorage.setItem(PAL_HOME_LANGUAGE_KEY, nextLang);
         const englishButton = document.querySelector(".lang-switch button[onclick*=\"'en'\"]");
+        localStorage.setItem(PAL_HOME_LANGUAGE_KEY, 'en');
         originalSetLanguage.call(this, 'en', englishButton);
+        palHomeApplyLanguage();
         localStorage.setItem(PAL_HOME_LANGUAGE_KEY, nextLang);
+        originalSetLanguage.call(this, nextLang, btn || document.querySelector(`.lang-switch button[onclick*="'${nextLang}'"]`));
         setTimeout(() => palHomeApplyLanguage(), 0);
         return undefined;
       };

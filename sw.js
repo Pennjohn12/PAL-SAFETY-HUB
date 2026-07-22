@@ -1,7 +1,7 @@
 // PAL Safety Hub Service Worker
-// Caches the app so it works offline after first load.
+// Keeps the app usable offline, while always preferring fresh pages when online.
 
-const CACHE_NAME = 'pal-safety-hub-v5';
+const CACHE_NAME = 'pal-safety-hub-v2026-07-22-1';
 const ASSETS = [
   './',
   './index.html',
@@ -14,11 +14,10 @@ const ASSETS = [
   './pal-carousel-3.jpg',
   './pal-carousel-4.jpg'
 ];
-const CACHE_PATHS = new Set(ASSETS.map(asset => new URL(asset, self.location.href).pathname));
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS).catch(() => undefined))
   );
   self.skipWaiting();
 });
@@ -32,15 +31,38 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Use fresh pages when online, cached pages only when offline.
+function isHtmlRequest(request) {
+  const requestUrl = new URL(request.url);
+  const acceptHeader = request.headers.get('accept') || '';
+  return request.mode === 'navigate' ||
+    acceptHeader.includes('text/html') ||
+    requestUrl.pathname === '/' ||
+    requestUrl.pathname.endsWith('.html');
+}
+
+// HTML/pages: network first, cache only as an offline backup.
+// Static files/images: network first, cached only as an offline backup.
 self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url);
   if (event.request.method !== 'GET' || requestUrl.origin !== self.location.origin) {
     return;
   }
-  if (!CACHE_PATHS.has(requestUrl.pathname)) {
+
+  if (isHtmlRequest(event.request)) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .then(response => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+    );
     return;
   }
+
   event.respondWith(
     fetch(event.request, { cache: 'no-store' })
       .then(response => {
