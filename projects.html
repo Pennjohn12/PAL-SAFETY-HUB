@@ -1505,6 +1505,227 @@
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
 
+    /* SIGNED_IN_INTERACTION_POLISH_2026_07_22 */
+    #view-projects .tab,
+    #view-detail .tab,
+    #view-projects .btn-outline,
+    #view-detail .btn-outline,
+    #view-projects .btn-secondary,
+    #view-detail .btn-secondary,
+    #view-projects .btn-sm,
+    #view-detail .btn-sm {
+      transition:background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+    #view-projects .tab,
+    #view-detail .tab {
+      background:#fff;
+      color:var(--navy);
+      border:1.5px solid var(--line);
+      border-bottom:3px solid transparent;
+      box-shadow:0 2px 8px rgba(16,24,40,.05);
+    }
+    #view-projects .tab:hover,
+    #view-projects .tab:focus,
+    #view-detail .tab:hover,
+    #view-detail .tab:focus,
+    #view-projects .btn-outline:hover,
+    #view-projects .btn-outline:focus,
+    #view-detail .btn-outline:hover,
+    #view-detail .btn-outline:focus,
+    #view-projects .btn-secondary:hover,
+    #view-projects .btn-secondary:focus,
+    #view-detail .btn-secondary:hover,
+    #view-detail .btn-secondary:focus,
+    #view-projects .btn-sm:hover,
+    #view-projects .btn-sm:focus,
+    #view-detail .btn-sm:hover,
+    #view-detail .btn-sm:focus {
+      background:var(--green);
+      color:var(--navy);
+      border-color:var(--green);
+      box-shadow:0 8px 18px rgba(16,24,40,.10);
+      outline:none;
+    }
+    #view-projects .tab.active,
+    #view-detail .tab.active {
+      background:var(--navy);
+      color:#fff;
+      border-color:var(--navy);
+      border-bottom-color:var(--green);
+      box-shadow:0 8px 18px rgba(16,24,40,.12);
+    }
+    #view-projects .tab.active:hover,
+    #view-projects .tab.active:focus,
+    #view-detail .tab.active:hover,
+    #view-detail .tab.active:focus {
+      background:var(--green);
+      color:var(--navy);
+      border-color:var(--green);
+    }
+    #view-projects .project-card,
+    #view-detail .summary-card.project-access-card,
+    #view-detail .project-record-tab,
+    #view-projects .jha-workflow-card:not(.disabled),
+    #view-projects .jha-template-card,
+    #view-projects .foreman-tool-card.tool-launch,
+    #view-detail .foreman-tool-card.tool-launch,
+    #view-projects .workforce-overview-card,
+    #view-projects .cert-alert-box.filter-card,
+    #view-projects .onboarding-flow-card,
+    #view-projects .onboarding-review-card,
+    #view-projects .employee-card.employee-row,
+    #view-projects .newhire-card,
+    #view-projects .ticket-card,
+    #view-detail .ticket-card,
+    #view-projects .warehouse-card,
+    #view-detail .warehouse-card,
+    #view-projects .upload-zone,
+    #view-detail .upload-zone {
+      transition:background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+    #view-projects .project-card:hover,
+    #view-projects .project-card:focus,
+    #view-detail .summary-card.project-access-card:hover,
+    #view-detail .summary-card.project-access-card:focus,
+    #view-detail .project-record-tab:hover,
+    #view-detail .project-record-tab:focus,
+    #view-projects .jha-workflow-card:not(.disabled):hover,
+    #view-projects .jha-workflow-card:not(.disabled):focus,
+    #view-projects .jha-template-card:hover,
+    #view-projects .jha-template-card:focus,
+    #view-projects .foreman-tool-card.tool-launch:hover,
+    #view-projects .foreman-tool-card.tool-launch:focus,
+    #view-detail .foreman-tool-card.tool-launch:hover,
+    #view-detail .foreman-tool-card.tool-launch:focus,
+    #view-projects .workforce-overview-card:hover,
+    #view-projects .workforce-overview-card:focus,
+    #view-projects .cert-alert-box.filter-card:hover,
+    #view-projects .cert-alert-box.filter-card:focus,
+    #view-projects .onboarding-flow-card:hover,
+    #view-projects .onboarding-flow-card:focus,
+    #view-projects .onboarding-review-card:hover,
+    #view-projects .onboarding-review-card:focus,
+    #view-projects .employee-card.employee-row:hover,
+    #view-projects .employee-card.employee-row:focus,
+    #view-projects .newhire-card:hover,
+    #view-projects .newhire-card:focus-within,
+    #view-projects .ticket-card:hover,
+    #view-projects .ticket-card:focus,
+    #view-detail .ticket-card:hover,
+    #view-detail .ticket-card:focus,
+    #view-projects .warehouse-card:hover,
+    #view-projects .warehouse-card:focus,
+    #view-detail .warehouse-card:hover,
+    #view-detail .warehouse-card:focus,
+    #view-projects .upload-zone:hover,
+    #view-projects .upload-zone:focus-within,
+    #view-detail .upload-zone:hover,
+    #view-detail .upload-zone:focus-within {
+      background:#f4fbe9;
+      border-color:var(--green);
+      box-shadow:0 12px 26px rgba(16,24,40,.12);
+      transform:translateY(-1px);
+      outline:none;
+    }
+    #view-detail .summary-card.project-access-card.active,
+    #view-projects .jha-template-card.active,
+    #view-projects .foreman-tool-card.tool-launch.is-active,
+    #view-detail .foreman-tool-card.tool-launch.is-active,
+    #view-projects .onboarding-flow-card.active,
+    #view-projects .onboarding-review-card.active,
+    #view-projects .cert-alert-box.filter-card.active,
+    #view-projects .employee-card.employee-row.expanded {
+      background:#f4fbe9;
+      border-color:var(--green);
+      box-shadow:0 0 0 2px rgba(112,193,71,.22), 0 10px 22px rgba(16,24,40,.10);
+    }
+    #view-projects button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger),
+    #view-detail button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger) {
+      background:#fff;
+      color:var(--navy);
+      border-color:var(--line);
+    }
+    #view-projects button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):hover,
+    #view-projects button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):focus,
+    #view-detail button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):hover,
+    #view-detail button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):focus {
+      background:var(--green);
+      color:var(--navy);
+      border-color:var(--green);
+      box-shadow:0 8px 18px rgba(16,24,40,.10);
+      outline:none;
+    }
+    #view-projects [data-onboarding-tab].active,
+    #view-projects .pipeline-tabs .tab.active,
+    #view-detail .project-detail-tabs .tab.active {
+      background:var(--navy) !important;
+      color:#fff !important;
+      border-color:var(--navy) !important;
+      border-bottom-color:var(--green) !important;
+    }
+    #view-projects [data-onboarding-tab].active:hover,
+    #view-projects [data-onboarding-tab].active:focus,
+    #view-projects .pipeline-tabs .tab.active:hover,
+    #view-projects .pipeline-tabs .tab.active:focus,
+    #view-detail .project-detail-tabs .tab.active:hover,
+    #view-detail .project-detail-tabs .tab.active:focus {
+      background:var(--green) !important;
+      color:var(--navy) !important;
+      border-color:var(--green) !important;
+    }
+    #view-projects [role="button"],
+    #view-detail [role="button"],
+    #view-projects .packet-form-card,
+    #view-projects .cert-preview-card,
+    #view-projects .daily-box,
+    #view-detail .daily-box,
+    #view-projects .warehouse-box,
+    #view-detail .warehouse-box,
+    #view-projects .ticket-total-box,
+    #view-detail .ticket-total-box,
+    #view-projects .workforce-status-card,
+    #view-projects .access-row,
+    #view-projects .activity-row {
+      transition:background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+    #view-projects [role="button"]:hover,
+    #view-projects [role="button"]:focus,
+    #view-detail [role="button"]:hover,
+    #view-detail [role="button"]:focus,
+    #view-projects .packet-form-card:hover,
+    #view-projects .packet-form-card:focus-within,
+    #view-projects .cert-preview-card:hover,
+    #view-projects .cert-preview-card:focus-within,
+    #view-projects .daily-box:hover,
+    #view-detail .daily-box:hover,
+    #view-projects .warehouse-box:hover,
+    #view-detail .warehouse-box:hover,
+    #view-projects .ticket-total-box:hover,
+    #view-detail .ticket-total-box:hover,
+    #view-projects .workforce-status-card:hover,
+    #view-projects .access-row:hover,
+    #view-projects .activity-row:hover {
+      background:#f4fbe9;
+      border-color:var(--green);
+      box-shadow:0 12px 26px rgba(16,24,40,.10);
+      transform:translateY(-1px);
+      outline:none;
+    }
+    #view-projects [role="button"] h3,
+    #view-projects [role="button"] h4,
+    #view-detail [role="button"] h3,
+    #view-detail [role="button"] h4,
+    #view-projects .packet-form-card h3,
+    #view-projects .packet-form-card h4,
+    #view-projects .daily-box strong,
+    #view-detail .daily-box strong,
+    #view-projects .warehouse-box strong,
+    #view-detail .warehouse-box strong,
+    #view-projects .ticket-total-box strong,
+    #view-detail .ticket-total-box strong {
+      color:var(--navy);
+    }
+
   </style>
 
 <script>
@@ -1702,7 +1923,7 @@
                 <div><strong>Step 2:</strong> Watch the PAL orientation video. During the video, you will answer five questions. Please do not skip ahead.</div>
                 <div><strong>Step 3:</strong> Review and sign the required orientation forms.</div>
                 <div><strong>Step 4:</strong> Upload safety certifications such as OSHA, SST, fall protection, scaffold, G60, fire watch, or any other PAL-required certs.</div>
-                <div><strong>Step 5:</strong> Upload payroll and ID documents, including driver license/photo ID, Social Security card, union card/book if applicable, and any other requested payroll document.</div>
+                <div><strong>Step 5:</strong> Upload payroll and ID documents, including driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll forms, and any other requested payroll document.</div>
               </div>
               <p class="helper-text">If something required is missing, PAL Safety Hub will stop you and show what needs to be fixed before you can move forward.</p>
               <div class="newhire-step-actions">
@@ -1756,12 +1977,14 @@
               <div class="newhire-required-list">
                 <div id="public-drug-status">Drug & Alcohol Consent: Pending</div>
                 <div id="public-safety-status">Safety Agreement: Pending</div>
+                <div id="public-w4-status">Federal W-4 Form: Pending</div>
               </div>
               <div class="newhire-step-actions">
                 <button class="btn-secondary" type="button" onclick="publicNewHireWizardBack()">Back</button>
                 <div class="right">
                   <button class="btn-secondary" type="button" onclick="openPublicNewHireDrugConsentForm()">Open Drug & Alcohol Consent</button>
                   <button class="btn-secondary" type="button" onclick="openPublicNewHireSafetyAgreementForm()">Open Safety Agreement</button>
+                  <button class="btn-secondary" type="button" onclick="openPublicNewHireW4Form()">Open Federal W-4</button>
                   <button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Continue</button>
                 </div>
               </div>
@@ -1780,7 +2003,7 @@
                 </div>
                 <div class="box">
                   <h4>Payroll / ID Documents</h4>
-                  <p>Examples: driver license/photo ID, Social Security card, union book/card if applicable, W-4/payroll documents, and other office-requested files.</p>
+                  <p>Examples: driver license/photo ID, Social Security card, union book/card if applicable, completed W-4/payroll forms, and other office-requested files.</p>
                   <div class="mini-note" id="public-payroll-id-status">Payroll / ID Uploads: Pending</div>
                 </div>
               </div>
@@ -1803,6 +2026,7 @@
                 <div class="report-field"><span class="k">Orientation</span><div class="v">Pending</div></div>
                 <div class="report-field"><span class="k">Drug Consent</span><div class="v">Pending</div></div>
                 <div class="report-field"><span class="k">Safety Agreement</span><div class="v">Pending</div></div>
+                <div class="report-field"><span class="k">Federal W-4</span><div class="v">Pending</div></div>
                 <div class="report-field"><span class="k">Cert Uploads</span><div class="v">Pending</div></div>
                 <div class="report-field"><span class="k">Payroll / ID Uploads</span><div class="v">Pending</div></div>
                 <div class="report-field"><span class="k">Packet Status</span><div class="v">Not Submitted</div></div>
@@ -3230,7 +3454,7 @@
     <div class="mini-note" id="newhire-payroll-id-label" style="margin-bottom:14px;">Office-sensitive payroll/onboarding documents.</div>
     <div class="detail-card" style="background:#fff7ed;margin-bottom:12px;">
       <h3 style="margin-bottom:6px;">Private Payroll / Identity Documents</h3>
-      <div class="helper-text">Upload clear photos or PDFs. These should be treated as office-sensitive documents and reviewed only by authorized PAL office staff.</div>
+      <div class="helper-text">Upload clear photos or PDFs. Include driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll form, and any other document PAL office requested.</div>
     </div>
     <div class="report-grid">
       <div class="field"><label>Driver License / Photo ID</label><input id="newhire-payroll-driver-id" type="file" accept=".pdf,image/*" /></div>
@@ -3450,6 +3674,8 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
+      <button class="btn-outline" onclick="printNewHireFullPacket()">Print Full Packet</button>
+      <button class="btn-outline" onclick="downloadNewHireFullPacket()">Save Full Packet</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
       <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
@@ -3528,6 +3754,8 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-orientation-form')">Cancel</button>
+      <button class="btn-outline" type="button" onclick="printNewHirePacketForm('orientation')">Print / PDF</button>
+      <button class="btn-outline" type="button" onclick="downloadNewHirePacketForm('orientation')">Save to Files</button>
       <button class="btn-save" id="save-newhire-orientation-btn" onclick="saveNewHireOrientationForm()">Save Orientation Form</button>
     </div>
   </div>
@@ -3570,6 +3798,8 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-drug-form')">Cancel</button>
+      <button class="btn-outline" type="button" onclick="printNewHirePacketForm('drug')">Print / PDF</button>
+      <button class="btn-outline" type="button" onclick="downloadNewHirePacketForm('drug')">Save to Files</button>
       <button class="btn-save" id="save-newhire-drug-btn" onclick="saveNewHireDrugConsentForm()">Save Drug Consent</button>
     </div>
   </div>
@@ -3614,7 +3844,68 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modal-newhire-safety-form')">Cancel</button>
+      <button class="btn-outline" type="button" onclick="printNewHirePacketForm('safety')">Print / PDF</button>
+      <button class="btn-outline" type="button" onclick="downloadNewHirePacketForm('safety')">Save to Files</button>
       <button class="btn-save" id="save-newhire-safety-btn" onclick="saveNewHireSafetyAgreementForm()">Save Safety Agreement</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW HIRE W-4 DOCUMENT WINDOW - W4_PACKET_PHASE_2026_07_22 -->
+<div class="modal-overlay" id="modal-newhire-w4-form">
+  <div class="modal newhire-doc-window">
+    <div class="newhire-doc-paper">
+      <div class="newhire-doc-head">
+        <h3>Federal W-4 Form</h3>
+        <p>Employee withholding information saves back to the new-hire orientation packet.</p>
+      </div>
+      <div class="newhire-doc-body">
+        <div class="doc-review-box">
+          <h4>Employee Review</h4>
+          <p class="helper-text" style="margin-bottom:8px;">Complete this section for PAL payroll review. Use the same legal name and address that should appear on payroll records.</p>
+          <ul>
+            <li>Enter legal name, address, Social Security number, and filing status.</li>
+            <li>Complete any additional withholding sections that apply to you.</li>
+            <li>Type your full name as your electronic signature before saving.</li>
+          </ul>
+        </div>
+        <div class="report-grid">
+          <div class="field"><label>First Name</label><input id="nh-w4-first-name" placeholder="First name" /></div>
+          <div class="field"><label>Last Name</label><input id="nh-w4-last-name" placeholder="Last name" /></div>
+          <div class="field span-2"><label>Address</label><input id="nh-w4-address" placeholder="Street address" /></div>
+          <div class="field"><label>City</label><input id="nh-w4-city" placeholder="City" /></div>
+          <div class="field"><label>State</label><input id="nh-w4-state" placeholder="State" /></div>
+          <div class="field"><label>ZIP Code</label><input id="nh-w4-zip" inputmode="numeric" placeholder="ZIP code" /></div>
+          <div class="field"><label>Social Security Number</label><input id="nh-w4-ssn" inputmode="numeric" autocomplete="off" placeholder="XXX-XX-XXXX" /></div>
+          <div class="field span-2"><label>Filing Status</label><select id="nh-w4-filing-status">
+            <option value="">Select filing status...</option>
+            <option>Single or Married filing separately</option>
+            <option>Married filing jointly or Qualifying surviving spouse</option>
+            <option>Head of household</option>
+          </select></div>
+          <div class="field span-2"><label>Multiple Jobs or Spouse Works</label><select id="nh-w4-multiple-jobs">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select></div>
+          <div class="field"><label>Child Tax Credit</label><input id="nh-w4-child-credit" inputmode="decimal" placeholder="0.00" /></div>
+          <div class="field"><label>Other Dependents / Credits</label><input id="nh-w4-other-credit" inputmode="decimal" placeholder="0.00" /></div>
+          <div class="field"><label>Total Credits</label><input id="nh-w4-total-credits" inputmode="decimal" placeholder="0.00" /></div>
+          <div class="field"><label>Other Income</label><input id="nh-w4-other-income" inputmode="decimal" placeholder="0.00" /></div>
+          <div class="field"><label>Deductions</label><input id="nh-w4-deductions" inputmode="decimal" placeholder="0.00" /></div>
+          <div class="field"><label>Extra Withholding</label><input id="nh-w4-extra-withholding" inputmode="decimal" placeholder="0.00" /></div>
+          <div class="field span-2"><label>Employee Notes</label><textarea id="nh-w4-notes" rows="3" placeholder="Optional payroll notes..."></textarea></div>
+        </div>
+        <div class="doc-sig-line" style="margin-top:14px;">
+          <div class="field"><label>Employee Signature / Typed Name</label><input id="nh-w4-signature" placeholder="Type full legal name as signature" /></div>
+          <div class="field"><label>Date Signed</label><input id="nh-w4-date-signed" type="date" /></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-newhire-w4-form')">Cancel</button>
+      <button class="btn-outline" type="button" onclick="printNewHireW4Form()">Print / PDF</button>
+      <button class="btn-outline" type="button" onclick="downloadNewHireW4Form()">Save to Files</button>
+      <button class="btn-save" id="save-newhire-w4-btn" onclick="saveNewHireW4Form()">Save W-4 Form</button>
     </div>
   </div>
 </div>
@@ -3730,6 +4021,7 @@
   let currentNewHireOrientationId = null;
   let currentNewHireDrugConsentId = null;
   let currentNewHireSafetyAgreementId = null;
+  let currentNewHireW4Id = null;
   let editingWarehouseProjectId = null;
   let editingWarehouseItemId = null;
   let selectedTicket = null;
@@ -3905,6 +4197,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.copyNewHireIntakeText = copyNewHireIntakeText;
   window.copyNewHireIntakeTextById = copyNewHireIntakeTextById;
   window.openNewHireReview = openNewHireReview;
+  window.printNewHireFullPacket = printNewHireFullPacket;
+  window.downloadNewHireFullPacket = downloadNewHireFullPacket;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
@@ -3917,6 +4211,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openNewHireSafetyAgreementForm = openNewHireSafetyAgreementForm;
   window.saveNewHireSafetyAgreementForm = saveNewHireSafetyAgreementForm;
   window.openPublicNewHireSafetyAgreementForm = openPublicNewHireSafetyAgreementForm;
+  window.openNewHireW4Form = openNewHireW4Form;
+  window.saveNewHireW4Form = saveNewHireW4Form;
+  window.openPublicNewHireW4Form = openPublicNewHireW4Form;
+  window.printNewHireW4Form = printNewHireW4Form;
+  window.downloadNewHireW4Form = downloadNewHireW4Form;
+  window.printNewHirePacketForm = printNewHirePacketForm;
+  window.downloadNewHirePacketForm = downloadNewHirePacketForm;
   window.openPublicNewHireCertUploadForm = openPublicNewHireCertUploadForm;
   window.openPublicNewHirePayrollIdUploadForm = openPublicNewHirePayrollIdUploadForm;
   window.publicNewHireWizardNext = publicNewHireWizardNext;
@@ -11086,6 +11387,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         if (os) os.textContent = 'Orientation Form: Pending';
         const ds = document.getElementById('public-drug-status');
         if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
+        const ss = document.getElementById('public-safety-status');
+        if (ss) ss.textContent = 'Safety Agreement: Pending';
+        const ws = document.getElementById('public-w4-status');
+        if (ws) ws.textContent = 'Federal W-4 Form: Pending';
         updatePublicPacketChecklist(currentPublicNewHireIntake);
         showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
         return;
@@ -11116,6 +11421,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (ds) ds.textContent = `Drug & Alcohol Consent: ${x.drugConsentForm?.completed ? 'Completed' : 'Pending'}`;
       const ss = document.getElementById('public-safety-status');
       if (ss) ss.textContent = `Safety Agreement: ${x.safetyAgreementForm?.completed ? 'Completed' : 'Pending'}`;
+      const ws = document.getElementById('public-w4-status');
+      if (ws) ws.textContent = `Federal W-4 Form: ${x.w4Form?.completed ? 'Completed' : 'Pending'}`;
       const cs = document.getElementById('public-cert-upload-status');
       if (cs) cs.textContent = `Certification Uploads: ${(x.certFiles || []).length ? (x.certFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
       const ps = document.getElementById('public-payroll-id-status');
@@ -11140,6 +11447,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (os) os.textContent = 'Orientation Form: Pending';
       const ds = document.getElementById('public-drug-status'); if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
       const ss = document.getElementById('public-safety-status'); if (ss) ss.textContent = 'Safety Agreement: Pending';
+      const ws = document.getElementById('public-w4-status'); if (ws) ws.textContent = 'Federal W-4 Form: Pending';
       updatePublicPacketChecklist(currentPublicNewHireIntake);
       showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     }
@@ -11167,6 +11475,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       allNewHireIntakes.push(currentPublicNewHireIntake);
     }
     openNewHireSafetyAgreementForm(publicNewHireIntakeId);
+  }
+
+  function openPublicNewHireW4Form() {
+    if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    if (currentPublicNewHireIntake && !allNewHireIntakes.some(x => x.id === currentPublicNewHireIntake.id)) {
+      allNewHireIntakes.push(currentPublicNewHireIntake);
+    }
+    openNewHireW4Form(publicNewHireIntakeId);
   }
 
   function ensurePublicIntakeForUpload() {
@@ -11232,6 +11548,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const missing = [];
       if (!c.drug) missing.push('Drug & Alcohol Consent');
       if (!c.safety) missing.push('Safety Agreement');
+      if (!c.w4) missing.push('Federal W-4 Form');
       return missing.length ? `Please complete and save: ${missing.join(' and ')}.` : '';
     }
     if (step === 4) {
@@ -11245,6 +11562,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!c.orientation) missing.push('Orientation');
       if (!c.drug) missing.push('Drug Consent');
       if (!c.safety) missing.push('Safety Agreement');
+      if (!c.w4) missing.push('Federal W-4');
       if (!c.certs) missing.push('Cert Uploads');
       if (!c.payroll) missing.push('Payroll / ID Uploads');
       return missing.length ? `Before submitting, finish: ${missing.join(', ')}.` : '';
@@ -11286,7 +11604,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       true,
       !publicNewHireMissingBasicFields().length,
       checklist.orientation,
-      checklist.drug && checklist.safety,
+      checklist.drug && checklist.safety && checklist.w4,
       checklist.certs && checklist.payroll,
       checklist.submitted
     ];
@@ -11434,6 +11752,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       orientation: !!x.orientationForm?.completed,
       drug: !!x.drugConsentForm?.completed,
       safety: !!x.safetyAgreementForm?.completed,
+      w4: !!x.w4Form?.completed,
       certs: !!(x.certUploadsCompleted || (x.certFiles || []).length),
       payroll: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length),
       submitted: !!x.packetSubmitted
@@ -11451,15 +11770,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const c = getNewHirePacketChecklist(x);
     const certDetail = (x.certFiles || []).length ? `${(x.certFiles || []).length} file(s)` : '';
     const payrollDetail = (x.payrollIdFiles || []).length ? `${(x.payrollIdFiles || []).length} file(s)` : '';
-    const completeCount = [c.orientation, c.drug, c.safety, c.certs, c.payroll].filter(Boolean).length;
+    const completeCount = [c.orientation, c.drug, c.safety, c.w4, c.certs, c.payroll].filter(Boolean).length;
     if (el) {
       el.innerHTML = [
         packetStatusHTML(c.orientation, 'Orientation'),
         packetStatusHTML(c.drug, 'Drug Consent'),
         packetStatusHTML(c.safety, 'Safety Agreement'),
+        packetStatusHTML(c.w4, 'Federal W-4'),
         packetStatusHTML(c.certs, 'Cert Uploads', certDetail),
         packetStatusHTML(c.payroll, 'Payroll / ID Uploads', payrollDetail),
-        `<div class="report-field"><span class="k">Packet Status</span><div class="v"><span class="pill ${c.submitted ? 'active' : 'pending'}">${c.submitted ? 'Submitted to PAL' : 'Not Submitted'}</span><div class="mini-note">${completeCount}/5 sections complete</div></div></div>`
+        `<div class="report-field"><span class="k">Packet Status</span><div class="v"><span class="pill ${c.submitted ? 'active' : 'pending'}">${c.submitted ? 'Submitted to PAL' : 'Not Submitted'}</span><div class="mini-note">${completeCount}/6 sections complete</div></div></div>`
       ].join('');
     }
     const setStatus = (id, label, done, detail = '') => {
@@ -11469,6 +11789,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     setStatus('public-orientation-status', 'Orientation Form', c.orientation);
     setStatus('public-drug-status', 'Drug & Alcohol Consent', c.drug);
     setStatus('public-safety-status', 'Safety Agreement', c.safety);
+    setStatus('public-w4-status', 'Federal W-4 Form', c.w4);
     setStatus('public-cert-upload-status', 'Certification Uploads', c.certs, certDetail ? `${certDetail} uploaded` : 'Pending');
     setStatus('public-payroll-id-status', 'Payroll / ID Uploads', c.payroll, payrollDetail ? `${payrollDetail} uploaded` : 'Pending');
     const btn = document.getElementById('public-final-submit-btn');
@@ -12010,6 +12331,138 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     navigator.clipboard?.writeText(text).then(() => toast('Text message copied.')).catch(() => toast('Could not copy text.'));
   }
 
+  function newHireFullPacketHTML(x) {
+    if (!x) return '';
+    const checklist = getNewHirePacketChecklist(x);
+    const statusCell = (done) => done ? 'Complete' : 'Pending';
+    const row = (label, value = '') => `<tr><th>${esc(label)}</th><td>${esc(value || '')}</td></tr>`;
+    const fileRows = (files = []) => files.length
+      ? files.map(f => `<tr><td>${esc(f.type || 'File')}</td><td><a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded File')}</a></td><td>${esc(f.uploadedAt || '')}</td></tr>`).join('')
+      : '<tr><td colspan="3">No files uploaded.</td></tr>';
+    const formRows = [
+      ['Orientation', checklist.orientation, x.orientationForm?.dateSigned || x.orientationForm?.savedAt || ''],
+      ['Drug & Alcohol Consent', checklist.drug, x.drugConsentForm?.dateSigned || x.drugConsentForm?.savedAt || ''],
+      ['Safety Agreement', checklist.safety, x.safetyAgreementForm?.dateSigned || x.safetyAgreementForm?.savedAt || ''],
+      ['Federal W-4', checklist.w4, x.w4Form?.dateSigned || x.w4Form?.savedAt || ''],
+      ['Certification Uploads', checklist.certs, `${(x.certFiles || []).length} file(s)`],
+      ['Payroll / ID Uploads', checklist.payroll, `${(x.payrollIdFiles || []).length} file(s)`],
+      ['Final Submit', checklist.submitted, x.packetSubmittedAt || '']
+    ].map(([label, done, detail]) => `<tr><td>${esc(label)}</td><td>${statusCell(done)}</td><td>${esc(detail || '')}</td></tr>`).join('');
+    const w4 = x.w4Form || {};
+    const css = `
+      @page{size:letter;margin:.35in}
+      *{box-sizing:border-box}
+      html,body{margin:0;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif}
+      body{padding:14px}
+      .file-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+      .file-actions button{border:1px solid #111;border-radius:8px;background:#fff;color:#111;padding:10px 14px;font-weight:900}
+      .packet{max-width:8in;margin:0 auto;border:1px solid #111;background:#fff}
+      .head{display:grid;grid-template-columns:1.2in 1fr 1.55in;align-items:center;border-bottom:2px solid #111;padding:.13in .15in;gap:.12in}
+      .logo{font-size:22px;font-weight:900;line-height:1;color:#0b3a66}.logo small{display:block;font-size:7px;letter-spacing:.6px;color:#6abf00}
+      .title{text-align:center}.title h1{font-size:20px;margin:0 0 3px}.title p{font-size:11px;margin:0;color:#333}
+      .meta{text-align:right;font-size:10px;line-height:1.35}
+      section{padding:.14in .16in;border-bottom:1px solid #999}
+      h2{font-size:13px;margin:0 0 .08in;color:#111}
+      table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:.06in}
+      th,td{border:1px solid #777;padding:6px;text-align:left;vertical-align:top;word-break:break-word}
+      th{background:#f1f5f9;width:32%;font-weight:900}
+      a{color:#0b3a66}
+      .note{font-size:10px;color:#333;line-height:1.35}
+      @media print{body{padding:0}.file-actions{display:none!important}.packet{max-width:100%;border-color:#111}a{text-decoration:none;color:#111}}
+      @media(max-width:700px){body{padding:8px}.packet{min-width:720px}.file-actions{position:sticky;top:0;background:#fff;padding:8px;z-index:2}}
+    `;
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PAL Onboarding Packet - ${esc(x.name || 'New Hire')}</title>
+  <style>${css}</style>
+</head>
+<body>
+  <div class="file-actions">
+    <button onclick="window.print()">Print / Save as PDF</button>
+    <button onclick="window.close()">Close</button>
+  </div>
+  <div class="packet">
+    <div class="head">
+      <div class="logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+      <div class="title"><h1>New Hire Onboarding Packet</h1><p>Office review and recordkeeping summary</p></div>
+      <div class="meta">Generated: ${esc(new Date().toLocaleString())}<br>Status: ${esc(x.status || 'Pending')}</div>
+    </div>
+    <section>
+      <h2>Employee / Project</h2>
+      <table>
+        ${row('Employee', x.name)}
+        ${row('Phone', x.phone)}
+        ${row('Email', x.email)}
+        ${row('Trade / Role', x.trade)}
+        ${row('Project', [x.projectName, x.projectJobNumber ? 'Job # ' + x.projectJobNumber : ''].filter(Boolean).join(' - '))}
+        ${row('Foreman / Contact', x.foreman)}
+        ${row('Expected Start Date', x.startDate)}
+        ${row('Required Certs / Documents', x.required)}
+        ${row('Notes', x.notes || x.employeeNotes)}
+      </table>
+    </section>
+    <section>
+      <h2>Packet Checklist</h2>
+      <table><thead><tr><th>Section</th><th>Status</th><th>Detail</th></tr></thead><tbody>${formRows}</tbody></table>
+    </section>
+    <section>
+      <h2>Signed Form Snapshot</h2>
+      <table>
+        ${row('Orientation Signature', x.orientationForm?.signature)}
+        ${row('Drug Consent Signature', x.drugConsentForm?.signature)}
+        ${row('Safety Agreement Signature', x.safetyAgreementForm?.signature)}
+        ${row('W-4 Employee', `${w4.firstName || ''} ${w4.lastName || ''}`.trim())}
+        ${row('W-4 Filing Status', w4.filingStatus)}
+        ${row('W-4 Signature', w4.signature)}
+      </table>
+      <div class="note">Sensitive payroll documents and uploaded files remain stored in the protected app record. This summary helps the office confirm what is present without manually opening every section first.</div>
+    </section>
+    <section>
+      <h2>Certification Uploads</h2>
+      <table><thead><tr><th>Type</th><th>File</th><th>Uploaded</th></tr></thead><tbody>${fileRows(x.certFiles || [])}</tbody></table>
+    </section>
+    <section>
+      <h2>Payroll / ID Uploads</h2>
+      <table><thead><tr><th>Type</th><th>File</th><th>Uploaded</th></tr></thead><tbody>${fileRows(x.payrollIdFiles || [])}</tbody></table>
+    </section>
+  </div>
+</body>
+</html>`;
+  }
+
+  function currentReviewIntake() {
+    return allNewHireIntakes.find(i => i.id === currentNewHireReviewId) || null;
+  }
+
+  function newHireFullPacketFileName(x) {
+    const name = String(x?.name || 'new-hire').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-hire';
+    return `pal-onboarding-packet-${name}-${todayISO()}.html`;
+  }
+
+  function printNewHireFullPacket() {
+    const x = currentReviewIntake();
+    if (!x) return toast('Open an intake request first.');
+    const html = newHireFullPacketHTML(x);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) {
+      URL.revokeObjectURL(url);
+      toast('Popup blocked. Use Save Full Packet instead.');
+      return;
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }
+
+  function downloadNewHireFullPacket() {
+    const x = currentReviewIntake();
+    if (!x) return toast('Open an intake request first.');
+    downloadHtmlDocument(newHireFullPacketFileName(x), newHireFullPacketHTML(x), 'Full onboarding packet saved to files.');
+  }
+
   function openNewHireReview(id) {
     const x = allNewHireIntakes.find(i => i.id === id);
     if (!x) return toast('Intake request not found.');
@@ -12035,6 +12488,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         ${packetStatusHTML(!!x.orientationForm?.completed, 'Orientation')}
         ${packetStatusHTML(!!x.drugConsentForm?.completed, 'Drug Consent')}
         ${packetStatusHTML(!!x.safetyAgreementForm?.completed, 'Safety Agreement')}
+        ${packetStatusHTML(!!x.w4Form?.completed, 'Federal W-4')}
         ${packetStatusHTML(!!(x.certUploadsCompleted || (x.certFiles || []).length), 'Cert Uploads', (x.certFiles || []).length ? (x.certFiles || []).length + ' file(s)' : '')}
         ${packetStatusHTML(!!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length), 'Payroll / ID Uploads', (x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s)' : '')}
         ${packetStatusHTML(!!x.packetSubmitted, 'Final Submit', x.packetSubmittedAt || '')}
@@ -12073,6 +12527,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
           <span class="pill ${x.safetyAgreementForm?.completed ? 'active' : 'pending'}">${x.safetyAgreementForm?.completed ? 'Completed' : 'Pending'}</span>
           <button class="btn-sm" onclick="openNewHireSafetyAgreementForm('${esc(x.id)}')">Open Safety Agreement</button>
+        </div>
+      </div>
+    </div>
+    <div class="packet-form-card">
+      <div class="packet-form-row">
+        <div>
+          <div class="packet-form-title">Federal W-4 Form</div>
+          <div class="packet-form-sub">Opens as a separate payroll document window and saves back to this employee intake packet.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span class="pill ${x.w4Form?.completed ? 'active' : 'pending'}">${x.w4Form?.completed ? 'Completed' : 'Pending'}</span>
+          <button class="btn-sm" onclick="openNewHireW4Form('${esc(x.id)}')">Open W-4 Form</button>
         </div>
       </div>
     </div>
@@ -12326,6 +12792,148 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     resetOrientationModule(intake?.orientationForm || {});
   }
 
+  function currentNewHirePacketFormData(kind) {
+    const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
+    const configs = {
+      orientation: {
+        title: 'PAL New Hire Orientation Form',
+        subtitle: 'Employee orientation acknowledgement',
+        filePrefix: 'pal-orientation-form',
+        fields: [
+          ['Employee Name', val('nh-orient-employee-name')],
+          ['Date', val('nh-orient-date')],
+          ['Project / Jobsite', val('nh-orient-project')],
+          ['Orientation Language', selectedOrientationLanguage().toUpperCase()],
+          ['Video Completed', orientationSession?.ended ? 'Yes' : 'No'],
+          ['Knowledge Checks', orientationSession ? `${orientationSession.answers.filter(Boolean).length} of ${orientationSession.answers.length} complete` : 'Not started'],
+          ['Final Acknowledgement', document.getElementById('nh-orient-module-complete')?.checked ? 'Yes' : 'No'],
+          ['Employee Notes / Questions', val('nh-orient-notes')],
+          ['Employee Signature / Typed Name', val('nh-orient-signature')],
+          ['Date Signed', val('nh-orient-date-signed')]
+        ]
+      },
+      drug: {
+        title: 'PAL Drug & Alcohol Consent Form',
+        subtitle: 'Employee drug and alcohol consent acknowledgement',
+        filePrefix: 'pal-drug-alcohol-consent',
+        fields: [
+          ['Employee Name', val('nh-drug-employee-name')],
+          ['Date', val('nh-drug-date')],
+          ['Project / Jobsite', val('nh-drug-project')],
+          ['Consent Acknowledgement', val('nh-drug-consent')],
+          ['Employee Notes / Questions', val('nh-drug-notes')],
+          ['Employee Signature / Typed Name', val('nh-drug-signature')],
+          ['Date Signed', val('nh-drug-date-signed')]
+        ]
+      },
+      safety: {
+        title: 'PAL Scaffold / Fall / Ladder Safety Agreement',
+        subtitle: 'Employee safety agreement acknowledgement',
+        filePrefix: 'pal-safety-agreement',
+        fields: [
+          ['Employee Name', val('nh-safety-employee-name')],
+          ['Date', val('nh-safety-date')],
+          ['Project / Jobsite', val('nh-safety-project')],
+          ['Fall Protection Acknowledgement', val('nh-safety-fall')],
+          ['Ladder / Scaffold Acknowledgement', val('nh-safety-scaffold')],
+          ['Employee Notes / Questions', val('nh-safety-notes')],
+          ['Employee Signature / Typed Name', val('nh-safety-signature')],
+          ['Date Signed', val('nh-safety-date-signed')]
+        ]
+      }
+    };
+    return configs[kind] || null;
+  }
+
+  function newHirePacketFormDocumentHTML(kind) {
+    const form = currentNewHirePacketFormData(kind);
+    if (!form) return '';
+    const employee = form.fields.find(([label]) => label === 'Employee Name')?.[1] || 'New Hire';
+    const signatureLabels = new Set(['Employee Signature / Typed Name']);
+    const css = `
+      @page{size:letter;margin:.35in}
+      *{box-sizing:border-box}
+      html,body{margin:0;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif}
+      body{padding:14px}
+      .file-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+      .file-actions button{border:1px solid #111;border-radius:8px;background:#fff;color:#111;padding:10px 14px;font-weight:900}
+      .packet-sheet{max-width:8in;margin:0 auto;border:1px solid #111;background:#fff}
+      .packet-head{display:grid;grid-template-columns:1.25in 1fr 1.45in;align-items:center;border-bottom:2px solid #111;padding:.13in .15in;gap:.12in}
+      .packet-logo{font-size:22px;font-weight:900;line-height:1;color:#0b3a66}.packet-logo small{display:block;font-size:7px;letter-spacing:.6px;color:#6abf00}
+      .packet-title{text-align:center}.packet-title h1{font-size:19px;margin:0 0 3px}.packet-title p{font-size:11px;margin:0;color:#333}
+      .packet-meta{text-align:right;font-size:10px;line-height:1.35}
+      .packet-body{padding:.14in .16in}
+      .packet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.11in .18in}
+      .packet-field{min-height:.36in;border-bottom:1px solid #555;padding-bottom:3px}
+      .packet-field.full{grid-column:1/-1}
+      .packet-label{font-size:9px;font-weight:900;text-transform:uppercase;margin-bottom:3px}
+      .packet-value{font-size:12px;white-space:pre-wrap;word-break:break-word;min-height:16px}
+      .packet-signature{font-family:"Brush Script MT","Segoe Script",cursive;font-size:22px}
+      .packet-note{font-size:10px;line-height:1.35;color:#333;margin-top:.16in;border-top:1px solid #999;padding-top:.08in}
+      @media print{body{padding:0}.file-actions{display:none!important}.packet-sheet{max-width:100%;border-color:#111}}
+      @media(max-width:700px){body{padding:8px}.packet-sheet{min-width:720px}.file-actions{position:sticky;top:0;background:#fff;padding:8px;z-index:2}}
+    `;
+    const fields = form.fields.map(([label, value]) => {
+      const full = String(value || '').length > 50 || label.includes('Notes') || label.includes('Project');
+      const sig = signatureLabels.has(label) ? ' packet-signature' : '';
+      return `<div class="packet-field ${full ? 'full' : ''}"><div class="packet-label">${esc(label)}</div><div class="packet-value${sig}">${esc(value || '')}</div></div>`;
+    }).join('');
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(form.title)} - ${esc(employee)}</title>
+  <style>${css}</style>
+</head>
+<body>
+  <div class="file-actions">
+    <button onclick="window.print()">Print / Save as PDF</button>
+    <button onclick="window.close()">Close</button>
+  </div>
+  <div class="packet-sheet">
+    <div class="packet-head">
+      <div class="packet-logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+      <div class="packet-title"><h1>${esc(form.title)}</h1><p>${esc(form.subtitle)}</p></div>
+      <div class="packet-meta">Internal packet copy<br>Date: ${esc(todayISO())}</div>
+    </div>
+    <div class="packet-body">
+      <div class="packet-grid">${fields}</div>
+      <div class="packet-note">This copy was generated from PAL Safety Hub and is intended to support PAL onboarding review and employee recordkeeping.</div>
+    </div>
+  </div>
+</body>
+</html>`;
+  }
+
+  function newHirePacketFormFileName(kind) {
+    const form = currentNewHirePacketFormData(kind);
+    if (!form) return `pal-newhire-form-${todayISO()}.html`;
+    const employee = form.fields.find(([label]) => label === 'Employee Name')?.[1] || 'new-hire';
+    const slug = String(employee).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-hire';
+    return `${form.filePrefix}-${slug}-${todayISO()}.html`;
+  }
+
+  function printNewHirePacketForm(kind) {
+    const html = newHirePacketFormDocumentHTML(kind);
+    if (!html) return toast('This packet form is not ready to print.');
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) {
+      URL.revokeObjectURL(url);
+      toast('Popup blocked. Use Save to Files instead.');
+      return;
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }
+
+  function downloadNewHirePacketForm(kind) {
+    const html = newHirePacketFormDocumentHTML(kind);
+    if (!html) return toast('This packet form is not ready to save.');
+    downloadHtmlDocument(newHirePacketFormFileName(kind), html, 'Packet form saved to files.');
+  }
+
   function openNewHireOrientationForm(id) {
     const x = allNewHireIntakes.find(i => i.id === id) || (currentPublicNewHireIntake?.id === id ? currentPublicNewHireIntake : null);
     if (!x) return toast('Intake request not found.');
@@ -12521,6 +13129,243 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       toast('Could not save Safety Agreement.');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Safety Agreement'; }
+    }
+  }
+
+  // W4_PACKET_PHASE_2026_07_22
+  function splitEmployeeName(fullName = '') {
+    const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return { firstName: '', lastName: '' };
+    if (parts.length === 1) return { firstName: parts[0], lastName: '' };
+    return { firstName: parts.slice(0, -1).join(' '), lastName: parts[parts.length - 1] };
+  }
+
+  function openNewHireW4Form(id) {
+    const x = allNewHireIntakes.find(i => i.id === id) || (currentPublicNewHireIntake?.id === id ? currentPublicNewHireIntake : null);
+    if (!x) return toast('Intake request not found.');
+    currentNewHireW4Id = id;
+    const form = x.w4Form || {};
+    const nameParts = splitEmployeeName(x.name || '');
+    const set = (fieldId, value) => { const el = document.getElementById(fieldId); if (el) el.value = value || ''; };
+    set('nh-w4-first-name', form.firstName || nameParts.firstName);
+    set('nh-w4-last-name', form.lastName || nameParts.lastName);
+    set('nh-w4-address', form.address || '');
+    set('nh-w4-city', form.city || '');
+    set('nh-w4-state', form.state || '');
+    set('nh-w4-zip', form.zip || '');
+    set('nh-w4-ssn', form.ssn || '');
+    set('nh-w4-filing-status', form.filingStatus || '');
+    set('nh-w4-multiple-jobs', form.multipleJobs || 'No');
+    set('nh-w4-child-credit', form.childCredit || '');
+    set('nh-w4-other-credit', form.otherCredit || '');
+    set('nh-w4-total-credits', form.totalCredits || '');
+    set('nh-w4-other-income', form.otherIncome || '');
+    set('nh-w4-deductions', form.deductions || '');
+    set('nh-w4-extra-withholding', form.extraWithholding || '');
+    set('nh-w4-notes', form.notes || '');
+    set('nh-w4-signature', form.signature || x.name || '');
+    set('nh-w4-date-signed', form.dateSigned || todayISO());
+    const btn = document.getElementById('save-newhire-w4-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save W-4 Form'; }
+    document.getElementById('modal-newhire-w4-form')?.classList.add('open');
+  }
+
+  function getCurrentNewHireW4FormData() {
+    const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
+    return {
+      firstName: val('nh-w4-first-name'),
+      lastName: val('nh-w4-last-name'),
+      address: val('nh-w4-address'),
+      city: val('nh-w4-city'),
+      state: val('nh-w4-state'),
+      zip: val('nh-w4-zip'),
+      ssn: val('nh-w4-ssn'),
+      filingStatus: val('nh-w4-filing-status'),
+      multipleJobs: val('nh-w4-multiple-jobs'),
+      childCredit: val('nh-w4-child-credit'),
+      otherCredit: val('nh-w4-other-credit'),
+      totalCredits: val('nh-w4-total-credits'),
+      otherIncome: val('nh-w4-other-income'),
+      deductions: val('nh-w4-deductions'),
+      extraWithholding: val('nh-w4-extra-withholding'),
+      notes: val('nh-w4-notes'),
+      signature: val('nh-w4-signature'),
+      dateSigned: val('nh-w4-date-signed') || todayISO()
+    };
+  }
+
+  function newHireW4DocumentHTML(form = getCurrentNewHireW4FormData()) {
+    const fullName = `${form.firstName || ''} ${form.lastName || ''}`.trim() || 'New Hire';
+    const css = `
+      @page{size:letter;margin:.35in}
+      *{box-sizing:border-box}
+      html,body{margin:0;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif}
+      body{padding:14px}
+      .file-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+      .file-actions button{border:1px solid #111;border-radius:8px;background:#fff;color:#111;padding:10px 14px;font-weight:900}
+      .w4-sheet{max-width:8in;margin:0 auto;border:1px solid #111;background:#fff}
+      .w4-head{display:grid;grid-template-columns:1.2in 1fr 1.5in;align-items:center;border-bottom:2px solid #111;padding:.12in .14in;gap:.12in}
+      .w4-logo{font-size:22px;font-weight:900;line-height:1;color:#0b3a66}.w4-logo small{display:block;font-size:7px;letter-spacing:.6px;color:#6abf00}
+      .w4-title{text-align:center}.w4-title h1{font-size:20px;margin:0 0 3px}.w4-title p{font-size:11px;margin:0;color:#333}
+      .w4-meta{text-align:right;font-size:10px;line-height:1.35}
+      .w4-section{padding:.12in .14in;border-bottom:1px solid #999}
+      .w4-section h2{font-size:12px;margin:0 0 .08in;color:#111}
+      .w4-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.1in .16in}
+      .w4-field{min-height:.34in;border-bottom:1px solid #555;padding-bottom:3px}
+      .w4-field.full{grid-column:1/-1}
+      .w4-label{font-size:9px;font-weight:900;text-transform:uppercase;margin-bottom:3px}
+      .w4-value{font-size:12px;white-space:pre-wrap;word-break:break-word;min-height:16px}
+      .w4-signature{font-family:"Brush Script MT","Segoe Script",cursive;font-size:22px}
+      .w4-note{font-size:10px;line-height:1.35;color:#333;margin-top:.08in}
+      @media print{body{padding:0}.file-actions{display:none!important}.w4-sheet{max-width:100%;border-color:#111}}
+      @media(max-width:700px){body{padding:8px}.w4-sheet{min-width:720px}.file-actions{position:sticky;top:0;background:#fff;padding:8px;z-index:2}}
+    `;
+    const field = (label, value, full = false, extraClass = '') => `
+      <div class="w4-field ${full ? 'full' : ''}">
+        <div class="w4-label">${esc(label)}</div>
+        <div class="w4-value ${extraClass}">${esc(value || '')}</div>
+      </div>`;
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PAL Federal W-4 - ${esc(fullName)}</title>
+  <style>${css}</style>
+</head>
+<body>
+  <div class="file-actions">
+    <button onclick="window.print()">Print / Save as PDF</button>
+    <button onclick="window.close()">Close</button>
+  </div>
+  <div class="w4-sheet">
+    <div class="w4-head">
+      <div class="w4-logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+      <div class="w4-title"><h1>Federal W-4 Form</h1><p>Employee Withholding Certificate</p></div>
+      <div class="w4-meta">Internal payroll review<br>Date: ${esc(form.dateSigned || todayISO())}</div>
+    </div>
+    <div class="w4-section">
+      <h2>Step 1 - Employee Information</h2>
+      <div class="w4-grid">
+        ${field('First Name', form.firstName)}
+        ${field('Last Name', form.lastName)}
+        ${field('Address', form.address, true)}
+        ${field('City', form.city)}
+        ${field('State', form.state)}
+        ${field('ZIP Code', form.zip)}
+        ${field('Social Security Number', form.ssn)}
+        ${field('Filing Status', form.filingStatus, true)}
+      </div>
+    </div>
+    <div class="w4-section">
+      <h2>Steps 2-4 - Withholding Details</h2>
+      <div class="w4-grid">
+        ${field('Multiple Jobs / Spouse Works', form.multipleJobs)}
+        ${field('Child Tax Credit', form.childCredit)}
+        ${field('Other Dependents / Credits', form.otherCredit)}
+        ${field('Total Credits', form.totalCredits)}
+        ${field('Other Income', form.otherIncome)}
+        ${field('Deductions', form.deductions)}
+        ${field('Extra Withholding', form.extraWithholding)}
+        ${field('Employee Notes', form.notes, true)}
+      </div>
+    </div>
+    <div class="w4-section">
+      <h2>Step 5 - Employee Signature</h2>
+      <div class="w4-grid">
+        ${field('Employee Signature / Typed Name', form.signature, false, 'w4-signature')}
+        ${field('Date Signed', form.dateSigned)}
+      </div>
+      <div class="w4-note">This digital packet copy is captured through PAL Safety Hub for payroll review. PAL payroll may request any additional official payroll documentation required by law or company policy.</div>
+    </div>
+  </div>
+</body>
+</html>`;
+  }
+
+  function newHireW4FileName(form = getCurrentNewHireW4FormData()) {
+    const name = `${form.firstName || 'new'}-${form.lastName || 'hire'}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return `pal-w4-${name || 'new-hire'}-${form.dateSigned || todayISO()}.html`;
+  }
+
+  function printNewHireW4Form() {
+    const html = newHireW4DocumentHTML();
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) {
+      URL.revokeObjectURL(url);
+      toast('Popup blocked. Use Save to Files instead.');
+      return;
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }
+
+  function downloadNewHireW4Form() {
+    const form = getCurrentNewHireW4FormData();
+    downloadHtmlDocument(newHireW4FileName(form), newHireW4DocumentHTML(form), 'W-4 file saved to files.');
+  }
+
+  async function saveNewHireW4Form() {
+    if (!requireCloudConnection('save the W-4 form')) return;
+    if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
+    if (!currentNewHireW4Id) return toast('Open an intake request first.');
+    const btn = document.getElementById('save-newhire-w4-btn');
+    const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
+    const required = [
+      ['nh-w4-first-name', 'first name'],
+      ['nh-w4-last-name', 'last name'],
+      ['nh-w4-address', 'address'],
+      ['nh-w4-city', 'city'],
+      ['nh-w4-state', 'state'],
+      ['nh-w4-zip', 'ZIP code'],
+      ['nh-w4-ssn', 'Social Security number'],
+      ['nh-w4-filing-status', 'filing status'],
+      ['nh-w4-signature', 'employee signature']
+    ].filter(([id]) => !val(id)).map(([, label]) => label);
+    if (required.length) return toast(`Please complete the W-4 ${required.join(', ')}.`);
+    const w4Form = {
+      completed: true,
+      firstName: val('nh-w4-first-name'),
+      lastName: val('nh-w4-last-name'),
+      address: val('nh-w4-address'),
+      city: val('nh-w4-city'),
+      state: val('nh-w4-state'),
+      zip: val('nh-w4-zip'),
+      ssn: val('nh-w4-ssn'),
+      filingStatus: val('nh-w4-filing-status'),
+      multipleJobs: val('nh-w4-multiple-jobs'),
+      childCredit: val('nh-w4-child-credit'),
+      otherCredit: val('nh-w4-other-credit'),
+      totalCredits: val('nh-w4-total-credits'),
+      otherIncome: val('nh-w4-other-income'),
+      deductions: val('nh-w4-deductions'),
+      extraWithholding: val('nh-w4-extra-withholding'),
+      notes: val('nh-w4-notes'),
+      signature: val('nh-w4-signature'),
+      dateSigned: val('nh-w4-date-signed') || todayISO(),
+      savedAt: new Date().toISOString(),
+      savedBy: currentUser?.email || currentUser?.uid || 'public-intake'
+    };
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      await setDoc(doc(db, 'newHireIntakes', currentNewHireW4Id), {
+        w4Form,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      toast('Federal W-4 saved to intake packet.');
+      closeModal('modal-newhire-w4-form');
+      if (publicNewHireIntakeId) {
+        await loadPublicNewHireIntake();
+      } else {
+        await loadNewHireIntakes(true);
+        openNewHireReview(currentNewHireW4Id);
+      }
+    } catch (e) {
+      console.error(e);
+      toast('Could not save Federal W-4.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save W-4 Form'; }
     }
   }
 
