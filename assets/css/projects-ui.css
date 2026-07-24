@@ -1,0 +1,399 @@
+/* PROJECTS_UI_INTERACTION_LAYER_2026_07_24
+   Scoped styling for the signed-in Projects tab and project detail workspace. */
+
+#view-projects #main-projects .project-card,
+#view-projects #main-projects .btn-add,
+#view-detail #project-access-cards .project-access-card,
+#view-detail .project-section-window .project-record-tab,
+#view-detail .project-section-window .ticket-card,
+#view-detail .project-section-window .warehouse-card,
+#view-detail .project-section-window .foreman-tool-card.tool-launch,
+#view-detail .project-section-window .daily-box,
+#view-detail .project-section-window .warehouse-box,
+#view-detail .project-section-window .ticket-total-box,
+#view-detail .project-section-window .upload-zone {
+  background:#fff;
+  border-color:var(--line);
+  color:var(--navy);
+  transition:background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+#view-projects #main-projects .project-card:hover,
+#view-projects #main-projects .project-card:focus,
+#view-projects #main-projects .btn-add:hover,
+#view-projects #main-projects .btn-add:focus,
+#view-detail #project-access-cards .project-access-card:hover,
+#view-detail #project-access-cards .project-access-card:focus,
+#view-detail .project-section-window .project-record-tab:hover,
+#view-detail .project-section-window .project-record-tab:focus,
+#view-detail .project-section-window .ticket-card:hover,
+#view-detail .project-section-window .ticket-card:focus,
+#view-detail .project-section-window .warehouse-card:hover,
+#view-detail .project-section-window .warehouse-card:focus,
+#view-detail .project-section-window .foreman-tool-card.tool-launch:hover,
+#view-detail .project-section-window .foreman-tool-card.tool-launch:focus,
+#view-detail .project-section-window .daily-box:hover,
+#view-detail .project-section-window .warehouse-box:hover,
+#view-detail .project-section-window .ticket-total-box:hover,
+#view-detail .project-section-window .upload-zone:hover,
+#view-detail .project-section-window .upload-zone:focus-within {
+  background:var(--green);
+  border-color:var(--green);
+  box-shadow:0 12px 26px rgba(16,24,40,.12);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-projects #main-projects .btn-add {
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 4px 14px rgba(16,24,40,.05);
+}
+
+#view-projects #main-projects .project-card {
+  border:1px solid var(--line);
+}
+
+#view-detail #project-access-cards .project-access-card.active {
+  background:var(--green);
+  border-color:var(--green);
+  box-shadow:0 0 0 2px rgba(112,193,71,.22), 0 10px 22px rgba(16,24,40,.10);
+}
+
+#view-detail .project-detail-tabs .tab,
+#view-detail .project-section-window .tab,
+#view-detail .project-section-window .btn-outline,
+#view-detail .project-section-window .btn-secondary,
+#view-detail .project-section-window .btn-sm,
+#view-detail .detail-actions .btn-outline,
+#view-detail .detail-actions .btn-secondary,
+#view-detail .detail-actions .btn-save,
+#view-projects #main-projects .btn-outline,
+#view-projects #main-projects .btn-secondary,
+#view-projects #main-projects .btn-sm,
+#view-projects #main-projects .btn-add,
+#view-projects #main-projects .project-alpha-btn {
+  background:#fff;
+  color:var(--navy);
+  border-color:var(--line);
+  transition:background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+#view-detail .project-detail-tabs .tab:hover,
+#view-detail .project-detail-tabs .tab:focus,
+#view-detail .project-section-window .tab:hover,
+#view-detail .project-section-window .tab:focus,
+#view-detail .project-section-window .btn-outline:hover,
+#view-detail .project-section-window .btn-outline:focus,
+#view-detail .project-section-window .btn-secondary:hover,
+#view-detail .project-section-window .btn-secondary:focus,
+#view-detail .project-section-window .btn-sm:hover,
+#view-detail .project-section-window .btn-sm:focus,
+#view-detail .detail-actions .btn-outline:hover,
+#view-detail .detail-actions .btn-outline:focus,
+#view-detail .detail-actions .btn-secondary:hover,
+#view-detail .detail-actions .btn-secondary:focus,
+#view-detail .detail-actions .btn-save:hover,
+#view-detail .detail-actions .btn-save:focus,
+#view-projects #main-projects .btn-outline:hover,
+#view-projects #main-projects .btn-outline:focus,
+#view-projects #main-projects .btn-secondary:hover,
+#view-projects #main-projects .btn-secondary:focus,
+#view-projects #main-projects .btn-sm:hover,
+#view-projects #main-projects .btn-sm:focus,
+#view-projects #main-projects .project-alpha-btn:hover,
+#view-projects #main-projects .project-alpha-btn:focus,
+#view-projects #main-projects .project-alpha-btn.active {
+  background:var(--green);
+  color:var(--navy);
+  border-color:var(--green);
+  box-shadow:0 8px 18px rgba(16,24,40,.10);
+  outline:none;
+}
+
+#view-detail .project-detail-tabs .tab.active,
+#view-detail .project-section-window .tab.active {
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+  border-bottom-color:var(--green);
+  box-shadow:0 8px 18px rgba(16,24,40,.12);
+}
+
+#view-detail .project-detail-tabs .tab.active:hover,
+#view-detail .project-detail-tabs .tab.active:focus,
+#view-detail .project-section-window .tab.active:hover,
+#view-detail .project-section-window .tab.active:focus {
+  background:var(--green);
+  color:var(--navy);
+  border-color:var(--green);
+}
+
+#view-detail #project-access-cards .project-access-card .label,
+#view-detail .project-section-window .foreman-tool-card h3,
+#view-detail .project-section-window .ticket-card h4,
+#view-detail .project-section-window .warehouse-card h4,
+#view-detail .project-section-window .daily-box strong,
+#view-detail .project-section-window .warehouse-box strong,
+#view-detail .project-section-window .ticket-total-box strong,
+#view-projects #main-projects .project-card h3 {
+  color:var(--navy);
+}
+
+#view-detail .project-header-card {
+  margin-bottom:14px;
+}
+
+#view-detail .project-guide-card {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 7px 18px rgba(16,24,40,.06);
+}
+
+#view-detail .project-guide-card h3 {
+  color:var(--navy);
+  font-size:18px;
+  margin:0 0 6px;
+}
+
+#view-detail .project-guide-card p {
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+  margin:0;
+}
+
+#view-detail .project-guide-list {
+  display:grid;
+  gap:8px;
+}
+
+#view-detail .project-guide-list strong {
+  color:var(--navy);
+}
+
+#view-detail .project-dashboard-shell {
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+  margin-bottom:18px;
+}
+
+#view-detail #project-access-cards.project-access-rail {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:0;
+}
+
+#view-detail #project-access-cards.project-access-rail .project-access-card {
+  min-height:unset;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:8px;
+  padding:13px;
+}
+
+#view-detail #project-access-cards.project-access-rail .project-access-card .value {
+  grid-column:2;
+  grid-row:1 / span 2;
+  background:rgba(18,58,95,.10);
+  border-radius:999px;
+  min-width:38px;
+  min-height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+}
+
+#view-detail #project-access-cards.project-access-rail .project-access-card .sub {
+  font-size:12px;
+  line-height:1.25;
+}
+
+#view-detail .project-dashboard-panel {
+  display:grid;
+  gap:12px;
+}
+
+#view-detail .project-dashboard-stats {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+
+#view-detail .project-quick-card {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  color:var(--navy);
+  text-align:left;
+  cursor:pointer;
+  box-shadow:0 7px 18px rgba(16,24,40,.06);
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+
+#view-detail .project-quick-card:hover,
+#view-detail .project-quick-card:focus {
+  background:var(--green);
+  border-color:var(--green);
+  box-shadow:0 12px 26px rgba(16,24,40,.12);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-detail .project-quick-card strong {
+  display:block;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+#view-detail .project-quick-card span {
+  display:block;
+  font-size:28px;
+  font-weight:900;
+}
+
+#view-detail .project-activity-panel {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 7px 18px rgba(16,24,40,.06);
+}
+
+#view-detail .project-activity-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+#view-detail .project-activity-head h3 {
+  color:var(--navy);
+  margin:0;
+  font-size:17px;
+}
+
+#view-detail .project-mini-tabs {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+#view-detail .project-mini-tabs button {
+  background:#fff;
+  color:var(--navy);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:8px 11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#view-detail .project-mini-tabs button:hover,
+#view-detail .project-mini-tabs button:focus,
+#view-detail .project-mini-tabs button.active {
+  background:var(--green);
+  border-color:var(--green);
+  outline:none;
+}
+
+#view-detail .project-activity-row {
+  display:grid;
+  grid-template-columns:110px minmax(0,1fr) 70px;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:11px;
+  background:#f9fbfd;
+  margin-bottom:9px;
+}
+
+#view-detail .project-activity-row strong {
+  color:var(--navy);
+}
+
+#view-detail .project-activity-bar {
+  height:9px;
+  border-radius:999px;
+  background:#e6edf3;
+  overflow:hidden;
+}
+
+#view-detail .project-activity-bar span {
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--green),var(--blue));
+}
+
+#view-detail .project-activity-open {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border-top:1px solid var(--line);
+  margin-top:12px;
+  padding-top:12px;
+}
+
+#view-detail .project-activity-open strong {
+  color:var(--navy);
+}
+
+#view-detail .project-activity-open p {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+  margin:4px 0 0;
+}
+
+#view-detail .project-activity-open .btn-save {
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+  transition:background .16s ease,color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+
+#view-detail .project-activity-open .btn-save:hover,
+#view-detail .project-activity-open .btn-save:focus {
+  background:var(--green);
+  color:var(--navy);
+  border-color:var(--green);
+  box-shadow:0 8px 18px rgba(16,24,40,.10);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+@media(max-width:700px) {
+  #view-detail .project-dashboard-shell,
+  #view-detail .project-activity-row,
+  #view-detail .project-activity-open {
+    grid-template-columns:1fr;
+  }
+
+  #view-detail .project-dashboard-stats {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  #view-detail .project-activity-head {
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  #view-detail .project-section-window .btn-outline,
+  #view-detail .project-section-window .btn-secondary,
+  #view-detail .project-section-window .btn-sm {
+    min-height:44px;
+  }
+}

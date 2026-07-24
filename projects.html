@@ -69,7 +69,7 @@
       display: grid; place-items: center; font-size: 13px; font-weight: 800; padding: 0 9px;
     }
     .app-lang-switch {
-      position: fixed; top: 72px; right: 14px; z-index: 2200;
+      position: fixed; right: 14px; bottom: 14px; z-index: 2200;
       display: flex; gap: 5px; padding: 5px;
       background: rgba(255,255,255,.96); border: 1px solid var(--line);
       border-radius: 999px; box-shadow: 0 8px 22px rgba(16,24,40,.14);
@@ -81,7 +81,7 @@
     }
     .app-lang-switch button.active { background: var(--green); color: var(--navy); }
     @media(max-width:680px){
-      .app-lang-switch { top:auto; right:10px; bottom:12px; box-shadow:0 8px 24px rgba(16,24,40,.22); }
+      .app-lang-switch { right:10px; bottom:12px; box-shadow:0 8px 24px rgba(16,24,40,.22); }
       .toast { bottom:74px; }
     }
     body:has(.modal-overlay.open) .app-lang-switch,
@@ -1504,229 +1504,8 @@
     .workforce-actions .btn-sm { min-height:38px; }
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
-
-    /* SIGNED_IN_INTERACTION_POLISH_2026_07_22 */
-    #view-projects .tab,
-    #view-detail .tab,
-    #view-projects .btn-outline,
-    #view-detail .btn-outline,
-    #view-projects .btn-secondary,
-    #view-detail .btn-secondary,
-    #view-projects .btn-sm,
-    #view-detail .btn-sm {
-      transition:background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
-    }
-    #view-projects .tab,
-    #view-detail .tab {
-      background:#fff;
-      color:var(--navy);
-      border:1.5px solid var(--line);
-      border-bottom:3px solid transparent;
-      box-shadow:0 2px 8px rgba(16,24,40,.05);
-    }
-    #view-projects .tab:hover,
-    #view-projects .tab:focus,
-    #view-detail .tab:hover,
-    #view-detail .tab:focus,
-    #view-projects .btn-outline:hover,
-    #view-projects .btn-outline:focus,
-    #view-detail .btn-outline:hover,
-    #view-detail .btn-outline:focus,
-    #view-projects .btn-secondary:hover,
-    #view-projects .btn-secondary:focus,
-    #view-detail .btn-secondary:hover,
-    #view-detail .btn-secondary:focus,
-    #view-projects .btn-sm:hover,
-    #view-projects .btn-sm:focus,
-    #view-detail .btn-sm:hover,
-    #view-detail .btn-sm:focus {
-      background:var(--green);
-      color:var(--navy);
-      border-color:var(--green);
-      box-shadow:0 8px 18px rgba(16,24,40,.10);
-      outline:none;
-    }
-    #view-projects .tab.active,
-    #view-detail .tab.active {
-      background:var(--navy);
-      color:#fff;
-      border-color:var(--navy);
-      border-bottom-color:var(--green);
-      box-shadow:0 8px 18px rgba(16,24,40,.12);
-    }
-    #view-projects .tab.active:hover,
-    #view-projects .tab.active:focus,
-    #view-detail .tab.active:hover,
-    #view-detail .tab.active:focus {
-      background:var(--green);
-      color:var(--navy);
-      border-color:var(--green);
-    }
-    #view-projects .project-card,
-    #view-detail .summary-card.project-access-card,
-    #view-detail .project-record-tab,
-    #view-projects .jha-workflow-card:not(.disabled),
-    #view-projects .jha-template-card,
-    #view-projects .foreman-tool-card.tool-launch,
-    #view-detail .foreman-tool-card.tool-launch,
-    #view-projects .workforce-overview-card,
-    #view-projects .cert-alert-box.filter-card,
-    #view-projects .onboarding-flow-card,
-    #view-projects .onboarding-review-card,
-    #view-projects .employee-card.employee-row,
-    #view-projects .newhire-card,
-    #view-projects .ticket-card,
-    #view-detail .ticket-card,
-    #view-projects .warehouse-card,
-    #view-detail .warehouse-card,
-    #view-projects .upload-zone,
-    #view-detail .upload-zone {
-      transition:background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
-    }
-    #view-projects .project-card:hover,
-    #view-projects .project-card:focus,
-    #view-detail .summary-card.project-access-card:hover,
-    #view-detail .summary-card.project-access-card:focus,
-    #view-detail .project-record-tab:hover,
-    #view-detail .project-record-tab:focus,
-    #view-projects .jha-workflow-card:not(.disabled):hover,
-    #view-projects .jha-workflow-card:not(.disabled):focus,
-    #view-projects .jha-template-card:hover,
-    #view-projects .jha-template-card:focus,
-    #view-projects .foreman-tool-card.tool-launch:hover,
-    #view-projects .foreman-tool-card.tool-launch:focus,
-    #view-detail .foreman-tool-card.tool-launch:hover,
-    #view-detail .foreman-tool-card.tool-launch:focus,
-    #view-projects .workforce-overview-card:hover,
-    #view-projects .workforce-overview-card:focus,
-    #view-projects .cert-alert-box.filter-card:hover,
-    #view-projects .cert-alert-box.filter-card:focus,
-    #view-projects .onboarding-flow-card:hover,
-    #view-projects .onboarding-flow-card:focus,
-    #view-projects .onboarding-review-card:hover,
-    #view-projects .onboarding-review-card:focus,
-    #view-projects .employee-card.employee-row:hover,
-    #view-projects .employee-card.employee-row:focus,
-    #view-projects .newhire-card:hover,
-    #view-projects .newhire-card:focus-within,
-    #view-projects .ticket-card:hover,
-    #view-projects .ticket-card:focus,
-    #view-detail .ticket-card:hover,
-    #view-detail .ticket-card:focus,
-    #view-projects .warehouse-card:hover,
-    #view-projects .warehouse-card:focus,
-    #view-detail .warehouse-card:hover,
-    #view-detail .warehouse-card:focus,
-    #view-projects .upload-zone:hover,
-    #view-projects .upload-zone:focus-within,
-    #view-detail .upload-zone:hover,
-    #view-detail .upload-zone:focus-within {
-      background:#f4fbe9;
-      border-color:var(--green);
-      box-shadow:0 12px 26px rgba(16,24,40,.12);
-      transform:translateY(-1px);
-      outline:none;
-    }
-    #view-detail .summary-card.project-access-card.active,
-    #view-projects .jha-template-card.active,
-    #view-projects .foreman-tool-card.tool-launch.is-active,
-    #view-detail .foreman-tool-card.tool-launch.is-active,
-    #view-projects .onboarding-flow-card.active,
-    #view-projects .onboarding-review-card.active,
-    #view-projects .cert-alert-box.filter-card.active,
-    #view-projects .employee-card.employee-row.expanded {
-      background:#f4fbe9;
-      border-color:var(--green);
-      box-shadow:0 0 0 2px rgba(112,193,71,.22), 0 10px 22px rgba(16,24,40,.10);
-    }
-    #view-projects button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger),
-    #view-detail button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger) {
-      background:#fff;
-      color:var(--navy);
-      border-color:var(--line);
-    }
-    #view-projects button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):hover,
-    #view-projects button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):focus,
-    #view-detail button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):hover,
-    #view-detail button:not(.btn-save):not(.btn-primary):not(.btn-upload):not(.btn-icon):not(.back-btn):not(.danger):focus {
-      background:var(--green);
-      color:var(--navy);
-      border-color:var(--green);
-      box-shadow:0 8px 18px rgba(16,24,40,.10);
-      outline:none;
-    }
-    #view-projects [data-onboarding-tab].active,
-    #view-projects .pipeline-tabs .tab.active,
-    #view-detail .project-detail-tabs .tab.active {
-      background:var(--navy) !important;
-      color:#fff !important;
-      border-color:var(--navy) !important;
-      border-bottom-color:var(--green) !important;
-    }
-    #view-projects [data-onboarding-tab].active:hover,
-    #view-projects [data-onboarding-tab].active:focus,
-    #view-projects .pipeline-tabs .tab.active:hover,
-    #view-projects .pipeline-tabs .tab.active:focus,
-    #view-detail .project-detail-tabs .tab.active:hover,
-    #view-detail .project-detail-tabs .tab.active:focus {
-      background:var(--green) !important;
-      color:var(--navy) !important;
-      border-color:var(--green) !important;
-    }
-    #view-projects [role="button"],
-    #view-detail [role="button"],
-    #view-projects .packet-form-card,
-    #view-projects .cert-preview-card,
-    #view-projects .daily-box,
-    #view-detail .daily-box,
-    #view-projects .warehouse-box,
-    #view-detail .warehouse-box,
-    #view-projects .ticket-total-box,
-    #view-detail .ticket-total-box,
-    #view-projects .workforce-status-card,
-    #view-projects .access-row,
-    #view-projects .activity-row {
-      transition:background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
-    }
-    #view-projects [role="button"]:hover,
-    #view-projects [role="button"]:focus,
-    #view-detail [role="button"]:hover,
-    #view-detail [role="button"]:focus,
-    #view-projects .packet-form-card:hover,
-    #view-projects .packet-form-card:focus-within,
-    #view-projects .cert-preview-card:hover,
-    #view-projects .cert-preview-card:focus-within,
-    #view-projects .daily-box:hover,
-    #view-detail .daily-box:hover,
-    #view-projects .warehouse-box:hover,
-    #view-detail .warehouse-box:hover,
-    #view-projects .ticket-total-box:hover,
-    #view-detail .ticket-total-box:hover,
-    #view-projects .workforce-status-card:hover,
-    #view-projects .access-row:hover,
-    #view-projects .activity-row:hover {
-      background:#f4fbe9;
-      border-color:var(--green);
-      box-shadow:0 12px 26px rgba(16,24,40,.10);
-      transform:translateY(-1px);
-      outline:none;
-    }
-    #view-projects [role="button"] h3,
-    #view-projects [role="button"] h4,
-    #view-detail [role="button"] h3,
-    #view-detail [role="button"] h4,
-    #view-projects .packet-form-card h3,
-    #view-projects .packet-form-card h4,
-    #view-projects .daily-box strong,
-    #view-detail .daily-box strong,
-    #view-projects .warehouse-box strong,
-    #view-detail .warehouse-box strong,
-    #view-projects .ticket-total-box strong,
-    #view-detail .ticket-total-box strong {
-      color:var(--navy);
-    }
-
   </style>
+  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-24-6" />
 
 <script>
   // PUBLIC_LINK_EARLY_VIEW_FORCE_2026_07_20
@@ -2227,6 +2006,11 @@
           <p>Open the standard daily safety meeting form and fill it out by hand.</p>
           <button class="btn-outline" type="button" onclick="event.stopPropagation(); openForemanToolModal('foreman-tool-manual-safety')">Open Manual Safety Sheet</button>
         </div>
+        <div class="foreman-tool-card tool-launch" role="button" tabindex="0" data-foreman-target="foreman-tool-weekly-toolbox" onclick="openForemanToolModal('foreman-tool-weekly-toolbox')" onkeydown="handleForemanToolCardKey(event, 'foreman-tool-weekly-toolbox')">
+          <h3>Weekly Toolbox Talk</h3>
+          <p>Weekly toolbox talk sheet with topic, language, speaker, and crew signatures.</p>
+          <button class="btn-outline" type="button" onclick="event.stopPropagation(); openForemanToolModal('foreman-tool-weekly-toolbox')">Open Weekly Toolbox</button>
+        </div>
         <div class="foreman-tool-card tool-launch" role="button" tabindex="0" data-foreman-target="foreman-tool-ai-safety" onclick="openForemanToolModal('foreman-tool-ai-safety')" onkeydown="handleForemanToolCardKey(event, 'foreman-tool-ai-safety')">
           <h3>AI Assisted Daily Safety Sheet</h3>
           <p>Type the day's work plan and let the helper draft the safety sheet for review.</p>
@@ -2319,6 +2103,70 @@
         <div class="foreman-form-actions">
           <button class="btn-secondary" type="button" onclick="closeForemanToolAndReturn()">Back / Close</button>
           <button class="btn-save" type="button" id="save-manual-safety-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
+          <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
+          <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
+        </div>
+      </div>
+      </div>
+
+      <div class="foreman-tool-pane" id="foreman-tool-weekly-toolbox">
+      <div class="ai-safety-panel">
+        <div class="foreman-paper-title">
+          <div class="foreman-paper-logo">PAL<small>SAFETY</small></div>
+          <h3>Weekly Toolbox Talk</h3>
+        </div>
+        <p>Complete a weekly toolbox talk record and submit it to the selected project's Daily Safety section.</p>
+        <div class="daily-report-form-grid">
+          <div class="field span-2"><label>Project</label><select id="weekly-toolbox-project-select" onchange="syncWeeklyToolboxProjectFields()"><option value="">Select a project...</option></select></div>
+          <div class="field"><label>Project #</label><input id="weekly-toolbox-project-number" /></div>
+          <div class="field"><label>Date of Meeting</label><input id="weekly-toolbox-date" type="date" /></div>
+          <div class="field"><label>Project Name</label><input id="weekly-toolbox-project-name" /></div>
+          <div class="field"><label>Day</label><input id="weekly-toolbox-day" /></div>
+          <div class="field"><label>Location</label><input id="weekly-toolbox-location" /></div>
+          <div class="field"><label>Time</label><input id="weekly-toolbox-time" placeholder="7:00 AM" /></div>
+          <div class="field"><label>Supervisor Holding Meeting</label><input id="weekly-toolbox-supervisor" /></div>
+          <div class="field"><label>Number of Personnel Present</label><input id="weekly-toolbox-personnel" type="number" min="0" /></div>
+          <div class="field span-2"><label>Topic Discussed</label><input id="weekly-toolbox-topic" placeholder="Falls, PPE, silica, housekeeping, ladder last policy..." /></div>
+        </div>
+        <div class="doc-review-box" style="margin-top:14px;">
+          <strong>I have received the above training and I fully understand the material presented.</strong>
+        </div>
+        <div class="ticket-table-wrap" style="margin-top:12px;">
+          <table class="ticket-table">
+            <thead><tr><th style="width:54px;">#</th><th>Print Name</th><th>Signature / Typed Name</th></tr></thead>
+            <tbody id="weekly-toolbox-sign-rows">
+              <tr><td>1</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>2</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>3</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>4</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+              <tr><td>5</td><td><input /></td><td><input class="ai-signature-input" /></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="ai-safety-actions">
+          <button class="btn-outline" type="button" onclick="addWeeklyToolboxRow()">Add Crew Row</button>
+          <button class="btn-outline" type="button" onclick="clearWeeklyToolbox()">Clear Sheet</button>
+        </div>
+        <div class="ai-safety-grid" style="margin-top:14px;">
+          <div class="field span-2"><label>Language</label>
+            <div class="language-line">
+              <label><input type="checkbox" id="weekly-toolbox-lang-english" checked /> English</label>
+              <label><input type="checkbox" id="weekly-toolbox-lang-spanish" /> Spanish</label>
+              <label><input type="checkbox" id="weekly-toolbox-lang-polish" /> Polish</label>
+              <label><input type="checkbox" id="weekly-toolbox-lang-ukrainian" /> Ukrainian</label>
+              <label><input type="checkbox" id="weekly-toolbox-lang-russian" /> Russian</label>
+              <label><input type="checkbox" id="weekly-toolbox-lang-other" /> Other</label>
+            </div>
+          </div>
+          <div class="field"><label>Speaker Printed Name</label><input id="weekly-toolbox-speaker" /></div>
+          <div class="field"><label>Date Signed</label><input id="weekly-toolbox-date-signed" type="date" /></div>
+          <div class="field span-2"><label>Supervisor Signature</label><input id="weekly-toolbox-supervisor-signature" class="ai-signature-input" /></div>
+          <div class="field span-2"><label>Quality Control Verification Signature</label><input id="weekly-toolbox-qc-signature" class="ai-signature-input" /></div>
+        </div>
+        <div class="foreman-form-actions">
+          <button class="btn-secondary" type="button" onclick="closeForemanToolAndReturn()">Back / Close</button>
+          <button class="btn-save" type="button" id="save-weekly-toolbox-btn" onclick="submitForemanToolToProject()">Submit to Project</button>
           <button class="btn-outline" type="button" onclick="printForemanTool()">Print</button>
           <button class="btn-outline" type="button" onclick="saveForemanToolPdf()">Print / PDF</button>
           <button class="btn-save" type="button" onclick="shareForemanTool()">Save to Files</button>
@@ -2955,23 +2803,61 @@
       <h2 id="detail-project-name">Project Name</h2>
       <div class="meta" id="detail-project-meta"></div>
       <div class="detail-actions">
-        <button class="btn-outline" onclick="openDailyReportForm()">Create Daily Report</button>
         <button class="btn-outline" onclick="openProjectFieldFormsMenu()">Field Forms</button>
         <button class="btn-outline" onclick="copyProjectLink()">Copy Project Link</button>
       </div>
     </div>
 
-    <div class="project-summary-grid" id="project-access-cards">
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-docs" onclick="openProjectAccessSection('tab-docs')" onkeydown="handleProjectAccessCardKey(event, 'tab-docs')"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-photos" onclick="openProjectAccessSection('tab-photos')" onkeydown="handleProjectAccessCardKey(event, 'tab-photos')"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Camera and library uploads</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-reports" onclick="openProjectAccessSection('tab-reports')" onkeydown="handleProjectAccessCardKey(event, 'tab-reports')"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="safety" onclick="openProjectAccessSection('tab-field-forms', 'safety')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'safety')"><div class="label">Safety Sheets</div><div class="value" id="summary-safety-forms">0</div><div class="sub">Crew safety sign-ins</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="payroll" onclick="openProjectAccessSection('tab-field-forms', 'payroll')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'payroll')"><div class="label">Payroll</div><div class="value" id="summary-payroll-forms">0</div><div class="sub">Daily and weekly payroll</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-field-forms" data-field-filter="expense" onclick="openProjectAccessSection('tab-field-forms', 'expense')" onkeydown="handleProjectAccessCardKey(event, 'tab-field-forms', 'expense')"><div class="label">Expense Reports</div><div class="value" id="summary-expense-forms">0</div><div class="sub">Submitted expense forms</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-project-tickets" onclick="openProjectAccessSection('tab-project-tickets')" onkeydown="handleProjectAccessCardKey(event, 'tab-project-tickets')"><div class="label">Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Extra work tickets</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="jha-checklist" onclick="openProjectJhaChecklist()" onkeydown="handleProjectAccessCardKey(event, 'jha-checklist')"><div class="label">JHA / Checklist</div><div class="value" id="summary-jha-forms">0</div><div class="sub">Open JHA library</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-project-warehouse" onclick="openProjectAccessSection('tab-project-warehouse')" onkeydown="handleProjectAccessCardKey(event, 'tab-project-warehouse')"><div class="label">Warehouse</div><div class="value" id="summary-warehouse">0</div><div class="sub">Equipment and material</div></div>
-      <div class="summary-card project-access-card" role="button" tabindex="0" data-project-section="tab-foremen" onclick="openProjectAccessSection('tab-foremen')" onkeydown="handleProjectAccessCardKey(event, 'tab-foremen')"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
+    <div class="project-guide-card">
+      <h3>Project Document Center</h3>
+      <div class="project-guide-list">
+        <p><strong>Completed Records:</strong> Use the section buttons below to find completed and signed project records by category.</p>
+        <p><strong>Create New Documents:</strong> Use Field Forms located above to create any new daily safety sheet, weekly toolbox talk, payroll form, report, ticket, checklist, or project document.</p>
+        <p><strong>Share Access:</strong> Use Copy Project Link to share this project with an approved PAL user. Each section opens in its own project window for review, printing, late signatures, and save-to-files.</p>
+      </div>
+    </div>
+
+    <div class="project-dashboard-shell">
+      <div class="project-summary-grid project-access-rail" id="project-access-cards">
+        <div class="summary-card project-access-card active" role="button" tabindex="0" data-dashboard-section="safety" data-project-section="tab-field-forms" data-field-filter="safety" onclick="selectProjectDashboardSection('safety')" onkeydown="handleProjectDashboardCardKey(event, 'safety')"><div class="label">Daily Safety</div><div class="value" id="summary-safety-forms">0</div><div class="sub">Safety sheets and weekly toolbox talks</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="docs" data-project-section="tab-docs" onclick="selectProjectDashboardSection('docs')" onkeydown="handleProjectDashboardCardKey(event, 'docs')"><div class="label">Documents</div><div class="value" id="summary-docs">0</div><div class="sub">Project files uploaded</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="reports" data-project-section="tab-reports" onclick="selectProjectDashboardSection('reports')" onkeydown="handleProjectDashboardCardKey(event, 'reports')"><div class="label">Daily Reports</div><div class="value" id="summary-reports">0</div><div class="sub">Field reports on file</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="payroll" data-project-section="tab-field-forms" data-field-filter="payroll" onclick="selectProjectDashboardSection('payroll')" onkeydown="handleProjectDashboardCardKey(event, 'payroll')"><div class="label">Payroll</div><div class="value" id="summary-payroll-forms">0</div><div class="sub">Daily payroll, weekly payroll, expenses</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="photos" data-project-section="tab-photos" onclick="selectProjectDashboardSection('photos')" onkeydown="handleProjectDashboardCardKey(event, 'photos')"><div class="label">Photos</div><div class="value" id="summary-photos">0</div><div class="sub">Camera and library uploads</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="tickets" data-project-section="tab-project-tickets" onclick="selectProjectDashboardSection('tickets')" onkeydown="handleProjectDashboardCardKey(event, 'tickets')"><div class="label">Tickets</div><div class="value" id="summary-tickets">0</div><div class="sub">Extra work tickets</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="jha" data-project-section="jha-checklist" onclick="selectProjectDashboardSection('jha')" onkeydown="handleProjectDashboardCardKey(event, 'jha')"><div class="label">JHA / Checklist</div><div class="value" id="summary-jha-forms">0</div><div class="sub">Open JHA library</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="warehouse" data-project-section="tab-project-warehouse" onclick="selectProjectDashboardSection('warehouse')" onkeydown="handleProjectDashboardCardKey(event, 'warehouse')"><div class="label">Warehouse</div><div class="value" id="summary-warehouse">0</div><div class="sub">Equipment and material</div></div>
+        <div class="summary-card project-access-card" role="button" tabindex="0" data-dashboard-section="foremen" data-project-section="tab-foremen" onclick="selectProjectDashboardSection('foremen')" onkeydown="handleProjectDashboardCardKey(event, 'foremen')"><div class="label">Assigned Foremen</div><div class="value" id="summary-foremen">0</div><div class="sub">Current project access</div></div>
+      </div>
+
+      <div class="project-dashboard-panel">
+        <div class="project-dashboard-stats">
+          <button class="project-quick-card" type="button" onclick="openProjectDashboardQuickRange('today')"><strong>Today</strong><span id="project-quick-today">0</span></button>
+          <button class="project-quick-card" type="button" onclick="openProjectDashboardQuickRange('week')"><strong>This Week</strong><span id="project-quick-week">0</span></button>
+          <button class="project-quick-card" type="button" onclick="openProjectDashboardQuickRange('month')"><strong>This Month</strong><span id="project-quick-month">0</span></button>
+          <button class="project-quick-card" type="button" onclick="openProjectDashboardCurrentSection()"><strong id="project-quick-total-title">Total</strong><span id="project-quick-total">0</span></button>
+        </div>
+        <div class="project-activity-panel">
+          <div class="project-activity-head">
+            <h3 id="project-dashboard-title">Recent Safety Sheets and Sign-Ins</h3>
+            <div class="project-mini-tabs">
+              <button class="active" type="button" onclick="openProjectDashboardQuickRange('week')">Week</button>
+              <button type="button" onclick="openProjectDashboardQuickRange('month')">Month</button>
+              <button type="button" onclick="openProjectDashboardQuickRange('year')">Year</button>
+            </div>
+          </div>
+          <div class="project-activity-row"><strong>Today</strong><div class="project-activity-bar"><span id="project-quick-today-bar" style="width:0%;"></span></div><span id="project-quick-today-label">0 items</span></div>
+          <div class="project-activity-row"><strong>This Week</strong><div class="project-activity-bar"><span id="project-quick-week-bar" style="width:0%;"></span></div><span id="project-quick-week-label">0 items</span></div>
+          <div class="project-activity-row"><strong>This Month</strong><div class="project-activity-bar"><span id="project-quick-month-bar" style="width:0%;"></span></div><span id="project-quick-month-label">0 items</span></div>
+          <div class="project-activity-open">
+            <div>
+              <strong id="project-dashboard-open-title">Daily safety and weekly toolbox records</strong>
+              <p id="project-dashboard-open-copy">Open this section to review completed forms, add late signatures, print records, or save files to the device.</p>
+            </div>
+            <button class="btn-save" id="project-dashboard-open-btn" type="button" onclick="openProjectDashboardCurrentSection()">Open Daily Safety</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="detail-grid">
@@ -3225,6 +3111,11 @@
         <p>Blank daily safety meeting sheet with crew sign-in rows.</p>
         <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-manual-safety')">Open Form</button>
       </div>
+      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-weekly-toolbox')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-weekly-toolbox')">
+        <h3>Weekly Toolbox Talk</h3>
+        <p>Blank weekly toolbox talk sheet with topic, language, speaker, and crew signatures.</p>
+        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectForemanTool('foreman-tool-weekly-toolbox')">Open Form</button>
+      </div>
       <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openProjectForemanTool('foreman-tool-ai-safety')" onkeydown="handleProjectFieldFormCardKey(event, 'foreman-tool-ai-safety')">
         <h3>AI Safety Sheet</h3>
         <p>Draft a daily safety sheet from the foreman's work notes.</p>
@@ -3264,11 +3155,6 @@
         <h3>JHA / Checklist</h3>
         <p>Open approved JHAs, fill crew acknowledgement rows, and submit the signed copy to the project.</p>
         <button class="btn-outline" type="button" onclick="event.stopPropagation(); openProjectJhaChecklist()">Open JHA Library</button>
-      </div>
-      <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('toolbox-signin')" onkeydown="handleProjectFieldFormCardKey(event, 'official:toolbox-signin')">
-        <h3>Toolbox Talk Sign-In</h3>
-        <p>Official blank weekly toolbox talk sign-in sheet.</p>
-        <button class="btn-outline" type="button" onclick="event.stopPropagation(); openOfficialBlankForm('toolbox-signin')">Open Form</button>
       </div>
       <div class="foreman-tool-card tool-launch" role="button" tabindex="0" onclick="openOfficialBlankForm('incident-report')" onkeydown="handleProjectFieldFormCardKey(event, 'official:incident-report')">
         <h3>Incident Report</h3>
@@ -4089,6 +3975,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.previewDailyReportPhotos = previewDailyReportPhotos;
   window.copyProjectLink = copyProjectLink;
   window.openProjectAccessSection = openProjectAccessSection;
+  window.openProjectDashboardQuickRange = openProjectDashboardQuickRange;
+  window.openProjectDashboardCurrentSection = openProjectDashboardCurrentSection;
+  window.selectProjectDashboardSection = selectProjectDashboardSection;
+  window.handleProjectDashboardCardKey = handleProjectDashboardCardKey;
   window.closeProjectSectionWindow = closeProjectSectionWindow;
   window.handleProjectAccessCardKey = handleProjectAccessCardKey;
   window.updateProjectHistoryWeekOptions = updateProjectHistoryWeekOptions;
@@ -4124,8 +4014,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.printFieldFormSafetySheet = printFieldFormSafetySheet;
   window.shareFieldFormSafetySheet = shareFieldFormSafetySheet;
   window.saveFieldFormDocumentToFiles = saveFieldFormDocumentToFiles;
+  window.printGenericFieldFormDocument = printGenericFieldFormDocument;
   window.refreshAiSafetyProjectOptions = refreshAiSafetyProjectOptions;
   window.syncManualSafetyProjectFields = syncManualSafetyProjectFields;
+  window.syncWeeklyToolboxProjectFields = syncWeeklyToolboxProjectFields;
   window.fillAiSafetyExample = fillAiSafetyExample;
   window.generateProjectAiSafetySheet = generateProjectAiSafetySheet;
   window.saveProjectAiSafetySheet = saveProjectAiSafetySheet;
@@ -4136,6 +4028,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.handleForemanToolCardKey = handleForemanToolCardKey;
   window.addManualSafetySignRow = addManualSafetySignRow;
   window.addAiSafetySignRow = addAiSafetySignRow;
+  window.addWeeklyToolboxRow = addWeeklyToolboxRow;
+  window.clearWeeklyToolbox = clearWeeklyToolbox;
   window.addDailyPayrollRow = addDailyPayrollRow;
   window.calcDailyPayrollRow = calcDailyPayrollRow;
   window.renumberDailyPayrollRows = renumberDailyPayrollRows;
@@ -4148,6 +4042,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.clearForemanExpenseReport = clearForemanExpenseReport;
   window.saveDailyPayrollToProject = saveDailyPayrollToProject;
   window.saveWeeklyPayrollToProject = saveWeeklyPayrollToProject;
+  window.saveWeeklyToolboxToProject = saveWeeklyToolboxToProject;
   window.saveExpenseReportToProject = saveExpenseReportToProject;
   window.submitForemanToolToProject = submitForemanToolToProject;
   window.printForemanTool = printForemanTool;
@@ -4364,7 +4259,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function refreshLocalizedDynamicViews() {
     try {
       if (document.getElementById('projects-list') && Array.isArray(allProjects)) renderProjectsList();
-      if (currentProject?.id) updateProjectSummary();
+      if (currentProject?.id) {
+        updateProjectSummary(currentProjectDoc || currentProject);
+        updateProjectDashboardPanel(activeProjectDashboardSection);
+      }
       if (document.getElementById('jha-template-list')) renderJhaTemplateList();
       if (document.getElementById('main-tickets')?.classList.contains('active')) renderMainTickets();
       if (document.getElementById('main-warehouse')?.classList.contains('active')) renderWarehouse();
@@ -5175,6 +5073,234 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const warehouseEl = document.getElementById('summary-warehouse');
     if (ticketEl) ticketEl.textContent = tickets;
     if (warehouseEl) warehouseEl.textContent = warehouse;
+    updateProjectSafetyQuickCounts();
+  }
+
+  let activeProjectDashboardSection = 'safety';
+
+  const projectDashboardSectionConfig = {
+    safety: {
+      title: 'Recent Safety Sheets and Sign-Ins',
+      openTitle: 'Daily safety and weekly toolbox records',
+      openCopy: 'Open this section to review completed forms, add late signatures, print records, or save files to the device.',
+      openLabel: 'Open Daily Safety',
+      kind: 'fieldForms',
+      tabId: 'tab-field-forms',
+      fieldFilter: 'safety'
+    },
+    docs: {
+      title: 'Recent Project Documents',
+      openTitle: 'Project documents',
+      openCopy: 'Open this section to review uploaded project files, filter by date, download records, or add more documents.',
+      openLabel: 'Open Documents',
+      kind: 'docs',
+      tabId: 'tab-docs'
+    },
+    reports: {
+      title: 'Recent Daily Reports',
+      openTitle: 'Daily field reports',
+      openCopy: 'Open this section to review daily reports, search by week or month, print details, or create a new report.',
+      openLabel: 'Open Daily Reports',
+      kind: 'reports',
+      tabId: 'tab-reports'
+    },
+    payroll: {
+      title: 'Recent Payroll and Expense Records',
+      openTitle: 'Payroll, weekly payroll, and expense reports',
+      openCopy: 'Open this section to review completed payroll documents and expense reports by day, week, month, or year.',
+      openLabel: 'Open Payroll',
+      kind: 'fieldForms',
+      tabId: 'tab-field-forms',
+      fieldFilter: 'payroll'
+    },
+    photos: {
+      title: 'Recent Project Photos',
+      openTitle: 'Project photos',
+      openCopy: 'Open this section to review job photos by date or category and upload new site photos.',
+      openLabel: 'Open Photos',
+      kind: 'photos',
+      tabId: 'tab-photos'
+    },
+    tickets: {
+      title: 'Recent Project Tickets',
+      openTitle: 'Extra work tickets',
+      openCopy: 'Open this section to review completed tickets, print signed tickets, save files, or create a new project ticket.',
+      openLabel: 'Open Tickets',
+      kind: 'tickets',
+      tabId: 'tab-project-tickets'
+    },
+    jha: {
+      title: 'Recent JHA and Checklist Forms',
+      openTitle: 'JHA and checklist records',
+      openCopy: 'Open this section to review submitted JHAs and checklists, or open the JHA library for approved templates.',
+      openLabel: 'Open JHA Library',
+      kind: 'fieldForms',
+      tabId: 'tab-field-forms',
+      fieldFilter: 'jha',
+      customOpen: 'jha'
+    },
+    warehouse: {
+      title: 'Recent Warehouse Records',
+      openTitle: 'Warehouse and equipment records',
+      openCopy: 'Open this section to review equipment and material activity tied to this project.',
+      openLabel: 'Open Warehouse',
+      kind: 'warehouse',
+      tabId: 'tab-project-warehouse'
+    },
+    foremen: {
+      title: 'Assigned Project Access',
+      openTitle: 'Assigned foremen and supervisors',
+      openCopy: 'Open this section to review who currently has access to this project.',
+      openLabel: 'Open Assigned Foremen',
+      kind: 'foremen',
+      tabId: 'tab-foremen'
+    }
+  };
+
+  function projectDashboardConfig(section = activeProjectDashboardSection) {
+    return projectDashboardSectionConfig[section] || projectDashboardSectionConfig.safety;
+  }
+
+  function projectDashboardRecordDate(item = {}) {
+    const data = item.documentData || {};
+    const value = data.date || data.reportDate || data.inspection_date || data.sup_date || data.week_start || item.date || item.uploadedAt || item.localSubmittedAt || item.submittedAt || item.createdAt || item.movedAt || item.updatedAt;
+    if (!value) return null;
+    if (value.toDate) return value.toDate();
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(value + 'T00:00:00');
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  function projectDashboardItems(section = activeProjectDashboardSection) {
+    const config = projectDashboardConfig(section);
+    if (config.kind === 'fieldForms') {
+      return (currentProjectFieldForms || []).filter(form => !config.fieldFilter || getProjectFieldFormType(form) === config.fieldFilter);
+    }
+    if (config.kind === 'docs') return currentProjectDocs || [];
+    if (config.kind === 'photos') return currentProjectPhotos || [];
+    if (config.kind === 'reports') return currentProjectReports || [];
+    if (config.kind === 'tickets') return currentProjectDoc?.extraTickets || currentProject?.extraTickets || [];
+    if (config.kind === 'warehouse') return currentProjectDoc?.warehouseItems || currentProject?.warehouseItems || [];
+    if (config.kind === 'foremen') return currentProjectDoc?.foremen || currentProject?.foremen || [];
+    return [];
+  }
+
+  function projectDashboardRangeCounts(section = activeProjectDashboardSection) {
+    const rows = projectDashboardItems(section);
+    const now = new Date();
+    const today = todayISO();
+    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const weekStart = addDays(now, -(now.getDay() === 0 ? 6 : now.getDay() - 1));
+    weekStart.setHours(0,0,0,0);
+    const weekEnd = addDays(weekStart, 7);
+    const counts = { today:0, week:0, month:0, total: rows.length };
+    rows.forEach(item => {
+      const d = projectDashboardRecordDate(item);
+      if (!d) return;
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      if (iso === today) counts.today++;
+      if (d >= weekStart && d < weekEnd) counts.week++;
+      if (`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` === month) counts.month++;
+    });
+    return counts;
+  }
+
+  function updateProjectDashboardPanel(section = activeProjectDashboardSection) {
+    activeProjectDashboardSection = section;
+    const config = projectDashboardConfig(section);
+    const counts = projectDashboardRangeCounts(section);
+    const max = Math.max(counts.today, counts.week, counts.month, 1);
+    const itemLabel = count => appText(count === 1 ? 'item' : 'items');
+    [
+      ['project-dashboard-title', appText(config.title)],
+      ['project-dashboard-open-title', appText(config.openTitle)],
+      ['project-dashboard-open-copy', appText(config.openCopy)],
+      ['project-dashboard-open-btn', appText(config.openLabel)],
+      ['project-quick-total-title', appText('Total')],
+      ['project-quick-total', counts.total],
+      ['project-quick-today', counts.today],
+      ['project-quick-week', counts.week],
+      ['project-quick-month', counts.month],
+      ['project-quick-today-label', `${counts.today} ${itemLabel(counts.today)}`],
+      ['project-quick-week-label', `${counts.week} ${itemLabel(counts.week)}`],
+      ['project-quick-month-label', `${counts.month} ${itemLabel(counts.month)}`]
+    ].forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+    document.querySelectorAll('#project-access-cards .project-access-card').forEach(card => {
+      card.classList.toggle('active', card.dataset.dashboardSection === section);
+    });
+    [
+      ['project-quick-today-bar', counts.today],
+      ['project-quick-week-bar', counts.week],
+      ['project-quick-month-bar', counts.month]
+    ].forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.style.width = `${Math.max(6, Math.round((value / max) * 100))}%`;
+    });
+  }
+
+  function updateProjectSafetyQuickCounts() {
+    updateProjectDashboardPanel(activeProjectDashboardSection);
+  }
+
+  function selectProjectDashboardSection(section = 'safety') {
+    activeProjectDashboardSection = section;
+    updateProjectDashboardPanel(section);
+  }
+
+  function handleProjectDashboardCardKey(event, section) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    selectProjectDashboardSection(section);
+  }
+
+  function setProjectHistoryQuickRange(kind, range) {
+    setupProjectHistoryFilter(kind);
+    const monthEl = document.getElementById(`${kind}-filter-month`);
+    const weekEl = document.getElementById(`${kind}-filter-week`);
+    const searchEl = document.getElementById(`${kind}-filter-search`);
+    const now = new Date();
+    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    if (monthEl) monthEl.value = month;
+    if (searchEl) searchEl.value = '';
+    updateProjectHistoryWeekOptions(kind);
+    if (range === 'today') {
+      if (searchEl) searchEl.value = todayISO();
+      if (weekEl) weekEl.value = 'all';
+    } else if (range === 'week') {
+      const weekStart = addDays(now, -(now.getDay() === 0 ? 6 : now.getDay() - 1));
+      const start = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, '0')}-${String(weekStart.getDate()).padStart(2, '0')}`;
+      const option = Array.from(weekEl?.options || []).find(opt => String(opt.value || '').startsWith(start + '|'));
+      if (option && weekEl) weekEl.value = option.value;
+    } else if (range === 'year') {
+      if (monthEl) monthEl.value = '';
+      if (searchEl) searchEl.value = String(now.getFullYear());
+      if (weekEl) weekEl.innerHTML = '<option value="all">All weeks</option>';
+    } else if (weekEl) {
+      weekEl.value = 'all';
+    }
+  }
+
+  function openProjectDashboardCurrentSection() {
+    const config = projectDashboardConfig();
+    if (config.customOpen === 'jha') return openProjectJhaChecklist();
+    if (config.tabId === 'tab-field-forms') return openProjectAccessSection(config.tabId, config.fieldFilter || 'all');
+    return openProjectAccessSection(config.tabId);
+  }
+
+  function openProjectDashboardQuickRange(range = 'week') {
+    const config = projectDashboardConfig();
+    if (!config.kind || config.kind === 'foremen') return openProjectDashboardCurrentSection();
+    if (config.customOpen === 'jha' && range === 'year') return openProjectJhaChecklist();
+    if (config.kind === 'fieldForms') activeProjectFieldFormFilter = config.fieldFilter || 'all';
+    if (config.tabId === 'tab-field-forms') openProjectAccessSection(config.tabId, activeProjectFieldFormFilter);
+    else openProjectAccessSection(config.tabId);
+    setTimeout(() => {
+      setProjectHistoryQuickRange(config.kind, range);
+      applyProjectHistoryFilter(config.kind);
+    }, 60);
   }
 
   function setProjectAccessActive(tabId, fieldFilter = '') {
@@ -5203,7 +5329,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (tabId === 'tab-foremen') return 'Assigned Foremen';
     if (tabId === 'tab-employees') return 'Employee Records';
     if (tabId === 'tab-field-forms') {
-      const labels = { all:'Field Forms', safety:'Safety Sheets', payroll:'Payroll', expense:'Expense Reports', jha:'JHA / Checklist', other:'Other Field Forms' };
+      const labels = { all:'Field Forms', safety:'Daily Safety', payroll:'Payroll', expense:'Expense Reports', jha:'JHA / Checklist', other:'Other Field Forms' };
       return labels[activeProjectFieldFormFilter] || 'Field Forms';
     }
     return 'Project Section';
@@ -5238,6 +5364,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     document.querySelectorAll('#project-access-cards .project-access-card').forEach(card => card.classList.remove('active'));
     const su = document.getElementById('sticky-upload');
     if (su) su.style.display = 'none';
+    updateProjectDashboardPanel(activeProjectDashboardSection);
     if (restoreScroll) document.getElementById('project-access-cards')?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
@@ -5386,7 +5513,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       manualSelect.innerHTML = optionHTML;
       if (currentProject?.id) manualSelect.value = currentProject.id;
     }
-    ['manual-report-project-select','ai-report-project-select','daily-payroll-project-select','weekly-payroll-project-select','expense-report-project-select'].forEach(id => {
+    ['manual-report-project-select','ai-report-project-select','daily-payroll-project-select','weekly-payroll-project-select','expense-report-project-select','weekly-toolbox-project-select'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         el.innerHTML = optionHTML;
@@ -5408,14 +5535,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (manualForeman && !manualForeman.value) manualForeman.value = name;
     if (manualSpeaker && !manualSpeaker.value) manualSpeaker.value = name;
     if (manualPrint && !manualPrint.value) manualPrint.value = name;
-    ['manual-report-date','ai-report-date','daily-payroll-date','weekly-payroll-date','expense-report-date','daily-payroll-date-signed','foreman-expense-date-signed'].forEach(id => {
+    ['manual-report-date','ai-report-date','daily-payroll-date','weekly-payroll-date','expense-report-date','daily-payroll-date-signed','foreman-expense-date-signed','weekly-toolbox-date','weekly-toolbox-date-signed'].forEach(id => {
       const el = document.getElementById(id);
       if (el && !el.value) el.value = new Date().toISOString().slice(0, 10);
     });
-    ['manual-report-supervisor','ai-report-supervisor','daily-payroll-foreman','daily-payroll-print-name','weekly-payroll-supervisor','expense-employee-name'].forEach(id => {
+    ['manual-report-supervisor','ai-report-supervisor','daily-payroll-foreman','daily-payroll-print-name','weekly-payroll-supervisor','expense-employee-name','weekly-toolbox-supervisor','weekly-toolbox-speaker'].forEach(id => {
       const el = document.getElementById(id);
       if (el && !el.value) el.value = name;
     });
+    syncWeeklyToolboxProjectFields();
   }
 
   function manualSafetyForemanName(project) {
@@ -5504,6 +5632,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let foremanToolReturnToFieldForms = false;
   const foremanToolTitles = {
     'foreman-tool-manual-safety': 'Manual Daily Safety Sheet',
+    'foreman-tool-weekly-toolbox': 'Weekly Toolbox Talk',
     'foreman-tool-ai-safety': 'AI Assisted Daily Safety Sheet',
     'foreman-tool-manual-report': 'Manual Daily Report',
     'foreman-tool-ai-report': 'AI Assisted Daily Report',
@@ -5613,12 +5742,47 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     addSafetySignRow('ai-safety-sign-rows');
   }
 
+  function setWeeklyToolboxRows(rows = [], minimumRows = 5) {
+    setSafetySignRows('weekly-toolbox-sign-rows', rows, minimumRows);
+  }
+
+  function addWeeklyToolboxRow() {
+    addSafetySignRow('weekly-toolbox-sign-rows');
+  }
+
+  function selectedWeeklyToolboxProject() {
+    return selectedForemanProject('weekly-toolbox-project-select');
+  }
+
+  function syncWeeklyToolboxProjectFields() {
+    const project = selectedWeeklyToolboxProject();
+    const set = (id, value = '') => {
+      const el = document.getElementById(id);
+      if (el) el.value = value;
+    };
+    set('weekly-toolbox-project-number', project?.jobNumber || '');
+    set('weekly-toolbox-project-name', project?.name || '');
+    set('weekly-toolbox-location', project?.location || '');
+    const name = manualSafetyForemanName(project);
+    set('weekly-toolbox-supervisor', name);
+    set('weekly-toolbox-speaker', name);
+  }
+
+  function clearWeeklyToolbox() {
+    if (!confirm('Clear the weekly toolbox talk form?')) return;
+    resetForemanToolForm('foreman-tool-weekly-toolbox');
+    syncWeeklyToolboxProjectFields();
+  }
+
   function initForemanPayrollExpenseTool(tabId) {
     if (tabId === 'foreman-tool-daily-payroll' && !document.querySelector('#daily-payroll-rows tr')) {
       for (let i = 0; i < 5; i++) addDailyPayrollRow();
     }
     if (tabId === 'foreman-tool-weekly-payroll' && !document.querySelector('#weekly-payroll-rows tr')) {
       for (let i = 0; i < 8; i++) addWeeklyPayrollRow();
+    }
+    if (tabId === 'foreman-tool-weekly-toolbox' && !document.querySelector('#weekly-toolbox-sign-rows tr')) {
+      setWeeklyToolboxRows();
     }
     if (tabId === 'foreman-tool-expense-report' && !document.querySelector('#foreman-expense-rows tr')) {
       for (let i = 0; i < 3; i++) addForemanExpenseRow();
@@ -5659,6 +5823,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const tbody = document.getElementById('weekly-payroll-rows');
       if (tbody) tbody.innerHTML = '';
       for (let i = 0; i < 8; i++) addWeeklyPayrollRow();
+    }
+    if (tabId === 'foreman-tool-weekly-toolbox') {
+      setWeeklyToolboxRows();
+      const projectSelect = document.getElementById('weekly-toolbox-project-select');
+      if (projectSelect && currentProject?.id && Array.from(projectSelect.options).some(o => o.value === currentProject.id)) projectSelect.value = currentProject.id;
+      syncWeeklyToolboxProjectFields();
+      ['weekly-toolbox-lang-english','weekly-toolbox-lang-spanish','weekly-toolbox-lang-polish','weekly-toolbox-lang-ukrainian','weekly-toolbox-lang-russian','weekly-toolbox-lang-other'].forEach((id, index) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = index === 0;
+      });
     }
     if (tabId === 'foreman-tool-expense-report') {
       const tbody = document.getElementById('foreman-expense-rows');
@@ -5833,6 +6007,42 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     };
   }
 
+  function getWeeklyToolboxData() {
+    const rows = Array.from(document.querySelectorAll('#weekly-toolbox-sign-rows tr')).map((tr, index) => {
+      const inputs = tr.querySelectorAll('input');
+      return {
+        row: index + 1,
+        printName: inputs[0]?.value.trim() || '',
+        signature: inputs[1]?.value.trim() || ''
+      };
+    }).filter(r => r.printName || r.signature);
+    const languages = [
+      ['weekly-toolbox-lang-english', 'English'],
+      ['weekly-toolbox-lang-spanish', 'Spanish'],
+      ['weekly-toolbox-lang-polish', 'Polish'],
+      ['weekly-toolbox-lang-ukrainian', 'Ukrainian'],
+      ['weekly-toolbox-lang-russian', 'Russian'],
+      ['weekly-toolbox-lang-other', 'Other']
+    ].filter(([id]) => document.getElementById(id)?.checked).map(([, label]) => label);
+    return {
+      date: document.getElementById('weekly-toolbox-date')?.value || new Date().toISOString().slice(0,10),
+      projectNumber: document.getElementById('weekly-toolbox-project-number')?.value.trim() || '',
+      projectName: document.getElementById('weekly-toolbox-project-name')?.value.trim() || '',
+      day: document.getElementById('weekly-toolbox-day')?.value.trim() || '',
+      location: document.getElementById('weekly-toolbox-location')?.value.trim() || '',
+      time: document.getElementById('weekly-toolbox-time')?.value.trim() || '',
+      supervisor: document.getElementById('weekly-toolbox-supervisor')?.value.trim() || '',
+      personnelPresent: document.getElementById('weekly-toolbox-personnel')?.value || '',
+      topic: document.getElementById('weekly-toolbox-topic')?.value.trim() || '',
+      languages,
+      speaker: document.getElementById('weekly-toolbox-speaker')?.value.trim() || '',
+      dateSigned: document.getElementById('weekly-toolbox-date-signed')?.value || '',
+      supervisorSignature: document.getElementById('weekly-toolbox-supervisor-signature')?.value.trim() || '',
+      qcSignature: document.getElementById('weekly-toolbox-qc-signature')?.value.trim() || '',
+      rows
+    };
+  }
+
   function getWeeklyPayrollData() {
     const days = ['mon','tue','wed','thu','fri','sat','sun'];
     const rows = Array.from(document.querySelectorAll('#weekly-payroll-rows tr')).map(tr => {
@@ -5951,6 +6161,22 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
   }
 
+  function saveWeeklyToolboxToProject() {
+    const data = getWeeklyToolboxData();
+    const project = selectedWeeklyToolboxProject();
+    return saveForemanFieldForm({
+      project,
+      formKey: 'weekly-toolbox-talk',
+      formTitle: 'Weekly Toolbox Talk',
+      data: {
+        ...data,
+        jobNumber: data.projectNumber || project?.jobNumber || ''
+      },
+      buttonId: 'save-weekly-toolbox-btn',
+      emptyMessage: 'Add at least one crew signature before saving weekly toolbox talk.'
+    });
+  }
+
   function saveExpenseReportToProject() {
     return saveForemanFieldForm({
       project: selectedForemanProject('expense-report-project-select'),
@@ -5964,6 +6190,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function submitForemanToolToProject() {
     if (activeForemanToolId === 'foreman-tool-manual-safety') return saveManualDailySafetySheet();
+    if (activeForemanToolId === 'foreman-tool-weekly-toolbox') return saveWeeklyToolboxToProject();
     if (activeForemanToolId === 'foreman-tool-ai-safety') return saveProjectAiSafetySheet();
     if (activeForemanToolId === 'foreman-tool-manual-report') return saveForemanDailyReport('manual');
     if (activeForemanToolId === 'foreman-tool-ai-report') return saveForemanDailyReport('ai');
@@ -6150,6 +6377,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   const safeForemanExportTools = [
     'foreman-tool-manual-report',
+    'foreman-tool-weekly-toolbox',
     'foreman-tool-daily-payroll',
     'foreman-tool-weekly-payroll',
     'foreman-tool-expense-report'
@@ -6359,6 +6587,43 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       };
     }
 
+    if (activeForemanToolId === 'foreman-tool-weekly-toolbox') {
+      const project = selectedWeeklyToolboxProject();
+      const data = getWeeklyToolboxData();
+      const title = 'PAL Weekly Toolbox Talk';
+      return {
+        title,
+        fileName: `pal-weekly-toolbox-${exportSlug(project?.name || data.projectName || 'project')}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Weekly toolbox talk and crew sign-in',
+          meta: `Project: ${esc(project?.name || data.projectName || '')}<br>Job: ${esc(data.projectNumber || project?.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project #', data.projectNumber || project?.jobNumber || ''],
+            ['Project Name', data.projectName || project?.name || ''],
+            ['Date of Meeting', data.date],
+            ['Day', data.day],
+            ['Location', data.location],
+            ['Time', data.time],
+            ['Supervisor Holding Meeting', data.supervisor],
+            ['Number of Personnel Present', data.personnelPresent],
+            ['Topic Discussed', data.topic],
+            ['Languages', (data.languages || []).join(', ')],
+            ['Speaker', data.speaker],
+            ['Date Signed', data.dateSigned],
+            ['Supervisor Signature', data.supervisorSignature],
+            ['Quality Control Verification Signature', data.qcSignature]
+          ],
+          tables: [{
+            title: 'Crew Signatures',
+            headers: ['#', 'Print Name', 'Signature'],
+            rows: data.rows,
+            columns: ['row', 'printName', 'signature']
+          }]
+        })
+      };
+    }
+
     if (activeForemanToolId === 'foreman-tool-expense-report') {
       const project = selectedForemanProject('expense-report-project-select');
       const data = getForemanExpenseReportData();
@@ -6459,6 +6724,40 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             headers: ['LU #', 'Worker', 'Last 4 SSN', 'Cost Code', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Reg', 'OT', 'Total'],
             rows: data.rows || [],
             columns: ['luNumber', 'workerName', 'ssnLast4', 'costCode', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'regularHours', 'overtimeHours', 'totalHours']
+          }]
+        })
+      };
+    }
+    if (form?.formKey === 'weekly-toolbox-talk') {
+      const title = 'PAL Weekly Toolbox Talk';
+      return {
+        title,
+        fileName: `pal-weekly-toolbox-${exportSlug(projectName)}-${exportSlug(data.date || 'today')}.html`,
+        html: foremanExportDocumentHTML({
+          title,
+          subtitle: 'Weekly toolbox talk and crew sign-in',
+          meta: `Project: ${esc(projectName)}<br>Job: ${esc(data.projectNumber || form.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          fields: [
+            ['Project #', data.projectNumber || form.jobNumber || ''],
+            ['Project Name', data.projectName || projectName],
+            ['Date of Meeting', data.date],
+            ['Day', data.day],
+            ['Location', data.location],
+            ['Time', data.time],
+            ['Supervisor Holding Meeting', data.supervisor],
+            ['Number of Personnel Present', data.personnelPresent],
+            ['Topic Discussed', data.topic],
+            ['Languages', (data.languages || []).join(', ')],
+            ['Speaker', data.speaker],
+            ['Date Signed', data.dateSigned],
+            ['Supervisor Signature', data.supervisorSignature],
+            ['Quality Control Verification Signature', data.qcSignature]
+          ],
+          tables: [{
+            title: 'Crew Signatures',
+            headers: ['#', 'Print Name', 'Signature'],
+            rows: data.rows || [],
+            columns: ['row', 'printName', 'signature']
           }]
         })
       };
@@ -8179,9 +8478,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function getProjectFieldFormType(form = {}) {
     const key = String(form.formKey || '').toLowerCase();
     if (key.includes('payroll')) return 'payroll';
-    if (key.includes('expense')) return 'expense';
+    if (key.includes('expense')) return 'payroll';
     if (key.includes('jha') || key.includes('checklist')) return 'jha';
-    if (key.includes('safety')) return 'safety';
+    if (key.includes('safety') || key.includes('toolbox')) return 'safety';
     return 'other';
   }
 
@@ -8193,7 +8492,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }, { safety:0, payroll:0, expense:0, jha:0, other:0 });
     const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
     set('summary-safety-forms', counts.safety || 0);
-    set('summary-payroll-forms', counts.payroll || 0);
+    set('summary-payroll-forms', (counts.payroll || 0) + (counts.expense || 0));
     set('summary-expense-forms', counts.expense || 0);
     set('summary-jha-forms', counts.jha || 0);
   }
@@ -8207,7 +8506,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       : currentProjectFieldForms.filter(form => getProjectFieldFormType(form) === activeProjectFieldFormFilter);
     const rows = typeRows.filter(form => projectHistoryMatches(form, 'fieldForms'));
     setProjectHistoryCount('fieldForms', rows.length, typeRows.length);
-    const labels = { all:'Submitted Field Forms', safety:'Safety Sheets', payroll:'Payroll Forms', expense:'Expense Reports', jha:'JHA / Checklist Forms', other:'Other Field Forms' };
+    const labels = { all:'Submitted Field Forms', safety:'Daily Safety Records', payroll:'Payroll Forms', expense:'Expense Reports', jha:'JHA / Checklist Forms', other:'Other Field Forms' };
     const section = document.getElementById('field-forms-section-label');
     const helper = document.getElementById('field-forms-helper');
     if (section) section.textContent = labels[activeProjectFieldFormFilter] || 'Submitted Field Forms';
@@ -8262,6 +8561,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }));
       await syncSignedSafetyRequestsForForms(projectId, currentProjectFieldForms);
       updateProjectFieldFormSummary(currentProjectFieldForms);
+      updateProjectSafetyQuickCounts();
       renderProjectFieldFormsList();
     } catch(e) {
       console.error(e);
@@ -8332,6 +8632,65 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
               <div class="daily-safety-field"><label>Supervisor Printed Name</label><div class="daily-safety-value">${esc(data.supervisor_printed_name || '')}</div></div>
               <div class="daily-safety-field"><label>Date</label><div class="daily-safety-value">${esc(data.supervisor_date || data.date || '')}</div></div>
               <div class="daily-safety-field full"><label>Supervisor Signature</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.supervisor_signature || '')}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function weeklyToolboxDetailHTML(form) {
+    const data = form.documentData || {};
+    const rows = Array.isArray(data.rows) && data.rows.length ? data.rows : Array.from({ length: 5 }, (_, i) => ({ row: i + 1, printName: '', signature: '' }));
+    const rowHTML = rows.map((r, index) => `
+      <tr>
+        <td>${esc(r.row || index + 1)}</td>
+        <td>${esc(r.printName || '')}</td>
+        <td><span class="signature-script">${esc(r.signature || '')}</span></td>
+      </tr>`).join('');
+    const lang = Array.isArray(data.languages) ? data.languages : [];
+    const langMark = label => lang.includes(label) ? '[x]' : '[ ]';
+    return `
+      <div class="daily-safety-paper">
+        <div class="daily-safety-head">
+          <div class="logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
+          <div>
+            <h3>Weekly Toolbox Talk</h3>
+            <p>Topic review + crew sign-in</p>
+          </div>
+          <div class="daily-safety-meta">Form: PAL-WTB-001<br>Project Safety<br>${esc(data.date || '')}</div>
+        </div>
+        <div class="daily-safety-body">
+          <div class="daily-safety-field-grid">
+            <div class="daily-safety-field"><label>Project #</label><div class="daily-safety-value">${esc(data.projectNumber || form.jobNumber || '')}</div></div>
+            <div class="daily-safety-field"><label>Date of Meeting</label><div class="daily-safety-value">${esc(data.date || '')}</div></div>
+            <div class="daily-safety-field"><label>Project Name</label><div class="daily-safety-value">${esc(data.projectName || form.projectName || currentProject?.name || '')}</div></div>
+            <div class="daily-safety-field"><label>Day</label><div class="daily-safety-value">${esc(data.day || '')}</div></div>
+            <div class="daily-safety-field"><label>Location</label><div class="daily-safety-value">${esc(data.location || '')}</div></div>
+            <div class="daily-safety-field"><label>Time</label><div class="daily-safety-value">${esc(data.time || '')}</div></div>
+            <div class="daily-safety-field"><label>Supervisor Holding Meeting</label><div class="daily-safety-value">${esc(data.supervisor || '')}</div></div>
+            <div class="daily-safety-field"><label>Personnel Present</label><div class="daily-safety-value">${esc(data.personnelPresent || '')}</div></div>
+            <div class="daily-safety-field full"><label>Topic Discussed</label><div class="daily-safety-value">${esc(data.topic || '')}</div></div>
+          </div>
+          <div class="daily-safety-block-title" style="margin-top:12px;">Training Acknowledgement</div>
+          <p style="font-weight:800;color:var(--navy);margin:6px 0 8px;">I have received the above training and I fully understand the material presented.</p>
+          <table class="daily-safety-sign-table">
+            <thead><tr><th style="width:48px;">#</th><th>Print Name</th><th>Signature</th></tr></thead>
+            <tbody>${rowHTML}</tbody>
+          </table>
+          <div class="daily-safety-footer">
+            <div class="language-line">
+              <span>${langMark('English')} English</span>
+              <span>${langMark('Spanish')} Spanish</span>
+              <span>${langMark('Polish')} Polish</span>
+              <span>${langMark('Ukrainian')} Ukrainian</span>
+              <span>${langMark('Russian')} Russian</span>
+              <span>${langMark('Other')} Other ________</span>
+            </div>
+            <div class="daily-safety-field-grid">
+              <div class="daily-safety-field"><label>Speaker Printed Name</label><div class="daily-safety-value">${esc(data.speaker || '')}</div></div>
+              <div class="daily-safety-field"><label>Date Signed</label><div class="daily-safety-value">${esc(data.dateSigned || data.date || '')}</div></div>
+              <div class="daily-safety-field full"><label>Supervisor Signature</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.supervisorSignature || '')}</div></div>
+              <div class="daily-safety-field full"><label>Quality Control Verification Signature</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.qcSignature || '')}</div></div>
             </div>
           </div>
         </div>
@@ -8436,6 +8795,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     downloadHtmlDocument(doc.fileName, doc.html, 'Document saved to files.');
   }
 
+  function printGenericFieldFormDocument(formId) {
+    const form = findProjectFieldForm(formId);
+    if (!form) return toast('Document not found. Refresh and try again.');
+    const doc = savedPayrollExpenseExportDocument(form);
+    if (!doc) return toast('Print is not ready for this document yet.');
+    openForemanExportFileWindow(doc);
+  }
+
   function openFieldFormDetail(formId) {
     const form = findProjectFieldForm(formId);
     if (!form) return;
@@ -8457,6 +8824,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           <button class="btn-save" type="button" onclick="saveFieldFormDocumentToFiles('${form.id}')">Save to Files</button>
         </div>
         ${dailySafetySheetDetailHTML(form)}`;
+      document.getElementById('modal-report-detail').classList.add('open');
+      return;
+    }
+    if (form.formKey === 'weekly-toolbox-talk') {
+      if (heading) heading.textContent = 'Weekly Toolbox Talk';
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px;">
+          <button class="btn-outline" type="button" onclick="printGenericFieldFormDocument('${form.id}')">Print</button>
+          <button class="btn-outline" type="button" onclick="printGenericFieldFormDocument('${form.id}')">Print / PDF</button>
+          <button class="btn-save" type="button" onclick="saveFieldFormDocumentToFiles('${form.id}')">Save to Files</button>
+        </div>
+        ${weeklyToolboxDetailHTML(form)}`;
       document.getElementById('modal-report-detail').classList.add('open');
       return;
     }
