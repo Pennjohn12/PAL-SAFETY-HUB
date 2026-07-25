@@ -170,6 +170,161 @@
   color:var(--navy);
 }
 
+#view-projects #main-jha .jha-workflow-card,
+#view-projects #main-jha .jha-template-card,
+#view-projects #main-jha .btn-outline,
+#view-projects #main-jha .btn-save,
+#modal-jha-editor .jha-template-card,
+#modal-jha-editor .btn-outline,
+#modal-jha-editor .btn-save,
+#modal-jha-editor .btn-sm,
+#modal-jha-upload .btn-outline,
+#modal-jha-upload .btn-save,
+#modal-jha-upload .btn-secondary {
+  background:#fff;
+  color:var(--navy);
+  border-color:var(--line);
+  transition:background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+#view-projects #main-jha .jha-workflow-card h3,
+#view-projects #main-jha .jha-template-card h3,
+#view-projects #main-jha .jha-workflow-card p,
+#view-projects #main-jha .jha-template-card p,
+#modal-jha-editor .jha-template-card h3,
+#modal-jha-editor .jha-template-card p {
+  color:var(--navy);
+}
+
+#view-projects #main-jha .btn-outline:hover,
+#view-projects #main-jha .btn-outline:focus,
+#view-projects #main-jha .btn-save:hover,
+#view-projects #main-jha .btn-save:focus,
+#modal-jha-editor .btn-outline:hover,
+#modal-jha-editor .btn-outline:focus,
+#modal-jha-editor .btn-save:hover,
+#modal-jha-editor .btn-save:focus,
+#modal-jha-editor .btn-sm:hover,
+#modal-jha-editor .btn-sm:focus,
+#modal-jha-upload .btn-outline:hover,
+#modal-jha-upload .btn-outline:focus,
+#modal-jha-upload .btn-save:hover,
+#modal-jha-upload .btn-save:focus,
+#modal-jha-upload .btn-secondary:hover,
+#modal-jha-upload .btn-secondary:focus {
+  background:var(--green);
+  color:var(--navy);
+  border-color:var(--green);
+  box-shadow:0 10px 22px rgba(16,24,40,.12);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-projects #main-jha .jha-workflow-card,
+#view-projects #main-jha .jha-template-card,
+#modal-jha-editor .jha-template-card {
+  cursor:default;
+}
+
+#view-projects #main-jha .jha-template-card.active,
+#modal-jha-editor .jha-template-card.active {
+  background:#fff;
+  color:var(--navy);
+  border-color:var(--line);
+  box-shadow:none;
+  transform:none;
+}
+
+#view-projects #main-jha .jha-workflow-card.disabled {
+  background:#f8fafc;
+  color:var(--muted);
+  border-color:var(--line);
+  box-shadow:none;
+  transform:none;
+}
+
+#view-projects #main-employee-onboarding .onboarding-flow-card,
+#view-projects #main-employee-onboarding .onboarding-review-card,
+#view-projects #main-employee-onboarding .newhire-card,
+#view-projects #main-employee-onboarding .newhire-actions .btn-sm,
+#view-projects #main-employee-onboarding .btn-outline,
+#view-projects #main-employee-onboarding .btn-save,
+#view-projects #main-employee-onboarding .btn-add,
+#view-projects #main-employee-onboarding .inline-select {
+  background:#fff;
+  color:var(--navy);
+  border-color:var(--line);
+  transition:background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+#view-projects #main-employee-onboarding .onboarding-flow-card h3,
+#view-projects #main-employee-onboarding .onboarding-review-card h3,
+#view-projects #main-employee-onboarding .newhire-card h4,
+#view-projects #main-employee-onboarding .newhire-actions .btn-sm {
+  color:var(--navy);
+}
+
+#view-projects #main-employee-onboarding .onboarding-flow-card p,
+#view-projects #main-employee-onboarding .onboarding-review-card p,
+#view-projects #main-employee-onboarding .newhire-meta,
+#view-projects #main-employee-onboarding .newhire-completion-missing {
+  color:var(--muted);
+}
+
+#view-projects #main-employee-onboarding .onboarding-flow-card.active,
+#view-projects #main-employee-onboarding .onboarding-review-card.active {
+  background:#fff;
+  color:var(--navy);
+  border-color:var(--line);
+  border-left-color:var(--green);
+  box-shadow:0 5px 14px rgba(16,24,40,.07);
+}
+
+#view-projects #main-employee-onboarding .onboarding-flow-card:hover,
+#view-projects #main-employee-onboarding .onboarding-flow-card:focus,
+#view-projects #main-employee-onboarding .onboarding-review-card:hover,
+#view-projects #main-employee-onboarding .onboarding-review-card:focus,
+#view-projects #main-employee-onboarding .newhire-card:hover,
+#view-projects #main-employee-onboarding .newhire-card:focus-within,
+#view-projects #main-employee-onboarding .newhire-actions .btn-sm:hover,
+#view-projects #main-employee-onboarding .newhire-actions .btn-sm:focus,
+#view-projects #main-employee-onboarding .btn-outline:hover,
+#view-projects #main-employee-onboarding .btn-outline:focus,
+#view-projects #main-employee-onboarding .btn-save:hover,
+#view-projects #main-employee-onboarding .btn-save:focus,
+#view-projects #main-employee-onboarding .btn-add:hover,
+#view-projects #main-employee-onboarding .btn-add:focus {
+  background:var(--green);
+  color:var(--navy);
+  border-color:var(--green);
+  box-shadow:0 10px 22px rgba(16,24,40,.12);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-projects #main-employee-onboarding .onboarding-flow-card:hover h3,
+#view-projects #main-employee-onboarding .onboarding-flow-card:focus h3,
+#view-projects #main-employee-onboarding .onboarding-review-card:hover h3,
+#view-projects #main-employee-onboarding .onboarding-review-card:focus h3,
+#view-projects #main-employee-onboarding .onboarding-flow-card:hover p,
+#view-projects #main-employee-onboarding .onboarding-flow-card:focus p,
+#view-projects #main-employee-onboarding .onboarding-review-card:hover p,
+#view-projects #main-employee-onboarding .onboarding-review-card:focus p,
+#view-projects #main-employee-onboarding .newhire-card:hover h4,
+#view-projects #main-employee-onboarding .newhire-card:focus-within h4,
+#view-projects #main-employee-onboarding .newhire-card:hover .newhire-meta,
+#view-projects #main-employee-onboarding .newhire-card:focus-within .newhire-meta,
+#view-projects #main-employee-onboarding .newhire-card:hover .newhire-completion-missing,
+#view-projects #main-employee-onboarding .newhire-card:focus-within .newhire-completion-missing {
+  color:var(--navy);
+}
+
+#view-projects #main-employee-onboarding .newhire-actions .btn-sm.danger {
+  background:#fff;
+  color:var(--navy);
+  border-color:var(--line);
+}
+
 #view-detail .project-header-card {
   margin-bottom:14px;
 }

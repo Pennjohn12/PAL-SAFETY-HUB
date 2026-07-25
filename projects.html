@@ -1505,7 +1505,7 @@
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
   </style>
-  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-25-foreman-tools" />
+  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-25-onboarding-flow" />
 
 <script>
   // PUBLIC_LINK_EARLY_VIEW_FORCE_2026_07_20
@@ -1974,17 +1974,17 @@
       <div class="helper-text" style="margin-bottom:14px;">Office can create, edit, and upload JHAs. Foremen can open approved JHAs, add crew print names/signatures, and submit the signed copy to the project.</div>
 
       <div class="jha-workflow-grid">
-        <div class="jha-workflow-card" role="button" tabindex="0" onclick="showJhaMode('previous')" onkeydown="handleJhaWorkflowKey(event, 'previous')">
+        <div class="jha-workflow-card">
           <div><h3>Previous Worksite JHAs</h3><p>Open approved prior job JHAs, search by project/task, and use them as the field signing copy.</p></div>
-          <button class="btn-outline" type="button" onclick="event.stopPropagation(); showJhaMode('previous')">Open Library</button>
+          <button class="btn-outline" type="button" onclick="showJhaMode('previous')">Open Library</button>
         </div>
-        <div class="jha-workflow-card admin-only" role="button" tabindex="0" onclick="showJhaMode('create')" onkeydown="handleJhaWorkflowKey(event, 'create')">
+        <div class="jha-workflow-card admin-only">
           <div><h3>Create New JHA</h3><p>Office/admin can start from a blank PAL fireproofing template and edit the full document.</p></div>
-          <button class="btn-save" type="button" onclick="event.stopPropagation(); showJhaMode('create')">Create JHA</button>
+          <button class="btn-save" type="button" onclick="showJhaMode('create')">Create JHA</button>
         </div>
-        <div class="jha-workflow-card admin-only" role="button" tabindex="0" onclick="openUploadJhaModal()" onkeydown="handleJhaWorkflowKey(event, 'upload')">
+        <div class="jha-workflow-card admin-only">
           <div><h3>Upload New JHA</h3><p>Office/admin can upload a PDF or file that already exists and attach it to the selected project.</p></div>
-          <button class="btn-outline" type="button" onclick="event.stopPropagation(); openUploadJhaModal()">Upload JHA</button>
+          <button class="btn-outline" type="button" onclick="openUploadJhaModal()">Upload JHA</button>
         </div>
       </div>
 
@@ -3812,7 +3812,7 @@
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js";
+  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-07-25-weekly-toolbox";
   import {
     PAL_ADMIN_EMAILS,
     PAL_PUBLIC_PROJECTS_URL,
@@ -6998,33 +6998,33 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (activeForemanToolId === 'foreman-tool-weekly-toolbox') {
       const project = selectedWeeklyToolboxProject();
       const data = getWeeklyToolboxData();
-      const title = 'PAL Weekly Toolbox Talk';
+      const title = appText('PAL Weekly Toolbox Talk');
       return {
         title,
         fileName: `pal-weekly-toolbox-${exportSlug(project?.name || data.projectName || 'project')}-${exportSlug(data.date || 'today')}.html`,
         html: foremanExportDocumentHTML({
           title,
-          subtitle: 'Weekly toolbox talk and crew sign-in',
-          meta: `Project: ${esc(project?.name || data.projectName || '')}<br>Job: ${esc(data.projectNumber || project?.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          subtitle: appText('Weekly toolbox talk and crew sign-in'),
+          meta: `${appText('Project')}: ${esc(project?.name || data.projectName || '')}<br>${appText('Job')}: ${esc(data.projectNumber || project?.jobNumber || '')}<br>${appText('Date')}: ${esc(data.date || '')}`,
           fields: [
-            ['Project #', data.projectNumber || project?.jobNumber || ''],
-            ['Project Name', data.projectName || project?.name || ''],
-            ['Date of Meeting', data.date],
-            ['Day', data.day],
-            ['Location', data.location],
-            ['Time', data.time],
-            ['Supervisor Holding Meeting', data.supervisor],
-            ['Number of Personnel Present', data.personnelPresent],
-            ['Topic Discussed', data.topic],
-            ['Languages', (data.languages || []).join(', ')],
-            ['Speaker', data.speaker],
-            ['Date Signed', data.dateSigned],
-            ['Supervisor Signature', data.supervisorSignature],
-            ['Quality Control Verification Signature', data.qcSignature]
+            [appText('Project #'), data.projectNumber || project?.jobNumber || ''],
+            [appText('Project Name'), data.projectName || project?.name || ''],
+            [appText('Date of Meeting'), data.date],
+            [appText('Day'), data.day],
+            [appText('Location'), data.location],
+            [appText('Time'), data.time],
+            [appText('Supervisor Holding Meeting'), data.supervisor],
+            [appText('Number of Personnel Present'), data.personnelPresent],
+            [appText('Topic Discussed'), data.topic],
+            [appText('Languages'), (data.languages || []).map(label => appText(label)).join(', ')],
+            [appText('Speaker'), data.speaker],
+            [appText('Date Signed'), data.dateSigned],
+            [appText('Supervisor Signature'), data.supervisorSignature],
+            [appText('Quality Control Verification Signature'), data.qcSignature]
           ],
           tables: [{
-            title: 'Crew Signatures',
-            headers: ['#', 'Print Name', 'Signature'],
+            title: appText('Crew Signatures'),
+            headers: ['#', appText('Print Name'), appText('Signature')],
             rows: data.rows,
             columns: ['row', 'printName', 'signature']
           }]
@@ -7137,33 +7137,33 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       };
     }
     if (form?.formKey === 'weekly-toolbox-talk') {
-      const title = 'PAL Weekly Toolbox Talk';
+      const title = appText('PAL Weekly Toolbox Talk');
       return {
         title,
         fileName: `pal-weekly-toolbox-${exportSlug(projectName)}-${exportSlug(data.date || 'today')}.html`,
         html: foremanExportDocumentHTML({
           title,
-          subtitle: 'Weekly toolbox talk and crew sign-in',
-          meta: `Project: ${esc(projectName)}<br>Job: ${esc(data.projectNumber || form.jobNumber || '')}<br>Date: ${esc(data.date || '')}`,
+          subtitle: appText('Weekly toolbox talk and crew sign-in'),
+          meta: `${appText('Project')}: ${esc(projectName)}<br>${appText('Job')}: ${esc(data.projectNumber || form.jobNumber || '')}<br>${appText('Date')}: ${esc(data.date || '')}`,
           fields: [
-            ['Project #', data.projectNumber || form.jobNumber || ''],
-            ['Project Name', data.projectName || projectName],
-            ['Date of Meeting', data.date],
-            ['Day', data.day],
-            ['Location', data.location],
-            ['Time', data.time],
-            ['Supervisor Holding Meeting', data.supervisor],
-            ['Number of Personnel Present', data.personnelPresent],
-            ['Topic Discussed', data.topic],
-            ['Languages', (data.languages || []).join(', ')],
-            ['Speaker', data.speaker],
-            ['Date Signed', data.dateSigned],
-            ['Supervisor Signature', data.supervisorSignature],
-            ['Quality Control Verification Signature', data.qcSignature]
+            [appText('Project #'), data.projectNumber || form.jobNumber || ''],
+            [appText('Project Name'), data.projectName || projectName],
+            [appText('Date of Meeting'), data.date],
+            [appText('Day'), data.day],
+            [appText('Location'), data.location],
+            [appText('Time'), data.time],
+            [appText('Supervisor Holding Meeting'), data.supervisor],
+            [appText('Number of Personnel Present'), data.personnelPresent],
+            [appText('Topic Discussed'), data.topic],
+            [appText('Languages'), (data.languages || []).map(label => appText(label)).join(', ')],
+            [appText('Speaker'), data.speaker],
+            [appText('Date Signed'), data.dateSigned],
+            [appText('Supervisor Signature'), data.supervisorSignature],
+            [appText('Quality Control Verification Signature'), data.qcSignature]
           ],
           tables: [{
-            title: 'Crew Signatures',
-            headers: ['#', 'Print Name', 'Signature'],
+            title: appText('Crew Signatures'),
+            headers: ['#', appText('Print Name'), appText('Signature')],
             rows: data.rows || [],
             columns: ['row', 'printName', 'signature']
           }]
@@ -8081,11 +8081,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const search = String(document.getElementById('jha-template-search')?.value || '').trim().toLowerCase();
     const rows = jhaTemplates.filter(t => !search || [t.title, t.projectName, t.task, t.location, t.equipment, t.competentPersons].some(v => String(v || '').toLowerCase().includes(search)));
     list.innerHTML = rows.length ? rows.map(t => `
-      <button class="jha-template-card ${t.id === activeJhaTemplateId ? 'active' : ''}" type="button" onclick="openJhaTemplateWindow('${t.id}', 'previous')">
-        <h3>${esc(t.title)}</h3>
-        <p>${esc(t.task)}</p>
-        <p style="margin-top:5px;">${esc(t.source || 'Template')}</p>
-      </button>`).join('') : '<p class="helper-text">No JHA templates match this search.</p>';
+      <div class="jha-template-card ${t.id === activeJhaTemplateId ? 'active' : ''}">
+        <div>
+          <h3>${esc(t.title)}</h3>
+          <p>${esc(t.task)}</p>
+          <p style="margin-top:5px;">${esc(t.source || 'Template')}</p>
+        </div>
+        <button class="btn-outline" type="button" onclick="openJhaTemplateWindow('${t.id}', 'previous')">Open JHA</button>
+      </div>`).join('') : '<p class="helper-text">No JHA templates match this search.</p>';
   }
 
   function handleJhaWorkflowKey(event, mode) {
@@ -9077,48 +9080,49 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       </tr>`).join('');
     const lang = Array.isArray(data.languages) ? data.languages : [];
     const langMark = label => lang.includes(label) ? '[x]' : '[ ]';
+    const langLabel = label => appText(label);
     return `
       <div class="daily-safety-paper">
         <div class="daily-safety-head">
           <div class="logo">PAL<small>ENVIRONMENTAL SERVICES</small></div>
           <div>
-            <h3>Weekly Toolbox Talk</h3>
-            <p>Topic review + crew sign-in</p>
+            <h3>${appText('Weekly Toolbox Talk')}</h3>
+            <p>${appText('Topic review + crew sign-in')}</p>
           </div>
-          <div class="daily-safety-meta">Form: PAL-WTB-001<br>Project Safety<br>${esc(data.date || '')}</div>
+          <div class="daily-safety-meta">Form: PAL-WTB-001<br>${appText('Project Safety')}<br>${esc(data.date || '')}</div>
         </div>
         <div class="daily-safety-body">
           <div class="daily-safety-field-grid">
-            <div class="daily-safety-field"><label>Project #</label><div class="daily-safety-value">${esc(data.projectNumber || form.jobNumber || '')}</div></div>
-            <div class="daily-safety-field"><label>Date of Meeting</label><div class="daily-safety-value">${esc(data.date || '')}</div></div>
-            <div class="daily-safety-field"><label>Project Name</label><div class="daily-safety-value">${esc(data.projectName || form.projectName || currentProject?.name || '')}</div></div>
-            <div class="daily-safety-field"><label>Day</label><div class="daily-safety-value">${esc(data.day || '')}</div></div>
-            <div class="daily-safety-field"><label>Location</label><div class="daily-safety-value">${esc(data.location || '')}</div></div>
-            <div class="daily-safety-field"><label>Time</label><div class="daily-safety-value">${esc(data.time || '')}</div></div>
-            <div class="daily-safety-field"><label>Supervisor Holding Meeting</label><div class="daily-safety-value">${esc(data.supervisor || '')}</div></div>
-            <div class="daily-safety-field"><label>Personnel Present</label><div class="daily-safety-value">${esc(data.personnelPresent || '')}</div></div>
-            <div class="daily-safety-field full"><label>Topic Discussed</label><div class="daily-safety-value">${esc(data.topic || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Project #')}</label><div class="daily-safety-value">${esc(data.projectNumber || form.jobNumber || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Date of Meeting')}</label><div class="daily-safety-value">${esc(data.date || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Project Name')}</label><div class="daily-safety-value">${esc(data.projectName || form.projectName || currentProject?.name || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Day')}</label><div class="daily-safety-value">${esc(data.day || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Location')}</label><div class="daily-safety-value">${esc(data.location || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Time')}</label><div class="daily-safety-value">${esc(data.time || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Supervisor Holding Meeting')}</label><div class="daily-safety-value">${esc(data.supervisor || '')}</div></div>
+            <div class="daily-safety-field"><label>${appText('Personnel Present')}</label><div class="daily-safety-value">${esc(data.personnelPresent || '')}</div></div>
+            <div class="daily-safety-field full"><label>${appText('Topic Discussed')}</label><div class="daily-safety-value">${esc(data.topic || '')}</div></div>
           </div>
-          <div class="daily-safety-block-title" style="margin-top:12px;">Training Acknowledgement</div>
-          <p style="font-weight:800;color:var(--navy);margin:6px 0 8px;">I have received the above training and I fully understand the material presented.</p>
+          <div class="daily-safety-block-title" style="margin-top:12px;">${appText('Training Acknowledgement')}</div>
+          <p style="font-weight:800;color:var(--navy);margin:6px 0 8px;">${appText('I have received the above training and I fully understand the material presented.')}</p>
           <table class="daily-safety-sign-table">
-            <thead><tr><th style="width:48px;">#</th><th>Print Name</th><th>Signature</th></tr></thead>
+            <thead><tr><th style="width:48px;">#</th><th>${appText('Print Name')}</th><th>${appText('Signature')}</th></tr></thead>
             <tbody>${rowHTML}</tbody>
           </table>
           <div class="daily-safety-footer">
             <div class="language-line">
-              <span>${langMark('English')} English</span>
-              <span>${langMark('Spanish')} Spanish</span>
-              <span>${langMark('Polish')} Polish</span>
-              <span>${langMark('Ukrainian')} Ukrainian</span>
-              <span>${langMark('Russian')} Russian</span>
-              <span>${langMark('Other')} Other ________</span>
+              <span>${langMark('English')} ${langLabel('English')}</span>
+              <span>${langMark('Spanish')} ${langLabel('Spanish')}</span>
+              <span>${langMark('Polish')} ${langLabel('Polish')}</span>
+              <span>${langMark('Ukrainian')} ${langLabel('Ukrainian')}</span>
+              <span>${langMark('Russian')} ${langLabel('Russian')}</span>
+              <span>${langMark('Other')} ${langLabel('Other')} ________</span>
             </div>
             <div class="daily-safety-field-grid">
-              <div class="daily-safety-field"><label>Speaker Printed Name</label><div class="daily-safety-value">${esc(data.speaker || '')}</div></div>
-              <div class="daily-safety-field"><label>Date Signed</label><div class="daily-safety-value">${esc(data.dateSigned || data.date || '')}</div></div>
-              <div class="daily-safety-field full"><label>Supervisor Signature</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.supervisorSignature || '')}</div></div>
-              <div class="daily-safety-field full"><label>Quality Control Verification Signature</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.qcSignature || '')}</div></div>
+              <div class="daily-safety-field"><label>${appText('Speaker Printed Name')}</label><div class="daily-safety-value">${esc(data.speaker || '')}</div></div>
+              <div class="daily-safety-field"><label>${appText('Date Signed')}</label><div class="daily-safety-value">${esc(data.dateSigned || data.date || '')}</div></div>
+              <div class="daily-safety-field full"><label>${appText('Supervisor Signature')}</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.supervisorSignature || '')}</div></div>
+              <div class="daily-safety-field full"><label>${appText('Quality Control Verification Signature')}</label><div class="signature-script" style="text-align:center;padding:12px 0 4px;">${esc(data.qcSignature || '')}</div></div>
             </div>
           </div>
         </div>
