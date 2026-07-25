@@ -3,6 +3,7 @@
 
 #view-projects #main-projects .project-card,
 #view-projects #main-projects .btn-add,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch,
 #view-detail #project-access-cards .project-access-card,
 #view-detail .project-section-window .project-record-tab,
 #view-detail .project-section-window .ticket-card,
@@ -22,6 +23,10 @@
 #view-projects #main-projects .project-card:focus,
 #view-projects #main-projects .btn-add:hover,
 #view-projects #main-projects .btn-add:focus,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:hover,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:focus,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:focus-within,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch.is-active,
 #view-detail #project-access-cards .project-access-card:hover,
 #view-detail #project-access-cards .project-access-card:focus,
 #view-detail .project-section-window .project-record-tab:hover,
@@ -68,6 +73,9 @@
 #view-detail .detail-actions .btn-outline,
 #view-detail .detail-actions .btn-secondary,
 #view-detail .detail-actions .btn-save,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch .btn-outline,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch .btn-save,
+#view-projects #main-foreman-tools .header-actions .btn-outline,
 #view-projects #main-projects .btn-outline,
 #view-projects #main-projects .btn-secondary,
 #view-projects #main-projects .btn-sm,
@@ -95,6 +103,12 @@
 #view-detail .detail-actions .btn-secondary:focus,
 #view-detail .detail-actions .btn-save:hover,
 #view-detail .detail-actions .btn-save:focus,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch .btn-outline:hover,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch .btn-outline:focus,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch .btn-save:hover,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch .btn-save:focus,
+#view-projects #main-foreman-tools .header-actions .btn-outline:hover,
+#view-projects #main-foreman-tools .header-actions .btn-outline:focus,
 #view-projects #main-projects .btn-outline:hover,
 #view-projects #main-projects .btn-outline:focus,
 #view-projects #main-projects .btn-secondary:hover,
@@ -130,6 +144,7 @@
 }
 
 #view-detail #project-access-cards .project-access-card .label,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch h3,
 #view-detail .project-section-window .foreman-tool-card h3,
 #view-detail .project-section-window .ticket-card h4,
 #view-detail .project-section-window .warehouse-card h4,
@@ -137,6 +152,21 @@
 #view-detail .project-section-window .warehouse-box strong,
 #view-detail .project-section-window .ticket-total-box strong,
 #view-projects #main-projects .project-card h3 {
+  color:var(--navy);
+}
+
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch p {
+  color:var(--muted);
+}
+
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:hover h3,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:focus h3,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:focus-within h3,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch.is-active h3,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:hover p,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:focus p,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch:focus-within p,
+#view-projects #main-foreman-tools .foreman-tool-card.tool-launch.is-active p {
   color:var(--navy);
 }
 
@@ -309,14 +339,26 @@
 
 #view-detail .project-activity-row {
   display:grid;
-  grid-template-columns:110px minmax(0,1fr) 70px;
+  grid-template-columns:132px minmax(0,1fr) 96px;
   gap:10px;
   align-items:center;
   border:1px solid var(--line);
   border-radius:12px;
   padding:11px;
-  background:#f9fbfd;
+  background:#fff;
+  color:var(--navy);
   margin-bottom:9px;
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+
+#view-detail .project-activity-row:hover,
+#view-detail .project-activity-row:focus {
+  background:var(--green);
+  border-color:var(--green);
+  box-shadow:0 8px 18px rgba(16,24,40,.10);
+  transform:translateY(-1px);
+  outline:none;
 }
 
 #view-detail .project-activity-row strong {
@@ -375,6 +417,224 @@
   outline:none;
 }
 
+#view-detail .project-section-window #docs-history-filter,
+#view-detail .project-section-window #photos-history-filter,
+#view-detail .project-section-window #reports-history-filter,
+#view-detail .project-section-window #fieldForms-history-filter,
+#view-detail .project-section-window #tickets-history-filter,
+#view-detail .project-section-window #warehouse-history-filter {
+  display:none;
+}
+
+#view-detail .project-record-browser {
+  display:grid;
+  gap:12px;
+  margin:10px 0 14px;
+}
+
+#view-detail .record-browser-desktop,
+#view-detail .record-browser-mobile,
+#view-detail .record-browser-results-head {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 7px 18px rgba(16,24,40,.06);
+}
+
+#view-detail .record-browser-desktop {
+  display:grid;
+  gap:12px;
+  padding:14px;
+}
+
+#view-detail .record-browser-mobile {
+  display:none;
+  gap:12px;
+  padding:14px;
+}
+
+#view-detail .record-browser-top {
+  display:grid;
+  grid-template-columns:220px minmax(0,1fr);
+  gap:10px;
+  align-items:end;
+}
+
+#view-detail .record-month-picker {
+  display:grid;
+  gap:6px;
+  color:var(--navy);
+  font-weight:800;
+}
+
+#view-detail .record-month-picker input {
+  min-height:48px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  color:var(--navy);
+  font:inherit;
+  padding:8px 12px;
+}
+
+#view-detail .record-month-picker input:hover,
+#view-detail .record-month-picker input:focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(112,193,71,.18);
+  outline:none;
+}
+
+#view-detail .record-week-tabs {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+#view-detail .record-week-chip,
+#view-detail .record-calendar-day,
+#view-detail .record-week-card {
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--navy);
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+
+#view-detail .record-week-chip {
+  border-radius:999px;
+  min-height:42px;
+  padding:8px 11px;
+  font-weight:800;
+}
+
+#view-detail .record-week-chip strong {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:24px;
+  min-height:24px;
+  margin-left:5px;
+  border-radius:999px;
+  background:rgba(18,58,95,.10);
+}
+
+#view-detail .record-calendar-grid {
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:7px;
+}
+
+#view-detail .record-calendar-dow {
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+  text-align:center;
+}
+
+#view-detail .record-calendar-day {
+  min-height:58px;
+  border-radius:12px;
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  gap:4px;
+  font-weight:900;
+}
+
+#view-detail .record-calendar-day.muted {
+  opacity:.48;
+}
+
+#view-detail .record-calendar-day strong {
+  min-width:24px;
+  min-height:22px;
+  padding:2px 6px;
+  border-radius:999px;
+  background:var(--navy);
+  color:#fff;
+  font-size:12px;
+}
+
+#view-detail .record-week-chip:hover,
+#view-detail .record-week-chip:focus,
+#view-detail .record-week-chip.active,
+#view-detail .record-calendar-day:hover,
+#view-detail .record-calendar-day:focus,
+#view-detail .record-calendar-day.active,
+#view-detail .record-calendar-day.has-record:hover,
+#view-detail .record-week-card:hover,
+#view-detail .record-week-card:focus,
+#view-detail .record-week-card.active {
+  background:var(--green);
+  border-color:var(--green);
+  color:var(--navy);
+  box-shadow:0 8px 18px rgba(16,24,40,.10);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-detail .record-calendar-day.has-record {
+  border-color:rgba(112,193,71,.65);
+  box-shadow:inset 0 0 0 1px rgba(112,193,71,.35);
+}
+
+#view-detail .record-week-card-grid {
+  display:grid;
+  gap:10px;
+}
+
+#view-detail .record-week-card {
+  border-radius:14px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:5px 10px;
+  text-align:left;
+}
+
+#view-detail .record-week-card span,
+#view-detail .record-week-card em {
+  color:var(--muted);
+  font-style:normal;
+  font-size:12px;
+}
+
+#view-detail .record-week-card strong {
+  color:var(--navy);
+  grid-column:1;
+}
+
+#view-detail .record-week-card b {
+  grid-column:2;
+  grid-row:1 / span 3;
+  align-self:center;
+  justify-self:center;
+  font-size:30px;
+  color:var(--navy);
+}
+
+#view-detail .record-browser-results-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:13px 14px;
+}
+
+#view-detail .record-browser-results-head div {
+  display:grid;
+  gap:2px;
+}
+
+#view-detail .record-browser-results-head strong {
+  color:var(--navy);
+}
+
+#view-detail .record-browser-results-head span {
+  color:var(--muted);
+  font-size:13px;
+}
+
 @media(max-width:700px) {
   #view-detail .project-dashboard-shell,
   #view-detail .project-activity-row,
@@ -395,5 +655,18 @@
   #view-detail .project-section-window .btn-secondary,
   #view-detail .project-section-window .btn-sm {
     min-height:44px;
+  }
+
+  #view-detail .record-browser-desktop {
+    display:none;
+  }
+
+  #view-detail .record-browser-mobile {
+    display:grid;
+  }
+
+  #view-detail .record-browser-results-head {
+    align-items:stretch;
+    flex-direction:column;
   }
 }

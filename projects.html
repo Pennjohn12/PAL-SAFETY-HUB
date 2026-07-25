@@ -1505,7 +1505,7 @@
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
   </style>
-  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-24-6" />
+  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-25-foreman-tools" />
 
 <script>
   // PUBLIC_LINK_EARLY_VIEW_FORCE_2026_07_20
@@ -2841,14 +2841,14 @@
           <div class="project-activity-head">
             <h3 id="project-dashboard-title">Recent Safety Sheets and Sign-Ins</h3>
             <div class="project-mini-tabs">
-              <button class="active" type="button" onclick="openProjectDashboardQuickRange('week')">Week</button>
-              <button type="button" onclick="openProjectDashboardQuickRange('month')">Month</button>
-              <button type="button" onclick="openProjectDashboardQuickRange('year')">Year</button>
+              <button class="active" type="button" data-preview-mode="week" onclick="setProjectDashboardPreviewMode('week')">Week</button>
+              <button type="button" data-preview-mode="month" onclick="setProjectDashboardPreviewMode('month')">Month</button>
+              <button type="button" data-preview-mode="year" onclick="setProjectDashboardPreviewMode('year')">Year</button>
             </div>
           </div>
-          <div class="project-activity-row"><strong>Today</strong><div class="project-activity-bar"><span id="project-quick-today-bar" style="width:0%;"></span></div><span id="project-quick-today-label">0 items</span></div>
-          <div class="project-activity-row"><strong>This Week</strong><div class="project-activity-bar"><span id="project-quick-week-bar" style="width:0%;"></span></div><span id="project-quick-week-label">0 items</span></div>
-          <div class="project-activity-row"><strong>This Month</strong><div class="project-activity-bar"><span id="project-quick-month-bar" style="width:0%;"></span></div><span id="project-quick-month-label">0 items</span></div>
+          <div class="project-activity-row" role="button" tabindex="0" onclick="openProjectDashboardPreviewRow(0)" onkeydown="handleProjectDashboardPreviewRowKey(event, 0)"><strong id="project-preview-row-1-title">Today</strong><div class="project-activity-bar"><span id="project-quick-today-bar" style="width:0%;"></span></div><span id="project-quick-today-label">0 items</span></div>
+          <div class="project-activity-row" role="button" tabindex="0" onclick="openProjectDashboardPreviewRow(1)" onkeydown="handleProjectDashboardPreviewRowKey(event, 1)"><strong id="project-preview-row-2-title">This Week</strong><div class="project-activity-bar"><span id="project-quick-week-bar" style="width:0%;"></span></div><span id="project-quick-week-label">0 items</span></div>
+          <div class="project-activity-row" role="button" tabindex="0" onclick="openProjectDashboardPreviewRow(2)" onkeydown="handleProjectDashboardPreviewRowKey(event, 2)"><strong id="project-preview-row-3-title">This Month</strong><div class="project-activity-bar"><span id="project-quick-month-bar" style="width:0%;"></span></div><span id="project-quick-month-label">0 items</span></div>
           <div class="project-activity-open">
             <div>
               <strong id="project-dashboard-open-title">Daily safety and weekly toolbox records</strong>
@@ -2907,6 +2907,7 @@
         <div class="helper-text">Best field method: open or download the document, sign it using the device markup/signature tool, then upload the signed copy back into this project. We can later add an in-app Send for Signature / Sign & Save workflow if you want it built directly into PAL Safety Hub.</div>
       </div>
       <div id="docs-history-filter"></div>
+      <div id="docs-record-browser" class="project-record-browser"></div>
       <div id="docs-list"><p style="color:var(--muted);font-size:14px;">No documents yet.</p></div>
       <input type="file" id="doc-file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none" onchange="handleDocUpload(this)" />
     </div>
@@ -2933,6 +2934,7 @@
         </div>
       </div>
       <div id="photos-history-filter"></div>
+      <div id="photos-record-browser" class="project-record-browser"></div>
       <div id="photos-sections"></div>
       <div class="photo-grid" id="photos-grid"></div>
       <p id="no-photos-msg" style="color:var(--muted);font-size:14px;">No photos yet.</p>
@@ -2951,6 +2953,7 @@
         <button class="btn-save" onclick="openDailyReportForm()">New Daily Report</button>
       </div>
       <div id="reports-history-filter"></div>
+      <div id="reports-record-browser" class="project-record-browser"></div>
       <div id="reports-list"><p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p></div>
     </div>
 
@@ -2964,6 +2967,7 @@
         <button class="btn-outline" type="button" onclick="loadProjectFieldForms()">Refresh</button>
       </div>
       <div id="fieldForms-history-filter"></div>
+      <div id="fieldForms-record-browser" class="project-record-browser"></div>
       <div id="field-forms-list"><p style="color:var(--muted);font-size:14px;">No submitted field forms yet.</p></div>
     </div>
 
@@ -2977,6 +2981,7 @@
         <button class="btn-save" type="button" onclick="openProjectTicketModal()">New Ticket for This Project</button>
       </div>
       <div id="tickets-history-filter"></div>
+      <div id="tickets-record-browser" class="project-record-browser"></div>
       <div id="project-ticket-dashboard-summary"></div>
       <div id="project-ticket-list"><p style="color:var(--muted);font-size:14px;">No extra work tickets for this project yet.</p></div>
     </div>
@@ -2991,6 +2996,7 @@
         <button class="btn-save" onclick="openWarehouseItemModal(currentProject?.id || '')">Add Item for This Project</button>
       </div>
       <div id="warehouse-history-filter"></div>
+      <div id="warehouse-record-browser" class="project-record-browser"></div>
       <div id="warehouse-dashboard-project"></div>
       <div id="warehouse-list-project"><p style="color:var(--muted);font-size:14px;">No warehouse records for this project yet.</p></div>
     </div>
@@ -3978,12 +3984,26 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openProjectDashboardQuickRange = openProjectDashboardQuickRange;
   window.openProjectDashboardCurrentSection = openProjectDashboardCurrentSection;
   window.selectProjectDashboardSection = selectProjectDashboardSection;
+  window.setProjectDashboardPreviewMode = setProjectDashboardPreviewMode;
+  window.openProjectDashboardPreviewRow = openProjectDashboardPreviewRow;
   window.handleProjectDashboardCardKey = handleProjectDashboardCardKey;
+  window.handleProjectDashboardPreviewRowKey = handleProjectDashboardPreviewRowKey;
   window.closeProjectSectionWindow = closeProjectSectionWindow;
   window.handleProjectAccessCardKey = handleProjectAccessCardKey;
   window.updateProjectHistoryWeekOptions = updateProjectHistoryWeekOptions;
   window.applyProjectHistoryFilter = applyProjectHistoryFilter;
   window.clearProjectHistoryFilter = clearProjectHistoryFilter;
+  window.clearProjectHistoryQuickRange = clearProjectHistoryQuickRange;
+  window.projectRecordBrowserSelectMonth = projectRecordBrowserSelectMonth;
+  window.projectRecordBrowserShowMonth = projectRecordBrowserShowMonth;
+  window.projectRecordBrowserSelectWeek = projectRecordBrowserSelectWeek;
+  window.projectRecordBrowserSelectDay = projectRecordBrowserSelectDay;
+  window.renderProjectRecordBrowser = renderProjectRecordBrowser;
+  window.fieldFormsBrowserSelectMonth = fieldFormsBrowserSelectMonth;
+  window.fieldFormsBrowserShowMonth = fieldFormsBrowserShowMonth;
+  window.fieldFormsBrowserSelectWeek = fieldFormsBrowserSelectWeek;
+  window.fieldFormsBrowserSelectDay = fieldFormsBrowserSelectDay;
+  window.renderFieldFormsRecordBrowser = renderFieldFormsRecordBrowser;
   window.openProjectFieldFormsMenu = openProjectFieldFormsMenu;
   window.openProjectForemanTool = openProjectForemanTool;
   window.openProjectExtraWorkTicket = openProjectExtraWorkTicket;
@@ -4953,6 +4973,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     currentProjectPhotos = [];
     currentProjectReports = [];
     activeProjectFieldFormFilter = 'all';
+    activeProjectDashboardSection = 'safety';
+    activeProjectDashboardPreviewMode = 'week';
+    activeFieldFormsBrowserMonth = '';
+    Object.keys(activeProjectRecordBrowserMonths).forEach(key => delete activeProjectRecordBrowserMonths[key]);
     updateProjectFieldFormSummary([]);
     const url = new URL(window.location.href);
     url.searchParams.set('projectId', id);
@@ -5077,6 +5101,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   let activeProjectDashboardSection = 'safety';
+  let activeProjectDashboardPreviewMode = 'week';
+  let activeFieldFormsBrowserMonth = '';
+  const activeProjectRecordBrowserMonths = {};
 
   const projectDashboardSectionConfig = {
     safety: {
@@ -5171,6 +5198,318 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
+  function projectBrowserDateInput(date = new Date()) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  function projectBrowserMonthInput(date = new Date()) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function projectBrowserMonthLabel(monthValue = projectBrowserMonthInput()) {
+    const [year, month] = String(monthValue || '').split('-').map(Number);
+    if (!year || !month) return appText('Select Month');
+    const locale = getAppLanguage() === 'es' ? 'es-US' : getAppLanguage() === 'pl' ? 'pl-PL' : 'en-US';
+    return new Date(year, month - 1, 1).toLocaleDateString(locale, { month:'long', year:'numeric' });
+  }
+
+  function projectBrowserShortDate(value) {
+    try {
+      const locale = getAppLanguage() === 'es' ? 'es-US' : getAppLanguage() === 'pl' ? 'pl-PL' : 'en-US';
+      return new Date(value + 'T00:00:00').toLocaleDateString(locale, { month:'short', day:'numeric' });
+    } catch {
+      return value;
+    }
+  }
+
+  function projectBrowserMondayWeeks(monthValue = projectBrowserMonthInput()) {
+    const [year, month] = String(monthValue || '').split('-').map(Number);
+    if (!year || !month) return [];
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 1);
+    const start = new Date(monthStart);
+    start.setDate(start.getDate() - (start.getDay() === 0 ? 6 : start.getDay() - 1));
+    const weeks = [];
+    let cursor = start;
+    let index = 1;
+    while (cursor < monthEnd) {
+      const end = addDays(cursor, 7);
+      const displayEnd = projectBrowserDateInput(addDays(end, -1));
+      weeks.push({
+        index,
+        start: projectBrowserDateInput(cursor),
+        end: projectBrowserDateInput(end),
+        label: `${projectBrowserShortDate(projectBrowserDateInput(cursor))} - ${projectBrowserShortDate(displayEnd)}`
+      });
+      cursor = end;
+      index += 1;
+    }
+    return weeks;
+  }
+
+  function projectBrowserMonthRecords(rows, monthValue) {
+    const [year, month] = String(monthValue || '').split('-').map(Number);
+    if (!year || !month) return [];
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 1);
+    return rows.filter(item => {
+      const d = projectDashboardRecordDate(item);
+      return d && d >= monthStart && d < monthEnd;
+    });
+  }
+
+  function projectBrowserRowsForActiveFieldFilter() {
+    return activeProjectFieldFormFilter === 'all'
+      ? currentProjectFieldForms
+      : currentProjectFieldForms.filter(form => getProjectFieldFormType(form) === activeProjectFieldFormFilter);
+  }
+
+  function projectBrowserRowsForKind(kind) {
+    if (kind === 'fieldForms') return projectBrowserRowsForActiveFieldFilter();
+    if (kind === 'docs') return currentProjectDocs || [];
+    if (kind === 'photos') return currentProjectPhotos || [];
+    if (kind === 'reports') return currentProjectReports || [];
+    if (kind === 'tickets') return currentProject?.extraTickets || currentProjectDoc?.extraTickets || [];
+    if (kind === 'warehouse') return currentProject?.warehouseItems || currentProjectDoc?.warehouseItems || [];
+    return [];
+  }
+
+  function projectBrowserRenderKind(kind) {
+    if (kind === 'docs') return renderProjectDocsList();
+    if (kind === 'photos') return renderProjectPhotosList();
+    if (kind === 'reports') return renderProjectReportsList();
+    if (kind === 'fieldForms') return renderProjectFieldFormsList();
+    if (kind === 'tickets') return renderProjectTicketsTab();
+    if (kind === 'warehouse') return renderProjectWarehouseTab();
+  }
+
+  function projectBrowserCountForRange(rows, start, end) {
+    const startDate = start ? new Date(start + 'T00:00:00') : null;
+    const endDate = end ? new Date(end + 'T00:00:00') : null;
+    return rows.filter(item => {
+      const d = projectDashboardRecordDate(item);
+      if (!d) return false;
+      if (startDate && d < startDate) return false;
+      if (endDate && d >= endDate) return false;
+      return true;
+    }).length;
+  }
+
+  function projectBrowserCountForDay(rows, day) {
+    return rows.filter(item => {
+      const d = projectDashboardRecordDate(item);
+      return d && projectBrowserDateInput(d) === day;
+    }).length;
+  }
+
+  function setProjectHistoryExactRange(kind, start = '', end = '', label = '') {
+    setupProjectHistoryFilter(kind);
+    const host = document.getElementById(`${kind}-history-filter`);
+    if (host) {
+      host.dataset.quickRange = '';
+      host.dataset.start = start || '';
+      host.dataset.end = end || '';
+      host.dataset.rangeLabel = label || '';
+    }
+    const monthEl = document.getElementById(`${kind}-filter-month`);
+    const weekEl = document.getElementById(`${kind}-filter-week`);
+    const searchEl = document.getElementById(`${kind}-filter-search`);
+    if (monthEl) monthEl.value = '';
+    if (weekEl) weekEl.innerHTML = '<option value="all">All weeks</option>';
+    if (searchEl) searchEl.value = '';
+    applyProjectHistoryFilter(kind);
+  }
+
+  function clearProjectHistoryExactRange(kind) {
+    const host = document.getElementById(`${kind}-history-filter`);
+    if (host) {
+      host.dataset.start = '';
+      host.dataset.end = '';
+      host.dataset.rangeLabel = '';
+    }
+  }
+
+  function projectRecordBrowserSelectMonth(kind, value) {
+    activeProjectRecordBrowserMonths[kind] = value || projectBrowserMonthInput();
+    if (kind === 'fieldForms') activeFieldFormsBrowserMonth = activeProjectRecordBrowserMonths[kind];
+    setupProjectHistoryFilter(kind);
+    const host = document.getElementById(`${kind}-history-filter`);
+    if (host) {
+      host.dataset.quickRange = '';
+      host.dataset.start = '';
+      host.dataset.end = '';
+      host.dataset.rangeLabel = '';
+    }
+    const monthEl = document.getElementById(`${kind}-filter-month`);
+    const weekEl = document.getElementById(`${kind}-filter-week`);
+    const searchEl = document.getElementById(`${kind}-filter-search`);
+    if (monthEl) monthEl.value = activeProjectRecordBrowserMonths[kind];
+    if (searchEl) searchEl.value = '';
+    updateProjectHistoryWeekOptions(kind);
+    if (weekEl) weekEl.value = 'all';
+    applyProjectHistoryFilter(kind);
+    renderProjectRecordBrowser(kind);
+  }
+
+  function fieldFormsBrowserSelectMonth(value) {
+    projectRecordBrowserSelectMonth('fieldForms', value);
+  }
+
+  function projectRecordBrowserShowMonth(kind) {
+    projectRecordBrowserSelectMonth(kind, activeProjectRecordBrowserMonths[kind] || projectBrowserMonthInput());
+  }
+
+  function fieldFormsBrowserShowMonth() {
+    projectRecordBrowserShowMonth('fieldForms');
+  }
+
+  function projectRecordBrowserSelectWeek(kind, start, end, label) {
+    setProjectHistoryExactRange(kind, start, end, label);
+    renderProjectRecordBrowser(kind);
+  }
+
+  function fieldFormsBrowserSelectWeek(start, end, label) {
+    projectRecordBrowserSelectWeek('fieldForms', start, end, label);
+  }
+
+  function projectRecordBrowserSelectDay(kind, day) {
+    const end = projectBrowserDateInput(addDays(day, 1));
+    setProjectHistoryExactRange(kind, day, end, projectBrowserShortDate(day));
+    renderProjectRecordBrowser(kind);
+  }
+
+  function fieldFormsBrowserSelectDay(day) {
+    projectRecordBrowserSelectDay('fieldForms', day);
+  }
+
+  function handleFieldFormsBrowserDayKey(event, day) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    fieldFormsBrowserSelectDay(day);
+  }
+
+  function handleFieldFormsBrowserWeekKey(event, start, end, label) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    fieldFormsBrowserSelectWeek(start, end, label);
+  }
+
+  function renderProjectRecordBrowser(kind = 'fieldForms') {
+    const host = document.getElementById(`${kind}-record-browser`);
+    if (!host) return;
+    const filterHost = document.getElementById(`${kind}-history-filter`);
+    const activeStart = filterHost?.dataset.start || '';
+    const activeEnd = filterHost?.dataset.end || '';
+    const activeLabel = filterHost?.dataset.rangeLabel || '';
+    const quickRange = filterHost?.dataset.quickRange || '';
+    const rows = projectBrowserRowsForKind(kind);
+    const monthValue = activeProjectRecordBrowserMonths[kind] || (kind === 'fieldForms' ? activeFieldFormsBrowserMonth : '') || projectBrowserMonthInput();
+    activeProjectRecordBrowserMonths[kind] = monthValue;
+    if (kind === 'fieldForms') activeFieldFormsBrowserMonth = monthValue;
+    const monthRows = projectBrowserMonthRecords(rows, monthValue);
+    const weeks = projectBrowserMondayWeeks(monthValue);
+    const [year, month] = monthValue.split('-').map(Number);
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 1);
+    const calendarStart = new Date(monthStart);
+    calendarStart.setDate(calendarStart.getDate() - (calendarStart.getDay() === 0 ? 6 : calendarStart.getDay() - 1));
+    const days = Array.from({ length:42 }, (_, index) => {
+      const d = addDays(calendarStart, index);
+      const iso = projectBrowserDateInput(d);
+      const inMonth = d >= monthStart && d < monthEnd;
+      const count = projectBrowserCountForDay(rows, iso);
+      const selected = activeStart === iso && activeEnd === projectBrowserDateInput(addDays(iso, 1));
+      return { iso, day:d.getDate(), inMonth, count, selected };
+    });
+    const quickTitle = {
+      today:'Today',
+      week:'This Week',
+      month:'This Month',
+      lastMonth:'Last Month',
+      last3Months:'Last 3 Months',
+      last6Months:'Last 6 Months',
+      year:'This Year',
+      lastYear:'Last Year',
+      total:'Total Project'
+    }[quickRange] || '';
+    const selectedCount = quickRange
+      ? rows.filter(item => projectHistoryItemMatches(item, kind, { range: quickRange })).length
+      : activeStart || activeEnd
+        ? projectBrowserCountForRange(rows, activeStart, activeEnd)
+        : monthRows.length;
+    const selectedTitle = quickTitle ? appText(quickTitle) : (activeLabel || projectBrowserMonthLabel(monthValue));
+    const selectedCountText = `${selectedCount} ${appText(selectedCount === 1 ? 'record' : 'records')} ${appText('selected')}`;
+    host.innerHTML = `
+      <div class="record-browser-desktop">
+        <div class="record-browser-top">
+          <label class="record-month-picker">
+            <span>Month</span>
+            <input type="month" value="${esc(monthValue)}" onchange="projectRecordBrowserSelectMonth('${kind}', this.value)" />
+          </label>
+          <div class="record-week-tabs">
+            ${weeks.map(week => {
+              const count = projectBrowserCountForRange(rows, week.start, week.end);
+              const active = activeStart === week.start && activeEnd === week.end ? ' active' : '';
+              return `<button class="record-week-chip${active}" type="button" onclick="projectRecordBrowserSelectWeek('${kind}','${week.start}','${week.end}','${esc(week.label)}')">${esc(week.label)} <strong>${count}</strong></button>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="record-calendar-grid">
+          ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => `<div class="record-calendar-dow">${day}</div>`).join('')}
+          ${days.map(day => {
+            const classes = ['record-calendar-day'];
+            if (!day.inMonth) classes.push('muted');
+            if (day.count) classes.push('has-record');
+            if (day.selected) classes.push('active');
+            return `<button class="${classes.join(' ')}" type="button" onclick="projectRecordBrowserSelectDay('${kind}','${day.iso}')"><span>${day.day}</span>${day.count ? `<strong>${day.count}</strong>` : ''}</button>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="record-browser-mobile">
+        <label class="record-month-picker mobile">
+          <span>Month</span>
+          <input type="month" value="${esc(monthValue)}" onchange="projectRecordBrowserSelectMonth('${kind}', this.value)" />
+        </label>
+        <div class="record-week-card-grid">
+          ${weeks.map(week => {
+            const count = projectBrowserCountForRange(rows, week.start, week.end);
+            const active = activeStart === week.start && activeEnd === week.end ? ' active' : '';
+            return `<button class="record-week-card${active}" type="button" onclick="projectRecordBrowserSelectWeek('${kind}','${week.start}','${week.end}','${esc(week.label)}')"><span>Week ${week.index}</span><strong>${esc(week.label)}</strong><b>${count}</b><em>records</em></button>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="record-browser-results-head">
+        <div><strong>${esc(selectedTitle)}</strong><span>${esc(selectedCountText)}</span></div>
+        <button class="btn-outline" type="button" onclick="projectRecordBrowserShowMonth('${kind}')">Show Month</button>
+      </div>`;
+    applyAppLanguage(host);
+  }
+
+  function renderFieldFormsRecordBrowser() {
+    renderProjectRecordBrowser('fieldForms');
+  }
+
+  function syncProjectRecordBrowserDefaultFilter(kind = 'fieldForms') {
+    setupProjectHistoryFilter(kind);
+    const host = document.getElementById(`${kind}-history-filter`);
+    const hasExactRange = !!(host?.dataset.start || host?.dataset.end);
+    const hasQuickRange = !!host?.dataset.quickRange;
+    if (hasExactRange || hasQuickRange) return;
+    activeProjectRecordBrowserMonths[kind] = activeProjectRecordBrowserMonths[kind] || (kind === 'fieldForms' ? activeFieldFormsBrowserMonth : '') || projectBrowserMonthInput();
+    if (kind === 'fieldForms') activeFieldFormsBrowserMonth = activeProjectRecordBrowserMonths[kind];
+    const monthEl = document.getElementById(`${kind}-filter-month`);
+    const weekEl = document.getElementById(`${kind}-filter-week`);
+    if (monthEl && !monthEl.value) {
+      monthEl.value = activeProjectRecordBrowserMonths[kind];
+      updateProjectHistoryWeekOptions(kind);
+      if (weekEl) weekEl.value = 'all';
+    }
+  }
+
+  function syncFieldFormsBrowserDefaultFilter() {
+    syncProjectRecordBrowserDefaultFilter('fieldForms');
+  }
+
   function projectDashboardItems(section = activeProjectDashboardSection) {
     const config = projectDashboardConfig(section);
     if (config.kind === 'fieldForms') {
@@ -5193,7 +5532,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const weekStart = addDays(now, -(now.getDay() === 0 ? 6 : now.getDay() - 1));
     weekStart.setHours(0,0,0,0);
     const weekEnd = addDays(weekStart, 7);
-    const counts = { today:0, week:0, month:0, total: rows.length };
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
+    const last3MonthsStart = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+    const last6MonthsStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+    const yearStart = new Date(now.getFullYear(), 0, 1);
+    const nextYearStart = new Date(now.getFullYear() + 1, 0, 1);
+    const lastYearStart = new Date(now.getFullYear() - 1, 0, 1);
+    const thisYearStart = new Date(now.getFullYear(), 0, 1);
+    const counts = {
+      today:0, week:0, month:0, total: rows.length,
+      lastMonth:0, last3Months:0, last6Months:0, year:0, lastYear:0
+    };
     rows.forEach(item => {
       const d = projectDashboardRecordDate(item);
       if (!d) return;
@@ -5201,15 +5551,43 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (iso === today) counts.today++;
       if (d >= weekStart && d < weekEnd) counts.week++;
       if (`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` === month) counts.month++;
+      if (d >= lastMonthStart && d < lastMonthEnd) counts.lastMonth++;
+      if (d >= last3MonthsStart && d <= now) counts.last3Months++;
+      if (d >= last6MonthsStart && d <= now) counts.last6Months++;
+      if (d >= yearStart && d < nextYearStart) counts.year++;
+      if (d >= lastYearStart && d < thisYearStart) counts.lastYear++;
     });
     return counts;
+  }
+
+  function projectDashboardPreviewRows(mode = activeProjectDashboardPreviewMode) {
+    if (mode === 'month') {
+      return [
+        { title:'Last Month', range:'lastMonth', key:'lastMonth' },
+        { title:'Last 3 Months', range:'last3Months', key:'last3Months' },
+        { title:'Last 6 Months', range:'last6Months', key:'last6Months' }
+      ];
+    }
+    if (mode === 'year') {
+      return [
+        { title:'This Year', range:'year', key:'year' },
+        { title:'Last Year', range:'lastYear', key:'lastYear' },
+        { title:'Total Project', range:'total', key:'total' }
+      ];
+    }
+    return [
+      { title:'Today', range:'today', key:'today' },
+      { title:'This Week', range:'week', key:'week' },
+      { title:'This Month', range:'month', key:'month' }
+    ];
   }
 
   function updateProjectDashboardPanel(section = activeProjectDashboardSection) {
     activeProjectDashboardSection = section;
     const config = projectDashboardConfig(section);
     const counts = projectDashboardRangeCounts(section);
-    const max = Math.max(counts.today, counts.week, counts.month, 1);
+    const previewRows = projectDashboardPreviewRows();
+    const max = Math.max(...previewRows.map(row => counts[row.key] || 0), 1);
     const itemLabel = count => appText(count === 1 ? 'item' : 'items');
     [
       ['project-dashboard-title', appText(config.title)],
@@ -5220,24 +5598,29 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       ['project-quick-total', counts.total],
       ['project-quick-today', counts.today],
       ['project-quick-week', counts.week],
-      ['project-quick-month', counts.month],
-      ['project-quick-today-label', `${counts.today} ${itemLabel(counts.today)}`],
-      ['project-quick-week-label', `${counts.week} ${itemLabel(counts.week)}`],
-      ['project-quick-month-label', `${counts.month} ${itemLabel(counts.month)}`]
+      ['project-quick-month', counts.month]
     ].forEach(([id, value]) => {
       const el = document.getElementById(id);
       if (el) el.textContent = value;
     });
+    [
+      ['project-preview-row-1-title', 'project-quick-today-label', 'project-quick-today-bar', previewRows[0]],
+      ['project-preview-row-2-title', 'project-quick-week-label', 'project-quick-week-bar', previewRows[1]],
+      ['project-preview-row-3-title', 'project-quick-month-label', 'project-quick-month-bar', previewRows[2]]
+    ].forEach(([titleId, labelId, barId, row]) => {
+      const count = counts[row.key] || 0;
+      const title = document.getElementById(titleId);
+      const label = document.getElementById(labelId);
+      const bar = document.getElementById(barId);
+      if (title) title.textContent = appText(row.title);
+      if (label) label.textContent = `${count} ${itemLabel(count)}`;
+      if (bar) bar.style.width = `${Math.max(6, Math.round((count / max) * 100))}%`;
+    });
     document.querySelectorAll('#project-access-cards .project-access-card').forEach(card => {
       card.classList.toggle('active', card.dataset.dashboardSection === section);
     });
-    [
-      ['project-quick-today-bar', counts.today],
-      ['project-quick-week-bar', counts.week],
-      ['project-quick-month-bar', counts.month]
-    ].forEach(([id, value]) => {
-      const el = document.getElementById(id);
-      if (el) el.style.width = `${Math.max(6, Math.round((value / max) * 100))}%`;
+    document.querySelectorAll('#view-detail .project-mini-tabs button').forEach(button => {
+      button.classList.toggle('active', button.dataset.previewMode === activeProjectDashboardPreviewMode);
     });
   }
 
@@ -5250,6 +5633,22 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     updateProjectDashboardPanel(section);
   }
 
+  function setProjectDashboardPreviewMode(mode = 'week') {
+    activeProjectDashboardPreviewMode = ['week','month','year'].includes(mode) ? mode : 'week';
+    updateProjectDashboardPanel(activeProjectDashboardSection);
+  }
+
+  function openProjectDashboardPreviewRow(index = 0) {
+    const row = projectDashboardPreviewRows()[index] || projectDashboardPreviewRows()[0];
+    openProjectDashboardQuickRange(row.range);
+  }
+
+  function handleProjectDashboardPreviewRowKey(event, index) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openProjectDashboardPreviewRow(index);
+  }
+
   function handleProjectDashboardCardKey(event, section) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
@@ -5258,13 +5657,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function setProjectHistoryQuickRange(kind, range) {
     setupProjectHistoryFilter(kind);
+    const host = document.getElementById(`${kind}-history-filter`);
+    if (host) {
+      host.dataset.quickRange = range || '';
+      host.dataset.start = '';
+      host.dataset.end = '';
+      host.dataset.rangeLabel = '';
+    }
     const monthEl = document.getElementById(`${kind}-filter-month`);
     const weekEl = document.getElementById(`${kind}-filter-week`);
     const searchEl = document.getElementById(`${kind}-filter-search`);
     const now = new Date();
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    if (monthEl) monthEl.value = month;
     if (searchEl) searchEl.value = '';
+    if (monthEl) monthEl.value = range === 'lastMonth'
+      ? `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`
+      : (range === 'today' || range === 'week' || range === 'month' ? month : '');
     updateProjectHistoryWeekOptions(kind);
     if (range === 'today') {
       if (searchEl) searchEl.value = todayISO();
@@ -5274,9 +5683,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const start = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, '0')}-${String(weekStart.getDate()).padStart(2, '0')}`;
       const option = Array.from(weekEl?.options || []).find(opt => String(opt.value || '').startsWith(start + '|'));
       if (option && weekEl) weekEl.value = option.value;
-    } else if (range === 'year') {
+    } else if (range === 'year' || range === 'lastYear' || range === 'last3Months' || range === 'last6Months' || range === 'total') {
       if (monthEl) monthEl.value = '';
-      if (searchEl) searchEl.value = String(now.getFullYear());
+      if (searchEl) searchEl.value = '';
       if (weekEl) weekEl.innerHTML = '<option value="all">All weeks</option>';
     } else if (weekEl) {
       weekEl.value = 'all';
@@ -5293,7 +5702,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function openProjectDashboardQuickRange(range = 'week') {
     const config = projectDashboardConfig();
     if (!config.kind || config.kind === 'foremen') return openProjectDashboardCurrentSection();
-    if (config.customOpen === 'jha' && range === 'year') return openProjectJhaChecklist();
     if (config.kind === 'fieldForms') activeProjectFieldFormFilter = config.fieldFilter || 'all';
     if (config.tabId === 'tab-field-forms') openProjectAccessSection(config.tabId, activeProjectFieldFormFilter);
     else openProjectAccessSection(config.tabId);
@@ -8105,17 +8513,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       <div class="project-history-filter">
         <div class="field">
           <label>Month</label>
-          <input id="${kind}-filter-month" type="month" onchange="updateProjectHistoryWeekOptions('${kind}'); applyProjectHistoryFilter('${kind}')" />
+          <input id="${kind}-filter-month" type="month" onchange="clearProjectHistoryQuickRange('${kind}'); updateProjectHistoryWeekOptions('${kind}'); applyProjectHistoryFilter('${kind}')" />
         </div>
         <div class="field">
           <label>Week</label>
-          <select id="${kind}-filter-week" onchange="applyProjectHistoryFilter('${kind}')">
+          <select id="${kind}-filter-week" onchange="clearProjectHistoryQuickRange('${kind}'); applyProjectHistoryFilter('${kind}')">
             <option value="all">All weeks</option>
           </select>
         </div>
         <div class="field">
           <label>Search</label>
-          <input id="${kind}-filter-search" type="search" placeholder="Search ${projectHistoryLabels[kind] || 'records'}..." oninput="applyProjectHistoryFilter('${kind}')" />
+          <input id="${kind}-filter-search" type="search" placeholder="Search ${projectHistoryLabels[kind] || 'records'}..." oninput="clearProjectHistoryQuickRange('${kind}'); applyProjectHistoryFilter('${kind}')" />
         </div>
         <div class="filter-actions">
           <button class="btn-outline" type="button" onclick="clearProjectHistoryFilter('${kind}')">Clear</button>
@@ -8152,6 +8560,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   function clearProjectHistoryFilter(kind) {
+    clearProjectHistoryQuickRange(kind);
+    clearProjectHistoryExactRange(kind);
     ['month','search'].forEach(part => {
       const el = document.getElementById(`${kind}-filter-${part}`);
       if (el) el.value = '';
@@ -8161,12 +8571,22 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     applyProjectHistoryFilter(kind);
   }
 
+  function clearProjectHistoryQuickRange(kind) {
+    const host = document.getElementById(`${kind}-history-filter`);
+    if (host) host.dataset.quickRange = '';
+    clearProjectHistoryExactRange(kind);
+  }
+
   function projectHistoryMatches(item, kind) {
     setupProjectHistoryFilter(kind);
+    const host = document.getElementById(`${kind}-history-filter`);
+    const quickRange = host?.dataset.quickRange || '';
+    const start = host?.dataset.start || '';
+    const end = host?.dataset.end || '';
     const month = document.getElementById(`${kind}-filter-month`)?.value || '';
     const week = document.getElementById(`${kind}-filter-week`)?.value || 'all';
     const search = (document.getElementById(`${kind}-filter-search`)?.value || '').trim().toLowerCase();
-    return projectHistoryItemMatches(item, kind, { month, week, search });
+    return projectHistoryItemMatches(item, kind, { month, week, search, range: quickRange, start, end });
   }
 
   function setProjectHistoryCount(kind, showing, total) {
@@ -8236,9 +8656,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderProjectDocsList() {
     setupProjectHistoryFilter('docs');
+    syncProjectRecordBrowserDefaultFilter('docs');
     const docs = currentProjectDocs.filter(d => projectHistoryMatches(d, 'docs'));
     const list = document.getElementById('docs-list');
     setProjectHistoryCount('docs', docs.length, currentProjectDocs.length);
+    renderProjectRecordBrowser('docs');
     if (!docs.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No documents found for this filter.</p>'; return; }
     list.innerHTML = '';
     docs.forEach(d => {
@@ -8312,6 +8734,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderProjectPhotosList() {
     setupProjectHistoryFilter('photos');
+    syncProjectRecordBrowserDefaultFilter('photos');
     const photos = currentProjectPhotos.filter(p => projectHistoryMatches(p, 'photos'));
     const grid = document.getElementById('photos-grid');
     const sections = document.getElementById('photos-sections');
@@ -8319,6 +8742,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     grid.innerHTML = '';
     sections.innerHTML = '';
     setProjectHistoryCount('photos', photos.length, currentProjectPhotos.length);
+    renderProjectRecordBrowser('photos');
     if (!photos.length) { msg.textContent = 'No photos found for this filter.'; msg.style.display = ''; return; }
     msg.style.display = 'none';
     const grouped = {};
@@ -8438,10 +8862,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderProjectReportsList() {
     setupProjectHistoryFilter('reports');
+    syncProjectRecordBrowserDefaultFilter('reports');
     const list = document.getElementById('reports-list');
     if (!list) return;
     const rows = currentProjectReports.filter(r => projectHistoryMatches(r, 'reports'));
     setProjectHistoryCount('reports', rows.length, currentProjectReports.length);
+    renderProjectRecordBrowser('reports');
     list.dataset.reportMap = JSON.stringify(currentProjectReports);
     if (!currentProjectReports.length) { renderDailyReportDashboard([]); list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No reports submitted yet.</p>'; return; }
     if (!rows.length) { list.innerHTML = '<p style="color:var(--muted);font-size:14px;">No daily reports found for this filter.</p>'; return; }
@@ -8499,6 +8925,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderProjectFieldFormsList() {
     setupProjectHistoryFilter('fieldForms');
+    syncFieldFormsBrowserDefaultFilter();
     const list = document.getElementById('field-forms-list');
     if (!list) return;
     const typeRows = activeProjectFieldFormFilter === 'all'
@@ -8513,6 +8940,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (helper) helper.textContent = activeProjectFieldFormFilter === 'all'
       ? 'Safety sheets, payroll forms, expense reports, and other app documents submitted to this project.'
       : `Showing ${labels[activeProjectFieldFormFilter] || 'Field Forms'} for this project.`;
+    renderFieldFormsRecordBrowser();
     list.dataset.fieldFormMap = JSON.stringify(currentProjectFieldForms);
     if (!rows.length) {
       list.innerHTML = `<p style="color:var(--muted);font-size:14px;">No ${String(labels[activeProjectFieldFormFilter] || 'field forms').toLowerCase()} submitted yet.</p>`;
@@ -10575,6 +11003,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function renderProjectWarehouseTab() {
     setupProjectHistoryFilter('warehouse');
+    syncProjectRecordBrowserDefaultFilter('warehouse');
     const summaryEl = document.getElementById('warehouse-dashboard-project');
     const listEl = document.getElementById('warehouse-list-project');
     if (!summaryEl && !listEl) return;
@@ -10587,6 +11016,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     })) : [];
     const items = allItems.filter(item => projectHistoryMatches(item, 'warehouse'));
     setProjectHistoryCount('warehouse', items.length, allItems.length);
+    renderProjectRecordBrowser('warehouse');
 
     if (summaryEl) summaryEl.innerHTML = warehouseDashboardHTML(items);
 
@@ -10704,10 +11134,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function getCurrentProjectTicketsData() {
     setupProjectHistoryFilter('tickets');
+    syncProjectRecordBrowserDefaultFilter('tickets');
     const project = currentProject || {};
     const all = Array.isArray(project.extraTickets) ? project.extraTickets : [];
     const tickets = all.filter(t => projectHistoryMatches(t, 'tickets'));
     setProjectHistoryCount('tickets', tickets.length, all.length);
+    renderProjectRecordBrowser('tickets');
 
     const totals = tickets.reduce((acc, t) => {
       acc.count += 1;
