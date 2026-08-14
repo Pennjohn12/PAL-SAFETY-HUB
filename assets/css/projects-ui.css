@@ -284,8 +284,6 @@
 #view-projects #main-employee-onboarding .onboarding-flow-card:focus,
 #view-projects #main-employee-onboarding .onboarding-review-card:hover,
 #view-projects #main-employee-onboarding .onboarding-review-card:focus,
-#view-projects #main-employee-onboarding .newhire-card:hover,
-#view-projects #main-employee-onboarding .newhire-card:focus-within,
 #view-projects #main-employee-onboarding .newhire-actions .btn-sm:hover,
 #view-projects #main-employee-onboarding .newhire-actions .btn-sm:focus,
 #view-projects #main-employee-onboarding .btn-outline:hover,
@@ -309,14 +307,29 @@
 #view-projects #main-employee-onboarding .onboarding-flow-card:hover p,
 #view-projects #main-employee-onboarding .onboarding-flow-card:focus p,
 #view-projects #main-employee-onboarding .onboarding-review-card:hover p,
-#view-projects #main-employee-onboarding .onboarding-review-card:focus p,
+#view-projects #main-employee-onboarding .onboarding-review-card:focus p {
+  color:var(--navy);
+}
+
+#view-projects #main-employee-onboarding .newhire-card:hover,
+#view-projects #main-employee-onboarding .newhire-card:focus-within {
+  background:#fff;
+  border-color:var(--line);
+  box-shadow:0 4px 12px rgba(16,24,40,.04);
+  color:var(--navy);
+  transform:none;
+}
+
 #view-projects #main-employee-onboarding .newhire-card:hover h4,
-#view-projects #main-employee-onboarding .newhire-card:focus-within h4,
+#view-projects #main-employee-onboarding .newhire-card:focus-within h4 {
+  color:var(--navy);
+}
+
 #view-projects #main-employee-onboarding .newhire-card:hover .newhire-meta,
 #view-projects #main-employee-onboarding .newhire-card:focus-within .newhire-meta,
 #view-projects #main-employee-onboarding .newhire-card:hover .newhire-completion-missing,
 #view-projects #main-employee-onboarding .newhire-card:focus-within .newhire-completion-missing {
-  color:var(--navy);
+  color:var(--muted);
 }
 
 #view-projects #main-employee-onboarding .newhire-actions .btn-sm.danger {
@@ -824,4 +837,211 @@
     align-items:stretch;
     flex-direction:column;
   }
+}
+
+/* REMAINING_SIGNED_IN_AREAS_POLISH_2026_07_26
+   Gives the rest of the protected app the same PAL white/blue/green focus flow. */
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) :is(.btn-add,.btn-save,.btn-outline,.btn-secondary,.btn-sm) {
+  background:#fff;
+  border:1.5px solid var(--line);
+  color:var(--navy);
+  box-shadow:0 4px 14px rgba(16,24,40,.04);
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) :is(.btn-add,.btn-save,.btn-outline,.btn-secondary,.btn-sm):hover,
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) :is(.btn-add,.btn-save,.btn-outline,.btn-secondary,.btn-sm):focus {
+  background:var(--green);
+  border-color:var(--green);
+  color:var(--navy);
+  box-shadow:0 10px 22px rgba(16,24,40,.10);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-tickets,
+  #main-warehouse,
+  #main-user-access
+) :is(
+  .workforce-overview-card,
+  .workforce-person,
+  .employee-card.employee-row,
+  .ticket-card,
+  .warehouse-card,
+  .access-row
+) {
+  background:#fff;
+  border-color:var(--line);
+  color:var(--navy);
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-tickets,
+  #main-warehouse,
+  #main-user-access
+) :is(
+  .workforce-overview-card,
+  .workforce-person,
+  .employee-card.employee-row,
+  .ticket-card,
+  .warehouse-card,
+  .access-row
+):hover,
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-tickets,
+  #main-warehouse,
+  #main-user-access
+) :is(
+  .workforce-overview-card,
+  .workforce-person,
+  .employee-card.employee-row,
+  .ticket-card,
+  .warehouse-card,
+  .access-row
+):focus,
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-tickets,
+  #main-warehouse,
+  #main-user-access
+) :is(
+  .workforce-overview-card,
+  .workforce-person,
+  .employee-card.employee-row,
+  .ticket-card,
+  .warehouse-card,
+  .access-row
+):focus-within {
+  background:var(--green);
+  border-color:var(--green);
+  color:var(--navy);
+  box-shadow:0 10px 22px rgba(16,24,40,.10);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+#view-projects #main-employees .employee-card.employee-row.expanded {
+  background:#fff;
+  border-color:var(--green);
+  box-shadow:0 0 0 2px rgba(112,193,71,.16),0 8px 18px rgba(16,24,40,.07);
+}
+
+#view-projects :is(#main-backup-export,#main-integrations) :is(.report-field,.summary-card,.detail-card) {
+  background:#fff;
+  border-color:var(--line);
+}
+
+#view-projects :is(#main-activity-log,#main-user-access) :is(.activity-row,.access-invite-panel),
+#view-projects #main-cert-email-preview .cert-email-panel,
+#view-projects #main-warehouse .warehouse-box,
+#view-projects #main-workforce-overview :is(.workforce-status-card,.workforce-column,.workforce-attention-list) {
+  background:#fff;
+  border-color:var(--line);
+}
+
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) :is(.inline-select,.search-input,input,textarea):focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(112,193,71,.18);
+  outline:none;
+}
+
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) :is(.pill,.access-role-badge,.warehouse-status,.integration-meter > span,.newhire-progress-fill) {
+  transform:none;
+}
+
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) .btn-sm.danger,
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) .btn-sm.danger:hover,
+#view-projects :is(
+  #main-workforce-overview,
+  #main-employees,
+  #main-cert-email-preview,
+  #main-tickets,
+  #main-warehouse,
+  #main-activity-log,
+  #main-user-access,
+  #main-backup-export,
+  #main-integrations
+) .btn-sm.danger:focus {
+  background:#fff1f2;
+  border-color:#fecdd3;
+  color:var(--red);
 }
