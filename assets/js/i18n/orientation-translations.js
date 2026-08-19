@@ -16,59 +16,59 @@
     ],
     "questions": [
       {
-        "question": "When may an employee use a respirator for PAL work?",
+        "question": "What should you do if conditions change after the pre-task plan is completed?",
         "answers": [
-          "Whenever dust is visible",
-          "After the required medical clearance, fit test, training, and authorization",
-          "Whenever a coworker has an extra respirator",
-          "Only after the shift has started"
+          "Continue working until the next safety meeting",
+          "Stop work, update the plan, and address the new hazards",
+          "Wait until the end of the shift",
+          "Ask a coworker to make the decision"
         ],
         "correct": 1,
-        "correction": "Respirators require medical clearance, fit testing, training, and authorization. Stop and speak with supervision if respiratory protection may be needed."
+        "correction": "When conditions change, stop work and update the pre-task plan before proceeding."
       },
       {
-        "question": "What should you do if you find a damaged electrical cord?",
+        "question": "Where must you connect your fall protection in a scissor lift?",
         "answers": [
-          "Keep using it if the damage looks minor",
-          "Cover the damaged area with tape",
-          "Tag it Do Not Use, remove it from service, and report it immediately",
-          "Repair it yourself before the next shift"
-        ],
-        "correct": 2,
-        "correction": "Never use damaged electrical equipment. Tag it Do Not Use, remove it from service, and report it immediately."
-      },
-      {
-        "question": "What must you do if you find an unlabeled chemical container?",
-        "answers": [
-          "Smell it to identify the contents",
-          "Use it carefully and label it later",
-          "Do not use it; isolate it and notify supervision",
-          "Pour it into a different container"
-        ],
-        "correct": 2,
-        "correction": "Never use an unknown or unlabeled material. Stop, isolate the container if safe, and notify supervision."
-      },
-      {
-        "question": "What should you do before entering a confined space?",
-        "answers": [
-          "Enter briefly to check whether it seems safe",
-          "Enter only when specifically trained, authorized, and working under the required procedure",
-          "Ask a coworker to wait outside",
-          "Wear a dust mask and proceed"
+          "The guardrail",
+          "The designated internal manufacturer anchor point",
+          "A nearby pipe or conduit",
+          "Any point above shoulder height"
         ],
         "correct": 1,
+        "correction": "In a scissor lift, tie off only to the designated internal manufacturer anchor point."
+      },
+      {
+        "question": "What does PAL's Ladders Last policy mean?",
+        "answers": [
+          "Use a traditional ladder before other equipment",
+          "Prioritize lifts, scaffolds, or platform ladders before traditional ladders",
+          "Traditional ladders may never be used",
+          "Use any ladder when the task takes less than five minutes"
+        ],
+        "correct": 1,
+        "correction": "PAL prioritizes lifts, scaffolds, and platform or podium ladders before traditional ladders."
+      },
+      {
+        "question": "What is required before entering a confined space?",
+        "answers": [
+          "Training, authorization, an approved procedure, atmospheric testing, required gear, and rescue provisions",
+          "Only a hard hat and safety glasses",
+          "Verbal permission from a coworker",
+          "A dust mask and a flashlight"
+        ],
+        "correct": 0,
         "correction": "This orientation does not authorize confined-space entry. Specialized training, authorization, equipment, and an approved procedure are required."
       },
       {
-        "question": "When must an accident, injury, environmental release, or near miss be reported?",
+        "question": "What should you do if you believe work is unsafe?",
         "answers": [
-          "At the end of the week",
-          "Only when medical treatment is required",
-          "Immediately, even when it appears minor",
-          "Only when property was damaged"
+          "Continue working to avoid disciplinary action",
+          "Stop work and notify your supervisor",
+          "Leave the site without reporting it",
+          "Wait until the end of the shift"
         ],
-        "correct": 2,
-        "correction": "Report every incident and near miss immediately to your supervisor and PAL EH&S, even when it appears minor."
+        "correct": 1,
+        "correction": "Stop work and notify supervision. PAL employees will not be penalized for refusing unsafe work."
       }
     ]
   },
