@@ -5520,10 +5520,18 @@ function closeTalk() {
       createSignRows('ai-dsm-front', 1, 11);
       createSignRows('ai-dsm-back', 12, 26);
       createSignRows('toolbox-signin-rows', 1, 3);
-      for (let i = 0; i < 3; i++) addWorkerRow();
-      for (let i = 0; i < 5; i++) addTimesheetRow();
-      for (let i = 0; i < 26; i++) addWeeklyFpRow();
-      for (let i = 0; i < 3; i++) addExpenseRow();
+      if (document.getElementById('worker-rows')) {
+        for (let i = 0; i < 3; i++) addWorkerRow();
+      }
+      if (document.getElementById('daily-timesheet-rows')) {
+        for (let i = 0; i < 5; i++) addTimesheetRow();
+      }
+      if (document.getElementById('weekly-fp-rows')) {
+        for (let i = 0; i < 26; i++) addWeeklyFpRow();
+      }
+      if (document.getElementById('expense-rows')) {
+        for (let i = 0; i < 3; i++) addExpenseRow();
+      }
       restoreForms();
       updatePalConnectionNotice(false);
       initAllSigPads();
