@@ -3594,7 +3594,7 @@
             </div>
             <select id="nh-orientation-language" class="select orientation-language" aria-label="Orientation language" onchange="changeOrientationLanguage(this.value)">
               <option value="en">English</option>
-              <option value="es" disabled>Spanish video coming soon</option>
+              <option value="es">Español</option>
               <option value="pl" disabled>Polish video coming soon</option>
             </select>
           </div>
@@ -3810,7 +3810,7 @@
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-07-25-weekly-toolbox";
+  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
   import {
     PAL_ADMIN_EMAILS,
     PAL_PUBLIC_PROJECTS_URL,
@@ -13407,8 +13407,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
-  const ORIENTATION_VERSION = 'pal-2026-08-18-youtube-v1';
-  const ORIENTATION_VIDEO_SOURCES = { en: '7r8Zp8vnqJU' };
+  const ORIENTATION_VERSION = 'pal-2026-08-19-youtube-spanish-v1';
+  const ORIENTATION_VIDEO_SOURCES = {
+    en: '7r8Zp8vnqJU',
+    es: 'AUkwbQzxZfQ'
+  };
   const ORIENTATION_EXPECTED_DURATION = 631;
   // Roughly two-minute chapters, aligned with the topics employees just watched.
   const ORIENTATION_CHECKPOINTS = [118, 245, 365, 485, 600];
