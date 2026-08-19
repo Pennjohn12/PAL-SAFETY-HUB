@@ -1435,7 +1435,8 @@
     .orientation-module-head p { color:var(--muted); font-size:13px; line-height:1.45; margin:0; }
     .orientation-language { min-width:150px; }
     .orientation-video-wrap { background:#071a2d; aspect-ratio:16/9; width:100%; }
-    .orientation-video-wrap video { display:block; width:100%; height:100%; object-fit:contain; background:#071a2d; }
+    .orientation-video-wrap video,
+    .orientation-video-wrap iframe { display:block; width:100%; height:100%; border:0; background:#071a2d; }
     .orientation-progress { padding:12px 16px; background:#fff; border-top:1px solid var(--line); }
     .orientation-progress-track { height:8px; overflow:hidden; background:#e5e7eb; border-radius:4px; }
     .orientation-progress-fill { height:100%; width:0; background:var(--green); transition:width .2s ease; }
@@ -3598,10 +3599,7 @@
             </select>
           </div>
           <div class="orientation-video-wrap">
-            <video id="nh-orientation-video" controls playsinline preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture>
-              <source src="media/pal-orientation-en-2026-08-17.mp4" type="video/mp4" />
-              Your device does not support this orientation video.
-            </video>
+            <div id="nh-orientation-video" aria-label="PAL Employee Safety Orientation video"></div>
           </div>
           <div class="orientation-progress">
             <div class="orientation-progress-track"><div class="orientation-progress-fill" id="nh-orientation-progress-fill"></div></div>
@@ -12156,7 +12154,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
     if (id === 'modal-newhire-orientation-form') {
-      document.getElementById('nh-orientation-video')?.pause();
+      orientationSession?.player?.pauseVideo?.();
       saveOrientationLocalProgress();
     }
     if (id === 'modal-warehouse-item') {
@@ -13409,15 +13407,40 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
-  const ORIENTATION_VERSION = 'pal-2026-08-17';
-  const ORIENTATION_VIDEO_SOURCES = {
-    en: 'media/pal-orientation-en-2026-08-17.mp4'
-  };
-  const ORIENTATION_EXPECTED_DURATION = 592;
-  // Pause immediately before each checkpoint card reveals its answer.
-  const ORIENTATION_CHECKPOINTS = [119, 253, 381.5, 441.5, 549.5];
+  const ORIENTATION_VERSION = 'pal-2026-08-18-youtube-v1';
+  const ORIENTATION_VIDEO_SOURCES = { en: '7r8Zp8vnqJU' };
+  const ORIENTATION_EXPECTED_DURATION = 631;
+  // Roughly two-minute chapters, aligned with the topics employees just watched.
+  const ORIENTATION_CHECKPOINTS = [118, 245, 365, 485, 600];
   const ORIENTATION_COPY = PAL_TRANSLATIONS.orientation;
   let orientationSession = null;
+  let orientationYouTubeApiPromise = null;
+
+  function loadOrientationYouTubeApi() {
+    if (window.YT?.Player) return Promise.resolve();
+    if (orientationYouTubeApiPromise) return orientationYouTubeApiPromise;
+    orientationYouTubeApiPromise = new Promise(resolve => {
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (typeof previousReady === 'function') previousReady();
+        resolve();
+      };
+      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(script);
+      }
+    });
+    return orientationYouTubeApiPromise;
+  }
+
+  function orientationCurrentTime() {
+    return Number(orientationSession?.player?.getCurrentTime?.() || 0);
+  }
+
+  function orientationDuration() {
+    return Number(orientationSession?.player?.getDuration?.() || ORIENTATION_EXPECTED_DURATION);
+  }
 
   function selectedOrientationLanguage() {
     return document.getElementById('nh-orientation-language')?.value || 'en';
@@ -13463,7 +13486,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       localStorage.setItem(orientationProgressKey(), JSON.stringify({
         answers: orientationSession.answers,
         attempts: orientationSession.attempts,
-        lastTime: orientationSession.video?.currentTime || 0,
+        lastTime: orientationCurrentTime(),
         ended: orientationSession.ended,
         savedAt: Date.now()
       }));
@@ -13475,8 +13498,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const copy = orientationCopy(orientationSession.language);
     const questions = orientationQuestions(orientationSession.language);
     const completed = orientationSession.answers.filter(Boolean).length;
-    const duration = orientationSession.video?.duration || ORIENTATION_EXPECTED_DURATION;
-    const watched = orientationSession.ended ? duration : Math.min(orientationSession.video?.currentTime || 0, duration);
+    const duration = orientationDuration();
+    const watched = orientationSession.ended ? duration : Math.min(orientationCurrentTime(), duration);
     const fill = document.getElementById('nh-orientation-progress-fill');
     const progressLabel = document.getElementById('nh-orientation-progress-label');
     const checkLabel = document.getElementById('nh-orientation-check-label');
@@ -13494,7 +13517,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const questions = orientationQuestions(orientationSession?.language);
     if (!orientationSession || index < 0 || index >= questions.length) return;
     orientationSession.activeQuestion = index;
-    orientationSession.video.pause();
+    orientationSession.player?.pauseVideo?.();
     const copy = orientationCopy(orientationSession.language);
     const item = questions[index];
     const quiz = document.getElementById('nh-orientation-quiz');
@@ -13537,24 +13560,29 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (quiz) quiz.classList.remove('active');
     updateOrientationProgressUI();
     saveOrientationLocalProgress();
-    orientationSession.video.play().catch(() => {});
+    orientationSession.player?.playVideo?.();
   }
 
-  function resetOrientationModule(form = {}) {
-    const video = document.getElementById('nh-orientation-video');
-    if (!video) return;
+  async function resetOrientationModule(form = {}) {
+    const videoWrap = document.querySelector('#pal-orientation-module .orientation-video-wrap');
+    if (!videoWrap) return;
+    if (orientationSession?.timer) clearInterval(orientationSession.timer);
+    orientationSession?.player?.destroy?.();
+    const videoHost = document.createElement('div');
+    videoHost.id = 'nh-orientation-video';
+    videoHost.setAttribute('aria-label', 'PAL Employee Safety Orientation video');
+    videoWrap.replaceChildren(videoHost);
     const language = selectedOrientationLanguage();
     applyOrientationLanguageText(language);
-    const source = ORIENTATION_VIDEO_SOURCES[language] || ORIENTATION_VIDEO_SOURCES.en;
-    const sourceEl = video.querySelector('source');
-    if (sourceEl && !sourceEl.getAttribute('src')?.endsWith(source.replace('media/', ''))) sourceEl.setAttribute('src', source);
+    const videoId = ORIENTATION_VIDEO_SOURCES[language] || ORIENTATION_VIDEO_SOURCES.en;
     let local = {};
     try { local = JSON.parse(localStorage.getItem(orientationProgressKey(language)) || '{}'); } catch (_) {}
     const sameSavedLanguage = !form.orientationLanguage || form.orientationLanguage === language;
     const savedAnswers = sameSavedLanguage && Array.isArray(form.orientationAnswers) ? form.orientationAnswers : local.answers;
     const savedAttempts = sameSavedLanguage && Array.isArray(form.orientationAttempts) ? form.orientationAttempts : local.attempts;
     orientationSession = {
-      video,
+      player: null,
+      timer: null,
       language,
       answers: Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedAnswers?.[i]),
       attempts: Array.from({ length: orientationQuestions(language).length }, (_, i) => Number(savedAttempts?.[i] || 0)),
@@ -13566,36 +13594,45 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (quiz) quiz.classList.remove('active');
     const ack = document.getElementById('nh-orient-module-complete');
     if (ack) ack.checked = !!form.orientationModuleReviewed;
-    video.ontimeupdate = () => {
+    await loadOrientationYouTubeApi();
+    orientationSession.player = new YT.Player(videoHost, {
+      videoId,
+      playerVars: { playsinline: 1, rel: 0, controls: 1, fs: 1, origin: location.origin },
+      events: {
+        onReady: event => {
+          const firstPending = orientationSession.answers.findIndex(answered => !answered);
+          const maxAllowed = firstPending < 0 ? orientationDuration() : ORIENTATION_CHECKPOINTS[firstPending];
+          const resumeAt = sameSavedLanguage && form.orientationVideoCompleted ? orientationDuration() : Number(local.lastTime || 0);
+          event.target.seekTo(Math.min(Math.max(0, resumeAt), Math.max(0, maxAllowed - 0.25)), true);
+          updateOrientationProgressUI();
+        },
+        onStateChange: event => {
+          if (event.data === YT.PlayerState.ENDED) {
+            orientationSession.ended = orientationSession.answers.every(Boolean);
+            updateOrientationProgressUI();
+            saveOrientationLocalProgress();
+          }
+        }
+      }
+    });
+    orientationSession.timer = setInterval(() => {
       if (!orientationSession || orientationSession.activeQuestion >= 0) return;
-      const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && video.currentTime >= time);
+      const currentTime = orientationCurrentTime();
+      const firstPending = orientationSession.answers.findIndex(answered => !answered);
+      const maxAllowed = firstPending < 0 ? orientationDuration() : ORIENTATION_CHECKPOINTS[firstPending];
+      if (currentTime > maxAllowed + 1) {
+        orientationSession.player?.seekTo?.(Math.max(0, maxAllowed - 0.25), true);
+        return;
+      }
+      const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && currentTime >= time);
       if (pendingIndex >= 0) return showOrientationCheckpoint(pendingIndex);
-      const wholeSecond = Math.floor(video.currentTime);
+      const wholeSecond = Math.floor(currentTime);
       if (wholeSecond > 0 && wholeSecond % 5 === 0 && wholeSecond !== orientationSession.lastSavedSecond) {
         orientationSession.lastSavedSecond = wholeSecond;
         saveOrientationLocalProgress();
       }
       updateOrientationProgressUI();
-    };
-    video.onseeking = () => {
-      if (!orientationSession) return;
-      const firstPending = orientationSession.answers.findIndex(answered => !answered);
-      const maxAllowed = firstPending < 0 ? (video.duration || ORIENTATION_EXPECTED_DURATION) : ORIENTATION_CHECKPOINTS[firstPending];
-      if (video.currentTime > maxAllowed + 1) video.currentTime = Math.max(0, maxAllowed - 0.25);
-    };
-    video.onended = () => {
-      orientationSession.ended = orientationSession.answers.every(Boolean);
-      updateOrientationProgressUI();
-      saveOrientationLocalProgress();
-    };
-    video.onloadedmetadata = () => {
-      const firstPending = orientationSession.answers.findIndex(answered => !answered);
-      const maxAllowed = firstPending < 0 ? video.duration : ORIENTATION_CHECKPOINTS[firstPending];
-      const resumeAt = sameSavedLanguage && form.orientationVideoCompleted ? video.duration : Number(local.lastTime || 0);
-      video.currentTime = Math.min(Math.max(0, resumeAt), Math.max(0, maxAllowed - 0.25));
-      updateOrientationProgressUI();
-    };
-    video.load();
+    }, 250);
     updateOrientationProgressUI();
   }
 
