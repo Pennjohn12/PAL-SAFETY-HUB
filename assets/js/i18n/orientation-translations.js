@@ -89,59 +89,59 @@
     ],
     "questions": [
       {
-        "question": "¿Cuándo puede un empleado usar un respirador para trabajo de PAL?",
+        "question": "¿Qué debe hacer si las condiciones cambian después de completar el plan previo a la tarea?",
         "answers": [
-          "Cuando se vea polvo",
-          "Después de la aprobación médica, prueba de ajuste, capacitación y autorización requeridas",
-          "Cuando un compañero tenga un respirador extra",
-          "Solo después de comenzar el turno"
+          "Continuar trabajando hasta la próxima reunión de seguridad",
+          "Detener el trabajo, actualizar el plan y atender los nuevos peligros",
+          "Esperar hasta el final del turno",
+          "Pedirle a un compañero que tome la decisión"
         ],
         "correct": 1,
-        "correction": "Los respiradores requieren aprobación médica, prueba de ajuste, capacitación y autorización. Deténgase y hable con supervisión si puede necesitar protección respiratoria."
+        "correction": "Cuando cambien las condiciones, detenga el trabajo y actualice el plan previo a la tarea antes de continuar."
       },
       {
-        "question": "¿Qué debe hacer si encuentra un cable eléctrico dañado?",
+        "question": "¿Dónde debe conectar su protección contra caídas en una plataforma elevadora de tijera?",
         "answers": [
-          "Seguir usándolo si el daño parece menor",
-          "Cubrir la parte dañada con cinta",
-          "Marcarlo No Usar, retirarlo de servicio y reportarlo inmediatamente",
-          "Repararlo usted mismo antes del próximo turno"
-        ],
-        "correct": 2,
-        "correction": "Nunca use equipo eléctrico dañado. Márquelo No Usar, retírelo de servicio y repórtelo inmediatamente."
-      },
-      {
-        "question": "¿Qué debe hacer si encuentra un envase químico sin etiqueta?",
-        "answers": [
-          "Olerlo para identificarlo",
-          "Usarlo con cuidado y etiquetarlo después",
-          "No usarlo; aislarlo y avisar a supervisión",
-          "Verterlo en otro envase"
-        ],
-        "correct": 2,
-        "correction": "Nunca use un material desconocido o sin etiqueta. Deténgase, aísle el envase si es seguro hacerlo y avise a supervisión."
-      },
-      {
-        "question": "¿Qué debe hacer antes de entrar a un espacio confinado?",
-        "answers": [
-          "Entrar brevemente para ver si parece seguro",
-          "Entrar solo si está específicamente capacitado, autorizado y trabajando bajo el procedimiento requerido",
-          "Pedir a un compañero que espere afuera",
-          "Usar una mascarilla contra polvo y continuar"
+          "En la baranda",
+          "En el punto de anclaje interno designado por el fabricante",
+          "En una tubería o conducto cercano",
+          "En cualquier punto por encima de los hombros"
         ],
         "correct": 1,
+        "correction": "En una plataforma elevadora de tijera, conéctese únicamente al punto de anclaje interno designado por el fabricante."
+      },
+      {
+        "question": "¿Qué significa la política de PAL “Ladders Last” (Las escaleras como último recurso)?",
+        "answers": [
+          "Usar una escalera tradicional antes que otros equipos",
+          "Priorizar elevadores, andamios o escaleras de plataforma antes que las escaleras tradicionales",
+          "Las escaleras tradicionales nunca pueden usarse",
+          "Usar cualquier escalera cuando la tarea dure menos de cinco minutos"
+        ],
+        "correct": 1,
+        "correction": "PAL prioriza elevadores, andamios y escaleras de plataforma o podio antes que las escaleras tradicionales."
+      },
+      {
+        "question": "¿Qué se requiere antes de entrar a un espacio confinado?",
+        "answers": [
+          "Capacitación, autorización, un procedimiento aprobado, pruebas atmosféricas, el equipo requerido y disposiciones de rescate",
+          "Solamente casco y gafas de seguridad",
+          "Permiso verbal de un compañero",
+          "Una mascarilla contra polvo y una linterna"
+        ],
+        "correct": 0,
         "correction": "Esta orientación no autoriza la entrada a espacios confinados. Se requiere capacitación especializada, autorización, equipo y un procedimiento aprobado."
       },
       {
-        "question": "¿Cuándo se debe reportar un accidente, lesión, derrame ambiental o casi accidente?",
+        "question": "¿Qué debe hacer si considera que el trabajo no es seguro?",
         "answers": [
-          "Al final de la semana",
-          "Solo cuando se necesite tratamiento médico",
-          "Inmediatamente, aunque parezca menor",
-          "Solo cuando haya daño a propiedad"
+          "Continuar trabajando para evitar medidas disciplinarias",
+          "Detener el trabajo y avisar a su supervisor",
+          "Salir del sitio sin reportarlo",
+          "Esperar hasta el final del turno"
         ],
-        "correct": 2,
-        "correction": "Reporte inmediatamente todos los incidentes y casi accidentes a su supervisor y a PAL EH&S, aunque parezcan menores."
+        "correct": 1,
+        "correction": "Detenga el trabajo y avise a supervisión. Los empleados de PAL no serán sancionados por negarse a realizar trabajo inseguro."
       }
     ]
   },
