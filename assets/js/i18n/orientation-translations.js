@@ -27,15 +27,15 @@
         "correction": "Respirators require medical clearance, fit testing, training, and authorization. Stop and speak with supervision if respiratory protection may be needed."
       },
       {
-        "question": "Under PAL's Ladders Last Policy, what is the required equipment-selection order?",
+        "question": "What should you do if you find a damaged electrical cord?",
         "answers": [
-          "Traditional ladder, podium ladder, scaffold, aerial lift",
-          "Aerial lift, scaffolding, podium or platform ladder, traditional portable ladder last when permitted",
-          "Podium ladder, traditional ladder, aerial lift, scaffolding",
-          "The employee may choose any option without supervisor review"
+          "Keep using it if the damage looks minor",
+          "Cover the damaged area with tape",
+          "Tag it Do Not Use, remove it from service, and report it immediately",
+          "Repair it yourself before the next shift"
         ],
-        "correct": 1,
-        "correction": "PAL requires safer work platforms to be evaluated first. Traditional portable ladders are the last resort and may be used only when permitted."
+        "correct": 2,
+        "correction": "Never use damaged electrical equipment. Tag it Do Not Use, remove it from service, and report it immediately."
       },
       {
         "question": "What must you do if you find an unlabeled chemical container?",
@@ -100,15 +100,15 @@
         "correction": "Los respiradores requieren aprobación médica, prueba de ajuste, capacitación y autorización. Deténgase y hable con supervisión si puede necesitar protección respiratoria."
       },
       {
-        "question": "Según la política Ladders Last de PAL, ¿cuál es el orden requerido para escoger el equipo?",
+        "question": "¿Qué debe hacer si encuentra un cable eléctrico dañado?",
         "answers": [
-          "Escalera tradicional, escalera de plataforma, andamio, elevador aéreo",
-          "Elevador aéreo, andamio, escalera de plataforma o podio, escalera portátil tradicional como último recurso cuando esté permitido",
-          "Escalera de podio, escalera tradicional, elevador aéreo, andamio",
-          "El empleado puede escoger cualquier opción sin revisión del supervisor"
+          "Seguir usándolo si el daño parece menor",
+          "Cubrir la parte dañada con cinta",
+          "Marcarlo No Usar, retirarlo de servicio y reportarlo inmediatamente",
+          "Repararlo usted mismo antes del próximo turno"
         ],
-        "correct": 1,
-        "correction": "PAL requiere evaluar primero plataformas de trabajo más seguras. Las escaleras portátiles tradicionales son el último recurso y solo pueden usarse cuando estén permitidas."
+        "correct": 2,
+        "correction": "Nunca use equipo eléctrico dañado. Márquelo No Usar, retírelo de servicio y repórtelo inmediatamente."
       },
       {
         "question": "¿Qué debe hacer si encuentra un envase químico sin etiqueta?",
@@ -173,15 +173,15 @@
         "correction": "Respiratory wymagają zgody medycznej, testu dopasowania, szkolenia i upoważnienia. Zatrzymaj pracę i porozmawiaj z przełożonym, jeśli ochrona dróg oddechowych może być potrzebna."
       },
       {
-        "question": "Zgodnie z polityką PAL Ladders Last, jaka jest wymagana kolejność wyboru sprzętu?",
+        "question": "Co należy zrobić, gdy znajdziesz uszkodzony przewód elektryczny?",
         "answers": [
-          "Zwykła drabina, drabina podium, rusztowanie, podnośnik",
-          "Podnośnik, rusztowanie, drabina podium lub platformowa, tradycyjna przenośna drabina jako ostatnia opcja, gdy jest dozwolona",
-          "Drabina podium, zwykła drabina, podnośnik, rusztowanie",
-          "Pracownik może wybrać dowolną opcję bez zgody przełożonego"
+          "Używać go dalej, jeśli uszkodzenie wydaje się niewielkie",
+          "Zakleić uszkodzone miejsce taśmą",
+          "Oznaczyć go Nie Używać, wycofać z użytkowania i natychmiast zgłosić",
+          "Naprawić go samodzielnie przed następną zmianą"
         ],
-        "correct": 1,
-        "correction": "PAL wymaga najpierw oceny bezpieczniejszych platform roboczych. Tradycyjne przenośne drabiny są ostatecznością i mogą być używane tylko wtedy, gdy jest to dozwolone."
+        "correct": 2,
+        "correction": "Nigdy nie używaj uszkodzonego sprzętu elektrycznego. Oznacz go Nie Używać, wycofaj z użytkowania i natychmiast zgłoś."
       },
       {
         "question": "Co należy zrobić, gdy znajdziesz nieopisany pojemnik z chemikaliami?",

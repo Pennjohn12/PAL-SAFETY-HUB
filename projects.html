@@ -3593,13 +3593,13 @@
             </div>
             <select id="nh-orientation-language" class="select orientation-language" aria-label="Orientation language" onchange="changeOrientationLanguage(this.value)">
               <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="pl">Polish</option>
+              <option value="es" disabled>Spanish video coming soon</option>
+              <option value="pl" disabled>Polish video coming soon</option>
             </select>
           </div>
           <div class="orientation-video-wrap">
             <video id="nh-orientation-video" controls playsinline preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture>
-              <source src="media/pal-orientation-en-2026.mp4" type="video/mp4" />
+              <source src="media/pal-orientation-en-2026-08-17.mp4" type="video/mp4" />
               Your device does not support this orientation video.
             </video>
           </div>
@@ -13409,13 +13409,13 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
-  const ORIENTATION_VERSION = 'pal-2026-07-06';
+  const ORIENTATION_VERSION = 'pal-2026-08-17';
   const ORIENTATION_VIDEO_SOURCES = {
-    en: 'media/pal-orientation-en-2026.mp4',
-    es: 'media/pal-orientation-es-2026.mp4',
-    pl: 'media/pal-orientation-pl-2026.mp4'
+    en: 'media/pal-orientation-en-2026-08-17.mp4'
   };
-  const ORIENTATION_CHECKPOINTS = [150, 300, 450, 600, 750];
+  const ORIENTATION_EXPECTED_DURATION = 592;
+  // Pause immediately before each checkpoint card reveals its answer.
+  const ORIENTATION_CHECKPOINTS = [119, 253, 381.5, 441.5, 549.5];
   const ORIENTATION_COPY = PAL_TRANSLATIONS.orientation;
   let orientationSession = null;
 
@@ -13475,7 +13475,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const copy = orientationCopy(orientationSession.language);
     const questions = orientationQuestions(orientationSession.language);
     const completed = orientationSession.answers.filter(Boolean).length;
-    const duration = orientationSession.video?.duration || 779;
+    const duration = orientationSession.video?.duration || ORIENTATION_EXPECTED_DURATION;
     const watched = orientationSession.ended ? duration : Math.min(orientationSession.video?.currentTime || 0, duration);
     const fill = document.getElementById('nh-orientation-progress-fill');
     const progressLabel = document.getElementById('nh-orientation-progress-label');
@@ -13580,7 +13580,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     video.onseeking = () => {
       if (!orientationSession) return;
       const firstPending = orientationSession.answers.findIndex(answered => !answered);
-      const maxAllowed = firstPending < 0 ? (video.duration || 779) : ORIENTATION_CHECKPOINTS[firstPending];
+      const maxAllowed = firstPending < 0 ? (video.duration || ORIENTATION_EXPECTED_DURATION) : ORIENTATION_CHECKPOINTS[firstPending];
       if (video.currentTime > maxAllowed + 1) video.currentTime = Math.max(0, maxAllowed - 0.25);
     };
     video.onended = () => {
