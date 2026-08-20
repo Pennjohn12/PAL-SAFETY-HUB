@@ -13457,6 +13457,24 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return orientationCopy(language).questions || ORIENTATION_COPY.en.questions;
   }
 
+  function orientationChapterLabel(language, chapter, total) {
+    if (language === 'es') return `Capítulo ${chapter} de ${total}`;
+    if (language === 'pl') return `Rozdział ${chapter} z ${total}`;
+    return `Chapter ${chapter} of ${total}`;
+  }
+
+  function orientationCheckLabel(language, completed, total) {
+    if (language === 'es') return `${completed} de ${total} preguntas completadas`;
+    if (language === 'pl') return `Ukończono ${completed} z ${total} pytań`;
+    return `${completed} of ${total} checks complete`;
+  }
+
+  function orientationQuestionTitle(language, index, total) {
+    if (language === 'es') return `Pregunta de seguridad ${index + 1} de ${total}`;
+    if (language === 'pl') return `Pytanie kontrolne ${index + 1} z ${total}`;
+    return `Knowledge Check ${index + 1} of ${total}`;
+  }
+
   function applyOrientationLanguageText(language = selectedOrientationLanguage()) {
     const copy = orientationCopy(language);
     const setText = (id, value) => {
@@ -13507,8 +13525,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const progressLabel = document.getElementById('nh-orientation-progress-label');
     const checkLabel = document.getElementById('nh-orientation-check-label');
     if (fill) fill.style.width = `${Math.min(100, (watched / duration) * 100)}%`;
-    if (progressLabel) progressLabel.textContent = orientationSession.ended ? copy.completeLabel : copy.chapterLabel(Math.min(questions.length, completed + 1));
-    if (checkLabel) checkLabel.textContent = copy.checkLabel(completed);
+    if (progressLabel) progressLabel.textContent = orientationSession.ended
+      ? copy.completeLabel
+      : orientationChapterLabel(orientationSession.language, Math.min(questions.length, completed + 1), questions.length);
+    if (checkLabel) checkLabel.textContent = orientationCheckLabel(orientationSession.language, completed, questions.length);
     const ready = orientationSession.ended && completed === questions.length;
     const ack = document.getElementById('nh-orient-module-complete');
     const wrap = document.getElementById('nh-orient-ack-wrap');
@@ -13528,7 +13548,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const question = document.getElementById('nh-orientation-question');
     const answers = document.getElementById('nh-orientation-answers');
     const feedback = document.getElementById('nh-orientation-feedback');
-    if (title) title.textContent = copy.questionTitle(index);
+    if (title) title.textContent = orientationQuestionTitle(orientationSession.language, index, questions.length);
     if (question) question.textContent = item.question;
     if (answers) {
       answers.replaceChildren();
@@ -13623,12 +13643,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       const currentTime = orientationCurrentTime();
       const firstPending = orientationSession.answers.findIndex(answered => !answered);
       const maxAllowed = firstPending < 0 ? orientationDuration() : ORIENTATION_CHECKPOINTS[firstPending];
+      const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && currentTime >= time);
+      if (pendingIndex >= 0) return showOrientationCheckpoint(pendingIndex);
       if (currentTime > maxAllowed + 1) {
         orientationSession.player?.seekTo?.(Math.max(0, maxAllowed - 0.25), true);
         return;
       }
-      const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && currentTime >= time);
-      if (pendingIndex >= 0) return showOrientationCheckpoint(pendingIndex);
       const wholeSecond = Math.floor(currentTime);
       if (wholeSecond > 0 && wholeSecond % 5 === 0 && wholeSecond !== orientationSession.lastSavedSecond) {
         orientationSession.lastSavedSecond = wholeSecond;
