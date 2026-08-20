@@ -198,7 +198,8 @@ service cloud.firestore {
       allow get: if isOffice() || true;
       allow list: if isOffice();
       allow create: if isOffice() || (
-        request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted'] &&
+        (!('status' in request.resource.data) ||
+          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
         request.resource.data.keys().hasOnly([
           'name',
           'phone',
@@ -209,6 +210,7 @@ service cloud.firestore {
           'foreman',
           'required',
           'notes',
+          'employeeNotes',
           'status',
           'createdAt',
           'createdBy',
@@ -223,17 +225,22 @@ service cloud.firestore {
           'payrollIdFiles',
           'emergencyName',
           'emergencyPhone',
+          'emergencyContactName',
+          'emergencyContactPhone',
+          'source',
           'finalSubmittedAt'
         ])
       );
       allow update: if isOffice() || (
-        request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted'] &&
+        (!('status' in request.resource.data) ||
+          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
         request.resource.data.diff(resource.data).changedKeys().hasOnly([
           'name',
           'phone',
           'email',
           'trade',
           'notes',
+          'employeeNotes',
           'status',
           'updatedAt',
           'publicSubmittedAt',
@@ -244,6 +251,9 @@ service cloud.firestore {
           'payrollIdFiles',
           'emergencyName',
           'emergencyPhone',
+          'emergencyContactName',
+          'emergencyContactPhone',
+          'source',
           'finalSubmittedAt'
         ])
       );
