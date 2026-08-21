@@ -234,6 +234,8 @@ service cloud.firestore {
       allow update: if isOffice() || (
         (!('status' in request.resource.data) ||
           request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
+        (!request.resource.data.diff(resource.data).changedKeys().hasAny(['createdAt']) ||
+          (!('createdAt' in resource.data) && request.resource.data.createdAt == request.time)) &&
         request.resource.data.diff(resource.data).changedKeys().hasOnly([
           'name',
           'phone',
@@ -242,6 +244,7 @@ service cloud.firestore {
           'notes',
           'employeeNotes',
           'status',
+          'createdAt',
           'updatedAt',
           'publicSubmittedAt',
           'orientationForm',

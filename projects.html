@@ -12396,6 +12396,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       updatedAt: serverTimestamp(),
       source: 'public-guided-intake'
     };
+    if (!currentPublicNewHireIntake?.createdAt) data.createdAt = serverTimestamp();
     try {
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), data, { merge: true });
       currentPublicNewHireIntake = { ...(currentPublicNewHireIntake || {}), id: publicNewHireIntakeId, ...data };
