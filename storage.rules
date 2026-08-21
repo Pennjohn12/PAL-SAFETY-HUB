@@ -106,6 +106,7 @@ service firebase.storage {
         isOffice() ||
         folder in [
           'publicUploads',
+          'certUploads',
           'payrollIdUploads',
           'orientation',
           'drugConsent',
