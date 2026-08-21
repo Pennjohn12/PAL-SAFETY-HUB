@@ -3905,7 +3905,7 @@
   let allTickets = [];
   let allNewHireIntakes = [];
   let currentNewHireReviewId = null;
-  let activeOnboardingReviewBucket = 'awaiting';
+  let activeOnboardingReviewBucket = 'in-progress';
   let activeEmployeeCertFilter = 'all';
   let allWarehouseItems = [];
   let currentNewHireOrientationId = null;
@@ -10063,13 +10063,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       activeEmployeeCertFilter = value || 'all';
       renderEmployeesList();
     };
-    const applyNewHireFilter = (activeTab = 'review', bucket = 'awaiting') => {
+    const applyNewHireFilter = (activeTab = 'review', bucket = 'in-progress') => {
       const intake = document.getElementById('onboarding-intake-section');
       const history = document.getElementById('onboarding-history-section');
       if (intake) intake.style.display = '';
       if (history) history.style.display = 'none';
       document.querySelectorAll('[data-onboarding-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.onboardingTab === activeTab));
-      activeOnboardingReviewBucket = bucket || 'awaiting';
+      activeOnboardingReviewBucket = bucket || 'in-progress';
       renderNewHireIntakes();
     };
 
@@ -10086,7 +10086,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     if (target === 'pending' || target === 'review' || target === 'missing-info' || target === 'good') {
       switchMainTab('main-employee-onboarding');
-      const bucketMap = { pending: 'awaiting', review: 'awaiting', 'missing-info': 'missing', good: 'approved-week' };
+      const bucketMap = { pending: 'in-progress', review: 'awaiting', 'missing-info': 'missing', good: 'approved-week' };
       setTimeout(() => applyNewHireFilter('review', bucketMap[target]), 0);
     }
   }
@@ -12918,8 +12918,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
     const helper = document.getElementById('onboarding-intake-helper');
     if (tab === 'review') {
-      if (!['awaiting', 'missing', 'approved-week'].includes(activeOnboardingReviewBucket)) activeOnboardingReviewBucket = 'awaiting';
-      if (helper) helper.textContent = 'Completed onboarding packets waiting for office or foreman review.';
+      if (!['in-progress', 'awaiting', 'missing', 'approved-week'].includes(activeOnboardingReviewBucket)) activeOnboardingReviewBucket = 'in-progress';
+      if (helper) helper.textContent = 'New-hire packets that have been started but are not ready for final office review yet.';
       renderNewHireIntakes();
     } else if (tab === 'history') {
       if (shouldLoad) loadNewHireIntakes(true);
@@ -12928,9 +12928,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
   function setOnboardingReviewBucket(bucket) {
-    activeOnboardingReviewBucket = bucket || 'awaiting';
+    activeOnboardingReviewBucket = bucket || 'in-progress';
     const helper = document.getElementById('onboarding-intake-helper');
     const helperByBucket = {
+      'in-progress': 'New-hire packets that have been started but are not ready for final office review yet.',
       awaiting: 'Completed onboarding packets waiting for safety, office, or foreman approval.',
       missing: 'Packets that need corrected information before the employee can be cleared.',
       'approved-week': 'Employees marked Good To Work this week. Keep them here for quick review before they roll into history.'
@@ -12968,6 +12969,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const host = document.getElementById('onboarding-review-grid');
     if (!host) return;
     const counts = {
+      inProgress: items.filter(x => ['Pending', 'Started'].includes(String(x.status || 'Pending'))).length,
       awaiting: items.filter(x => String(x.status || 'Pending') === 'Ready for Review').length,
       missing: items.filter(x => String(x.status || 'Pending') === 'Missing Info').length,
       approvedWeek: items.filter(isNewHireApprovedThisWeek).length
@@ -12979,6 +12981,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <p>${text}</p>
       </button>`;
     host.innerHTML = [
+      card('in-progress', 'In Progress', counts.inProgress, 'Started packets still completing orientation, forms, or uploads.'),
       card('awaiting', 'Awaiting Approval', counts.awaiting, 'Completed packets ready for office, safety, or foreman review.'),
       card('missing', 'Missing Information', counts.missing, 'Packets that need corrections before the employee is cleared.', 'missing'),
       card('approved-week', 'Approved This Week', counts.approvedWeek, 'Recent Good To Work employees kept handy for quick review.', 'approved')
@@ -13019,13 +13022,15 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!list) return;
     const search = (document.getElementById('newhire-search')?.value || '').toLowerCase().trim();
     const bucketStatus = {
+      'in-progress': 'in-progress',
       awaiting: 'Ready for Review',
       missing: 'Missing Info',
       'approved-week': 'Good To Work'
     };
     const status = bucketStatus[activeOnboardingReviewBucket] || 'Ready for Review';
     let items = allNewHireIntakes.filter(x => {
-      if (status !== 'all' && (x.status || 'Pending') !== status) return false;
+      if (status === 'in-progress' && !['Pending', 'Started'].includes(x.status || 'Pending')) return false;
+      if (status !== 'all' && status !== 'in-progress' && (x.status || 'Pending') !== status) return false;
       if (activeOnboardingReviewBucket === 'approved-week' && !isNewHireApprovedThisWeek(x)) return false;
       if (!search) return true;
       return [x.name, x.phone, x.email, x.trade, x.projectName, x.projectJobNumber, x.foreman, x.status].some(v => String(v || '').toLowerCase().includes(search));
@@ -13034,6 +13039,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!items.length) {
       const emptyText = activeOnboardingReviewBucket === 'approved-week'
         ? 'No employees were marked Good To Work this week.'
+        : activeOnboardingReviewBucket === 'in-progress'
+          ? 'No new-hire packets are currently in progress.'
         : activeOnboardingReviewBucket === 'missing'
           ? 'No intake packets are waiting on corrections right now.'
           : 'No intake packets are waiting for approval right now.';
