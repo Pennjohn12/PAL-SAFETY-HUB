@@ -4149,6 +4149,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.showPublicNewHireWizardStep = showPublicNewHireWizardStep;
   window.saveNewHireCertUploads = saveNewHireCertUploads;
   window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
+  window.openNewHireStoredFile = openNewHireStoredFile;
   window.submitPublicNewHireIntake = submitPublicNewHireIntake;
   window.finalSubmitPublicNewHirePacket = finalSubmitPublicNewHirePacket;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
@@ -12465,15 +12466,83 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     showPublicNewHireWizardStep(publicNewHireWizardStep - 1);
   }
 
+  const NEW_HIRE_UPLOAD_MAX_BYTES = 25 * 1024 * 1024;
+  const NEW_HIRE_UPLOAD_TYPES = {
+    pdf: 'application/pdf',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    webp: 'image/webp',
+    heic: 'image/heic',
+    heif: 'image/heif'
+  };
+
+  function newHireUploadExtension(file) {
+    return String(file?.name || '').split('.').pop().toLowerCase();
+  }
+
+  function validateNewHireUploadFile(file) {
+    if (!file) return '';
+    const ext = newHireUploadExtension(file);
+    if (!NEW_HIRE_UPLOAD_TYPES[ext]) {
+      return 'Use a PDF or a clear JPG, PNG, WEBP, HEIC, or HEIF photo.';
+    }
+    if (Number(file.size || 0) >= NEW_HIRE_UPLOAD_MAX_BYTES) {
+      return 'The file is too large. Each file must be under 25 MB.';
+    }
+    return '';
+  }
+
+  function newHireUploadErrorMessage(error, label) {
+    const code = String(error?.code || '');
+    if (code.includes('unauthorized')) return `${label} could not be saved because upload permission was denied. Please refresh and try again.`;
+    if (code.includes('retry-limit') || code.includes('network')) return `${label} did not finish uploading. Check your connection and try again.`;
+    if (code.includes('quota')) return `${label} could not be saved because storage is temporarily unavailable.`;
+    return `${label} could not be saved. Please refresh and try again. If it continues, tell PAL which file was selected.`;
+  }
+
+  function newHireUploadMetadata(file) {
+    const ext = newHireUploadExtension(file);
+    return { contentType: NEW_HIRE_UPLOAD_TYPES[ext] || file.type || 'application/octet-stream' };
+  }
+
+  function newHireFileLinkHTML(file, fallbackLabel = 'Uploaded File') {
+    const label = esc(file?.name || fallbackLabel);
+    if (file?.url) return `<a href="${esc(file.url)}" target="_blank" rel="noopener">${label}</a>`;
+    if (!file?.path) return label;
+    const encodedPath = encodeURIComponent(String(file.path)).replace(/'/g, '%27');
+    return `<button class="btn-sm" type="button" onclick="openNewHireStoredFile('${encodedPath}')">Open ${label}</button>`;
+  }
+
+  async function openNewHireStoredFile(encodedPath) {
+    if (!currentUser) return toast('PAL office sign-in is required to open this private file.');
+    const path = decodeURIComponent(String(encodedPath || ''));
+    if (!path) return toast('This uploaded file is missing its storage path.');
+    const popup = window.open('', '_blank');
+    try {
+      const url = await getDownloadURL(ref(storage, path));
+      if (!popup) return toast('Popup blocked. Allow popups, then choose Open again.');
+      popup.opener = null;
+      popup.location.replace(url);
+    } catch (error) {
+      try { popup?.close(); } catch (_) {}
+      console.error('Could not open protected new hire file', error);
+      toast('Could not open this private file. Refresh and try again.');
+    }
+  }
+
   async function uploadNewHireFormFile(inputId, label, folder) {
     const file = document.getElementById(inputId)?.files?.[0];
     if (!file) return null;
+    const fileError = validateNewHireUploadFile(file);
+    if (fileError) throw new Error(`${label}: ${fileError}`);
     const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
     const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
     const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    return { type: label, name: file.name, url, path, uploadedAt: new Date().toISOString(), source: folder };
+    await uploadBytes(storageRef, file, newHireUploadMetadata(file));
+    // Public users may write an intake file but may not read private payroll/cert files.
+    // Save the protected Storage path; office users resolve it only when they open it.
+    return { type: label, name: file.name, path, uploadedAt: new Date().toISOString(), source: folder };
   }
 
   async function saveNewHireCertUploads() {
@@ -12491,6 +12560,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ['newhire-cert-firewatch', 'Fire Watch / G60', 'newhire-cert-firewatch-exp'],
         ['newhire-cert-other', 'Other Certification', '']
       ];
+      const selectedCerts = certInputs.map(([inputId, label]) => ({ label, file: document.getElementById(inputId)?.files?.[0] })).filter(x => x.file);
+      if (!selectedCerts.length) return toast('Choose at least one certification file first.');
+      const invalidCert = selectedCerts.find(x => validateNewHireUploadFile(x.file));
+      if (invalidCert) return toast(`${invalidCert.label}: ${validateNewHireUploadFile(invalidCert.file)}`);
       for (const [inputId, label, expId] of certInputs) {
         const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads');
         if (uploaded) {
@@ -12498,7 +12571,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           uploads.push(uploaded);
         }
       }
-      if (!uploads.length) return toast('Choose at least one certification file first.');
       const notes = document.getElementById('newhire-cert-notes')?.value.trim() || '';
       let existing = [];
       try {
@@ -12519,7 +12591,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Certification uploads saved to intake packet.');
     } catch (e) {
       console.error('Cert upload save failed', e);
-      toast('Could not save certification uploads. Check Firebase public upload permissions.');
+      toast(newHireUploadErrorMessage(e, 'Certification upload'));
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Certification Uploads'; }
     }
@@ -12539,11 +12611,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ['newhire-payroll-w4', 'W-4 / Payroll Form'],
         ['newhire-payroll-extra', 'Additional Payroll / ID Document']
       ];
+      const selectedPayroll = inputs.map(([inputId, label]) => ({ label, file: document.getElementById(inputId)?.files?.[0] })).filter(x => x.file);
+      if (!selectedPayroll.length) return toast('Choose at least one payroll / ID file first.');
+      const invalidPayroll = selectedPayroll.find(x => validateNewHireUploadFile(x.file));
+      if (invalidPayroll) return toast(`${invalidPayroll.label}: ${validateNewHireUploadFile(invalidPayroll.file)}`);
       for (const [inputId, label] of inputs) {
         const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads');
         if (uploaded) uploads.push(uploaded);
       }
-      if (!uploads.length) return toast('Choose at least one payroll / ID file first.');
       const notes = document.getElementById('newhire-payroll-notes')?.value.trim() || '';
       let existing = [];
       try {
@@ -12565,7 +12640,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Payroll / ID uploads saved to intake packet.');
     } catch (e) {
       console.error('Payroll / ID upload save failed', e);
-      toast('Could not save payroll / ID uploads. Check Firebase public upload permissions.');
+      toast(newHireUploadErrorMessage(e, 'Payroll / ID upload'));
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll / ID Uploads'; }
     }
@@ -12688,13 +12763,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
       const uploaded = [];
+      const invalidCert = files.find(file => validateNewHireUploadFile(file));
+      if (invalidCert) return toast(`${invalidCert.name}: ${validateNewHireUploadFile(invalidCert)}`);
       for (const file of files) {
         const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
         const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${safeName}`;
         const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        uploaded.push({ name: file.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake-cert' });
+        await uploadBytes(storageRef, file, newHireUploadMetadata(file));
+        uploaded.push({ name: file.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-cert' });
       }
       const payrollUploads = [];
       const payrollInputs = [
@@ -12703,15 +12779,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ['pub-nh-ss-card', 'Social Security Card'],
         ['pub-nh-payroll-extra', 'Additional Payroll / ID Document']
       ];
+      const invalidPayroll = payrollInputs
+        .map(([inputId, label]) => ({ label, file: document.getElementById(inputId)?.files?.[0] }))
+        .find(item => item.file && validateNewHireUploadFile(item.file));
+      if (invalidPayroll) return toast(`${invalidPayroll.label}: ${validateNewHireUploadFile(invalidPayroll.file)}`);
       for (const [inputId, label] of payrollInputs) {
         const payrollFile = document.getElementById(inputId)?.files?.[0];
         if (!payrollFile) continue;
         const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${payrollFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
         const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${safeName}`;
         const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, payrollFile);
-        const url = await getDownloadURL(storageRef);
-        payrollUploads.push({ type: label, name: payrollFile.name, url, path, uploadedAt: new Date().toISOString(), source: 'public-intake-payroll-id' });
+        await uploadBytes(storageRef, payrollFile, newHireUploadMetadata(payrollFile));
+        payrollUploads.push({ type: label, name: payrollFile.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-payroll-id' });
       }
       let existing = [];
       let existingPayrollIdFiles = [];
@@ -13171,7 +13250,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const statusCell = (done) => done ? 'Complete' : 'Pending';
     const row = (label, value = '') => `<tr><th>${esc(label)}</th><td>${esc(value || '')}</td></tr>`;
     const fileRows = (files = []) => files.length
-      ? files.map(f => `<tr><td>${esc(f.type || 'File')}</td><td><a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded File')}</a></td><td>${esc(f.uploadedAt || '')}</td></tr>`).join('')
+      ? files.map(f => `<tr><td>${esc(f.type || 'File')}</td><td>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded File')}</a>` : esc(f.name || 'Uploaded File')}</td><td>${esc(f.uploadedAt || '')}</td></tr>`).join('')
       : '<tr><td colspan="3">No files uploaded.</td></tr>';
     const formRows = [
       ['Orientation', checklist.orientation, x.orientationForm?.dateSigned || x.orientationForm?.savedAt || ''],
@@ -13378,12 +13457,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
-      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item"> <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Certification File')}</a></div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
+      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">${newHireFileLinkHTML(f, 'Certification File')}</div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
     </div>
     <div class="newhire-upload-list" style="margin-top:12px;">
       <strong>Payroll / ID Uploads</strong>
       <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
-      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item"> ${esc(f.type || 'Payroll / ID Document')}: <a href="${esc(f.url || '#')}" target="_blank" rel="noopener">${esc(f.name || 'Uploaded Document')}</a></div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
+      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">${esc(f.type || 'Payroll / ID Document')}: ${newHireFileLinkHTML(f, 'Uploaded Document')}</div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
     document.getElementById('modal-newhire-review')?.classList.add('open');
