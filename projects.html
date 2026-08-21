@@ -13741,6 +13741,20 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     orientationSession.timer = setInterval(() => {
       if (!orientationSession || orientationSession.activeQuestion >= 0) return;
       const currentTime = orientationCurrentTime();
+      const duration = orientationDuration();
+      // YouTube's ENDED event is not completely reliable for every embedded
+      // video. In particular, the Spanish orientation can reach its exact
+      // duration without emitting ENDED, leaving the final acknowledgement
+      // permanently locked even after all five checks are complete.
+      if (!orientationSession.ended
+          && orientationSession.answers.every(Boolean)
+          && duration > 0
+          && currentTime >= duration - 0.75) {
+        orientationSession.ended = true;
+        updateOrientationProgressUI();
+        saveOrientationLocalProgress();
+        return;
+      }
       const firstPending = orientationSession.answers.findIndex(answered => !answered);
       const maxAllowed = firstPending < 0 ? orientationDuration() : ORIENTATION_CHECKPOINTS[firstPending];
       const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && currentTime >= time);
