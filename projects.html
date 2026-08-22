@@ -12859,7 +12859,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const contactLine = data.foreman ? `Contact: ${data.foreman}` : 'Contact: PAL office / foreman';
     const certLine = data.required ? data.required : 'Please send photos of all required certs/cards requested by PAL.';
     const startLine = data.startDate ? `Expected start date: ${data.startDate}` : '';
-    const link = data.intakeLink || 'Intake link will be added after saving the request.';
+    const fallbackIntakeId = String(data.id || data.intakeId || '').trim();
+    const fallbackLink = fallbackIntakeId
+      ? `${window.location.origin}${window.location.pathname}?intake=${encodeURIComponent(fallbackIntakeId)}`
+      : '';
+    const link = data.intakeLink || fallbackLink || 'Intake link will be added after saving the request.';
     return `PAL New Hire / Pre-Site Intake
 
 ${data.name ? 'Hello ' + data.name + ',' : 'Hello,'}
