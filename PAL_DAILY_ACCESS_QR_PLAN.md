@@ -1,6 +1,8 @@
 # PAL Daily Employee Access — QR Code Plan
 
-Status: Design saved for review. No live application changes have been made yet.
+Status: Initial live implementation published on August 22, 2026.
+
+The live version now includes the approved My Project's Operations Dashboard, the Home/Today/Upcoming/My History/Tools navigation, project/date-bound QR and clickable crew links, employee Daily Safety/Payroll/Toolbox confirmations, automatic master-sheet updates, employee payroll check-in fields, foreman checkout controls, session history, access closing, and secure expiration. Existing PAL foreman forms and AI-assisted tools remain in their original reusable modules and are opened directly from the new dashboard.
 
 ## Objective
 

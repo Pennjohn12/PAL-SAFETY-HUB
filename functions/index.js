@@ -3,6 +3,8 @@ const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineSecret } = require('firebase-functions/params');
 const { Resend } = require('resend');
+const crypto = require('crypto');
+const QRCode = require('qrcode');
 
 admin.initializeApp();
 
@@ -796,4 +798,263 @@ exports.monitorIntegrationHealth = onSchedule({
     }, { merge: true });
     console.error('Integration health alert failed', error);
   }
+});
+
+function validWorkDate(value) {
+  const text = String(value || '').trim();
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : '';
+}
+
+function staffRole(profile = {}, email = '') {
+  const role = String(profile.role || '').trim().toLowerCase();
+  const accessLevel = String(profile.accessLevel || '').trim().toLowerCase();
+  return BOOTSTRAP_ADMIN_EMAILS.has(cleanEmail(email))
+    || profile.admin === true
+    || profile.isAdmin === true
+    || ['admin','administrator','owner','office','project manager','project_manager','foreman','supervisor','field'].includes(role)
+    || ['admin','owner','office','foreman','supervisor','field'].includes(accessLevel);
+}
+
+function officeRole(profile = {}, email = '') {
+  const role = String(profile.role || '').trim().toLowerCase();
+  const accessLevel = String(profile.accessLevel || '').trim().toLowerCase();
+  return BOOTSTRAP_ADMIN_EMAILS.has(cleanEmail(email))
+    || profile.admin === true
+    || profile.isAdmin === true
+    || ['admin','administrator','owner','office','project manager','project_manager'].includes(role)
+    || ['admin','owner','office'].includes(accessLevel);
+}
+
+async function assertDailyAccessProject(auth, projectId) {
+  if (!auth?.uid) throw new HttpsError('unauthenticated', 'Sign in before managing daily crew access.');
+  const cleanProjectId = cleanText(projectId, 160);
+  if (!cleanProjectId) throw new HttpsError('invalid-argument', 'Select a project.');
+  const [profile, projectSnap] = await Promise.all([getUserProfile(auth.uid), db.collection('projects').doc(cleanProjectId).get()]);
+  if (!projectSnap.exists) throw new HttpsError('not-found', 'The selected project was not found.');
+  const email = cleanEmail(auth.token?.email);
+  if (!staffRole(profile, email)) throw new HttpsError('permission-denied', 'This account cannot manage daily crew access.');
+  const project = projectSnap.data() || {};
+  const member = officeRole(profile, email)
+    || project.createdBy === auth.uid
+    || (Array.isArray(project.memberUids) && project.memberUids.includes(auth.uid))
+    || (Array.isArray(project.memberEmails) && project.memberEmails.map(cleanEmail).includes(email))
+    || (Array.isArray(project.foremanUids) && project.foremanUids.includes(auth.uid))
+    || (Array.isArray(project.foremanEmails) && project.foremanEmails.map(cleanEmail).includes(email));
+  if (!member) throw new HttpsError('permission-denied', 'This project is not assigned to your account.');
+  return { profile, project:{ id:projectSnap.id, ...project }, email };
+}
+
+function formDate(form = {}) {
+  return validWorkDate(form.documentData?.date || form.documentData?.reportDate || form.localSubmittedAt?.slice?.(0,10) || '');
+}
+
+function newestMatchingForm(forms, keys, workDate) {
+  return forms.find(form => keys.includes(form.formKey) && formDate(form) === workDate) || null;
+}
+
+function dailyAccessEmployeeSummary(form) {
+  const data = form?.documentData || {};
+  if (['daily-safety-meeting','ai-daily-safety'].includes(form?.formKey)) {
+    return [
+      data.items_discussed ? `Items discussed: ${cleanText(data.items_discussed, 800)}` : '',
+      data.tasks_locations ? `Tasks and locations: ${cleanText(data.tasks_locations, 800)}` : '',
+      data.hazard1 ? `Hazard: ${cleanText(data.hazard1, 500)}` : '',
+      data.control1 ? `Control: ${cleanText(data.control1, 500)}` : '',
+      data.hazard2 ? `Hazard: ${cleanText(data.hazard2, 500)}` : '',
+      data.control2 ? `Control: ${cleanText(data.control2, 500)}` : '',
+      data.inspection_hazards ? `Additional hazards: ${cleanText(data.inspection_hazards, 500)}` : ''
+    ].filter(Boolean).join('\n');
+  }
+  if (form?.formKey === 'weekly-toolbox-talk') {
+    return [data.topic ? `Topic: ${cleanText(data.topic, 1200)}` : '', data.time ? `Meeting time: ${cleanText(data.time, 80)}` : ''].filter(Boolean).join('\n');
+  }
+  return 'Confirm your name, arrival time, union/local number, last four SSN digits, and typed signature. Your entry will be added to today’s master PAL Daily Payroll sheet.';
+}
+
+function dailyAccessExpiration(workDate) {
+  const base = new Date(`${workDate}T12:00:00Z`);
+  if (Number.isNaN(base.getTime())) return new Date(Date.now() + 36 * 60 * 60 * 1000);
+  base.setUTCDate(base.getUTCDate() + 2);
+  return base;
+}
+
+exports.createDailyAccessSession = onCall({ region:'us-central1', cors:true, timeoutSeconds:60, memory:'256MiB' }, async request => {
+  const workDate = validWorkDate(request.data?.workDate);
+  if (!workDate) throw new HttpsError('invalid-argument', 'Choose a valid work date.');
+  const selected = request.data?.forms || {};
+  if (!selected.safety && !selected.payroll && !selected.toolbox) throw new HttpsError('invalid-argument', 'Select at least one crew document.');
+  const access = await assertDailyAccessProject(request.auth, request.data?.projectId);
+  const formSnap = await db.collection('projects').doc(access.project.id).collection('fieldForms').orderBy('submittedAt', 'desc').limit(150).get();
+  const fieldForms = formSnap.docs.map(row => ({ id:row.id, ...row.data() }));
+  const forms = [];
+
+  if (selected.safety) {
+    const safety = newestMatchingForm(fieldForms, ['daily-safety-meeting','ai-daily-safety'], workDate);
+    if (!safety) throw new HttpsError('failed-precondition', 'Fill out and submit the Daily Safety Meeting for this project and date before generating the crew link.');
+    forms.push({ key:'safety', title:safety.formTitle || 'Daily Safety Meeting', shortLabel:'safety meeting', formId:safety.id, formKey:safety.formKey, employeeSummary:dailyAccessEmployeeSummary(safety) || 'Review the foreman’s daily safety meeting before signing.' });
+  }
+
+  if (selected.payroll) {
+    let payroll = newestMatchingForm(fieldForms, ['daily-payroll'], workDate);
+    if (!payroll) {
+      const payrollRef = await db.collection('projects').doc(access.project.id).collection('fieldForms').add({
+        formKey:'daily-payroll', formTitle:'Daily Payroll', projectId:access.project.id, projectName:access.project.name || '', jobNumber:access.project.jobNumber || '',
+        localSubmittedAt:new Date().toISOString(), submittedAt:admin.firestore.FieldValue.serverTimestamp(), submittedBy:request.auth.uid,
+        submittedByName:access.profile.name || request.auth.token?.name || access.email,
+        documentData:{ date:workDate, jobNumber:access.project.jobNumber || '', foreman:access.profile.name || request.auth.token?.name || access.email, weekOf:'', address:access.project.location || '', printedName:'', dateSigned:'', signature:'', rows:[], totals:{ regularHours:0, overtimeHours:0, totalHours:0 }, dailyAccessMaster:true, notes:'Daily Payroll created for employee QR check-in.' }
+      });
+      payroll = { id:payrollRef.id, formKey:'daily-payroll', formTitle:'Daily Payroll', documentData:{ date:workDate } };
+    }
+    forms.push({ key:'payroll', title:'Daily Payroll', shortLabel:'payroll check-in', formId:payroll.id, formKey:'daily-payroll', employeeSummary:dailyAccessEmployeeSummary(payroll) });
+  }
+
+  if (selected.toolbox) {
+    const toolbox = newestMatchingForm(fieldForms, ['weekly-toolbox-talk'], workDate);
+    if (!toolbox) throw new HttpsError('failed-precondition', 'Fill out and submit the Toolbox Talk for this project and date before adding it to the crew link.');
+    forms.push({ key:'toolbox', title:toolbox.formTitle || 'Weekly Toolbox Talk', shortLabel:'toolbox talk', formId:toolbox.id, formKey:toolbox.formKey, employeeSummary:dailyAccessEmployeeSummary(toolbox) || 'Review the toolbox talk before signing.' });
+  }
+
+  const token = crypto.randomBytes(24).toString('hex');
+  const link = `https://pal-safety-hub.web.app/projects.html?crewAccess=${encodeURIComponent(token)}`;
+  const expiresAt = dailyAccessExpiration(workDate);
+  const createdAtText = new Date().toISOString();
+  await db.collection('dailyAccessSessions').doc(token).set({
+    token, projectId:access.project.id, projectName:access.project.name || 'PAL Project', jobNumber:access.project.jobNumber || '', workDate,
+    forms, status:'Active', createdBy:request.auth.uid, createdByName:access.profile.name || request.auth.token?.name || access.email,
+    createdAt:admin.firestore.FieldValue.serverTimestamp(), createdAtText,
+    expiresAt:admin.firestore.Timestamp.fromDate(expiresAt), expiresAtText:expiresAt.toISOString(), submissionCount:0, updatedAt:admin.firestore.FieldValue.serverTimestamp()
+  });
+  const qrDataUrl = await QRCode.toDataURL(link, { errorCorrectionLevel:'M', width:360, margin:2, color:{ dark:'#1b3a5c', light:'#ffffff' } });
+  return { token, link, qrDataUrl, projectName:access.project.name || 'PAL Project', workDate, formTitles:forms.map(form => form.title), expiresAt:expiresAt.toISOString() };
+});
+
+function cleanTime(value) {
+  const text = String(value || '').trim();
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(text) ? text : '';
+}
+
+function confirmedKeys(value) {
+  return [...new Set((Array.isArray(value) ? value : []).map(item => cleanText(item, 40)).filter(Boolean))];
+}
+
+function hoursBetween(timeIn, timeOut) {
+  const [inH,inM] = timeIn.split(':').map(Number);
+  const [outH,outM] = timeOut.split(':').map(Number);
+  const minutes = outH * 60 + outM - (inH * 60 + inM);
+  if (minutes <= 0 || minutes > 18 * 60) throw new HttpsError('invalid-argument', 'Time out must be later than time in.');
+  const total = Math.round((minutes / 60) * 100) / 100;
+  const regular = Math.min(8, total);
+  return { regular, overtime:Math.max(0, Math.round((total - regular) * 100) / 100), total };
+}
+
+exports.submitDailyAccess = onCall({ region:'us-central1', cors:true, timeoutSeconds:60, memory:'256MiB' }, async request => {
+  const token = cleanText(request.data?.token, 120);
+  const employeeName = cleanText(request.data?.employeeName, 120);
+  const timeIn = cleanTime(request.data?.timeIn);
+  const unionLocal = cleanText(request.data?.unionLocal, 80);
+  const last4Ssn = String(request.data?.last4Ssn || '').trim();
+  const signature = cleanText(request.data?.signature, 120);
+  const confirmedFormKeys = confirmedKeys(request.data?.confirmedFormKeys);
+  if (!token || !employeeName || !timeIn || !unionLocal || !/^\d{4}$/.test(last4Ssn) || !signature) throw new HttpsError('invalid-argument', 'Complete every employee check-in field.');
+  const sessionRef = db.collection('dailyAccessSessions').doc(token);
+  const confirmation = crypto.createHash('sha256').update(`${token}|${employeeName.toLowerCase()}|${last4Ssn}`).digest('hex').slice(0, 16);
+  const submissionRef = sessionRef.collection('submissions').doc(confirmation);
+
+  await db.runTransaction(async transaction => {
+    const sessionSnap = await transaction.get(sessionRef);
+    if (!sessionSnap.exists) throw new HttpsError('not-found', 'This crew access link is not available.');
+    const session = sessionSnap.data() || {};
+    if (session.status !== 'Active') throw new HttpsError('failed-precondition', 'This crew access link has been closed.');
+    if (!session.expiresAt?.toDate || session.expiresAt.toDate().getTime() < Date.now()) throw new HttpsError('deadline-exceeded', 'This crew access link has expired.');
+    const requiredKeys = (Array.isArray(session.forms) ? session.forms : []).map(form => form.key);
+    if (requiredKeys.some(key => !confirmedFormKeys.includes(key))) throw new HttpsError('failed-precondition', 'Review and confirm every document before submitting.');
+    const existing = await transaction.get(submissionRef);
+    if (existing.exists) return;
+
+    const formDocs = [];
+    for (const form of session.forms || []) {
+      const ref = db.collection('projects').doc(session.projectId).collection('fieldForms').doc(form.formId);
+      const snap = await transaction.get(ref);
+      if (!snap.exists) throw new HttpsError('failed-precondition', `${form.title || 'A project form'} is no longer available.`);
+      formDocs.push({ form, ref, data:snap.data() || {} });
+    }
+    const nowText = new Date().toISOString();
+    for (const item of formDocs) {
+      const documentData = { ...(item.data.documentData || {}) };
+      if (item.form.key === 'safety') {
+        const rows = Array.isArray(documentData.signIns) ? documentData.signIns.slice() : [];
+        rows.push({ row:rows.length + 1, printName:employeeName, signature, signedAt:nowText, source:'daily-access', dailyAccessSubmissionId:confirmation });
+        documentData.signIns = rows;
+      }
+      if (item.form.key === 'toolbox') {
+        const rows = Array.isArray(documentData.rows) ? documentData.rows.slice() : [];
+        rows.push({ row:rows.length + 1, printName:employeeName, signature, signedAt:nowText, source:'daily-access', dailyAccessSubmissionId:confirmation });
+        documentData.rows = rows;
+        documentData.personnelPresent = String(rows.filter(row => row.printName || row.signature).length);
+      }
+      if (item.form.key === 'payroll') {
+        const rows = Array.isArray(documentData.rows) ? documentData.rows.slice() : [];
+        rows.push({ row:rows.length + 1, workerName:employeeName, luNumber:unionLocal, ssnLast4:last4Ssn, role:'', timeIn, timeOut:'', regularHours:'', overtimeHours:'', totalHours:'', signature, source:'daily-access', dailyAccessSubmissionId:confirmation });
+        documentData.rows = rows;
+      }
+      transaction.update(item.ref, { documentData, updatedAt:admin.firestore.FieldValue.serverTimestamp(), updatedBy:'daily-access', updatedByName:employeeName });
+    }
+    transaction.create(submissionRef, {
+      confirmation, employeeName, timeIn, timeOut:'', unionLocal, last4Ssn, signature, confirmedFormKeys,
+      projectId:session.projectId, projectName:session.projectName || '', workDate:session.workDate || '',
+      submittedAt:admin.firestore.FieldValue.serverTimestamp(), submittedAtText:nowText, status:'Checked In', totalHours:'', regularHours:'', overtimeHours:''
+    });
+    transaction.update(sessionRef, { submissionCount:admin.firestore.FieldValue.increment(1), updatedAt:admin.firestore.FieldValue.serverTimestamp() });
+  });
+  return { confirmation, status:'saved' };
+});
+
+exports.updateDailyAccessSubmission = onCall({ region:'us-central1', cors:true, timeoutSeconds:60, memory:'256MiB' }, async request => {
+  const token = cleanText(request.data?.token, 120);
+  const submissionId = cleanText(request.data?.submissionId, 120);
+  const timeIn = cleanTime(request.data?.timeIn);
+  const timeOut = cleanTime(request.data?.timeOut);
+  if (!token || !submissionId || !timeIn || !timeOut) throw new HttpsError('invalid-argument', 'Enter valid time in and time out values.');
+  const sessionRef = db.collection('dailyAccessSessions').doc(token);
+  const sessionSnap = await sessionRef.get();
+  if (!sessionSnap.exists) throw new HttpsError('not-found', 'Daily access session not found.');
+  const session = sessionSnap.data() || {};
+  await assertDailyAccessProject(request.auth, session.projectId);
+  const submissionRef = sessionRef.collection('submissions').doc(submissionId);
+  const hours = hoursBetween(timeIn, timeOut);
+  const payroll = (session.forms || []).find(form => form.key === 'payroll');
+  await db.runTransaction(async transaction => {
+    const submissionSnap = await transaction.get(submissionRef);
+    if (!submissionSnap.exists) throw new HttpsError('not-found', 'Employee check-in not found.');
+    let payrollRef = null;
+    let payrollSnap = null;
+    if (payroll?.formId) {
+      payrollRef = db.collection('projects').doc(session.projectId).collection('fieldForms').doc(payroll.formId);
+      payrollSnap = await transaction.get(payrollRef);
+    }
+    transaction.update(submissionRef, { timeIn, timeOut, regularHours:hours.regular.toFixed(2), overtimeHours:hours.overtime.toFixed(2), totalHours:hours.total.toFixed(2), status:'Checked Out', updatedAt:admin.firestore.FieldValue.serverTimestamp() });
+    if (payrollRef && payrollSnap?.exists) {
+      const form = payrollSnap.data() || {};
+      const documentData = { ...(form.documentData || {}) };
+      const rows = Array.isArray(documentData.rows) ? documentData.rows.slice() : [];
+      const index = rows.findIndex(row => row.dailyAccessSubmissionId === submissionId);
+      if (index >= 0) rows[index] = { ...rows[index], timeIn, timeOut, regularHours:hours.regular.toFixed(2), overtimeHours:hours.overtime.toFixed(2), totalHours:hours.total.toFixed(2) };
+      documentData.rows = rows.map((row,index) => ({ ...row, row:index + 1 }));
+      documentData.totals = rows.reduce((totals,row) => ({ regularHours:totals.regularHours + Number(row.regularHours || 0), overtimeHours:totals.overtimeHours + Number(row.overtimeHours || 0), totalHours:totals.totalHours + Number(row.totalHours || 0) }), { regularHours:0, overtimeHours:0, totalHours:0 });
+      transaction.update(payrollRef, { documentData, updatedAt:admin.firestore.FieldValue.serverTimestamp(), updatedBy:request.auth.uid, updatedByName:request.auth.token?.name || request.auth.token?.email || '' });
+    }
+  });
+  return { status:'updated', ...hours };
+});
+
+exports.closeDailyAccessSession = onCall({ region:'us-central1', cors:true, timeoutSeconds:30, memory:'256MiB' }, async request => {
+  const token = cleanText(request.data?.token, 120);
+  if (!token) throw new HttpsError('invalid-argument', 'Daily access token is required.');
+  const ref = db.collection('dailyAccessSessions').doc(token);
+  const snap = await ref.get();
+  if (!snap.exists) throw new HttpsError('not-found', 'Daily access session not found.');
+  const session = snap.data() || {};
+  await assertDailyAccessProject(request.auth, session.projectId);
+  await ref.update({ status:'Closed', closedAt:admin.firestore.FieldValue.serverTimestamp(), closedBy:request.auth.uid, updatedAt:admin.firestore.FieldValue.serverTimestamp() });
+  return { status:'Closed' };
 });

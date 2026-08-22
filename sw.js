@@ -1,7 +1,7 @@
 // PAL Safety Hub Service Worker
 // Keeps the app usable offline, while always preferring fresh pages when online.
 
-const CACHE_NAME = 'pal-safety-hub-v2026-07-22-1';
+const CACHE_NAME = 'pal-safety-hub-v2026-08-22-operations-dashboard';
 const ASSETS = [
   './',
   './index.html',
