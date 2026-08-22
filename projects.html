@@ -13599,14 +13599,14 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return `pal-orientation:${currentNewHireOrientationId || 'unknown'}:${ORIENTATION_VERSION}:${language}`;
   }
 
-  function saveOrientationLocalProgress() {
+  function saveOrientationLocalProgress(lastTimeOverride = null) {
     if (!orientationSession || !currentNewHireOrientationId) return;
     try {
       localStorage.setItem(orientationProgressKey(), JSON.stringify({
         answers: orientationSession.answers,
         quizAnswered: orientationSession.quizAnswered,
         attempts: orientationSession.attempts,
-        lastTime: orientationCurrentTime(),
+        lastTime: Number.isFinite(lastTimeOverride) ? lastTimeOverride : orientationCurrentTime(),
         videoCompleted: orientationSession.videoCompleted,
         quizPassed: orientationSession.quizPassed,
         savedAt: Date.now()
@@ -13682,7 +13682,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     orientationSession.player?.seekTo?.(0, true);
     orientationSession.player?.playVideo?.();
     updateOrientationProgressUI();
-    saveOrientationLocalProgress();
+    saveOrientationLocalProgress(0);
   }
 
   function answerOrientationCheckpoint(answerIndex) {
@@ -13765,10 +13765,21 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       ended: !!(sameSavedLanguage && form.orientationVideoCompleted) || !!local.videoCompleted,
       lastSavedSecond: -1
     };
+    // If the page was closed on a failed final score, require the promised
+    // full rewatch on reopen instead of restoring a completed-video timestamp.
+    if (orientationSession.videoCompleted
+        && orientationSession.quizAnswered.every(Boolean)
+        && !orientationSession.quizPassed) {
+      orientationSession.answers.fill(false);
+      orientationSession.quizAnswered.fill(false);
+      orientationSession.videoCompleted = false;
+      orientationSession.ended = false;
+      local.lastTime = 0;
+    }
     const quiz = document.getElementById('nh-orientation-quiz');
     if (quiz) quiz.classList.remove('active');
     const ack = document.getElementById('nh-orient-module-complete');
-    if (ack) ack.checked = !!form.orientationModuleReviewed;
+    if (ack) ack.checked = !!(sameSavedLanguage && form.orientationModuleReviewed);
     await loadOrientationYouTubeApi();
     orientationSession.player = new YT.Player(videoHost, {
       videoId,
