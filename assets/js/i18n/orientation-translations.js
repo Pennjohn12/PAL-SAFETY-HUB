@@ -1,7 +1,7 @@
 ﻿export const PAL_ORIENTATION_TRANSLATIONS = {
   "en": {
     "moduleTitle": "PAL Employee Safety Orientation",
-    "moduleCopy": "Watch the complete orientation video, then answer all five quiz questions. You need at least 3 correct answers to continue.",
+    "moduleCopy": "Watch the complete orientation video, then answer all five quiz questions. You need at least 3 correct answers to continue. A score of 0, 1, or 2 requires you to watch the complete video again before another attempt.",
     "completeLabel": "Video complete",
     "ack": "I watched the complete PAL orientation, answered all five knowledge checks, and understand that I must stop and ask for help whenever I am not trained, authorized, equipped, or certain the work can be performed safely.",
     "reviewTitle": "Employee Review",
@@ -74,7 +74,7 @@
   },
   "es": {
     "moduleTitle": "Orientación de Seguridad para Empleados de PAL",
-    "moduleCopy": "Mire el video completo de orientación y luego conteste las cinco preguntas. Necesita por lo menos 3 respuestas correctas para continuar.",
+    "moduleCopy": "Mire el video completo de orientación y luego conteste las cinco preguntas. Necesita por lo menos 3 respuestas correctas para continuar. Si obtiene 0, 1 o 2 respuestas correctas, deberá volver a mirar el video completo antes de intentarlo otra vez.",
     "completeLabel": "Video completo",
     "ack": "Vi la orientación completa de PAL, contesté correctamente las cinco preguntas de seguridad y entiendo que debo detenerme y pedir ayuda cuando no esté capacitado, autorizado, equipado o seguro de que el trabajo se puede realizar de manera segura.",
     "reviewTitle": "Revisión del Empleado",
