@@ -1047,7 +1047,6 @@
 }
 
 /* MY_PROJECT_OPERATIONS_DASHBOARD_2026_08_22 */
-#view-projects.operations-mode #main-dashboard-tabs { display:none; }
 .operations-shell { display:grid; gap:22px; }
 .operations-nav {
   display:flex; flex-wrap:wrap; gap:9px; padding:12px;
