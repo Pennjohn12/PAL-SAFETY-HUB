@@ -3580,9 +3580,9 @@
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
       <button class="btn-outline" onclick="printNewHireFullPacket()">Print Full Packet</button>
       <button class="btn-outline" onclick="downloadNewHireFullPacket()">Save Full Packet</button>
-      <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
-      <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
-      <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
+      <button class="btn-secondary" onclick="setCurrentNewHireStatus('Missing Info')">Mark Missing Info</button>
+      <button class="btn-secondary" onclick="setCurrentNewHireStatus('Ready for Review')">Ready for Review</button>
+      <button class="btn-save" onclick="setCurrentNewHireStatus('Good To Work')">Good To Work</button>
     </div>
   </div>
 </div>
@@ -4125,6 +4125,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.downloadNewHireFullPacket = downloadNewHireFullPacket;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
+  window.setCurrentNewHireStatus = setCurrentNewHireStatus;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.answerOrientationCheckpoint = answerOrientationCheckpoint;
@@ -14427,6 +14428,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }
   }
 
+
+  async function setCurrentNewHireStatus(status) {
+    if (!currentNewHireReviewId) return toast('Open an intake request first.');
+    return setNewHireStatus(currentNewHireReviewId, status);
+  }
 
   async function setNewHireStatus(id, status) {
     if (!requireCloudConnection('update the intake status')) return;
