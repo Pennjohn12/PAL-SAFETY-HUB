@@ -1471,6 +1471,25 @@
     .public-newhire-start-hero h2 { color:var(--navy); margin:0 0 6px; }
     .public-newhire-start-hero p { color:var(--muted); line-height:1.5; margin:0; }
     .public-newhire-start-hero .btn-save { width:100%; min-height:58px; margin-top:14px; font-size:17px; }
+    .newhire-account-gate { max-width:620px; margin:0 auto 18px; background:#fff; border:1px solid var(--line); border-top:6px solid var(--green); border-radius:18px; padding:24px; box-shadow:0 10px 30px rgba(16,24,40,.10); }
+    .newhire-account-gate h2 { color:var(--navy); margin:0 0 8px; font-size:25px; }
+    .newhire-account-gate .account-lead { color:var(--muted); line-height:1.55; margin:0 0 18px; }
+    .newhire-account-benefits { display:grid; gap:8px; margin:0 0 20px; }
+    .newhire-account-benefits div { display:flex; gap:9px; align-items:flex-start; color:#344054; font-size:14px; line-height:1.4; }
+    .newhire-account-benefits span { color:var(--green); font-weight:900; }
+    .newhire-account-tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; padding:5px; border-radius:12px; background:#f2f4f7; }
+    .newhire-account-tabs button { border:0; border-radius:9px; padding:11px 8px; font-weight:800; color:#475467; background:transparent; cursor:pointer; }
+    .newhire-account-tabs button.active { color:var(--navy); background:#fff; box-shadow:0 2px 8px rgba(16,24,40,.10); }
+    .newhire-account-panel { display:none; }
+    .newhire-account-panel.active { display:block; }
+    .newhire-account-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .newhire-account-grid .span-2 { grid-column:1 / -1; }
+    .newhire-account-actions .btn-save { width:100%; min-height:54px; font-size:16px; margin-top:8px; }
+    .newhire-account-error { display:none; margin:12px 0 0; padding:11px 12px; border:1px solid #fda29b; border-radius:10px; background:#fffbfa; color:#b42318; font-size:14px; line-height:1.4; }
+    .newhire-account-error.show { display:block; }
+    .newhire-account-help { margin-top:14px; text-align:center; color:var(--muted); font-size:13px; line-height:1.45; }
+    .newhire-account-help button { border:0; background:none; color:var(--navy); font-weight:800; text-decoration:underline; cursor:pointer; }
+    .newhire-account-signed-in { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:12px 14px; margin-bottom:16px; border:1px solid #a6f4c5; border-radius:12px; background:#ecfdf3; color:#05603a; }
     .public-newhire-start-meta { text-align:center; color:var(--muted); font-size:12px; font-weight:800; margin-top:10px; }
     .newhire-required-list { display:grid; gap:8px; margin:12px 0; }
     .newhire-required-list div { border:1px solid var(--line); border-left:4px solid var(--green); border-radius:10px; padding:10px 12px; background:#f8fafc; font-size:13px; line-height:1.45; }
@@ -1482,7 +1501,7 @@
     .newhire-upload-guidance .box { border:1px solid var(--line); border-radius:12px; padding:12px; background:#f8fafc; }
     .newhire-upload-guidance h4 { color:var(--navy); margin-bottom:6px; }
     .newhire-upload-guidance p { color:var(--muted); font-size:13px; line-height:1.45; }
-    @media(max-width:820px){ .newhire-wizard-shell { grid-template-columns:1fr; } .newhire-wizard-rail { position:static; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .newhire-upload-guidance { grid-template-columns:1fr; } }
+    @media(max-width:820px){ .newhire-wizard-shell { grid-template-columns:1fr; } .newhire-wizard-rail { position:static; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .newhire-upload-guidance { grid-template-columns:1fr; } .newhire-account-grid { grid-template-columns:1fr; } .newhire-account-grid .span-2 { grid-column:auto; } .newhire-account-gate { padding:20px 16px; } }
     @media(max-width:560px){ .newhire-wizard-rail { grid-template-columns:1fr; } .newhire-step-actions, .newhire-step-actions .right { display:grid; grid-template-columns:1fr; width:100%; } .newhire-step-actions button { width:100%; min-height:44px; } }
     .doc-review-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; }
     .doc-review-box h4 { color:var(--navy); margin-bottom:8px; }
@@ -1532,7 +1551,7 @@
       var status = document.getElementById('public-intake-status-card');
       if (isPublicNewHire && status && !status.dataset.publicHardFix) {
         status.dataset.publicHardFix = '1';
-        status.innerHTML = '<h3>PAL New Hire Packet</h3><p class="helper-text">Public employee packet opened. No office login required.</p>';
+        status.innerHTML = '<h3>PAL New Hire Packet</h3><p class="helper-text">Create or sign in to your employee account to securely open this packet.</p>';
       }
       var ticketStatus = document.getElementById('public-ticket-status-card');
       if (isPublicTicket && ticketStatus && !ticketStatus.dataset.publicHardFix) {
@@ -1661,9 +1680,7 @@
 
 </div>
 
-<!-- 
-     PUBLIC NEW HIRE INTAKE / FORM LAUNCHER - NO LOGIN REQUIRED
- -->
+<!-- EMPLOYEE NEW HIRE INTAKE / FORM LAUNCHER -->
 <div class="view" id="view-public-newhire-intake">
   <div class="header">
     <a class="brand" href="index.html">
@@ -1677,15 +1694,55 @@
   <div class="page-wrap">
     <div class="project-header-card">
       <h2>New Hire / Pre-Site Packet</h2>
-      <div class="meta">Employee access only - no login required.</div>
+      <div class="meta">Employee account required to protect and save your information.</div>
       <div class="meta">Foreman / office dashboard stays protected behind sign-in.</div>
     </div>
 
-    <div class="public-newhire-start-hero" id="public-newhire-start-hero">
+    <div class="newhire-account-gate" id="public-newhire-account-gate">
+      <h2>Create Your PAL Onboarding Account</h2>
+      <p class="account-lead">This account is required before you begin. It saves your progress and protects your private forms and documents.</p>
+      <div class="newhire-account-benefits">
+        <div><span>✓</span><div>Stop and return later without starting over.</div></div>
+        <div><span>✓</span><div>Continue from another phone or computer using the same email and password.</div></div>
+        <div><span>✓</span><div>This employee account only opens your own onboarding packet.</div></div>
+      </div>
+      <div class="newhire-account-tabs">
+        <button type="button" id="newhire-account-create-tab" class="active" onclick="showPublicNewHireAccountMode('create')">Create Account</button>
+        <button type="button" id="newhire-account-signin-tab" onclick="showPublicNewHireAccountMode('signin')">Already Have Account</button>
+      </div>
+      <div class="newhire-account-panel active" id="newhire-account-create-panel">
+        <div class="newhire-account-grid">
+          <div class="field"><label>Email</label><input id="newhire-account-email" type="email" autocomplete="email" placeholder="Your personal email" /></div>
+          <div class="field"><label>Confirm Email</label><input id="newhire-account-email-confirm" type="email" autocomplete="email" placeholder="Type email again" /></div>
+          <div class="field"><label>Password</label><input id="newhire-account-password" type="password" autocomplete="new-password" placeholder="At least 6 characters" /></div>
+          <div class="field"><label>Confirm Password</label><input id="newhire-account-password-confirm" type="password" autocomplete="new-password" placeholder="Type password again" /></div>
+          <label class="span-2" style="display:flex;gap:8px;align-items:center;font-size:14px;"><input id="newhire-account-show-password" type="checkbox" onchange="togglePublicNewHirePasswords()" /> Show password</label>
+        </div>
+        <div class="newhire-account-actions"><button class="btn-save" id="newhire-account-create-btn" type="button" onclick="createPublicNewHireAccount()">Create Account & Start Orientation</button></div>
+      </div>
+      <div class="newhire-account-panel" id="newhire-account-signin-panel">
+        <div class="newhire-account-grid">
+          <div class="field"><label>Email</label><input id="newhire-signin-email" type="email" autocomplete="email" placeholder="Your account email" /></div>
+          <div class="field"><label>Password</label><input id="newhire-signin-password" type="password" autocomplete="current-password" placeholder="Your password" /></div>
+          <label class="span-2" style="display:flex;gap:8px;align-items:center;font-size:14px;"><input id="newhire-signin-show-password" type="checkbox" onchange="togglePublicNewHirePasswords()" /> Show password</label>
+        </div>
+        <div class="newhire-account-actions"><button class="btn-save" id="newhire-account-signin-btn" type="button" onclick="signInPublicNewHireAccount()">Sign In & Resume</button></div>
+        <div class="newhire-account-help"><button type="button" onclick="resetPublicNewHirePassword()">Forgot Password?</button></div>
+      </div>
+      <div class="newhire-account-error" id="newhire-account-error"></div>
+      <div class="newhire-account-help">Need help? Contact your PAL supervisor or the PAL office.</div>
+    </div>
+
+    <div class="newhire-account-signed-in" id="public-newhire-account-signed-in" style="display:none;">
+      <div><strong>Progress is protected and saving to:</strong> <span id="public-newhire-account-email-display"></span></div>
+      <button class="btn-secondary" type="button" onclick="signOutPublicNewHireAccount()">Sign Out</button>
+    </div>
+
+    <div class="public-newhire-start-hero" id="public-newhire-start-hero" style="display:none;">
       <h2>New Hire Orientation</h2>
       <p>Complete your required PAL safety orientation and onboarding packet. We will guide you through each step.</p>
       <button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Start Orientation</button>
-      <div class="public-newhire-start-meta">No login required • Your progress saves as you continue</div>
+      <div class="public-newhire-start-meta">Your account saves progress as you continue</div>
     </div>
 
     <div class="detail-card" id="public-intake-status-card">
@@ -3819,10 +3876,10 @@
      FIREBASE + APP LOGIC
  -->
 <script type="module">
-  import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, writeBatch, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
+  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-22-onboarding-account";
   import {
     PAL_ADMIN_EMAILS,
     PAL_PUBLIC_PROJECTS_URL,
@@ -3944,9 +4001,9 @@
   const publicSafetySignProjectId = publicTicketSignParams.get('safetyProjectId') || '';
   const publicSafetySignFormId = publicTicketSignParams.get('safetyFormId') || '';
   const publicSafetySignToken = publicTicketSignParams.get('safetyToken') || '';
-// PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
   const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
+const publicNewHireNeedsResumeLookup = !!((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new'));
 if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) {
   publicNewHireIntakeId = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
   const palPublicUrl = new URL(window.location.href);
@@ -3956,6 +4013,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 }
   let publicNewHireIntakeLoaded = false;
   let currentPublicNewHireIntake = null;
+  let publicNewHireAccountReady = false;
   let publicTicketSignatureLoaded = false;
   let currentPublicTicketSignature = null;
   let publicSafetySignatureLoaded = false;
@@ -3968,6 +4026,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   //  Expose functions to global scope 
   window.setAppLanguage = setAppLanguage;
+  window.showPublicNewHireAccountMode = showPublicNewHireAccountMode;
+  window.togglePublicNewHirePasswords = togglePublicNewHirePasswords;
+  window.createPublicNewHireAccount = createPublicNewHireAccount;
+  window.signInPublicNewHireAccount = signInPublicNewHireAccount;
+  window.resetPublicNewHirePassword = resetPublicNewHirePassword;
+  window.signOutPublicNewHireAccount = signOutPublicNewHireAccount;
   window.doLogin = doLogin;
   window.doRegister = doRegister;
   window.doLogout = doLogout;
@@ -4317,10 +4381,223 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   initializeAppLanguage();
 
+  function showPublicNewHireAccountMode(mode = 'create') {
+    const createMode = mode !== 'signin';
+    document.getElementById('newhire-account-create-tab')?.classList.toggle('active', createMode);
+    document.getElementById('newhire-account-signin-tab')?.classList.toggle('active', !createMode);
+    document.getElementById('newhire-account-create-panel')?.classList.toggle('active', createMode);
+    document.getElementById('newhire-account-signin-panel')?.classList.toggle('active', !createMode);
+    setPublicNewHireAccountError('');
+  }
+
+  function togglePublicNewHirePasswords() {
+    const showCreate = !!document.getElementById('newhire-account-show-password')?.checked;
+    const showSignIn = !!document.getElementById('newhire-signin-show-password')?.checked;
+    ['newhire-account-password', 'newhire-account-password-confirm'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.type = showCreate ? 'text' : 'password';
+    });
+    const signInPassword = document.getElementById('newhire-signin-password');
+    if (signInPassword) signInPassword.type = showSignIn ? 'text' : 'password';
+  }
+
+  function setPublicNewHireAccountError(message = '') {
+    const el = document.getElementById('newhire-account-error');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.toggle('show', !!message);
+  }
+
+  function publicNewHireAccountError(error) {
+    const code = error?.code || '';
+    if (code === 'auth/email-already-in-use') return 'An account already uses this email. Select “Already Have Account” and sign in.';
+    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return 'The email or password is incorrect. Try again or use Forgot Password.';
+    if (code === 'auth/invalid-email') return 'Enter a valid email address.';
+    if (code === 'auth/weak-password') return 'Choose a password with at least 6 characters.';
+    if (code === 'auth/too-many-requests') return 'Too many attempts. Wait a few minutes, then try again.';
+    if (code === 'permission-denied' || code === 'firestore/permission-denied') return 'This onboarding packet is already connected to another account. Sign out and use the original account, or contact the PAL office.';
+    return error?.message ? `We could not open your onboarding account. ${error.message}` : 'We could not open your onboarding account. Check your connection and try again.';
+  }
+
+  function setPublicNewHireAccountUi(ready, user = currentUser) {
+    publicNewHireAccountReady = !!ready;
+    const gate = document.getElementById('public-newhire-account-gate');
+    const signedIn = document.getElementById('public-newhire-account-signed-in');
+    const status = document.getElementById('public-intake-status-card');
+    const form = document.getElementById('public-intake-form-card');
+    const hero = document.getElementById('public-newhire-start-hero');
+    if (gate) gate.style.display = ready ? 'none' : '';
+    if (signedIn) signedIn.style.display = ready ? 'flex' : 'none';
+    const emailDisplay = document.getElementById('public-newhire-account-email-display');
+    if (emailDisplay) emailDisplay.textContent = user?.email || 'your PAL account';
+    if (!ready) {
+      if (status) status.style.display = 'none';
+      if (form) form.style.display = 'none';
+      if (hero) hero.style.display = 'none';
+    } else if (status) {
+      status.style.display = 'block';
+      status.innerHTML = '<h3>Opening Your Saved Packet...</h3><p class="helper-text">Please wait while PAL Safety Hub securely loads your progress.</p>';
+    }
+  }
+
+  function setPublicNewHireAccountBusy(kind, busy) {
+    const id = kind === 'signin' ? 'newhire-account-signin-btn' : 'newhire-account-create-btn';
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = busy;
+    btn.textContent = busy
+      ? (kind === 'signin' ? 'Signing In...' : 'Creating Account...')
+      : (kind === 'signin' ? 'Sign In & Resume' : 'Create Account & Start Orientation');
+  }
+
+  async function connectPublicNewHireAccount(user, profile = null) {
+    currentUser = user;
+    currentUserProfile = profile || await loadUserProfile(user);
+
+    if (publicNewHireNeedsResumeLookup && currentUserProfile?.onboardingIntakeId) {
+      publicNewHireIntakeId = currentUserProfile.onboardingIntakeId;
+      const resumeUrl = new URL(window.location.href);
+      resumeUrl.searchParams.set('newhire', publicNewHireIntakeId);
+      resumeUrl.searchParams.delete('noLogin');
+      window.history.replaceState({}, '', resumeUrl.toString());
+    }
+
+    if (!publicNewHireIntakeId) throw new Error('This link is missing its PAL intake number. Ask PAL for a new orientation link.');
+
+    if (!isOfficeRole()) {
+      const intakeRef = doc(db, 'newHireIntakes', publicNewHireIntakeId);
+      const ownerPayload = {
+        ownerUid: user.uid,
+        ownerEmail: cleanAccessText(user.email || ''),
+        ownerLastSignedInAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      try {
+        await updateDoc(intakeRef, ownerPayload);
+      } catch (error) {
+        if (error?.code !== 'not-found' && error?.code !== 'firestore/not-found') throw error;
+        await setDoc(intakeRef, {
+          ...ownerPayload,
+          status: 'Pending',
+          source: 'employee-account-intake',
+          createdAt: serverTimestamp()
+        });
+      }
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: cleanAccessText(user.email || ''),
+        name: currentUserProfile?.name || user.displayName || user.email,
+        role: currentUserProfile?.role || 'employee',
+        accessLevel: currentUserProfile?.accessLevel || 'employee',
+        onboardingIntakeId: publicNewHireIntakeId,
+        onboardingUpdatedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      currentUserProfile = { ...currentUserProfile, onboardingIntakeId: publicNewHireIntakeId };
+    }
+
+    publicNewHireIntakeLoaded = false;
+    setPublicNewHireAccountUi(true, user);
+    await loadPublicNewHireIntake();
+  }
+
+  async function initializePublicNewHireAccount(user) {
+    if (!user) {
+      currentUser = null;
+      currentUserProfile = null;
+      currentPublicNewHireIntake = null;
+      publicNewHireIntakeLoaded = false;
+      setPublicNewHireAccountUi(false, null);
+      return;
+    }
+    try {
+      setPublicNewHireAccountError('');
+      await connectPublicNewHireAccount(user);
+    } catch (error) {
+      console.error('New hire account could not connect to intake', error);
+      setPublicNewHireAccountUi(false, user);
+      showPublicNewHireAccountMode('signin');
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    }
+  }
+
+  async function createPublicNewHireAccount() {
+    const email = cleanAccessText(document.getElementById('newhire-account-email')?.value || '');
+    const confirmEmail = cleanAccessText(document.getElementById('newhire-account-email-confirm')?.value || '');
+    const password = document.getElementById('newhire-account-password')?.value || '';
+    const confirmPassword = document.getElementById('newhire-account-password-confirm')?.value || '';
+    setPublicNewHireAccountError('');
+    if (!email || !confirmEmail || !password || !confirmPassword) return setPublicNewHireAccountError('Complete all four boxes before continuing.');
+    if (email !== confirmEmail) return setPublicNewHireAccountError('The email addresses do not match. Check both email boxes.');
+    if (password.length < 6) return setPublicNewHireAccountError('Your password must have at least 6 characters.');
+    if (password !== confirmPassword) return setPublicNewHireAccountError('The passwords do not match. Check both password boxes.');
+    setPublicNewHireAccountBusy('create', true);
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, 'users', credential.user.uid), {
+        uid: credential.user.uid,
+        email,
+        name: email,
+        role: 'employee',
+        accessLevel: 'employee',
+        admin: false,
+        disabled: false,
+        onboardingIntakeId: publicNewHireIntakeId,
+        createdAt: serverTimestamp(),
+        onboardingUpdatedAt: serverTimestamp()
+      });
+      await connectPublicNewHireAccount(credential.user);
+      toast('Account created. Your progress will save automatically.');
+    } catch (error) {
+      console.error('New hire account create failed', error);
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    } finally {
+      setPublicNewHireAccountBusy('create', false);
+    }
+  }
+
+  async function signInPublicNewHireAccount() {
+    const email = cleanAccessText(document.getElementById('newhire-signin-email')?.value || '');
+    const password = document.getElementById('newhire-signin-password')?.value || '';
+    setPublicNewHireAccountError('');
+    if (!email || !password) return setPublicNewHireAccountError('Enter your email and password.');
+    setPublicNewHireAccountBusy('signin', true);
+    try {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      await connectPublicNewHireAccount(credential.user);
+      toast('Signed in. Your saved progress is ready.');
+    } catch (error) {
+      console.error('New hire sign in failed', error);
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    } finally {
+      setPublicNewHireAccountBusy('signin', false);
+    }
+  }
+
+  async function resetPublicNewHirePassword() {
+    const email = cleanAccessText(document.getElementById('newhire-signin-email')?.value || '');
+    setPublicNewHireAccountError('');
+    if (!email) return setPublicNewHireAccountError('Enter your email above, then select Forgot Password again.');
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setPublicNewHireAccountError('');
+      toast('Password reset email sent. Check your inbox and spam folder.');
+    } catch (error) {
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    }
+  }
+
+  async function signOutPublicNewHireAccount() {
+    publicNewHireAccountReady = false;
+    currentPublicNewHireIntake = null;
+    publicNewHireIntakeLoaded = false;
+    await signOut(auth);
+    showPublicNewHireAccountMode('signin');
+    setPublicNewHireAccountUi(false, null);
+  }
+
   //  Auth state 
   onAuthStateChanged(auth, async user => {
-    // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
-    // If an employee opens any public new-hire route, bypass the foreman/office login wall.
+    // Guest ticket/safety signature routes stay link-based. New-hire packets require an account.
     const palPublicParams = new URLSearchParams(window.location.search);
     if (publicSafetySignProjectId && publicSafetySignFormId && publicSafetySignToken) {
       currentUser = user || null;
@@ -4340,7 +4617,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }
       currentUser = user || null;
       showView('view-public-newhire-intake');
-      if (!publicNewHireIntakeLoaded) loadPublicNewHireIntake();
+      await initializePublicNewHireAccount(user || null);
       return;
     }
     if (user) {
@@ -12206,7 +12483,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   // PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15
   async function loadPublicNewHireIntake() {
-    if (!publicNewHireIntakeId) return;
+    if (!publicNewHireIntakeId || !publicNewHireAccountReady || !currentUser) return;
     publicNewHireIntakeLoaded = true;
     const statusCard = document.getElementById('public-intake-status-card');
     const formCard = document.getElementById('public-intake-form-card');
@@ -12273,6 +12550,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ? 'Payroll / ID Uploads: Completed — all 3 required documents uploaded'
         : `Payroll / ID Uploads: ${payrollStatus.completedCount}/3 required documents — missing ${payrollStatus.missingLabels.join(', ')}`;
       updatePublicPacketChecklist(x);
+      const accountEmailInput = document.getElementById('pub-nh-email');
+      if (accountEmailInput && !isOfficeRole()) {
+        accountEmailInput.value = currentUser.email || accountEmailInput.value;
+        accountEmailInput.readOnly = true;
+        accountEmailInput.title = 'This email is connected to your PAL onboarding account.';
+      }
       showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15

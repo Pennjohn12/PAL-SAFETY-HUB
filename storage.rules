@@ -55,6 +55,16 @@ service firebase.storage {
       );
     }
 
+    function intakeData(intakeId) {
+      return firestore.get(/databases/(default)/documents/newHireIntakes/$(intakeId)).data;
+    }
+
+    function isIntakeOwner(intakeId) {
+      return signedIn()
+        && intakeData(intakeId).ownerUid is string
+        && intakeData(intakeId).ownerUid == request.auth.uid;
+    }
+
     function projectData(projectId) {
       return firestore.get(/databases/(default)/documents/projects/$(projectId)).data;
     }
@@ -100,18 +110,17 @@ service firebase.storage {
     }
 
     match /newHireIntakes/{intakeId}/{folder}/{fileName} {
-      // Public intake upload links use unguessable intake IDs.
-      allow read: if isOffice();
+      allow read: if isOffice() || isIntakeOwner(intakeId);
       allow write: if (
         isOffice() ||
-        folder in [
+        (isIntakeOwner(intakeId) && folder in [
           'publicUploads',
           'certUploads',
           'payrollIdUploads',
           'orientation',
           'drugConsent',
           'safetyAgreement'
-        ]
+        ])
       ) && isSafeUpload(25 * 1024 * 1024);
       allow delete: if false;
     }
