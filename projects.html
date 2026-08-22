@@ -3819,7 +3819,7 @@
  -->
 <script type="module">
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, writeBatch, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
   import {
@@ -9960,9 +9960,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records...</p>';
     try {
       // Read all employees and sort in the browser so every saved employee shows.
-      const snap = await getDocs(collection(db, 'employees'));
+      let snap = await getDocs(collection(db, 'employees'));
+      let employeeRows = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      const approvedEmployeesAdded = await backfillApprovedNewHiresToEmployees(employeeRows);
+      if (approvedEmployeesAdded) {
+        snap = await getDocs(collection(db, 'employees'));
+        employeeRows = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      }
       allEmployees = [];
-      snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
+      employeeRows.forEach(employee => allEmployees.push(employee));
       allEmployees = activeEmployeeRecords(allEmployees);
       allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       renderEmployeesList();
@@ -10446,16 +10452,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         cert.expirationDate ? `Expires: ${esc(cert.expirationDate)}` : 'No expiration date',
         cert.fileName ? esc(cert.fileName) : ''
       ].filter(Boolean).join('<br>');
-      const preview = isImageCert(cert)
-        ? `<a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener"><img class="cert-preview-img" src="${esc(safeFileUrl(cert.url))}" alt="${title}"></a>`
+      const certUrl = safeFileUrl(cert.url);
+      const encodedCertPath = cert.path ? encodeURIComponent(String(cert.path)).replace(/'/g, '%27') : '';
+      const preview = certUrl && isImageCert(cert)
+        ? `<a href="${esc(certUrl)}" target="_blank" rel="noopener"><img class="cert-preview-img" src="${esc(certUrl)}" alt="${title}"></a>`
         : `<div class="cert-pdf-box"><div style="font-size:34px;"></div><div>PDF / Document</div></div>`;
+      const openCertControl = certUrl
+        ? `<a href="${esc(certUrl)}" target="_blank" rel="noopener" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>`
+        : encodedCertPath
+          ? `<button class="btn-sm" type="button" onclick="openNewHireStoredFile('${encodedCertPath}')">Open Full Cert</button>`
+          : '<span class="helper-text">Certification file is not available.</span>';
       return `<div class="cert-preview-card">
         <h4>${title}</h4>
         <p>${meta}</p>
         <div class="status-row" style="margin-bottom:8px;"><span class="pill ${key}">${getCertStatusText(cert.expirationDate)}</span></div>
         ${preview}
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
+          ${openCertControl}
           <button class="btn-sm" onclick="editCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Edit Cert</button>
           <button class="btn-sm danger" onclick="deleteCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Archive Cert</button>
         </div>
@@ -14434,6 +14447,96 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return setNewHireStatus(currentNewHireReviewId, status);
   }
 
+  function approvedNewHireCertifications(intake) {
+    return (intake?.certFiles || []).map(file => ({
+      type: file.type || 'Onboarding Certification',
+      title: file.type || file.title || 'Onboarding Certification',
+      issueDate: file.issueDate || '',
+      expirationDate: file.expirationDate || '',
+      fileName: file.name || file.fileName || 'Certification File',
+      mimeType: file.mimeType || '',
+      url: file.url || '',
+      path: file.path || '',
+      uploadedAt: file.uploadedAt || new Date().toISOString(),
+      uploadedBy: currentUser?.displayName || currentUser?.email || '',
+      source: 'new-hire-intake',
+      sourceIntakeId: intake.id
+    }));
+  }
+
+  function employeeCertIdentity(cert) {
+    return String(cert?.path || cert?.url || `${cert?.sourceIntakeId || ''}|${cert?.fileName || ''}|${cert?.uploadedAt || ''}`);
+  }
+
+  async function prepareApprovedNewHireEmployee(intake, employeeRows = null) {
+    const employeeSnap = employeeRows ? null : await getDocs(collection(db, 'employees'));
+    const employees = employeeRows || employeeSnap.docs.map(employeeDoc => ({ id: employeeDoc.id, ...employeeDoc.data() }));
+    const email = String(intake.email || '').trim().toLowerCase();
+    const phone = String(intake.phone || '').replace(/\D/g, '');
+    const existing = employees.find(emp => emp.sourceNewHireIntakeId === intake.id || emp.newHireIntakeId === intake.id)
+      || (email ? employees.find(emp => String(emp.email || '').trim().toLowerCase() === email) : null)
+      || (phone.length >= 7 ? employees.find(emp => String(emp.phone || '').replace(/\D/g, '') === phone) : null);
+    const employeeRef = existing
+      ? doc(db, 'employees', existing.id)
+      : doc(db, 'employees', `newhire-${intake.id}`);
+    const existingCerts = Array.isArray(existing?.certifications) ? existing.certifications : [];
+    const certIds = new Set(existingCerts.map(employeeCertIdentity));
+    const intakeCerts = approvedNewHireCertifications(intake).filter(cert => !certIds.has(employeeCertIdentity(cert)));
+    const assignedProjectIds = [...new Set([
+      ...(Array.isArray(existing?.assignedProjectIds) ? existing.assignedProjectIds : []),
+      ...(intake.projectId ? [intake.projectId] : [])
+    ])];
+    return {
+      employeeRef,
+      isNew: !existing,
+      payload: {
+        name: intake.name || existing?.name || 'New Employee',
+        email: intake.email || existing?.email || '',
+        phone: intake.phone || existing?.phone || '',
+        trade: intake.trade || existing?.trade || '',
+        notes: existing?.notes || intake.employeeNotes || intake.notes || '',
+        certifications: [...existingCerts, ...intakeCerts],
+        assignedProjectIds,
+        status: 'active',
+        archived: false,
+        sourceNewHireIntakeId: intake.id,
+        newHireIntakeId: intake.id,
+        onboardingStatus: 'Good To Work',
+        goodToWorkAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        updatedBy: currentUser?.displayName || currentUser?.email || '',
+        ...(!existing ? {
+          createdAt: serverTimestamp(),
+          createdBy: currentUser?.uid || '',
+          createdByName: currentUser?.displayName || currentUser?.email || '',
+          source: 'approved-new-hire-intake'
+        } : {})
+      }
+    };
+  }
+
+  async function backfillApprovedNewHiresToEmployees(employeeRows = []) {
+    if (!isOfficeRole()) return 0;
+    const approvedSnap = await getDocs(query(collection(db, 'newHireIntakes'), where('status', '==', 'Good To Work')));
+    const approvedIntakes = approvedSnap.docs.map(intakeDoc => ({ id: intakeDoc.id, ...intakeDoc.data() }));
+    const linkedIntakeIds = new Set(employeeRows.flatMap(employee => [employee.sourceNewHireIntakeId, employee.newHireIntakeId]).filter(Boolean));
+    const missing = approvedIntakes.filter(intake => !linkedIntakeIds.has(intake.id));
+    if (!missing.length) return 0;
+    const batch = writeBatch(db);
+    const workingEmployees = [...employeeRows];
+    for (const intake of missing) {
+      const employeeSync = await prepareApprovedNewHireEmployee(intake, workingEmployees);
+      batch.set(employeeSync.employeeRef, employeeSync.payload, { merge: true });
+      workingEmployees.push({ id: employeeSync.employeeRef.id, ...employeeSync.payload });
+    }
+    await batch.commit();
+    await logAuditEvent('employee.approved_intakes_backfilled', {
+      employeeCount: missing.length,
+      intakeIds: missing.map(intake => intake.id)
+    });
+    return missing.length;
+  }
+
   async function setNewHireStatus(id, status) {
     if (!requireCloudConnection('update the intake status')) return;
     if (!id) return;
@@ -14441,8 +14544,22 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       const payload = { status, updatedAt: serverTimestamp() };
       if (status === 'Good To Work') payload.approvedAt = serverTimestamp();
       if (status === 'Missing Info') payload.correctionRequestedAt = serverTimestamp();
-      await updateDoc(doc(db, 'newHireIntakes', id), payload);
-      const intake = allNewHireIntakes.find(x => x.id === id);
+      let intake = allNewHireIntakes.find(x => x.id === id);
+      if (!intake) {
+        const intakeSnap = await getDoc(doc(db, 'newHireIntakes', id));
+        if (intakeSnap.exists()) intake = { id: intakeSnap.id, ...intakeSnap.data() };
+      }
+      let employeeSync = null;
+      if (status === 'Good To Work') {
+        if (!intake) throw new Error('New hire intake not found for employee creation.');
+        employeeSync = await prepareApprovedNewHireEmployee(intake);
+        const batch = writeBatch(db);
+        batch.update(doc(db, 'newHireIntakes', id), payload);
+        batch.set(employeeSync.employeeRef, employeeSync.payload, { merge: true });
+        await batch.commit();
+      } else {
+        await updateDoc(doc(db, 'newHireIntakes', id), payload);
+      }
       await logAuditEvent('new_hire_intake.status_updated', {
         intakeId: id,
         employeeName: intake?.name || '',
@@ -14450,7 +14567,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         projectName: intake?.projectName || '',
         status
       });
-      toast(`Status updated: ${status}`);
+      if (employeeSync) {
+        await logAuditEvent(employeeSync.isNew ? 'employee.created_from_approved_intake' : 'employee.updated_from_approved_intake', {
+          employeeId: employeeSync.employeeRef.id,
+          employeeName: intake?.name || '',
+          intakeId: id,
+          projectId: intake?.projectId || '',
+          projectName: intake?.projectName || ''
+        });
+        await loadEmployees(true);
+      }
+      toast(employeeSync
+        ? `${intake?.name || 'Employee'} marked Good To Work and ${employeeSync.isNew ? 'added to' : 'updated in'} Employee Records.`
+        : `Status updated: ${status}`);
       await loadNewHireIntakes(true);
       if (document.getElementById('workforce-overview-status-board')) {
         renderWorkforceAttention();
