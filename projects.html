@@ -1712,7 +1712,7 @@
               <p class="lead">You are about to start your PAL new-hire orientation packet. Follow each step in order. You can use Back at any time to return to the previous step.</p>
               <div class="newhire-required-list">
                 <div><strong>Step 1:</strong> Fill out your basic information.</div>
-                <div><strong>Step 2:</strong> Watch the PAL orientation video. During the video, you will answer five questions. Please do not skip ahead.</div>
+                <div><strong>Step 2:</strong> Watch the complete PAL orientation video, then answer the five-question quiz. A score of 3 out of 5 or better is required to continue.</div>
                 <div><strong>Step 3:</strong> Review and sign the required orientation forms.</div>
                 <div><strong>Step 4:</strong> Upload safety certifications such as OSHA, SST, fall protection, scaffold, G60, fire watch, or any other PAL-required certs.</div>
                 <div><strong>Step 5:</strong> Upload payroll and ID documents, including driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll forms, and any other requested payroll document.</div>
@@ -13507,14 +13507,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return new Date().toISOString().slice(0, 10);
   }
 
-  const ORIENTATION_VERSION = 'pal-2026-08-19-youtube-spanish-v1';
+  const ORIENTATION_VERSION = 'pal-2026-08-21-end-quiz-v1';
   const ORIENTATION_VIDEO_SOURCES = {
     en: '7r8Zp8vnqJU',
     es: 'AUkwbQzxZfQ'
   };
   const ORIENTATION_EXPECTED_DURATION = 631;
-  // Roughly two-minute chapters, aligned with the topics employees just watched.
-  const ORIENTATION_CHECKPOINTS = [118, 245, 365, 485, 600];
   const ORIENTATION_COPY = PAL_TRANSLATIONS.orientation;
   let orientationSession = null;
   let orientationYouTubeApiPromise = null;
@@ -13606,9 +13604,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     try {
       localStorage.setItem(orientationProgressKey(), JSON.stringify({
         answers: orientationSession.answers,
+        quizAnswered: orientationSession.quizAnswered,
         attempts: orientationSession.attempts,
         lastTime: orientationCurrentTime(),
-        ended: orientationSession.ended,
+        videoCompleted: orientationSession.videoCompleted,
+        quizPassed: orientationSession.quizPassed,
         savedAt: Date.now()
       }));
     } catch (_) {}
@@ -13618,18 +13618,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!orientationSession) return;
     const copy = orientationCopy(orientationSession.language);
     const questions = orientationQuestions(orientationSession.language);
-    const completed = orientationSession.answers.filter(Boolean).length;
+    const completed = orientationSession.quizAnswered.filter(Boolean).length;
+    const score = orientationSession.answers.filter(Boolean).length;
     const duration = orientationDuration();
-    const watched = orientationSession.ended ? duration : Math.min(orientationCurrentTime(), duration);
+    const watched = orientationSession.videoCompleted ? duration : Math.min(orientationCurrentTime(), duration);
     const fill = document.getElementById('nh-orientation-progress-fill');
     const progressLabel = document.getElementById('nh-orientation-progress-label');
     const checkLabel = document.getElementById('nh-orientation-check-label');
     if (fill) fill.style.width = `${Math.min(100, (watched / duration) * 100)}%`;
-    if (progressLabel) progressLabel.textContent = orientationSession.ended
+    if (progressLabel) progressLabel.textContent = orientationSession.videoCompleted
       ? copy.completeLabel
-      : orientationChapterLabel(orientationSession.language, Math.min(questions.length, completed + 1), questions.length);
+      : (orientationSession.language === 'es' ? 'Reproduciendo el video completo' : 'Playing complete orientation video');
     if (checkLabel) checkLabel.textContent = orientationCheckLabel(orientationSession.language, completed, questions.length);
-    const ready = orientationSession.ended && completed === questions.length;
+    const ready = orientationSession.videoCompleted && orientationSession.quizPassed && completed === questions.length && score >= 3;
     const ack = document.getElementById('nh-orient-module-complete');
     const wrap = document.getElementById('nh-orient-ack-wrap');
     if (ack) ack.disabled = !ready;
@@ -13666,24 +13667,67 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     saveOrientationLocalProgress();
   }
 
+  function resetOrientationForQuizRetry() {
+    if (!orientationSession) return;
+    orientationSession.answers.fill(false);
+    orientationSession.quizAnswered.fill(false);
+    orientationSession.activeQuestion = -1;
+    orientationSession.videoCompleted = false;
+    orientationSession.quizPassed = false;
+    orientationSession.ended = false;
+    const quiz = document.getElementById('nh-orientation-quiz');
+    if (quiz) quiz.classList.remove('active');
+    const ack = document.getElementById('nh-orient-module-complete');
+    if (ack) ack.checked = false;
+    orientationSession.player?.seekTo?.(0, true);
+    orientationSession.player?.playVideo?.();
+    updateOrientationProgressUI();
+    saveOrientationLocalProgress();
+  }
+
   function answerOrientationCheckpoint(answerIndex) {
     if (!orientationSession || orientationSession.activeQuestion < 0) return;
     const index = orientationSession.activeQuestion;
     const item = orientationQuestions(orientationSession.language)[index];
     orientationSession.attempts[index] = (orientationSession.attempts[index] || 0) + 1;
-    if (answerIndex !== item.correct) {
-      const feedback = document.getElementById('nh-orientation-feedback');
-      if (feedback) { feedback.textContent = item.correction; feedback.classList.add('show'); }
-      saveOrientationLocalProgress();
-      return;
-    }
-    orientationSession.answers[index] = true;
+    orientationSession.quizAnswered[index] = true;
+    orientationSession.answers[index] = answerIndex === item.correct;
     orientationSession.activeQuestion = -1;
     const quiz = document.getElementById('nh-orientation-quiz');
-    if (quiz) quiz.classList.remove('active');
+    const feedback = document.getElementById('nh-orientation-feedback');
+    const nextIndex = orientationSession.quizAnswered.findIndex(answered => !answered);
+    if (nextIndex >= 0) {
+      if (feedback) {
+        feedback.textContent = answerIndex === item.correct
+          ? (orientationSession.language === 'es' ? 'Correcto.' : 'Correct.')
+          : item.correction;
+        feedback.classList.add('show');
+      }
+      saveOrientationLocalProgress();
+      setTimeout(() => showOrientationCheckpoint(nextIndex), 700);
+      return;
+    }
+    const score = orientationSession.answers.filter(Boolean).length;
+    orientationSession.quizPassed = score >= 3;
+    if (orientationSession.quizPassed) {
+      if (quiz) quiz.classList.remove('active');
+    } else {
+      const answers = document.getElementById('nh-orientation-answers');
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'orientation-answer';
+      retry.textContent = orientationSession.language === 'es' ? 'Volver a ver el video' : 'Rewatch the video';
+      retry.addEventListener('click', resetOrientationForQuizRetry);
+      if (answers) answers.replaceChildren(retry);
+      if (feedback) {
+        feedback.textContent = orientationSession.language === 'es'
+          ? `Resultado: ${score} de 5. Se requieren al menos 3 respuestas correctas. Debe volver a ver el video antes de intentarlo otra vez.`
+          : `Score: ${score} of 5. At least 3 correct answers are required. You must rewatch the video before trying again.`;
+        feedback.classList.add('show');
+      }
+    }
     updateOrientationProgressUI();
     saveOrientationLocalProgress();
-    orientationSession.player?.playVideo?.();
   }
 
   async function resetOrientationModule(form = {}) {
@@ -13702,15 +13746,23 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     try { local = JSON.parse(localStorage.getItem(orientationProgressKey(language)) || '{}'); } catch (_) {}
     const sameSavedLanguage = !form.orientationLanguage || form.orientationLanguage === language;
     const savedAnswers = sameSavedLanguage && Array.isArray(form.orientationAnswers) ? form.orientationAnswers : local.answers;
+    const savedQuizAnswered = sameSavedLanguage && Array.isArray(form.orientationQuizAnswered)
+      ? form.orientationQuizAnswered
+      : (form.completed && sameSavedLanguage ? Array(orientationQuestions(language).length).fill(true) : local.quizAnswered);
     const savedAttempts = sameSavedLanguage && Array.isArray(form.orientationAttempts) ? form.orientationAttempts : local.attempts;
     orientationSession = {
       player: null,
       timer: null,
       language,
       answers: Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedAnswers?.[i]),
+      quizAnswered: Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedQuizAnswered?.[i]),
       attempts: Array.from({ length: orientationQuestions(language).length }, (_, i) => Number(savedAttempts?.[i] || 0)),
       activeQuestion: -1,
-      ended: !!(sameSavedLanguage && form.orientationVideoCompleted) || !!local.ended,
+      videoCompleted: !!(sameSavedLanguage && form.orientationVideoCompleted) || !!local.videoCompleted,
+      quizPassed: !!(sameSavedLanguage && form.completed)
+        || !!local.quizPassed
+        || (Array.isArray(savedQuizAnswered) && savedQuizAnswered.every(Boolean) && Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedAnswers?.[i]).filter(Boolean).length >= 3),
+      ended: !!(sameSavedLanguage && form.orientationVideoCompleted) || !!local.videoCompleted,
       lastSavedSecond: -1
     };
     const quiz = document.getElementById('nh-orientation-quiz');
@@ -13725,27 +13777,22 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       playerVars: { playsinline: 1, rel: 0, controls: 1, fs: 0, origin: location.origin },
       events: {
         onReady: event => {
-          const firstPending = orientationSession.answers.findIndex(answered => !answered);
-          const maxAllowed = firstPending < 0 ? orientationDuration() : ORIENTATION_CHECKPOINTS[firstPending];
           const resumeAt = sameSavedLanguage && form.orientationVideoCompleted ? orientationDuration() : Number(local.lastTime || 0);
-          event.target.seekTo(Math.min(Math.max(0, resumeAt), Math.max(0, maxAllowed - 0.25)), true);
+          event.target.seekTo(Math.min(Math.max(0, resumeAt), orientationDuration()), true);
           updateOrientationProgressUI();
+          if (orientationSession.videoCompleted && !orientationSession.quizPassed) {
+            const firstPending = orientationSession.quizAnswered.findIndex(answered => !answered);
+            setTimeout(() => showOrientationCheckpoint(firstPending < 0 ? 0 : firstPending), 250);
+          }
         },
         onStateChange: event => {
           if (event.data === YT.PlayerState.ENDED) {
-            const firstPending = orientationSession.answers.findIndex(answered => !answered);
-            if (firstPending >= 0) {
-              // Defensive recovery for browsers that suspend page timers while
-              // video is playing. Never let answering an end-of-video prompt
-              // restart playback from 0:00; restore the intended checkpoint.
-              const checkpoint = ORIENTATION_CHECKPOINTS[firstPending];
-              event.target.seekTo(Math.max(0, checkpoint - 0.25), true);
-              showOrientationCheckpoint(firstPending);
-              return;
-            }
+            orientationSession.videoCompleted = true;
             orientationSession.ended = true;
             updateOrientationProgressUI();
             saveOrientationLocalProgress();
+            const firstPending = orientationSession.quizAnswered.findIndex(answered => !answered);
+            if (!orientationSession.quizPassed) showOrientationCheckpoint(firstPending < 0 ? 0 : firstPending);
           }
         }
       }
@@ -13758,21 +13805,15 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       // video. In particular, the Spanish orientation can reach its exact
       // duration without emitting ENDED, leaving the final acknowledgement
       // permanently locked even after all five checks are complete.
-      if (!orientationSession.ended
-          && orientationSession.answers.every(Boolean)
+      if (!orientationSession.videoCompleted
           && duration > 0
           && currentTime >= duration - 0.75) {
+        orientationSession.videoCompleted = true;
         orientationSession.ended = true;
         updateOrientationProgressUI();
         saveOrientationLocalProgress();
-        return;
-      }
-      const firstPending = orientationSession.answers.findIndex(answered => !answered);
-      const maxAllowed = firstPending < 0 ? orientationDuration() : ORIENTATION_CHECKPOINTS[firstPending];
-      const pendingIndex = ORIENTATION_CHECKPOINTS.findIndex((time, index) => !orientationSession.answers[index] && currentTime >= time);
-      if (pendingIndex >= 0) return showOrientationCheckpoint(pendingIndex);
-      if (currentTime > maxAllowed + 1) {
-        orientationSession.player?.seekTo?.(Math.max(0, maxAllowed - 0.25), true);
+        const firstPending = orientationSession.quizAnswered.findIndex(answered => !answered);
+        if (!orientationSession.quizPassed) showOrientationCheckpoint(firstPending < 0 ? 0 : firstPending);
         return;
       }
       const wholeSecond = Math.floor(currentTime);
@@ -13806,7 +13847,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           ['Project / Jobsite', val('nh-orient-project')],
           ['Orientation Language', selectedOrientationLanguage().toUpperCase()],
           ['Video Completed', orientationSession?.ended ? 'Yes' : 'No'],
-          ['Knowledge Checks', orientationSession ? `${orientationSession.answers.filter(Boolean).length} of ${orientationSession.answers.length} complete` : 'Not started'],
+          ['Knowledge Checks', orientationSession ? `${orientationSession.quizAnswered.filter(Boolean).length} answered; ${orientationSession.answers.filter(Boolean).length} correct` : 'Not started'],
           ['Final Acknowledgement', document.getElementById('nh-orient-module-complete')?.checked ? 'Yes' : 'No'],
           ['Employee Notes / Questions', val('nh-orient-notes')],
           ['Employee Signature / Typed Name', val('nh-orient-signature')],
@@ -13966,7 +14007,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
     const signature = val('nh-orient-signature');
     if (!signature) return toast('Employee signature / typed name is required.');
-    if (!orientationSession?.ended || !orientationSession.answers.every(Boolean)) return toast('Please finish the video and all five knowledge checks.');
+    if (!orientationSession?.videoCompleted || !orientationSession.quizPassed || !orientationSession.quizAnswered.every(Boolean)) return toast('Please finish the video and pass the five-question quiz with at least 3 correct answers.');
     if (!document.getElementById('nh-orient-module-complete')?.checked) return toast('Please confirm the final orientation acknowledgement.');
     const orientationForm = {
       completed: true,
@@ -13980,6 +14021,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       orientationVideoCompleted: true,
       orientationLanguage: document.getElementById('nh-orientation-language')?.value || 'en',
       orientationAnswers: [...orientationSession.answers],
+      orientationQuizAnswered: [...orientationSession.quizAnswered],
       orientationAttempts: [...orientationSession.attempts],
       orientationScore: orientationSession.answers.filter(Boolean).length,
       orientationModuleVersion: ORIENTATION_VERSION,
