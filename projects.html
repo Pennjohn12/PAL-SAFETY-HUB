@@ -13720,7 +13720,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     await loadOrientationYouTubeApi();
     orientationSession.player = new YT.Player(videoHost, {
       videoId,
-      playerVars: { playsinline: 1, rel: 0, controls: 1, fs: 1, origin: location.origin },
+      // Keep playback inline so mobile/native fullscreen does not suspend the
+      // parent page's checkpoint timer and allow the video to run past a stop.
+      playerVars: { playsinline: 1, rel: 0, controls: 1, fs: 0, origin: location.origin },
       events: {
         onReady: event => {
           const firstPending = orientationSession.answers.findIndex(answered => !answered);
@@ -13731,7 +13733,17 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         },
         onStateChange: event => {
           if (event.data === YT.PlayerState.ENDED) {
-            orientationSession.ended = orientationSession.answers.every(Boolean);
+            const firstPending = orientationSession.answers.findIndex(answered => !answered);
+            if (firstPending >= 0) {
+              // Defensive recovery for browsers that suspend page timers while
+              // video is playing. Never let answering an end-of-video prompt
+              // restart playback from 0:00; restore the intended checkpoint.
+              const checkpoint = ORIENTATION_CHECKPOINTS[firstPending];
+              event.target.seekTo(Math.max(0, checkpoint - 0.25), true);
+              showOrientationCheckpoint(firstPending);
+              return;
+            }
+            orientationSession.ended = true;
             updateOrientationProgressUI();
             saveOrientationLocalProgress();
           }
