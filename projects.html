@@ -1716,7 +1716,7 @@
                 <div><strong>Step 2:</strong> Watch the complete PAL orientation video, then answer the five-question quiz. A score of 3 out of 5 or better is required to continue. A score of 0, 1, or 2 requires the complete video to be watched again before another attempt.</div>
                 <div><strong>Step 3:</strong> Review and sign the required orientation forms.</div>
                 <div><strong>Step 4:</strong> Upload safety certifications such as OSHA, SST, fall protection, scaffold, G60, fire watch, or any other PAL-required certs.</div>
-                <div><strong>Step 5:</strong> Upload payroll and ID documents, including driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll forms, and any other requested payroll document.</div>
+                <div><strong>Step 5:</strong> Upload all three required private payroll/ID documents: driver’s license, union book/card, and Social Security card. Your W-4 is completed separately in Step 3.</div>
               </div>
               <p class="helper-text">If something required is missing, PAL Safety Hub will stop you and show what needs to be fixed before you can move forward.</p>
               <div class="newhire-step-actions">
@@ -1795,7 +1795,7 @@
                 </div>
                 <div class="box">
                   <h4>Payroll / ID Documents</h4>
-                  <p>Examples: driver license/photo ID, Social Security card, union book/card if applicable, completed W-4/payroll forms, and other office-requested files.</p>
+                  <p>Required: driver’s license, union book/card, and Social Security card. All three must be uploaded before you can continue. The W-4 is completed separately in the Forms step.</p>
                   <div class="mini-note" id="public-payroll-id-status">Payroll / ID Uploads: Pending</div>
                 </div>
               </div>
@@ -3358,14 +3358,13 @@
     <h3>Payroll / ID Uploads</h3>
     <div class="mini-note" id="newhire-payroll-id-label" style="margin-bottom:14px;">Office-sensitive payroll/onboarding documents.</div>
     <div class="detail-card" style="background:#fff7ed;margin-bottom:12px;">
-      <h3 style="margin-bottom:6px;">Private Payroll / Identity Documents</h3>
-      <div class="helper-text">Upload clear photos or PDFs. Include driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll form, and any other document PAL office requested.</div>
+      <h3 style="margin-bottom:6px;">Three Required Private Documents</h3>
+      <div class="helper-text">To complete PAL payroll onboarding, upload a clear image or PDF of all three required items: your driver’s license, union book/card, and Social Security card. Your W-4 is completed separately in the Forms step.</div>
     </div>
     <div class="report-grid">
-      <div class="field"><label>Driver License / Photo ID</label><input id="newhire-payroll-driver-id" type="file" accept=".pdf,image/*" /></div>
-      <div class="field"><label>Union Book / Union Card</label><input id="newhire-payroll-union-book" type="file" accept=".pdf,image/*" /></div>
-      <div class="field"><label>Social Security Card</label><input id="newhire-payroll-ss-card" type="file" accept=".pdf,image/*" /></div>
-      <div class="field"><label>W-4 / Payroll Form Upload</label><input id="newhire-payroll-w4" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Driver’s License <span style="color:var(--red);">Required</span></label><input id="newhire-payroll-driver-id" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Union Book / Union Card <span style="color:var(--red);">Required</span></label><input id="newhire-payroll-union-book" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Social Security Card <span style="color:var(--red);">Required</span></label><input id="newhire-payroll-ss-card" type="file" accept=".pdf,image/*" /></div>
       <div class="field span-2"><label>Additional Payroll / ID Document</label><input id="newhire-payroll-extra" type="file" accept=".pdf,image/*" /></div>
       <div class="field span-2"><label>Payroll / ID Notes</label><textarea id="newhire-payroll-notes" rows="3" placeholder="Any notes for payroll or office review."></textarea></div>
     </div>
@@ -12269,7 +12268,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const cs = document.getElementById('public-cert-upload-status');
       if (cs) cs.textContent = `Certification Uploads: ${(x.certFiles || []).length ? (x.certFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
       const ps = document.getElementById('public-payroll-id-status');
-      if (ps) ps.textContent = `Payroll / ID Uploads: ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
+      const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+      if (ps) ps.textContent = payrollStatus.complete
+        ? 'Payroll / ID Uploads: Completed — all 3 required documents uploaded'
+        : `Payroll / ID Uploads: ${payrollStatus.completedCount}/3 required documents — missing ${payrollStatus.missingLabels.join(', ')}`;
       updatePublicPacketChecklist(x);
       showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     } catch (e) {
@@ -12397,7 +12399,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (step === 4) {
       const missing = [];
       if (!c.certs) missing.push('safety certification uploads');
-      if (!c.payroll) missing.push('payroll / ID uploads');
+      const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+      if (!c.payroll) missing.push(`payroll / ID uploads (${payrollStatus.missingLabels.join(', ')})`);
       return missing.length ? `Please complete ${missing.join(' and ')} before submitting.` : '';
     }
     if (step === 5) {
@@ -12407,7 +12410,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!c.safety) missing.push('Safety Agreement');
       if (!c.w4) missing.push('Federal W-4');
       if (!c.certs) missing.push('Cert Uploads');
-      if (!c.payroll) missing.push('Payroll / ID Uploads');
+      const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+      if (!c.payroll) missing.push(`Payroll / ID Uploads — missing ${payrollStatus.missingLabels.join(', ')}`);
       return missing.length ? `Before submitting, finish: ${missing.join(', ')}.` : '';
     }
     return '';
@@ -12615,6 +12619,29 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
+  const REQUIRED_PAYROLL_ID_DOCUMENTS = [
+    { key: 'driver-license', label: 'Driver’s License', matches: type => /driver|photo\s*id/i.test(type) },
+    { key: 'union-card', label: 'Union Book / Union Card', matches: type => /union/i.test(type) },
+    { key: 'social-security-card', label: 'Social Security Card', matches: type => /social\s*security|ssn/i.test(type) }
+  ];
+
+  function getRequiredPayrollIdStatus(files = []) {
+    const activeFiles = Array.isArray(files) ? files.filter(file => !isArchivedRecord(file)) : [];
+    const completed = REQUIRED_PAYROLL_ID_DOCUMENTS.filter(requirement =>
+      activeFiles.some(file => requirement.matches(String(file.type || file.title || file.name || '')))
+    );
+    const missing = REQUIRED_PAYROLL_ID_DOCUMENTS.filter(requirement =>
+      !completed.some(item => item.key === requirement.key)
+    );
+    return {
+      complete: missing.length === 0,
+      completedCount: completed.length,
+      total: REQUIRED_PAYROLL_ID_DOCUMENTS.length,
+      missing,
+      missingLabels: missing.map(item => item.label)
+    };
+  }
+
   async function saveNewHirePayrollIdUploads() {
     if (!requireCloudConnection('save payroll or ID uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
@@ -12626,7 +12653,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ['newhire-payroll-driver-id', 'Driver License / Photo ID'],
         ['newhire-payroll-union-book', 'Union Book / Union Card'],
         ['newhire-payroll-ss-card', 'Social Security Card'],
-        ['newhire-payroll-w4', 'W-4 / Payroll Form'],
         ['newhire-payroll-extra', 'Additional Payroll / ID Document']
       ];
       const selectedPayroll = inputs.map(([inputId, label]) => ({ label, file: document.getElementById(inputId)?.files?.[0] })).filter(x => x.file);
@@ -12643,19 +12669,25 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
         if (snap.exists()) existing = snap.data().payrollIdFiles || [];
       } catch (e) { console.warn('Could not read existing payroll files before merge', e); }
+      const merged = [...existing, ...uploads];
+      const requirementStatus = getRequiredPayrollIdStatus(merged);
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        payrollIdFiles: [...existing, ...uploads],
+        payrollIdFiles: merged,
         payrollIdNotes: notes,
-        payrollIdUploadsCompleted: true,
-        payrollIdUploadCount: existing.length + uploads.length,
+        payrollIdUploadsCompleted: requirementStatus.complete,
+        payrollIdUploadCount: merged.length,
         updatedAt: serverTimestamp(),
         status: 'Ready for Review'
       }, { merge: true });
       const st = document.getElementById('public-payroll-id-status');
-      if (st) st.textContent = `Payroll / ID Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      if (st) st.textContent = requirementStatus.complete
+        ? 'Payroll / ID Uploads: Completed — all 3 required documents uploaded'
+        : `Payroll / ID Uploads: ${requirementStatus.completedCount}/3 required documents — missing ${requirementStatus.missingLabels.join(', ')}`;
       await refreshCurrentPublicIntakeQuiet();
       closeModal('modal-newhire-payroll-id-form');
-      toast('Payroll / ID uploads saved to intake packet.');
+      toast(requirementStatus.complete
+        ? 'All three required payroll / ID documents are saved.'
+        : `Uploads saved. Still required: ${requirementStatus.missingLabels.join(', ')}.`);
     } catch (e) {
       console.error('Payroll / ID upload save failed', e);
       toast(newHireUploadErrorMessage(e, 'Payroll / ID upload'));
@@ -12668,13 +12700,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   // PACKET_FINAL_REVIEW_PHASE7_2026_05_15
   function getNewHirePacketChecklist(x) {
     x = x || currentPublicNewHireIntake || {};
+    const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
     return {
       orientation: !!x.orientationForm?.completed,
       drug: !!x.drugConsentForm?.completed,
       safety: !!x.safetyAgreementForm?.completed,
       w4: !!x.w4Form?.completed,
       certs: !!(x.certUploadsCompleted || (x.certFiles || []).length),
-      payroll: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length),
+      payroll: payrollStatus.complete,
       submitted: !!x.packetSubmitted
     };
   }
@@ -12689,7 +12722,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     x = x || currentPublicNewHireIntake || {};
     const c = getNewHirePacketChecklist(x);
     const certDetail = (x.certFiles || []).length ? `${(x.certFiles || []).length} file(s)` : '';
-    const payrollDetail = (x.payrollIdFiles || []).length ? `${(x.payrollIdFiles || []).length} file(s)` : '';
+    const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+    const payrollDetail = payrollStatus.complete
+      ? '3/3 required documents uploaded'
+      : `${payrollStatus.completedCount}/3 required — missing ${payrollStatus.missingLabels.join(', ')}`;
     const completeCount = [c.orientation, c.drug, c.safety, c.w4, c.certs, c.payroll].filter(Boolean).length;
     if (el) {
       el.innerHTML = [
@@ -12711,7 +12747,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     setStatus('public-safety-status', 'Safety Agreement', c.safety);
     setStatus('public-w4-status', 'Federal W-4 Form', c.w4);
     setStatus('public-cert-upload-status', 'Certification Uploads', c.certs, certDetail ? `${certDetail} uploaded` : 'Pending');
-    setStatus('public-payroll-id-status', 'Payroll / ID Uploads', c.payroll, payrollDetail ? `${payrollDetail} uploaded` : 'Pending');
+    setStatus('public-payroll-id-status', 'Payroll / ID Uploads', c.payroll, payrollDetail);
     const btn = document.getElementById('public-final-submit-btn');
     if (btn) {
       btn.textContent = c.submitted ? 'Packet Submitted to PAL Office' : 'Submit Full Packet to PAL Office';
@@ -12822,6 +12858,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         // Public rules may block read; continue with submission attempt.
         console.warn('Public intake submit could not pre-read existing files', readErr);
       }
+      const mergedPayrollIdFiles = [...existingPayrollIdFiles, ...payrollUploads];
+      const payrollRequirementStatus = getRequiredPayrollIdStatus(mergedPayrollIdFiles);
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         name: document.getElementById('pub-nh-name')?.value.trim() || '',
         phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
@@ -12831,13 +12869,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
         employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
         certFiles: [...existing, ...uploaded],
-        payrollIdFiles: [...existingPayrollIdFiles, ...payrollUploads],
-        payrollIdUploadCount: (existingPayrollIdFiles.length + payrollUploads.length),
-        status: 'Ready for Review',
+        payrollIdFiles: mergedPayrollIdFiles,
+        payrollIdUploadCount: mergedPayrollIdFiles.length,
+        payrollIdUploadsCompleted: payrollRequirementStatus.complete,
+        status: payrollRequirementStatus.complete ? 'Ready for Review' : 'Started',
         employeeSubmittedAt: new Date().toISOString(),
         updatedAt: serverTimestamp(),
         source: 'public-intake-fallback-safe'
       }, { merge: true });
+      if (!payrollRequirementStatus.complete) {
+        const statusCard = document.getElementById('public-intake-status-card');
+        if (statusCard) statusCard.innerHTML = `<h3>Payroll / ID Documents Still Required</h3><p class="helper-text">Your information was saved. Before final submission, upload: ${esc(payrollRequirementStatus.missingLabels.join(', '))}.</p>`;
+        toast(`Information saved. Still required: ${payrollRequirementStatus.missingLabels.join(', ')}.`);
+        return;
+      }
       const statusCard = document.getElementById('public-intake-status-card');
       const formCard = document.getElementById('public-intake-form-card');
       if (statusCard) statusCard.innerHTML = `<h3>Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
@@ -13108,7 +13153,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       { key: 'drug', label: 'Drug Consent', done: !!x.drugConsentForm?.completed },
       { key: 'safety', label: 'Safety Agreement', done: !!x.safetyAgreementForm?.completed },
       { key: 'certs', label: 'Certs', done: !!(x.certUploadsCompleted || (x.certFiles || []).length) },
-      { key: 'payroll', label: 'Payroll/ID', done: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length) },
+      { key: 'payroll', label: 'Payroll/ID (3 required)', done: getRequiredPayrollIdStatus(x.payrollIdFiles || []).complete },
       { key: 'submitted', label: 'Final Submit', done: !!x.packetSubmitted }
     ];
     const done = checks.filter(c => c.done).length;
@@ -13427,7 +13472,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         ${packetStatusHTML(!!x.safetyAgreementForm?.completed, 'Safety Agreement')}
         ${packetStatusHTML(!!x.w4Form?.completed, 'Federal W-4')}
         ${packetStatusHTML(!!(x.certUploadsCompleted || (x.certFiles || []).length), 'Cert Uploads', (x.certFiles || []).length ? (x.certFiles || []).length + ' file(s)' : '')}
-        ${packetStatusHTML(!!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length), 'Payroll / ID Uploads', (x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s)' : '')}
+        ${packetStatusHTML(getRequiredPayrollIdStatus(x.payrollIdFiles || []).complete, 'Payroll / ID Uploads', (() => { const status = getRequiredPayrollIdStatus(x.payrollIdFiles || []); return status.complete ? '3/3 required documents' : `${status.completedCount}/3 required — missing ${status.missingLabels.join(', ')}`; })())}
         ${packetStatusHTML(!!x.packetSubmitted, 'Final Submit', x.packetSubmittedAt || '')}
       </div>
     </div>
@@ -13486,6 +13531,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     <div class="newhire-upload-list" style="margin-top:12px;">
       <strong>Payroll / ID Uploads</strong>
       <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
+      ${(() => { const status = getRequiredPayrollIdStatus(x.payrollIdFiles || []); return `<div class="mini-note" style="margin-bottom:8px;">${status.complete ? 'Complete: all 3 required documents received.' : `${status.completedCount}/3 required documents received. Missing: ${esc(status.missingLabels.join(', '))}.`}</div>`; })()}
       ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">${esc(f.type || 'Payroll / ID Document')}: ${newHireFileLinkHTML(f, 'Uploaded Document')}</div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
@@ -14601,6 +14647,20 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       let employeeSync = null;
       if (status === 'Good To Work') {
         if (!intake) throw new Error('New hire intake not found for employee creation.');
+        const checklist = getNewHirePacketChecklist(intake);
+        const missingApprovalItems = [
+          !checklist.orientation ? 'Orientation' : '',
+          !checklist.drug ? 'Drug & Alcohol Consent' : '',
+          !checklist.safety ? 'Safety Agreement' : '',
+          !checklist.w4 ? 'Federal W-4' : '',
+          !checklist.certs ? 'Certification Uploads' : '',
+          !checklist.payroll ? `Payroll / ID: ${getRequiredPayrollIdStatus(intake.payrollIdFiles || []).missingLabels.join(', ')}` : '',
+          !checklist.submitted ? 'Final Packet Submission' : ''
+        ].filter(Boolean);
+        if (missingApprovalItems.length) {
+          toast(`Cannot mark Good To Work. Still required: ${missingApprovalItems.join('; ')}.`);
+          return;
+        }
         employeeSync = await prepareApprovedNewHireEmployee(intake);
         const batch = writeBatch(db);
         batch.update(doc(db, 'newHireIntakes', id), payload);
@@ -14695,7 +14755,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (!x.drugConsentForm?.completed) missing.push('drug consent');
       if (!x.safetyAgreementForm?.completed) missing.push('safety agreement');
       if (!((x.certFiles || []).length || x.certUploadsCompleted)) missing.push('certs');
-      if (!((x.payrollIdFiles || []).length || x.payrollIdUploadsCompleted)) missing.push('payroll/ID');
+      if (!getRequiredPayrollIdStatus(x.payrollIdFiles || []).complete) missing.push('payroll/ID (3 required documents)');
       rows.push({
         priority: status === 'Ready for Review' ? 3 : 4,
         title: x.name || 'New Hire',
