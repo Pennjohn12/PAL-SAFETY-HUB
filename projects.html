@@ -3536,9 +3536,9 @@
       <div class="field"><label>Phone</label><input id="nh-phone" placeholder="Cell phone number" /></div>
       <div class="field"><label>Email (optional)</label><input id="nh-email" type="email" placeholder="employee@email.com" /></div>
       <div class="field"><label>Trade / Role</label><input id="nh-trade" placeholder="Fireproofer / Labor / Fire Watch" /></div>
-      <div class="field"><label>Project / Jobsite</label><select id="nh-project-select"><option value="">Select project...</option></select></div>
+      <div class="field"><label>Project / Jobsite (optional)</label><select id="nh-project-select"><option value="">Not assigned yet</option></select></div>
       <div class="field"><label>Foreman / Contact</label><input id="nh-foreman" placeholder="Foreman or office contact" /></div>
-      <div class="field"><label>Expected Start Date</label><input id="nh-start-date" type="date" /></div>
+      <div class="field"><label>Expected Start Date (optional)</label><input id="nh-start-date" type="date" /><div class="helper-text">Leave blank if the employee has not been assigned a jobsite or start date.</div></div>
       <div class="field"><label>Status</label><select id="nh-status"><option>Pending</option><option>Ready for Review</option><option>Good To Work</option><option>Missing Info</option></select></div>
       <div class="field span-2"><label>Required Certs / Documents</label><textarea id="nh-required" rows="3" placeholder="OSHA 30, SST, Scaffold, Fall Protection, G60, ID, etc."></textarea></div>
       <div class="field span-2"><label>Notes / Instructions</label><textarea id="nh-notes" rows="3" placeholder="Tell the employee what to send before arriving to site..."></textarea></div>
@@ -3643,7 +3643,7 @@
         <div class="report-grid">
           <div class="field"><label>Employee Name</label><input id="nh-orient-employee-name" placeholder="Employee full name" /></div>
           <div class="field"><label>Date</label><input id="nh-orient-date" type="date" /></div>
-          <div class="field span-2"><label>Project / Jobsite</label><input id="nh-orient-project" placeholder="Project / jobsite" /></div>
+          <div class="field span-2"><label>Project / Jobsite (optional)</label><input id="nh-orient-project" placeholder="Leave blank if not assigned yet" /></div>
           <div class="field span-2"><label>Employee Notes / Questions</label><textarea id="nh-orient-notes" rows="3" placeholder="Optional notes or questions..."></textarea></div>
         </div>
 
@@ -3686,7 +3686,7 @@
         <div class="report-grid">
           <div class="field"><label>Employee Name</label><input id="nh-drug-employee-name" placeholder="Employee full name" /></div>
           <div class="field"><label>Date</label><input id="nh-drug-date" type="date" /></div>
-          <div class="field span-2"><label>Project / Jobsite</label><input id="nh-drug-project" placeholder="Project / jobsite" /></div>
+          <div class="field span-2"><label>Project / Jobsite (optional)</label><input id="nh-drug-project" placeholder="Leave blank if not assigned yet" /></div>
           <div class="field span-2"><label>Consent Acknowledgement</label><select id="nh-drug-consent"><option value="I consent">I consent</option><option value="I have questions before signing">I have questions before signing</option></select></div>
           <div class="field span-2"><label>Employee Notes / Questions</label><textarea id="nh-drug-notes" rows="3" placeholder="Optional notes or questions..."></textarea></div>
         </div>
@@ -3732,7 +3732,7 @@
         <div class="report-grid">
           <div class="field"><label>Employee Name</label><input id="nh-safety-employee-name" placeholder="Employee full name" /></div>
           <div class="field"><label>Date</label><input id="nh-safety-date" type="date" /></div>
-          <div class="field span-2"><label>Project / Jobsite</label><input id="nh-safety-project" placeholder="Project / jobsite" /></div>
+          <div class="field span-2"><label>Project / Jobsite (optional)</label><input id="nh-safety-project" placeholder="Leave blank if not assigned yet" /></div>
           <div class="field"><label>Fall Protection Acknowledgement</label><select id="nh-safety-fall"><option value="Acknowledged">Acknowledged</option><option value="I have questions before signing">I have questions before signing</option></select></div>
           <div class="field"><label>Ladder / Scaffold Acknowledgement</label><select id="nh-safety-scaffold"><option value="Acknowledged">Acknowledged</option><option value="I have questions before signing">I have questions before signing</option></select></div>
           <div class="field span-2"><label>Employee Notes / Questions</label><textarea id="nh-safety-notes" rows="3" placeholder="Optional notes or questions..."></textarea></div>
