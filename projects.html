@@ -12863,7 +12863,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const fileError = validateNewHireUploadFile(file);
     if (fileError) throw new Error(`${label}: ${fileError}`);
     const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-    const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
+    const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${currentUser.uid}/${safeName}`;
     const storageRef = ref(storage, path);
     await uploadBytes(storageRef, file, newHireUploadMetadata(file));
     // Public users may write an intake file but may not read private payroll/cert files.
@@ -13125,7 +13125,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (invalidCert) return toast(`${invalidCert.name}: ${validateNewHireUploadFile(invalidCert)}`);
       for (const file of files) {
         const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${safeName}`;
+        const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${currentUser.uid}/${safeName}`;
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, file, newHireUploadMetadata(file));
         uploaded.push({ name: file.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-cert' });
@@ -13145,7 +13145,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const payrollFile = document.getElementById(inputId)?.files?.[0];
         if (!payrollFile) continue;
         const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${payrollFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${safeName}`;
+        const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${currentUser.uid}/${safeName}`;
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, payrollFile, newHireUploadMetadata(payrollFile));
         payrollUploads.push({ type: label, name: payrollFile.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-payroll-id' });

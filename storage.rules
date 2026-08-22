@@ -61,8 +61,10 @@ service firebase.storage {
 
     function isIntakeOwner(intakeId) {
       return signedIn()
-        && intakeData(intakeId).ownerUid is string
-        && intakeData(intakeId).ownerUid == request.auth.uid;
+        && (
+          (profile().onboardingIntakeId is string && profile().onboardingIntakeId == intakeId) ||
+          (intakeData(intakeId).ownerUid is string && intakeData(intakeId).ownerUid == request.auth.uid)
+        );
     }
 
     function projectData(projectId) {
@@ -83,7 +85,14 @@ service firebase.storage {
     function isSafeUpload(maxBytes) {
       return request.resource != null
         && request.resource.size < maxBytes
-        && request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/html|text/plain');
+        && (
+          request.resource.contentType.matches('image/.*') ||
+          request.resource.contentType == 'application/pdf' ||
+          request.resource.contentType == 'application/msword' ||
+          request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+          request.resource.contentType == 'text/html' ||
+          request.resource.contentType == 'text/plain'
+        );
     }
 
     match /projects/{projectId}/{folder}/{fileName} {
@@ -106,6 +115,24 @@ service firebase.storage {
     match /employees/{employeeId}/certifications/{fileName} {
       allow read: if isOffice();
       allow write: if isOffice() && isSafeUpload(25 * 1024 * 1024);
+      allow delete: if false;
+    }
+
+    match /newHireIntakes/{intakeId}/{folder}/{ownerUid}/{fileName} {
+      // Employee uploads are namespaced by the authenticated uid. This makes
+      // ownership enforceable without relying on a cross-service document lookup.
+      allow read: if isOffice() || (signedIn() && ownerUid == request.auth.uid);
+      allow write: if signedIn()
+        && ownerUid == request.auth.uid
+        && folder in [
+          'publicUploads',
+          'certUploads',
+          'payrollIdUploads',
+          'orientation',
+          'drugConsent',
+          'safetyAgreement'
+        ]
+        && isSafeUpload(25 * 1024 * 1024);
       allow delete: if false;
     }
 
