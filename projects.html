@@ -4014,6 +4014,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let publicNewHireIntakeLoaded = false;
   let currentPublicNewHireIntake = null;
   let publicNewHireAccountReady = false;
+  let publicNewHireAccountConnectPromise = null;
+  let publicNewHireAccountConnectKey = '';
   let publicTicketSignatureLoaded = false;
   let currentPublicTicketSignature = null;
   let publicSafetySignatureLoaded = false;
@@ -4450,6 +4452,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   }
 
   async function connectPublicNewHireAccount(user, profile = null) {
+    const connectionKey = `${user?.uid || ''}:${publicNewHireIntakeId || ''}`;
+    if (publicNewHireAccountConnectPromise && publicNewHireAccountConnectKey === connectionKey) {
+      return publicNewHireAccountConnectPromise;
+    }
+    publicNewHireAccountConnectKey = connectionKey;
+    publicNewHireAccountConnectPromise = connectPublicNewHireAccountInternal(user, profile);
+    try {
+      return await publicNewHireAccountConnectPromise;
+    } finally {
+      if (publicNewHireAccountConnectKey === connectionKey) {
+        publicNewHireAccountConnectPromise = null;
+        publicNewHireAccountConnectKey = '';
+      }
+    }
+  }
+
+  async function connectPublicNewHireAccountInternal(user, profile = null) {
     currentUser = user;
     currentUserProfile = profile || await loadUserProfile(user);
 
@@ -4476,10 +4495,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       } catch (error) {
         if (error?.code !== 'not-found' && error?.code !== 'firestore/not-found') throw error;
         await setDoc(intakeRef, {
-          ...ownerPayload,
+          ownerUid: user.uid,
+          ownerEmail: cleanAccessText(user.email || ''),
           status: 'Pending',
           source: 'employee-account-intake',
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
         });
       }
       await setDoc(doc(db, 'users', user.uid), {
