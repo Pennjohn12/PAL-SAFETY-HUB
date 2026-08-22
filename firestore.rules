@@ -276,10 +276,16 @@ service cloud.firestore {
         ])
       ) || (
         isIntakeOwner(resource.data) &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'ownerLastSignedInAt',
+          'updatedAt'
+        ])
+      ) || (
+        isIntakeOwner(resource.data) &&
         request.resource.data.ownerUid == resource.data.ownerUid &&
         request.resource.data.ownerEmail == resource.data.ownerEmail &&
         (!('status' in request.resource.data) ||
-          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
+          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted', 'Missing Info']) &&
         (!request.resource.data.diff(resource.data).changedKeys().hasAny(['createdAt']) ||
           (!('createdAt' in resource.data) && request.resource.data.createdAt == request.time)) &&
         request.resource.data.diff(resource.data).changedKeys().hasOnly([
