@@ -1512,6 +1512,7 @@
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
   </style>
   <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-26-onboarding-card-actions" />
+  <link rel="stylesheet" href="assets/css/safety-record-center.css?v=2026-08-23-office-record-center" />
 
 <script>
   // PUBLIC_LINK_EARLY_VIEW_FORCE_2026_07_20
@@ -1944,6 +1945,7 @@
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
       <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Onboarding</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
+      <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-safety-record-center', this)">Employee Safety Records</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
       <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-activity-log', this)">Activity Log</button>
@@ -2479,6 +2481,80 @@
           <div id="employees-list-main"><p style="color:var(--muted);font-size:14px;">Open Employees or search to load employee records.</p></div>
         </section>
       </div>
+    </div>
+
+    <div class="tab-pane admin-only hidden-by-role" id="main-safety-record-center">
+      <div class="page-header">
+        <div>
+          <h2>Employee Safety Record Center</h2>
+          <p class="helper-text">Office/Admin only. Search PAL records by employee, document type, and safety topic without changing the original signed documents.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-outline" type="button" onclick="loadSafetyRecordCenter(true)">Refresh Records</button>
+        </div>
+      </div>
+
+      <section class="safety-record-search-panel">
+        <div class="safety-record-search-grid">
+          <div class="safety-record-filter-group">
+            <label for="safety-record-employee-search">Employee name</label>
+            <input class="search-input" id="safety-record-employee-search" list="safety-record-employee-options" placeholder="Start typing an employee name" autocomplete="off" />
+            <datalist id="safety-record-employee-options"></datalist>
+          </div>
+          <div class="safety-record-filter-group">
+            <label for="safety-record-document-type">Document type</label>
+            <div class="safety-record-inline-control">
+              <select class="inline-select" id="safety-record-document-type"></select>
+              <button class="safety-record-add-button" type="button" onclick="toggleSafetyRecordAdder('type', true)">+ Add Type</button>
+            </div>
+            <div class="safety-record-inline-add" id="safety-record-add-type-row">
+              <input class="search-input" id="safety-record-new-type" placeholder="Enter new document type" />
+              <button class="btn-save" type="button" onclick="saveSafetyRecordOption('type')">Save</button>
+              <button class="btn-outline" type="button" onclick="toggleSafetyRecordAdder('type', false)">Cancel</button>
+            </div>
+          </div>
+          <div class="safety-record-filter-group">
+            <label for="safety-record-safety-topic">Safety topic</label>
+            <div class="safety-record-inline-control">
+              <select class="inline-select" id="safety-record-safety-topic"></select>
+              <button class="safety-record-add-button" type="button" onclick="toggleSafetyRecordAdder('topic', true)">+ Add Topic</button>
+            </div>
+            <div class="safety-record-inline-add" id="safety-record-add-topic-row">
+              <input class="search-input" id="safety-record-new-topic" placeholder="Enter new safety topic" />
+              <button class="btn-save" type="button" onclick="saveSafetyRecordOption('topic')">Save</button>
+              <button class="btn-outline" type="button" onclick="toggleSafetyRecordAdder('topic', false)">Cancel</button>
+            </div>
+          </div>
+          <button class="btn-save" id="safety-record-search-button" type="button" onclick="searchEmployeeSafetyRecords()">Search Records</button>
+        </div>
+      </section>
+
+      <section class="safety-record-metrics" aria-label="Employee safety record totals">
+        <div class="safety-record-metric"><span>Total documented records</span><strong id="safety-record-total">0</strong></div>
+        <div class="safety-record-metric"><span>Safety-related records</span><strong id="safety-record-safety-total">0</strong></div>
+        <div class="safety-record-metric"><span>Proper lifting records</span><strong id="safety-record-lifting-total">0</strong></div>
+        <div class="safety-record-metric attention"><span>Items needing attention</span><strong id="safety-record-attention-total">0</strong></div>
+      </section>
+
+      <section class="safety-record-layout">
+        <div class="safety-record-panel">
+          <div class="safety-record-panel-head"><h3>Matching records</h3><span class="pill blue" id="safety-record-result-count">No employee selected</span></div>
+          <div class="safety-record-table-wrap">
+            <table class="safety-record-table">
+              <thead><tr><th>Date</th><th>Document</th><th>Project</th><th>Safety topics</th><th>Status</th><th></th></tr></thead>
+              <tbody id="safety-record-results"><tr><td colspan="6"><div class="safety-record-empty">Enter an employee name and select Search Records.</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <aside class="safety-record-panel">
+          <div class="safety-record-employee-head"><div class="safety-record-avatar" id="safety-record-avatar">?</div><div><h3 id="safety-record-employee-name">No employee selected</h3><p id="safety-record-employee-id">Search to load the employee history</p></div></div>
+          <div class="safety-record-fact"><span>First PAL record</span><strong id="safety-record-first-date">-</strong></div>
+          <div class="safety-record-fact"><span>Projects documented</span><strong id="safety-record-project-count">0</strong></div>
+          <div class="safety-record-fact"><span>Latest orientation</span><strong id="safety-record-orientation">-</strong></div>
+          <div class="safety-record-fact"><span>Certification attention</span><strong id="safety-record-cert-attention">-</strong></div>
+          <button class="btn-save safety-record-package-button" id="safety-record-package-button" type="button" onclick="createEmployeeSafetyRecordPackage()" disabled>Create Safety Record Package</button>
+        </aside>
+      </section>
     </div>
 
 
@@ -3819,7 +3895,7 @@
  -->
 <script type="module">
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { collection, collectionGroup, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
   import {
@@ -3862,6 +3938,14 @@
     profileIsOfficeRole,
     rolePayloadForAccess
   } from "./assets/js/security/roles.js";
+  import {
+    DEFAULT_SAFETY_DOCUMENT_TYPES,
+    DEFAULT_SAFETY_TOPICS,
+    buildEmployeeSafetyRecords,
+    filterEmployeeSafetyRecords,
+    normalizeSafetyName,
+    safetyRecordSummary
+  } from "./assets/js/records/safety-records.js?v=2026-08-23-office-record-center";
   import {
     calculateTicketTotals,
     collectTicketRowsFromDocument,
@@ -3919,6 +4003,12 @@
   let activeOnboardingReviewBucket = 'in-progress';
   let activeEmployeeCertFilter = 'all';
   let allWarehouseItems = [];
+  let allSafetyRecordFieldForms = [];
+  let allEmployeeSafetyRecords = [];
+  let filteredEmployeeSafetyRecords = [];
+  let safetyRecordDocumentTypes = [...DEFAULT_SAFETY_DOCUMENT_TYPES];
+  let safetyRecordTopics = [...DEFAULT_SAFETY_TOPICS];
+  let selectedSafetyRecordEmployee = null;
   let currentNewHireOrientationId = null;
   let currentNewHireDrugConsentId = null;
   let currentNewHireSafetyAgreementId = null;
@@ -4102,6 +4192,13 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openCertEmailDraft = openCertEmailDraft;
   window.downloadCertEmailPreview = downloadCertEmailPreview;
   window.loadIntegrationHealth = loadIntegrationHealth;
+  window.loadSafetyRecordCenter = loadSafetyRecordCenter;
+  window.searchEmployeeSafetyRecords = searchEmployeeSafetyRecords;
+  window.toggleSafetyRecordAdder = toggleSafetyRecordAdder;
+  window.saveSafetyRecordOption = saveSafetyRecordOption;
+  window.openSafetyRecordResultDetail = openSafetyRecordResultDetail;
+  window.openOriginalSafetyRecord = openOriginalSafetyRecord;
+  window.createEmployeeSafetyRecordPackage = createEmployeeSafetyRecordPackage;
   window.openEmployeeDetail = openEmployeeDetail;
   window.openCertificationModal = openCertificationModal;
   window.editCertification = editCertification;
@@ -14691,6 +14788,324 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }
   }
 
+  function safetyRecordEmployeeInitials(name = '') {
+    return String(name || '?').trim().split(/\s+/).filter(Boolean).map(part => part[0]).join('').toUpperCase().slice(0, 2) || '?';
+  }
+
+  function safetyRecordDateValue(value) {
+    if (!value) return '';
+    if (value?.toDate) return value.toDate().toISOString();
+    if (value?.seconds) return new Date(value.seconds * 1000).toISOString();
+    return String(value);
+  }
+
+  function safetyRecordDisplayDate(value) {
+    const clean = safetyRecordDateValue(value);
+    if (!clean) return '-';
+    const date = new Date(clean);
+    if (Number.isNaN(date.getTime())) return clean;
+    return date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function safetyRecordCandidateNames() {
+    const names = new Set();
+    const add = value => { const clean = String(value || '').trim(); if (clean) names.add(clean); };
+    (allEmployees || []).forEach(employee => add(employee.name));
+    (allNewHireIntakes || []).forEach(intake => {
+      add(intake.name);
+      add(intake.orientationForm?.employeeName);
+    });
+    (allSafetyRecordFieldForms || []).forEach(form => {
+      const data = form.documentData || {};
+      (Array.isArray(data.signIns) ? data.signIns : []).forEach(row => add(row.printName));
+      (Array.isArray(data.crewSignatures) ? data.crewSignatures : []).forEach(row => add(row.printName));
+      (Array.isArray(data.rows) ? data.rows : []).forEach(row => add(row.printName || row.workerName));
+    });
+    return [...names].sort((a, b) => a.localeCompare(b));
+  }
+
+  function renderSafetyRecordEmployeeOptions() {
+    const list = document.getElementById('safety-record-employee-options');
+    if (!list) return;
+    list.innerHTML = safetyRecordCandidateNames().map(name => `<option value="${esc(name)}"></option>`).join('');
+  }
+
+  function renderSafetyRecordOptionMenus() {
+    const type = document.getElementById('safety-record-document-type');
+    const topic = document.getElementById('safety-record-safety-topic');
+    const previousType = type?.value || 'All documents';
+    const previousTopic = topic?.value || 'All safety topics';
+    if (type) {
+      type.innerHTML = ['All documents', ...safetyRecordDocumentTypes].map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
+      type.value = Array.from(type.options).some(option => option.value === previousType) ? previousType : 'All documents';
+    }
+    if (topic) {
+      topic.innerHTML = ['All safety topics', ...safetyRecordTopics].map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
+      topic.value = Array.from(topic.options).some(option => option.value === previousTopic) ? previousTopic : 'All safety topics';
+    }
+  }
+
+  async function loadSafetyRecordSettings() {
+    try {
+      const snap = await getDoc(doc(db, 'safetyRecordSettings', 'default'));
+      const settings = snap.exists() ? snap.data() : {};
+      const customTypes = Array.isArray(settings.documentTypes) ? settings.documentTypes : [];
+      const customTopics = Array.isArray(settings.safetyTopics) ? settings.safetyTopics : [];
+      safetyRecordDocumentTypes = [...new Set([...DEFAULT_SAFETY_DOCUMENT_TYPES, ...customTypes].map(x => String(x || '').trim()).filter(Boolean))];
+      safetyRecordTopics = [...new Set([...DEFAULT_SAFETY_TOPICS, ...customTopics].map(x => String(x || '').trim()).filter(Boolean))];
+    } catch (error) {
+      console.warn('Safety record settings could not load', error);
+      safetyRecordDocumentTypes = [...DEFAULT_SAFETY_DOCUMENT_TYPES];
+      safetyRecordTopics = [...DEFAULT_SAFETY_TOPICS];
+    }
+    renderSafetyRecordOptionMenus();
+  }
+
+  async function loadSafetyRecordFieldForms() {
+    try {
+      const snap = await getDocs(collectionGroup(db, 'fieldForms'));
+      allSafetyRecordFieldForms = snap.docs.map(item => {
+        const data = item.data() || {};
+        const projectId = data.projectId || item.ref.parent.parent?.id || '';
+        return {
+          id: item.id,
+          ...data,
+          projectId,
+          submittedAt: safetyRecordDateValue(data.submittedAt),
+          localSubmittedAt: safetyRecordDateValue(data.localSubmittedAt)
+        };
+      });
+    } catch (error) {
+      console.warn('Collection-wide safety record load failed; trying project-by-project.', error);
+      const rows = [];
+      for (const project of allProjects || []) {
+        try {
+          const snap = await getDocs(collection(db, 'projects', project.id, 'fieldForms'));
+          snap.forEach(item => {
+            const data = item.data() || {};
+            rows.push({ id: item.id, ...data, projectId: data.projectId || project.id, projectName: data.projectName || project.name || '', submittedAt: safetyRecordDateValue(data.submittedAt), localSubmittedAt: safetyRecordDateValue(data.localSubmittedAt) });
+          });
+        } catch (projectError) {
+          console.warn('Could not load safety forms for project', project.id, projectError);
+        }
+      }
+      allSafetyRecordFieldForms = rows;
+    }
+  }
+
+  async function loadSafetyRecordCenter(force = false) {
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can view employee safety records.');
+    const results = document.getElementById('safety-record-results');
+    if (results) results.innerHTML = '<tr><td colspan="6"><div class="safety-record-empty">Loading employee and project records...</div></td></tr>';
+    try {
+      const [employeeSnap, intakeSnap] = await Promise.all([
+        getDocs(collection(db, 'employees')),
+        getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')))
+      ]);
+      allEmployees = activeEmployeeRecords(employeeSnap.docs.map(item => ({ id: item.id, ...item.data() })));
+      allNewHireIntakes = intakeSnap.docs.map(item => ({ id: item.id, ...item.data() }));
+      await Promise.all([loadSafetyRecordSettings(), loadSafetyRecordFieldForms()]);
+      renderSafetyRecordEmployeeOptions();
+      if (selectedSafetyRecordEmployee?.name) searchEmployeeSafetyRecords(false);
+      else if (results) results.innerHTML = '<tr><td colspan="6"><div class="safety-record-empty">Enter an employee name and select Search Records.</div></td></tr>';
+      if (force) toast('Employee safety records refreshed.');
+    } catch (error) {
+      console.error('Employee safety record center load failed', error);
+      if (results) results.innerHTML = `<tr><td colspan="6"><div class="safety-record-empty" style="color:var(--red)">Could not load employee safety records. ${esc(error?.message || '')}</div></td></tr>`;
+    }
+  }
+
+  function toggleSafetyRecordAdder(kind, open) {
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can manage safety record choices.');
+    const row = document.getElementById(`safety-record-add-${kind}-row`);
+    const input = document.getElementById(`safety-record-new-${kind}`);
+    row?.classList.toggle('open', !!open);
+    if (open) setTimeout(() => input?.focus(), 0);
+    else if (input) input.value = '';
+  }
+
+  async function saveSafetyRecordOption(kind) {
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can manage safety record choices.');
+    const isType = kind === 'type';
+    const input = document.getElementById(`safety-record-new-${kind}`);
+    const value = String(input?.value || '').trim();
+    if (!value) return toast(`Enter a ${isType ? 'document type' : 'safety topic'} first.`);
+    const target = isType ? safetyRecordDocumentTypes : safetyRecordTopics;
+    const existing = target.find(item => item.toLowerCase() === value.toLowerCase());
+    if (existing) {
+      toggleSafetyRecordAdder(kind, false);
+      const select = document.getElementById(isType ? 'safety-record-document-type' : 'safety-record-safety-topic');
+      if (select) select.value = existing;
+      return toast(`${existing} is already available.`);
+    }
+    try {
+      const field = isType ? 'documentTypes' : 'safetyTopics';
+      await setDoc(doc(db, 'safetyRecordSettings', 'default'), { [field]: arrayUnion(value), updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || '', updatedByName: currentUser?.displayName || currentUser?.email || '' }, { merge: true });
+      target.push(value);
+      target.sort((a, b) => a.localeCompare(b));
+      renderSafetyRecordOptionMenus();
+      const select = document.getElementById(isType ? 'safety-record-document-type' : 'safety-record-safety-topic');
+      if (select) select.value = value;
+      toggleSafetyRecordAdder(kind, false);
+      await logAuditEvent(`safety-record.${isType ? 'document-type' : 'topic'}.added`, { value });
+      toast(`${value} added.`);
+    } catch (error) {
+      console.error('Safety record option save failed', error);
+      toast(`Could not add ${isType ? 'document type' : 'safety topic'}.`);
+    }
+  }
+
+  function selectedEmployeeForSafetyRecords(name) {
+    const normalized = normalizeSafetyName(name);
+    const employee = (allEmployees || []).find(item => normalizeSafetyName(item.name) === normalized);
+    const intake = (allNewHireIntakes || []).find(item => normalizeSafetyName(item.name || item.orientationForm?.employeeName) === normalized);
+    return employee ? { ...employee, source: 'employee' } : intake ? { ...intake, source: 'intake' } : { id: '', name, source: 'records' };
+  }
+
+  function employeeSafetyAttentionCount(employee) {
+    if (!employee || employee.source !== 'employee') return 0;
+    const problem = getEmployeeCertProblem(employee);
+    return (problem.expired?.length || 0) + (problem.soon?.length || 0) + (!problem.total ? 1 : 0);
+  }
+
+  function renderEmployeeSafetyRecordResults() {
+    const body = document.getElementById('safety-record-results');
+    const count = document.getElementById('safety-record-result-count');
+    if (count) count.textContent = `${filteredEmployeeSafetyRecords.length} matching record${filteredEmployeeSafetyRecords.length === 1 ? '' : 's'}`;
+    if (!body) return;
+    if (!filteredEmployeeSafetyRecords.length) {
+      body.innerHTML = '<tr><td colspan="6"><div class="safety-record-empty">No records matched this employee and filter combination.</div></td></tr>';
+      return;
+    }
+    body.innerHTML = filteredEmployeeSafetyRecords.map(record => `
+      <tr>
+        <td>${esc(safetyRecordDisplayDate(record.date))}</td>
+        <td><strong>${esc(record.title)}</strong><br><span style="color:var(--muted)">${esc(record.type)}</span></td>
+        <td>${esc(record.projectName || 'Company-wide')}${record.jobNumber ? `<br><span style="color:var(--muted)">Job ${esc(record.jobNumber)}</span>` : ''}</td>
+        <td>${(record.topics || []).length ? record.topics.slice(0, 3).map(topic => `<span class="safety-record-topic">${esc(topic)}</span>`).join('') : '<span style="color:var(--muted)">Not tagged</span>'}</td>
+        <td><span class="pill active">${esc(record.status)}</span></td>
+        <td><button class="btn-sm" type="button" data-record-id="${esc(record.id)}" onclick="openSafetyRecordResultDetail(this.dataset.recordId)">Open</button></td>
+      </tr>`).join('');
+  }
+
+  function renderEmployeeSafetyRecordProfile() {
+    const employee = selectedSafetyRecordEmployee || {};
+    const name = employee.name || document.getElementById('safety-record-employee-search')?.value.trim() || 'Employee';
+    const dates = allEmployeeSafetyRecords.map(record => safetyRecordDateValue(record.date)).filter(Boolean).sort();
+    const projects = new Set(allEmployeeSafetyRecords.map(record => record.projectName).filter(Boolean));
+    const orientation = allEmployeeSafetyRecords.find(record => record.source === 'orientation');
+    const attention = employeeSafetyAttentionCount(employee);
+    const problem = employee.source === 'employee' ? getEmployeeCertProblem(employee) : null;
+    const setText = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value; };
+    setText('safety-record-avatar', safetyRecordEmployeeInitials(name));
+    setText('safety-record-employee-name', name);
+    setText('safety-record-employee-id', employee.id ? `Employee record ${employee.id}` : 'Matched from submitted PAL records');
+    setText('safety-record-first-date', dates.length ? safetyRecordDisplayDate(dates[0]) : '-');
+    setText('safety-record-project-count', String(projects.size));
+    setText('safety-record-orientation', orientation ? `${safetyRecordDisplayDate(orientation.date)}${orientation.intake?.orientationForm?.orientationLanguage ? ` · ${String(orientation.intake.orientationForm.orientationLanguage).toUpperCase()}` : ''}` : 'Not found');
+    setText('safety-record-cert-attention', problem ? (attention ? `${attention} item${attention === 1 ? '' : 's'}` : 'Current') : 'No employee cert file');
+    const button = document.getElementById('safety-record-package-button');
+    if (button) button.disabled = !filteredEmployeeSafetyRecords.length;
+  }
+
+  function searchEmployeeSafetyRecords(showNotice = true) {
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can view employee safety records.');
+    const input = document.getElementById('safety-record-employee-search');
+    const name = String(input?.value || '').trim();
+    if (!name) return toast('Enter or select an employee name first.');
+    selectedSafetyRecordEmployee = selectedEmployeeForSafetyRecords(name);
+    allEmployeeSafetyRecords = buildEmployeeSafetyRecords({ employeeName: name, forms: allSafetyRecordFieldForms, intakes: allNewHireIntakes, customTypes: safetyRecordDocumentTypes, customTopics: safetyRecordTopics });
+    filteredEmployeeSafetyRecords = filterEmployeeSafetyRecords(allEmployeeSafetyRecords, { documentType: document.getElementById('safety-record-document-type')?.value || '', safetyTopic: document.getElementById('safety-record-safety-topic')?.value || '' });
+    const summary = safetyRecordSummary(allEmployeeSafetyRecords, employeeSafetyAttentionCount(selectedSafetyRecordEmployee));
+    const setText = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = String(value); };
+    setText('safety-record-total', summary.total);
+    setText('safety-record-safety-total', summary.safety);
+    setText('safety-record-lifting-total', summary.properLifting);
+    setText('safety-record-attention-total', summary.attention);
+    renderEmployeeSafetyRecordResults();
+    renderEmployeeSafetyRecordProfile();
+    if (showNotice && !allEmployeeSafetyRecords.length) toast('No signed or documented PAL records were found for that exact employee name.');
+  }
+
+  function safetyRecordDetailFields(record) {
+    if (record.source === 'orientation') {
+      const form = record.intake?.orientationForm || {};
+      return [
+        ['Employee', record.employeeName], ['Date completed', safetyRecordDisplayDate(record.date)], ['Language', form.orientationLanguage || ''],
+        ['Knowledge-check score', form.orientationScore === undefined ? '' : `${form.orientationScore} / 5`], ['Signature', form.signature || ''], ['Module version', form.orientationModuleVersion || '']
+      ];
+    }
+    const data = record.form?.documentData || {};
+    return [
+      ['Employee', record.employeeName], ['Document', record.title], ['Project', record.projectName], ['Date', safetyRecordDisplayDate(record.date)],
+      ['Supervisor / Foreman', data.foreman || data.supervisor || record.submittedByName || ''], ['Topic', data.topic || data.items_discussed || ''],
+      ['Tasks / Locations', data.tasks_locations || ''], ['Hazard 1', data.hazard1 || ''], ['Control 1', data.control1 || ''], ['Hazard 2', data.hazard2 || ''], ['Control 2', data.control2 || ''],
+      ['Safety topics found', (record.topics || []).join(', ')], ['Record status', record.status]
+    ];
+  }
+
+  function openSafetyRecordResultDetail(recordId) {
+    const record = allEmployeeSafetyRecords.find(item => item.id === recordId);
+    if (!record) return toast('Record not found. Refresh and try again.');
+    const modal = document.getElementById('modal-report-detail');
+    const heading = modal?.querySelector('h3');
+    const action = modal?.querySelector('.btn-save');
+    if (heading) heading.textContent = record.title || 'Employee Safety Record';
+    if (action) action.style.display = 'none';
+    const grid = document.getElementById('report-detail-grid');
+    if (!grid) return;
+    const fields = safetyRecordDetailFields(record).filter(([, value]) => String(value || '').trim());
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="btn-save" type="button" data-record-id="${esc(record.id)}" onclick="openOriginalSafetyRecord(this.dataset.recordId)">Open Original PAL Record</button>
+      </div>
+      ${fields.map(([key, value]) => `<div class="report-field"><span class="k">${esc(key)}</span><div class="v">${esc(value)}</div></div>`).join('')}`;
+    modal?.classList.add('open');
+  }
+
+  async function openOriginalSafetyRecord(recordId) {
+    const record = allEmployeeSafetyRecords.find(item => item.id === recordId);
+    if (!record) return toast('Original record not found.');
+    closeModal('modal-report-detail');
+    if (record.source === 'fieldForm') {
+      const project = (allProjects || []).find(item => item.id === record.projectId);
+      if (!project) return toast('The source project could not be opened.');
+      await openProject(project.id, project);
+      await loadProjectFieldForms(project.id);
+      const fieldTab = document.querySelector('#view-detail .tab[onclick*="tab-field-forms"]');
+      switchTab('tab-field-forms', fieldTab);
+      openFieldFormDetail(record.sourceId);
+      return;
+    }
+    if (record.intakeId) {
+      showView('view-projects');
+      switchMainTab('main-employee-onboarding');
+      await loadNewHireIntakes(true);
+      openNewHireReview(record.intakeId);
+    }
+  }
+
+  function createEmployeeSafetyRecordPackage() {
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can create employee safety record packages.');
+    if (!filteredEmployeeSafetyRecords.length || !selectedSafetyRecordEmployee) return toast('Search and select records first.');
+    const employeeName = selectedSafetyRecordEmployee.name || document.getElementById('safety-record-employee-search')?.value.trim() || 'Employee';
+    const typeFilter = document.getElementById('safety-record-document-type')?.value || 'All documents';
+    const topicFilter = document.getElementById('safety-record-safety-topic')?.value || 'All safety topics';
+    const rows = filteredEmployeeSafetyRecords.map((record, index) => `<tr><td>${index + 1}</td><td>${esc(safetyRecordDisplayDate(record.date))}</td><td>${esc(record.title)}</td><td>${esc(record.projectName || 'Company-wide')}</td><td>${esc((record.topics || []).join(', ') || 'Not tagged')}</td><td>${esc(record.status)}</td></tr>`).join('');
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>PAL Employee Safety Records - ${esc(employeeName)}</title><style>body{font-family:Arial,sans-serif;color:#1f2937;margin:32px}h1,h2{color:#1b3a5c}.brand{border-bottom:5px solid #78c240;padding-bottom:12px}.note{background:#f4f6f8;border-left:4px solid #78c240;padding:12px;margin:16px 0}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #cfd8e3;padding:8px;text-align:left;vertical-align:top}th{background:#1b3a5c;color:#fff}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Print / Save as PDF</button><div class="brand"><h1>PAL Environmental Services</h1><h2>Employee Safety Record Package</h2></div><p><strong>Employee:</strong> ${esc(employeeName)}<br><strong>Created:</strong> ${esc(new Date().toLocaleString())}<br><strong>Document filter:</strong> ${esc(typeFilter)}<br><strong>Safety topic filter:</strong> ${esc(topicFilter)}<br><strong>Records included:</strong> ${filteredEmployeeSafetyRecords.length}</p><div class="note">This package is an index of records stored in the PAL Safety Hub. Original signed records remain unchanged in their source projects and onboarding packets.</div><table><thead><tr><th>#</th><th>Date</th><th>Document</th><th>Project</th><th>Safety topics</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pal-employee-safety-records-${exportSlug(employeeName)}-${new Date().toISOString().slice(0, 10)}.html`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    logAuditEvent('safety-record.package.created', { employeeName, recordCount: filteredEmployeeSafetyRecords.length, documentType: typeFilter, safetyTopic: topicFilter });
+    toast('Employee safety record package saved to files.');
+  }
+
   function switchMainTab(tabId, btn) {
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     const supportTabMap = {
@@ -14713,6 +15128,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (tabId === 'main-activity-log') loadActivityLog(true);
     if (tabId === 'main-user-access') loadUserAccessPanel(true);
     if (tabId === 'main-integrations') loadIntegrationHealth();
+    if (tabId === 'main-safety-record-center') loadSafetyRecordCenter(false);
     if (tabId === 'main-tickets') {
       refreshTicketProjectOptions();
       setTimeout(() => openExtraWorkTicketModal(), 0);

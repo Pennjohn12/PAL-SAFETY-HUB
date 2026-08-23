@@ -192,6 +192,11 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /safetyRecordSettings/{settingsId} {
+      allow read, create, update: if isOffice();
+      allow delete: if false;
+    }
+
     match /newHireIntakes/{intakeId} {
       // Public intake links are unguessable IDs. Public users can only get/create/update a known packet.
       // Listing all intakes is office-only.
