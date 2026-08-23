@@ -1945,9 +1945,9 @@
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
       <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Onboarding</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
-      <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-safety-record-center', this)">Employee Safety Records</button>
       <button class="tab" onclick="switchMainTab('main-tickets', this)">Tickets</button>
       <button class="tab" onclick="switchMainTab('main-warehouse', this)">Warehouse</button>
+      <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-safety-record-center', this)">Employee Safety Records</button>
       <button class="tab admin-only hidden-by-role" onclick="switchMainTab('main-activity-log', this)">Activity Log</button>
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-backup-export', this)">Backup Export</button>
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-integrations', this)">Integrations</button>
@@ -3656,6 +3656,7 @@
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
       <button class="btn-outline" onclick="printNewHireFullPacket()">Print Full Packet</button>
       <button class="btn-outline" onclick="downloadNewHireFullPacket()">Save Full Packet</button>
+      <button class="btn-sm danger admin-only hidden-by-role" onclick="archiveNewHireIntake(currentNewHireReviewId)">Remove New Hire</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
       <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
@@ -4210,6 +4211,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveNewHireIntake = saveNewHireIntake;
   window.sendNewHireIntakeText = sendNewHireIntakeText;
   window.loadNewHireIntakes = loadNewHireIntakes;
+  window.archiveNewHireIntake = archiveNewHireIntake;
   window.loadEmployeeOnboarding = loadEmployeeOnboarding;
   window.switchOnboardingTab = switchOnboardingTab;
   window.setOnboardingReviewBucket = setOnboardingReviewBucket;
@@ -9699,6 +9701,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       'employee.certification.updated': 'Certification updated',
       'employee.certification.archived': 'Certification archived',
       'new_hire_intake.created': 'New hire intake created',
+      'new_hire_intake.archived': 'New hire removed from active onboarding',
       'new_hire_intake.cert_files_uploaded': 'New hire cert files uploaded',
       'new_hire_intake.status_updated': 'New hire status updated',
       'ticket.created': 'Ticket created',
@@ -10046,6 +10049,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return (rows || []).filter(emp => !isArchivedRecord(emp));
   }
 
+  function activeNewHireIntakeRecords(rows = []) {
+    return (rows || []).filter(intake => !isArchivedRecord(intake));
+  }
+
   function activeCertifications(certs = []) {
     return (Array.isArray(certs) ? certs : []).filter(cert => !isArchivedRecord(cert));
   }
@@ -10096,7 +10103,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       allEmployees = activeEmployeeRecords(empSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-      allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allNewHireIntakes = activeNewHireIntakeRecords(nhSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       renderWorkforceOverview();
     } catch (e) {
       console.error(e);
@@ -10489,7 +10496,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
             <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
             <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
-            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Archive Employee</button>
+            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
             <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
           </div>
         </div>`;
@@ -10568,7 +10575,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
         <div class="employee-actions" style="margin-top:12px;">
           <button class="btn-sm" onclick="editEmployee('${employeeId}')">Detail Edit Employee</button>
-          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Archive Employee</button>
+          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Remove Employee</button>
         </div>
       </div>
       <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
@@ -10653,6 +10660,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   async function deleteEmployee(employeeId) {
     if (!requireCloudConnection('archive an employee file')) return;
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can remove employee records.');
     const emp = allEmployees.find(e => e.id === employeeId);
     if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
     const ok = confirm(`Archive ${emp.name || 'this employee'}? The record will be hidden from active lists but preserved for long-term history.`);
@@ -10671,10 +10679,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         closeModal('modal-employee-detail');
       }
       await loadEmployees(true);
-      toast('Employee archived');
+      toast('Employee removed from the active employee list.');
     } catch (e) {
       console.error(e);
-      toast('Could not archive employee');
+      toast('Could not remove employee');
     }
   }
 
@@ -12319,6 +12327,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }
       currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
       const x = currentPublicNewHireIntake;
+      if (isArchivedRecord(x)) {
+        if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Link Closed</h3><p class="helper-text">This onboarding request is no longer active. Please contact the PAL office if you still need to complete an intake packet.</p>`;
+        if (formCard) formCard.style.display = 'none';
+        return;
+      }
       if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Request Loaded</h3>
         <div class="report-grid" style="margin-top:10px;">
           <div class="report-field"><span class="k">Project</span><div class="v">${esc(x.projectName || 'PAL jobsite')} ${x.projectJobNumber ? '- Job # ' + esc(x.projectJobNumber) : ''}</div></div>
@@ -13085,13 +13098,47 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!currentUser) return;
     try {
       const snap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-      allNewHireIntakes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allNewHireIntakes = activeNewHireIntakeRecords(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       renderNewHireIntakes();
       renderRecentHires();
     } catch (e) {
       console.error(e);
       const list = document.getElementById('newhire-list-main');
       if (list) list.innerHTML = '<p style="color:var(--red);font-size:14px;">Could not load new hire intake requests.</p>';
+    }
+  }
+
+  async function archiveNewHireIntake(intakeId) {
+    if (!requireCloudConnection('remove a new-hire record')) return;
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can remove new-hire records.');
+    const intake = allNewHireIntakes.find(item => item.id === intakeId);
+    if (!intake) return toast('New-hire record not found. Refresh and try again.');
+    const ok = confirm(`Remove ${intake.name || 'this new hire'} from the active onboarding lists? The packet and uploaded documents will be preserved in archived history.`);
+    if (!ok) return;
+    try {
+      await updateDoc(doc(db, 'newHireIntakes', intakeId), {
+        archived: true,
+        archivedAt: serverTimestamp(),
+        archivedBy: currentUser?.uid || '',
+        archivedByName: currentUser?.displayName || currentUser?.email || '',
+        previousStatus: intake.status || 'Pending',
+        status: 'Archived',
+        updatedAt: serverTimestamp()
+      });
+      await logAuditEvent('new_hire_intake.archived', {
+        intakeId,
+        employeeName: intake.name || '',
+        previousStatus: intake.status || 'Pending'
+      });
+      if (currentNewHireReviewId === intakeId) {
+        currentNewHireReviewId = null;
+        closeModal('modal-newhire-review');
+      }
+      await loadNewHireIntakes(true);
+      toast('New hire removed from active onboarding lists.');
+    } catch (error) {
+      console.error('New-hire archive failed', error);
+      toast('Could not remove the new-hire record.');
     }
   }
 
@@ -13261,6 +13308,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
         <button class="btn-sm" onclick="setNewHireStatus('${esc(x.id)}','Good To Work')">Good To Work</button>
         <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
+        ${isOfficeRole() ? `<button class="btn-sm danger" onclick="archiveNewHireIntake('${esc(x.id)}')">Remove New Hire</button>` : ''}
       </div>
     </div>`).join('');
   }
@@ -13328,6 +13376,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <div class="newhire-actions">
           <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
           <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
+          ${isOfficeRole() ? `<button class="btn-sm danger" onclick="archiveNewHireIntake('${esc(x.id)}')">Remove New Hire</button>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -14563,7 +14612,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (!allNewHireIntakes || !allNewHireIntakes.length) {
         try {
           const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-          allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          allNewHireIntakes = activeNewHireIntakeRecords(nhSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (e) { console.warn('New hire status load warning', e); }
       }
       if (!allEmployees || !allEmployees.length) {
@@ -14903,7 +14952,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')))
       ]);
       allEmployees = activeEmployeeRecords(employeeSnap.docs.map(item => ({ id: item.id, ...item.data() })));
-      allNewHireIntakes = intakeSnap.docs.map(item => ({ id: item.id, ...item.data() }));
+      allNewHireIntakes = activeNewHireIntakeRecords(intakeSnap.docs.map(item => ({ id: item.id, ...item.data() })));
       await Promise.all([loadSafetyRecordSettings(), loadSafetyRecordFieldForms()]);
       renderSafetyRecordEmployeeOptions();
       if (selectedSafetyRecordEmployee?.name) searchEmployeeSafetyRecords(false);
