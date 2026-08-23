@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { housekeepingPromptGuidance } = require('./approved-safety-guidance');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineSecret } = require('firebase-functions/params');
 const { Resend } = require('resend');
@@ -187,7 +188,7 @@ PAL HIGH-RISK GUIDANCE (apply only when supported by the supplied work)
 - Mechanical lifts or mobile equipment: require authorized operators, pre-use inspection, manufacturer limits, stable travel/work surfaces, overhead and crush-zone checks, barricades/spotters where needed, controlled movement, and removal from service for defects.
 - Material handling: plan the route, keep it clear, assess weight/shape, use carts or mechanical assistance, team-lift awkward loads, keep hands out of pinch points, lift with the legs while keeping the load close, and stop if the load cannot be controlled.
 - Electrical or temporary power: inspect cords/tools, use required GFCI protection, keep connections dry and protected, avoid damaged equipment and energized exposure, maintain clearance, and remove defective equipment from service.
-- Housekeeping: maintain clear walkways and egress, control cords/hoses and trip hazards, stack materials securely, remove debris throughout the shift, keep access to extinguishers/electrical panels clear, and correct changing conditions immediately.
+${housekeepingPromptGuidance()}
 
 Write professional field-ready text that is specific, thorough, and easy to read aloud. This is an editable draft; never imply that AI approval replaces review by PAL's competent foreman before the meeting, crew signatures, or work begins.`;
 
@@ -622,7 +623,7 @@ exports.generateSafetyDraft = onCall({
     }
     await db.collection('integrationAiLogs').add({
       feature: 'daily-safety-draft', model: 'gpt-5.4-mini', projectName: input.projectName,
-      promptVersion: 'pal-safety-v2',
+      promptVersion: 'pal-safety-v3-housekeeping',
       actorUid: request.auth.uid, actorEmail: access.email, usageId: usage.usageId,
       inputTokens: Number(result.usage?.input_tokens || 0),
       outputTokens: Number(result.usage?.output_tokens || 0),
