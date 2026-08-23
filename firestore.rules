@@ -55,6 +55,12 @@ service cloud.firestore {
       );
     }
 
+    function isIntakeOwner(intake) {
+      return signedIn()
+        && intake.ownerUid is string
+        && intake.ownerUid == request.auth.uid;
+    }
+
     function isProjectMember(project) {
       return signedIn() && (
         isOffice() ||
@@ -130,7 +136,13 @@ service cloud.firestore {
         isAdmin() ||
         (
           userId == request.auth.uid &&
-          request.resource.data.diff(resource.data).changedKeys().hasOnly(['name', 'phone', 'updatedAt'])
+          request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'name',
+            'phone',
+            'onboardingIntakeId',
+            'onboardingUpdatedAt',
+            'updatedAt'
+          ])
         )
       );
       allow delete: if false;
@@ -193,14 +205,20 @@ service cloud.firestore {
     }
 
     match /newHireIntakes/{intakeId} {
-      // Public intake links are unguessable IDs. Public users can only get/create/update a known packet.
-      // Listing all intakes is office-only.
-      allow get: if isOffice() || true;
+      // Employees must authenticate and can only access the packet permanently assigned to their uid.
+      // PAL office users retain full review access and are the only users allowed to list packets.
+      allow get: if isOffice() || isIntakeOwner(resource.data);
       allow list: if isOffice();
       allow create: if isOffice() || (
+        signedIn() &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.ownerEmail == userEmail() &&
         (!('status' in request.resource.data) ||
           request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
         request.resource.data.keys().hasOnly([
+          'ownerUid',
+          'ownerEmail',
+          'ownerLastSignedInAt',
           'name',
           'phone',
           'email',
@@ -246,12 +264,33 @@ service cloud.firestore {
         ])
       );
       allow update: if isOffice() || (
+        signedIn() &&
+        !('ownerUid' in resource.data) &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.ownerEmail == userEmail() &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'ownerUid',
+          'ownerEmail',
+          'ownerLastSignedInAt',
+          'updatedAt'
+        ])
+      ) || (
+        isIntakeOwner(resource.data) &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'ownerLastSignedInAt',
+          'updatedAt'
+        ])
+      ) || (
+        isIntakeOwner(resource.data) &&
+        request.resource.data.ownerUid == resource.data.ownerUid &&
+        request.resource.data.ownerEmail == resource.data.ownerEmail &&
         (!('status' in request.resource.data) ||
-          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
+          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted', 'Missing Info']) &&
         (!request.resource.data.diff(resource.data).changedKeys().hasAny(['createdAt']) ||
           (!('createdAt' in resource.data) && request.resource.data.createdAt == request.time)) &&
         request.resource.data.diff(resource.data).changedKeys().hasOnly([
           'name',
+          'ownerLastSignedInAt',
           'phone',
           'email',
           'trade',
@@ -353,6 +392,29 @@ service cloud.firestore {
         ])
       ) || (signedIn() && isProjectMemberById(resource.data.projectId));
       allow delete: if isAdmin();
+    }
+
+    match /dailyAccessSessions/{sessionId} {
+      allow get: if (
+        resource.data.token == sessionId
+        && resource.data.status == 'Active'
+        && resource.data.expiresAt is timestamp
+        && request.time < resource.data.expiresAt
+      ) || (
+        signedIn()
+        && (isOffice() || resource.data.createdBy == request.auth.uid)
+      );
+      allow list: if signedIn()
+        && (isOffice() || resource.data.createdBy == request.auth.uid);
+      allow create, update, delete: if false;
+
+      match /submissions/{submissionId} {
+        allow read: if signedIn() && (
+          isOffice()
+          || get(/databases/$(database)/documents/dailyAccessSessions/$(sessionId)).data.createdBy == request.auth.uid
+        );
+        allow create, update, delete: if false;
+      }
     }
 
     match /integrationSettings/{settingsId} {

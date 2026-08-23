@@ -55,6 +55,18 @@ service firebase.storage {
       );
     }
 
+    function intakeData(intakeId) {
+      return firestore.get(/databases/(default)/documents/newHireIntakes/$(intakeId)).data;
+    }
+
+    function isIntakeOwner(intakeId) {
+      return signedIn()
+        && (
+          (profile().onboardingIntakeId is string && profile().onboardingIntakeId == intakeId) ||
+          (intakeData(intakeId).ownerUid is string && intakeData(intakeId).ownerUid == request.auth.uid)
+        );
+    }
+
     function projectData(projectId) {
       return firestore.get(/databases/(default)/documents/projects/$(projectId)).data;
     }
@@ -73,7 +85,14 @@ service firebase.storage {
     function isSafeUpload(maxBytes) {
       return request.resource != null
         && request.resource.size < maxBytes
-        && request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/html|text/plain');
+        && (
+          request.resource.contentType.matches('image/.*') ||
+          request.resource.contentType == 'application/pdf' ||
+          request.resource.contentType == 'application/msword' ||
+          request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+          request.resource.contentType == 'text/html' ||
+          request.resource.contentType == 'text/plain'
+        );
     }
 
     match /projects/{projectId}/{folder}/{fileName} {
@@ -99,12 +118,13 @@ service firebase.storage {
       allow delete: if false;
     }
 
-    match /newHireIntakes/{intakeId}/{folder}/{fileName} {
-      // Public intake upload links use unguessable intake IDs.
-      allow read: if isOffice();
-      allow write: if (
-        isOffice() ||
-        folder in [
+    match /newHireIntakes/{intakeId}/{folder}/{ownerUid}/{fileName} {
+      // Employee uploads are namespaced by the authenticated uid. This makes
+      // ownership enforceable without relying on a cross-service document lookup.
+      allow read: if isOffice() || (signedIn() && ownerUid == request.auth.uid);
+      allow write: if signedIn()
+        && ownerUid == request.auth.uid
+        && folder in [
           'publicUploads',
           'certUploads',
           'payrollIdUploads',
@@ -112,6 +132,22 @@ service firebase.storage {
           'drugConsent',
           'safetyAgreement'
         ]
+        && isSafeUpload(25 * 1024 * 1024);
+      allow delete: if false;
+    }
+
+    match /newHireIntakes/{intakeId}/{folder}/{fileName} {
+      allow read: if isOffice() || isIntakeOwner(intakeId);
+      allow write: if (
+        isOffice() ||
+        (isIntakeOwner(intakeId) && folder in [
+          'publicUploads',
+          'certUploads',
+          'payrollIdUploads',
+          'orientation',
+          'drugConsent',
+          'safetyAgreement'
+        ])
       ) && isSafeUpload(25 * 1024 * 1024);
       allow delete: if false;
     }

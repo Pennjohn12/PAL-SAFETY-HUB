@@ -880,6 +880,7 @@
       padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--navy);
     }
     .btn-sm.danger { color: var(--red); border-color: #fecdd3; background: #fff1f2; }
+    .btn-secondary.danger { color: var(--red); border-color: #fecdd3; background: #fff1f2; }
 
 
     .cert-alert-summary {
@@ -1470,6 +1471,25 @@
     .public-newhire-start-hero h2 { color:var(--navy); margin:0 0 6px; }
     .public-newhire-start-hero p { color:var(--muted); line-height:1.5; margin:0; }
     .public-newhire-start-hero .btn-save { width:100%; min-height:58px; margin-top:14px; font-size:17px; }
+    .newhire-account-gate { max-width:620px; margin:0 auto 18px; background:#fff; border:1px solid var(--line); border-top:6px solid var(--green); border-radius:18px; padding:24px; box-shadow:0 10px 30px rgba(16,24,40,.10); }
+    .newhire-account-gate h2 { color:var(--navy); margin:0 0 8px; font-size:25px; }
+    .newhire-account-gate .account-lead { color:var(--muted); line-height:1.55; margin:0 0 18px; }
+    .newhire-account-benefits { display:grid; gap:8px; margin:0 0 20px; }
+    .newhire-account-benefits div { display:flex; gap:9px; align-items:flex-start; color:#344054; font-size:14px; line-height:1.4; }
+    .newhire-account-benefits span { color:var(--green); font-weight:900; }
+    .newhire-account-tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; padding:5px; border-radius:12px; background:#f2f4f7; }
+    .newhire-account-tabs button { border:0; border-radius:9px; padding:11px 8px; font-weight:800; color:#475467; background:transparent; cursor:pointer; }
+    .newhire-account-tabs button.active { color:var(--navy); background:#fff; box-shadow:0 2px 8px rgba(16,24,40,.10); }
+    .newhire-account-panel { display:none; }
+    .newhire-account-panel.active { display:block; }
+    .newhire-account-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .newhire-account-grid .span-2 { grid-column:1 / -1; }
+    .newhire-account-actions .btn-save { width:100%; min-height:54px; font-size:16px; margin-top:8px; }
+    .newhire-account-error { display:none; margin:12px 0 0; padding:11px 12px; border:1px solid #fda29b; border-radius:10px; background:#fffbfa; color:#b42318; font-size:14px; line-height:1.4; }
+    .newhire-account-error.show { display:block; }
+    .newhire-account-help { margin-top:14px; text-align:center; color:var(--muted); font-size:13px; line-height:1.45; }
+    .newhire-account-help button { border:0; background:none; color:var(--navy); font-weight:800; text-decoration:underline; cursor:pointer; }
+    .newhire-account-signed-in { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:12px 14px; margin-bottom:16px; border:1px solid #a6f4c5; border-radius:12px; background:#ecfdf3; color:#05603a; }
     .public-newhire-start-meta { text-align:center; color:var(--muted); font-size:12px; font-weight:800; margin-top:10px; }
     .newhire-required-list { display:grid; gap:8px; margin:12px 0; }
     .newhire-required-list div { border:1px solid var(--line); border-left:4px solid var(--green); border-radius:10px; padding:10px 12px; background:#f8fafc; font-size:13px; line-height:1.45; }
@@ -1481,7 +1501,7 @@
     .newhire-upload-guidance .box { border:1px solid var(--line); border-radius:12px; padding:12px; background:#f8fafc; }
     .newhire-upload-guidance h4 { color:var(--navy); margin-bottom:6px; }
     .newhire-upload-guidance p { color:var(--muted); font-size:13px; line-height:1.45; }
-    @media(max-width:820px){ .newhire-wizard-shell { grid-template-columns:1fr; } .newhire-wizard-rail { position:static; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .newhire-upload-guidance { grid-template-columns:1fr; } }
+    @media(max-width:820px){ .newhire-wizard-shell { grid-template-columns:1fr; } .newhire-wizard-rail { position:static; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .newhire-upload-guidance { grid-template-columns:1fr; } .newhire-account-grid { grid-template-columns:1fr; } .newhire-account-grid .span-2 { grid-column:auto; } .newhire-account-gate { padding:20px 16px; } }
     @media(max-width:560px){ .newhire-wizard-rail { grid-template-columns:1fr; } .newhire-step-actions, .newhire-step-actions .right { display:grid; grid-template-columns:1fr; width:100%; } .newhire-step-actions button { width:100%; min-height:44px; } }
     .doc-review-box { background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px; }
     .doc-review-box h4 { color:var(--navy); margin-bottom:8px; }
@@ -1511,7 +1531,7 @@
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
   </style>
-  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-26-onboarding-card-actions" />
+  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-08-22-operations-dashboard" />
 
 <script>
   // PUBLIC_LINK_EARLY_VIEW_FORCE_2026_07_20
@@ -1520,10 +1540,11 @@
     var isPublicNewHire = params.get('newhire') || params.get('intake') || params.get('publicStart');
     var isPublicTicket = params.get('ticketProjectId') && params.get('ticketId') && params.get('ticketToken');
     var isPublicSafety = params.get('safetyProjectId') && params.get('safetyFormId') && params.get('safetyToken');
-    if (!isPublicNewHire && !isPublicTicket && !isPublicSafety) return;
+    var isDailyAccess = params.get('crewAccess');
+    if (!isPublicNewHire && !isPublicTicket && !isPublicSafety && !isDailyAccess) return;
     document.addEventListener('DOMContentLoaded', function(){
       document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-      var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : 'view-public-newhire-intake');
+      var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : (isDailyAccess ? 'view-daily-crew-access' : 'view-public-newhire-intake'));
       var pub = document.getElementById(viewId);
       if (pub) pub.classList.add('active');
       var login = document.getElementById('view-login');
@@ -1531,7 +1552,7 @@
       var status = document.getElementById('public-intake-status-card');
       if (isPublicNewHire && status && !status.dataset.publicHardFix) {
         status.dataset.publicHardFix = '1';
-        status.innerHTML = '<h3>PAL New Hire Packet</h3><p class="helper-text">Public employee packet opened. No office login required.</p>';
+        status.innerHTML = '<h3>PAL New Hire Packet</h3><p class="helper-text">Create or sign in to your employee account to securely open this packet.</p>';
       }
       var ticketStatus = document.getElementById('public-ticket-status-card');
       if (isPublicTicket && ticketStatus && !ticketStatus.dataset.publicHardFix) {
@@ -1549,15 +1570,16 @@
     var p = new URLSearchParams(window.location.search);
     var isPublicTicket = p.get('ticketProjectId') && p.get('ticketId') && p.get('ticketToken');
     var isPublicSafety = p.get('safetyProjectId') && p.get('safetyFormId') && p.get('safetyToken');
+    var isDailyAccess = p.get('crewAccess');
     var isPublicNewHire = p.get('newhire') || p.get('intake') || p.get('publicStart') || p.get('noLogin');
-    var isPublic = isPublicTicket || isPublicSafety || isPublicNewHire;
+    var isPublic = isPublicTicket || isPublicSafety || isDailyAccess || isPublicNewHire;
     if (!isPublic) return;
 
     // If this is a public route, never leave the login view active.
     function forcePublicView(){
       try {
         document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-        var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : 'view-public-newhire-intake');
+        var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : (isDailyAccess ? 'view-daily-crew-access' : 'view-public-newhire-intake'));
         var pub = document.getElementById(viewId);
         if (pub) pub.classList.add('active');
         var login = document.getElementById('view-login');
@@ -1660,9 +1682,7 @@
 
 </div>
 
-<!-- 
-     PUBLIC NEW HIRE INTAKE / FORM LAUNCHER - NO LOGIN REQUIRED
- -->
+<!-- EMPLOYEE NEW HIRE INTAKE / FORM LAUNCHER -->
 <div class="view" id="view-public-newhire-intake">
   <div class="header">
     <a class="brand" href="index.html">
@@ -1676,15 +1696,55 @@
   <div class="page-wrap">
     <div class="project-header-card">
       <h2>New Hire / Pre-Site Packet</h2>
-      <div class="meta">Employee access only - no login required.</div>
+      <div class="meta">Employee account required to protect and save your information.</div>
       <div class="meta">Foreman / office dashboard stays protected behind sign-in.</div>
     </div>
 
-    <div class="public-newhire-start-hero" id="public-newhire-start-hero">
+    <div class="newhire-account-gate" id="public-newhire-account-gate">
+      <h2>Create Your PAL Onboarding Account</h2>
+      <p class="account-lead">This account is required before you begin. It saves your progress and protects your private forms and documents.</p>
+      <div class="newhire-account-benefits">
+        <div><span>✓</span><div>Stop and return later without starting over.</div></div>
+        <div><span>✓</span><div>Continue from another phone or computer using the same email and password.</div></div>
+        <div><span>✓</span><div>This employee account only opens your own onboarding packet.</div></div>
+      </div>
+      <div class="newhire-account-tabs">
+        <button type="button" id="newhire-account-create-tab" class="active" onclick="showPublicNewHireAccountMode('create')">Create Account</button>
+        <button type="button" id="newhire-account-signin-tab" onclick="showPublicNewHireAccountMode('signin')">Already Have Account</button>
+      </div>
+      <div class="newhire-account-panel active" id="newhire-account-create-panel">
+        <div class="newhire-account-grid">
+          <div class="field"><label>Email</label><input id="newhire-account-email" type="email" autocomplete="email" placeholder="Your personal email" /></div>
+          <div class="field"><label>Confirm Email</label><input id="newhire-account-email-confirm" type="email" autocomplete="email" placeholder="Type email again" /></div>
+          <div class="field"><label>Password</label><input id="newhire-account-password" type="password" autocomplete="new-password" placeholder="At least 6 characters" /></div>
+          <div class="field"><label>Confirm Password</label><input id="newhire-account-password-confirm" type="password" autocomplete="new-password" placeholder="Type password again" /></div>
+          <label class="span-2" style="display:flex;gap:8px;align-items:center;font-size:14px;"><input id="newhire-account-show-password" type="checkbox" onchange="togglePublicNewHirePasswords()" /> Show password</label>
+        </div>
+        <div class="newhire-account-actions"><button class="btn-save" id="newhire-account-create-btn" type="button" onclick="createPublicNewHireAccount()">Create Account & Start Orientation</button></div>
+      </div>
+      <div class="newhire-account-panel" id="newhire-account-signin-panel">
+        <div class="newhire-account-grid">
+          <div class="field"><label>Email</label><input id="newhire-signin-email" type="email" autocomplete="email" placeholder="Your account email" /></div>
+          <div class="field"><label>Password</label><input id="newhire-signin-password" type="password" autocomplete="current-password" placeholder="Your password" /></div>
+          <label class="span-2" style="display:flex;gap:8px;align-items:center;font-size:14px;"><input id="newhire-signin-show-password" type="checkbox" onchange="togglePublicNewHirePasswords()" /> Show password</label>
+        </div>
+        <div class="newhire-account-actions"><button class="btn-save" id="newhire-account-signin-btn" type="button" onclick="signInPublicNewHireAccount()">Sign In & Resume</button></div>
+        <div class="newhire-account-help"><button type="button" onclick="resetPublicNewHirePassword()">Forgot Password?</button></div>
+      </div>
+      <div class="newhire-account-error" id="newhire-account-error"></div>
+      <div class="newhire-account-help">Need help? Contact your PAL supervisor or the PAL office.</div>
+    </div>
+
+    <div class="newhire-account-signed-in" id="public-newhire-account-signed-in" style="display:none;">
+      <div><strong>Progress is protected and saving to:</strong> <span id="public-newhire-account-email-display"></span></div>
+      <button class="btn-secondary" type="button" onclick="signOutPublicNewHireAccount()">Sign Out</button>
+    </div>
+
+    <div class="public-newhire-start-hero" id="public-newhire-start-hero" style="display:none;">
       <h2>New Hire Orientation</h2>
       <p>Complete your required PAL safety orientation and onboarding packet. We will guide you through each step.</p>
       <button class="btn-save" type="button" onclick="publicNewHireWizardNext()">Start Orientation</button>
-      <div class="public-newhire-start-meta">No login required • Your progress saves as you continue</div>
+      <div class="public-newhire-start-meta">Your account saves progress as you continue</div>
     </div>
 
     <div class="detail-card" id="public-intake-status-card">
@@ -1715,7 +1775,7 @@
                 <div><strong>Step 2:</strong> Watch the complete PAL orientation video, then answer the five-question quiz. A score of 3 out of 5 or better is required to continue. A score of 0, 1, or 2 requires the complete video to be watched again before another attempt.</div>
                 <div><strong>Step 3:</strong> Review and sign the required orientation forms.</div>
                 <div><strong>Step 4:</strong> Upload safety certifications such as OSHA, SST, fall protection, scaffold, G60, fire watch, or any other PAL-required certs.</div>
-                <div><strong>Step 5:</strong> Upload payroll and ID documents, including driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll forms, and any other requested payroll document.</div>
+                <div><strong>Step 5:</strong> Upload all three required private payroll/ID documents: driver’s license, union book/card, and Social Security card. Your W-4 is completed separately in Step 3.</div>
               </div>
               <p class="helper-text">If something required is missing, PAL Safety Hub will stop you and show what needs to be fixed before you can move forward.</p>
               <div class="newhire-step-actions">
@@ -1794,7 +1854,7 @@
                 </div>
                 <div class="box">
                   <h4>Payroll / ID Documents</h4>
-                  <p>Examples: driver license/photo ID, Social Security card, union book/card if applicable, completed W-4/payroll forms, and other office-requested files.</p>
+                  <p>Required: driver’s license, union book/card, and Social Security card. All three must be uploaded before you can continue. The W-4 is completed separately in the Forms step.</p>
                   <div class="mini-note" id="public-payroll-id-status">Payroll / ID Uploads: Pending</div>
                 </div>
               </div>
@@ -1916,6 +1976,47 @@
   </div>
 </div>
 
+<!-- PUBLIC DAILY CREW ACCESS - PROJECT/DATE BOUND, NO LOGIN REQUIRED -->
+<div class="view" id="view-daily-crew-access">
+  <div class="header">
+    <a class="brand" href="index.html">
+      <div class="pal-badge">PAL</div>
+      <div class="brand-text"><h1>PAL Safety Hub</h1><p>Daily Crew Access</p></div>
+    </a>
+  </div>
+  <div class="crew-access-wrap">
+    <div class="crew-access-hero">
+      <h2 id="crew-access-project-name">Today’s Project Forms</h2>
+      <p id="crew-access-project-meta">Loading the project and work date...</p>
+    </div>
+    <div class="crew-access-card" id="crew-access-status-card">
+      <h3>Opening Today’s Forms</h3>
+      <p class="helper-text">Please wait while PAL Safety Hub loads the forms selected by your foreman.</p>
+    </div>
+    <div id="crew-access-active" style="display:none;">
+      <div class="crew-access-card">
+        <h3>1. Review Today’s Documents</h3>
+        <p class="helper-text">Read each item and check the confirmation. Your submission is added to the foreman’s master project sheets.</p>
+        <div class="crew-access-form-list" id="crew-access-form-list"></div>
+      </div>
+      <div class="crew-access-card">
+        <h3>2. Employee Check-In</h3>
+        <p class="helper-text">Enter your information exactly as it should appear on today’s payroll sheet.</p>
+        <div class="crew-access-fields">
+          <div class="field full"><label>Full Name</label><input id="crew-access-name" autocomplete="name" placeholder="Your full legal name" /></div>
+          <div class="field"><label>Time In</label><input id="crew-access-time-in" type="time" value="07:00" /></div>
+          <div class="field"><label>Union / Local Number</label><input id="crew-access-union" placeholder="Example: Local 79" /></div>
+          <div class="field"><label>Last 4 Digits of SSN</label><input id="crew-access-last4" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000" /></div>
+          <div class="field full"><label>Typed Signature</label><input id="crew-access-signature" autocomplete="name" placeholder="Type your full legal name" oninput="updateCrewAccessSignaturePreview()" /></div>
+          <div class="field full"><div class="crew-signature-preview" id="crew-access-signature-preview">Your signature appears here</div></div>
+        </div>
+        <label class="crew-access-confirm" style="margin-top:15px;"><input type="checkbox" id="crew-access-certify" /> <span>I certify that the information above is correct and that my typed name is my electronic signature.</span></label>
+        <button class="btn-save crew-access-submit" id="crew-access-submit-btn" type="button" onclick="submitDailyCrewAccess()">Submit Today’s Forms</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 
      PROJECT LIST VIEW
  -->
@@ -1925,7 +2026,7 @@
       <div class="pal-badge">PAL</div>
       <div class="brand-text">
         <h1>PAL Safety Hub</h1>
-        <p>Projects</p>
+        <p>Environmental Services</p>
       </div>
     </a>
     <div class="header-right">
@@ -1939,8 +2040,8 @@
 
   <div class="page-wrap">
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
-      <button class="tab active" onclick="switchMainTab('main-projects', this)">Projects</button>
-      <button class="tab" onclick="switchMainTab('main-foreman-tools', this)">Foreman / Supervisor Tools</button>
+      <button class="tab active" onclick="switchMainTab('main-operations-dashboard', this)">My Operations</button>
+      <button class="tab" onclick="switchMainTab('main-projects', this)">Projects</button>
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
       <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Onboarding</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
@@ -1952,7 +2053,162 @@
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-user-access', this)">User Access</button>
     </div>
 
-    <div class="tab-pane active" id="main-projects">
+    <div class="tab-pane active" id="main-operations-dashboard">
+      <div class="operations-shell">
+        <div class="operations-nav" aria-label="My Project Operations">
+          <button type="button" class="active" data-operations-view="operations-home" onclick="showOperationsView('operations-home', this)">Home</button>
+          <button type="button" data-operations-view="operations-today" onclick="showOperationsView('operations-today', this)">Today</button>
+          <button type="button" data-operations-view="operations-upcoming" onclick="showOperationsView('operations-upcoming', this)">Upcoming</button>
+          <button type="button" data-operations-view="operations-history" onclick="showOperationsView('operations-history', this)">My History</button>
+          <button type="button" data-operations-view="operations-tools" onclick="showOperationsView('operations-tools', this)">Tools &amp; Blank Forms</button>
+        </div>
+
+        <section class="operations-view active" id="operations-home">
+          <div class="operations-title-row">
+            <div><h2>My Project’s Operations Dashboard</h2><p id="operations-welcome">Welcome back. Choose what you need to do today.</p></div>
+            <button class="btn-save" type="button" onclick="scrollToOperationsSetup()">Start Today’s Setup</button>
+          </div>
+
+          <div class="operations-actions-grid">
+            <button class="operations-action-card" type="button" onclick="focusOperationsSetup()">
+              <span class="operations-action-icon" aria-hidden="true">&#9881;</span>
+              <h3>Work on Today’s Project</h3>
+              <p>Select a project, prepare the required documents and manage today’s work.</p>
+            </button>
+            <button class="operations-action-card" type="button" onclick="focusOperationsCrewAccess()">
+              <span class="operations-action-icon" aria-hidden="true">QR</span>
+              <h3>Send Crew QR Code</h3>
+              <p>Create a QR code and clickable link for employees to complete today’s forms.</p>
+            </button>
+            <button class="operations-action-card active" type="button" onclick="showOperationsView('operations-upcoming')">
+              <span class="operations-action-icon" aria-hidden="true">+</span>
+              <h3>Prepare Tomorrow or This Week</h3>
+              <p>Create editable payroll and safety drafts ahead of time.</p>
+            </button>
+          </div>
+
+          <div class="operations-setup-card" id="operations-setup-card">
+            <div class="operations-title-row">
+              <div><h2 style="font-size:25px;">Set Up Today’s Work</h2><p>Complete these three steps, then send the QR code to the crew.</p></div>
+              <button class="btn-outline" type="button" onclick="saveOperationsDraft()">Save &amp; Finish Later</button>
+            </div>
+
+            <div class="operations-step">
+              <div class="operations-step-number">1</div>
+              <div>
+                <h3>Select the project you are working on</h3>
+                <div class="operations-project-row">
+                  <select id="operations-project-select" onchange="syncOperationsProjectSelection()"><option value="">Choose a project</option></select>
+                  <button class="btn-outline admin-only" type="button" onclick="openNewProjectModal()">Add Another Project</button>
+                </div>
+                <div class="operations-project-row" style="margin-top:10px;grid-template-columns:minmax(0,1fr);max-width:340px;">
+                  <input id="operations-work-date" type="date" onchange="renderOperationsDashboard()" />
+                </div>
+              </div>
+            </div>
+
+            <div class="operations-step">
+              <div class="operations-step-number">2</div>
+              <div>
+                <h3>Choose and prepare today’s documents</h3>
+                <div class="operations-doc-grid">
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-safety" checked /><span class="operations-doc-copy"><strong>Daily Safety Meeting</strong><small>Required today</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); openOperationsTool('foreman-tool-manual-safety')">Fill Out</button></label>
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-payroll" checked /><span class="operations-doc-copy"><strong>Daily Payroll</strong><small>Required today</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); openOperationsTool('foreman-tool-daily-payroll')">Set Up</button></label>
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-toolbox" /><span class="operations-doc-copy"><strong>Toolbox Talk</strong><small>Add when needed</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); openOperationsTool('foreman-tool-weekly-toolbox')">Add</button></label>
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-other" /><span class="operations-doc-copy"><strong>Another Document</strong><small>Optional form or signature</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); showOperationsView('operations-tools')">Choose</button></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="operations-step" id="operations-crew-access-step">
+              <div class="operations-step-number">3</div>
+              <div>
+                <h3>Create and send the crew access</h3>
+                <p class="helper-text" style="margin-bottom:13px;">Employees will see only the documents selected for this project and date.</p>
+                <div class="operations-inline-actions">
+                  <button class="btn-save" id="generate-daily-access-btn" type="button" onclick="generateDailyAccess()">Generate QR Code &amp; Link</button>
+                  <button class="btn-outline" type="button" onclick="previewDailyAccess()">Review Before Sending</button>
+                </div>
+                <div class="daily-access-result" id="daily-access-result">
+                  <div class="daily-access-share-grid">
+                    <div class="daily-access-qr" id="daily-access-qr"><span class="helper-text">QR code</span></div>
+                    <div>
+                      <h3 style="margin-top:0;">Crew Access Ready</h3>
+                      <p class="helper-text" id="daily-access-result-meta">Project and date</p>
+                      <input class="daily-access-link" id="daily-access-link" readonly />
+                      <div class="operations-inline-actions" style="margin-top:11px;">
+                        <button class="btn-save" type="button" onclick="copyDailyAccessLink()">Copy Link</button>
+                        <button class="btn-outline" type="button" onclick="shareDailyAccessLink()">Share</button>
+                        <button class="btn-outline" type="button" onclick="downloadDailyAccessQr()">Download QR</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="operations-actions-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+            <button class="operations-action-card" style="min-height:120px;background:var(--navy);" type="button" onclick="showOperationsView('operations-history')"><h3 style="color:#fff;font-size:19px;">My Project History</h3><p style="color:rgba(255,255,255,.78);">Review completed projects and submitted documents</p></button>
+            <button class="operations-action-card" style="min-height:120px;background:var(--navy);" type="button" onclick="showOperationsView('operations-tools')"><h3 style="color:#fff;font-size:19px;">Tools &amp; Blank Forms</h3><p style="color:rgba(255,255,255,.78);">Open the same PAL forms, reports, payroll and AI tools</p></button>
+          </div>
+        </section>
+
+        <section class="operations-view" id="operations-today">
+          <div class="operations-title-row"><div><h2>Today</h2><p>Open daily access sessions, review crew check-ins, and enter checkout times.</p></div><button class="btn-outline" type="button" onclick="loadDailyAccessSessions(true)">Refresh</button></div>
+          <div class="operations-status-grid"><div class="operations-status-card"><strong id="operations-today-project-count">0</strong><span>Active Project Sessions</span></div><div class="operations-status-card"><strong id="operations-today-crew-count">0</strong><span>Crew Check-Ins</span></div><div class="operations-status-card"><strong id="operations-today-open-count">0</strong><span>Open for Signatures</span></div></div>
+          <div class="operations-list" id="operations-today-list"><div class="operations-list-card"><p>No daily access session has been created for today yet.</p></div></div>
+        </section>
+
+        <section class="operations-view" id="operations-upcoming">
+          <div class="operations-title-row"><div><h2>Upcoming</h2><p>Prepare an editable safety sheet, payroll sheet, toolbox talk, report, or AI-assisted draft for a future date.</p></div></div>
+          <div class="operations-setup-card">
+            <div class="operations-project-row" style="grid-template-columns:minmax(0,1fr) minmax(180px,.45fr);margin-bottom:16px;"><select id="operations-upcoming-project"><option value="">Choose a project</option></select><input id="operations-upcoming-date" type="date" /></div>
+            <div class="operations-tools-grid">
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-manual-safety')"><strong>Daily Safety Meeting</strong><span>Open the existing PAL safety sheet with the future project and date filled in.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-daily-payroll')"><strong>Daily Payroll</strong><span>Open the existing PAL daily payroll sheet to prepare the crew.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-weekly-toolbox')"><strong>Toolbox Talk</strong><span>Prepare the current toolbox talk form ahead of time.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-ai-safety')"><strong>AI Assisted Safety Sheet</strong><span>Use the existing AI helper and review the draft before saving.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-manual-report')"><strong>Daily Report</strong><span>Prepare the existing PAL daily report form.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-ai-report')"><strong>AI Assisted Report</strong><span>Open the current AI report assistant without changing it.</span></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="operations-view" id="operations-history">
+          <div class="operations-title-row"><div><h2>My History</h2><p>Your daily access sessions and the project records connected to them.</p></div><button class="btn-outline" type="button" onclick="loadDailyAccessSessions(true)">Refresh</button></div>
+          <div class="operations-list" id="operations-history-list"><div class="operations-list-card"><p>Your session history will appear here.</p></div></div>
+        </section>
+
+        <section class="operations-view" id="operations-tools">
+          <div class="operations-title-row"><div><h2>Tools &amp; Blank Forms</h2><p>These buttons open the exact PAL forms and AI-assisted tools already in the app.</p></div></div>
+          <div class="operations-tools-grid">
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-manual-safety')"><strong>Manual Daily Safety Sheet</strong><span>Standard PAL daily safety meeting form.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-weekly-toolbox')"><strong>Weekly Toolbox Talk</strong><span>Topic, language, speaker and crew signatures.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-ai-safety')"><strong>AI Assisted Daily Safety Sheet</strong><span>Draft from the work plan, then review and edit.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-manual-report')"><strong>Manual Daily Report</strong><span>Current PAL daily field report.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-ai-report')"><strong>AI Assisted Daily Report</strong><span>Turn quick notes into an editable draft.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openExtraWorkTicketModal()"><strong>Extra Work Ticket</strong><span>Blank project-linked extra work ticket.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-daily-payroll')"><strong>Daily Payroll</strong><span>Daily worker time sheet and hour totals.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-weekly-payroll')"><strong>Weekly Payroll</strong><span>Weekly fireproofing payroll and cost codes.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-expense-report')"><strong>Expense Report</strong><span>Categories, totals, cash advance and amount due.</span></button>
+            <button class="operations-tool-button" type="button" onclick="switchMainTab('main-jha')"><strong>JHA / Pre-Task Plan</strong><span>Open the approved JHA library and checklist tools.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('incident-report')"><strong>Incident / Near-Miss Form</strong><span>Open the current official PAL incident form.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('scissor-lift-inspection')"><strong>Scissor Lift Inspection</strong><span>Open the current PAL pre-use lift inspection checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('scaffold-checklist')"><strong>Scaffold Checklist</strong><span>Open the official pre-use scaffold safety checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('harness-checklist')"><strong>Harness Checklist</strong><span>Open the current fall-protection inspection checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('decon-setup-checklist')"><strong>Decon Setup Checklist</strong><span>Open the PAL containment and decontamination setup checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('ppe-inspection-checklist')"><strong>PPE Inspection Checklist</strong><span>Open the current PAL PPE inspection checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('respirator-checklist')"><strong>Respirator Checklist</strong><span>Open the respiratory protection pre-use checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('demolition-safety-checklist')"><strong>Demolition Safety Checklist</strong><span>Open the current pre-task demolition safety review.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('toolbox-signin')"><strong>Toolbox Talk Sign-In</strong><span>Open the existing blank toolbox attendance form.</span></button>
+            <button class="operations-tool-button" type="button" onclick="switchMainTab('main-projects')"><strong>All Project Forms</strong><span>Open a project to view every current field form and file.</span></button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="main-projects">
       <div class="page-header">
         <h2>Projects</h2>
         <div class="header-actions">
@@ -3357,14 +3613,13 @@
     <h3>Payroll / ID Uploads</h3>
     <div class="mini-note" id="newhire-payroll-id-label" style="margin-bottom:14px;">Office-sensitive payroll/onboarding documents.</div>
     <div class="detail-card" style="background:#fff7ed;margin-bottom:12px;">
-      <h3 style="margin-bottom:6px;">Private Payroll / Identity Documents</h3>
-      <div class="helper-text">Upload clear photos or PDFs. Include driver license/photo ID, Social Security card, union card/book if applicable, completed W-4/payroll form, and any other document PAL office requested.</div>
+      <h3 style="margin-bottom:6px;">Three Required Private Documents</h3>
+      <div class="helper-text">To complete PAL payroll onboarding, upload a clear image or PDF of all three required items: your driver’s license, union book/card, and Social Security card. Your W-4 is completed separately in the Forms step.</div>
     </div>
     <div class="report-grid">
-      <div class="field"><label>Driver License / Photo ID</label><input id="newhire-payroll-driver-id" type="file" accept=".pdf,image/*" /></div>
-      <div class="field"><label>Union Book / Union Card</label><input id="newhire-payroll-union-book" type="file" accept=".pdf,image/*" /></div>
-      <div class="field"><label>Social Security Card</label><input id="newhire-payroll-ss-card" type="file" accept=".pdf,image/*" /></div>
-      <div class="field"><label>W-4 / Payroll Form Upload</label><input id="newhire-payroll-w4" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Driver’s License <span style="color:var(--red);">Required</span></label><input id="newhire-payroll-driver-id" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Union Book / Union Card <span style="color:var(--red);">Required</span></label><input id="newhire-payroll-union-book" type="file" accept=".pdf,image/*" /></div>
+      <div class="field"><label>Social Security Card <span style="color:var(--red);">Required</span></label><input id="newhire-payroll-ss-card" type="file" accept=".pdf,image/*" /></div>
       <div class="field span-2"><label>Additional Payroll / ID Document</label><input id="newhire-payroll-extra" type="file" accept=".pdf,image/*" /></div>
       <div class="field span-2"><label>Payroll / ID Notes</label><textarea id="newhire-payroll-notes" rows="3" placeholder="Any notes for payroll or office review."></textarea></div>
     </div>
@@ -3580,9 +3835,10 @@
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
       <button class="btn-outline" onclick="printNewHireFullPacket()">Print Full Packet</button>
       <button class="btn-outline" onclick="downloadNewHireFullPacket()">Save Full Packet</button>
-      <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
-      <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
-      <button class="btn-save" onclick="setNewHireStatus(currentNewHireReviewId, 'Good To Work')">Good To Work</button>
+      <button class="btn-secondary" onclick="setCurrentNewHireStatus('Missing Info')">Mark Missing Info</button>
+      <button class="btn-secondary" onclick="setCurrentNewHireStatus('Ready for Review')">Ready for Review</button>
+      <button class="btn-save" onclick="setCurrentNewHireStatus('Good To Work')">Good To Work</button>
+      <button class="btn-secondary danger" onclick="archiveCurrentNewHireIntake()">Remove from Onboarding</button>
     </div>
   </div>
 </div>
@@ -3818,10 +4074,10 @@
      FIREBASE + APP LOGIC
  -->
 <script type="module">
-  import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, writeBatch, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
+  import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-22-onboarding-account";
   import {
     PAL_ADMIN_EMAILS,
     PAL_PUBLIC_PROJECTS_URL,
@@ -3831,7 +4087,11 @@
     sendAppEmailCallable,
     sendAppTextCallable,
     generateSafetyDraftCallable,
-    getIntegrationHealthCallable
+    getIntegrationHealthCallable,
+    createDailyAccessSessionCallable,
+    submitDailyAccessCallable,
+    updateDailyAccessSubmissionCallable,
+    closeDailyAccessSessionCallable
   } from "./assets/js/config/pal-firebase.js";
   import {
     capitalize,
@@ -3943,9 +4203,10 @@
   const publicSafetySignProjectId = publicTicketSignParams.get('safetyProjectId') || '';
   const publicSafetySignFormId = publicTicketSignParams.get('safetyFormId') || '';
   const publicSafetySignToken = publicTicketSignParams.get('safetyToken') || '';
-// PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
+  const publicDailyAccessToken = publicTicketSignParams.get('crewAccess') || '';
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
   const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
+const publicNewHireNeedsResumeLookup = !!((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new'));
 if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) {
   publicNewHireIntakeId = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
   const palPublicUrl = new URL(window.location.href);
@@ -3955,10 +4216,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 }
   let publicNewHireIntakeLoaded = false;
   let currentPublicNewHireIntake = null;
+  let publicNewHireAccountReady = false;
+  let publicNewHireAccountConnectPromise = null;
+  let publicNewHireAccountConnectKey = '';
   let publicTicketSignatureLoaded = false;
   let currentPublicTicketSignature = null;
   let publicSafetySignatureLoaded = false;
   let currentPublicSafetySignature = null;
+  let currentPublicDailyAccess = null;
+  let dailyAccessSessions = [];
+  let currentDailyAccessResult = null;
   let foremanToolClearTimer = null;
   document.title = 'PAL Safety Hub';
   const APP_LANGUAGE_KEY = 'pal-language';
@@ -3967,9 +4234,37 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   //  Expose functions to global scope 
   window.setAppLanguage = setAppLanguage;
+  window.showPublicNewHireAccountMode = showPublicNewHireAccountMode;
+  window.togglePublicNewHirePasswords = togglePublicNewHirePasswords;
+  window.createPublicNewHireAccount = createPublicNewHireAccount;
+  window.signInPublicNewHireAccount = signInPublicNewHireAccount;
+  window.resetPublicNewHirePassword = resetPublicNewHirePassword;
+  window.signOutPublicNewHireAccount = signOutPublicNewHireAccount;
   window.doLogin = doLogin;
   window.doRegister = doRegister;
   window.doLogout = doLogout;
+  window.showOperationsView = showOperationsView;
+  window.scrollToOperationsSetup = scrollToOperationsSetup;
+  window.focusOperationsSetup = focusOperationsSetup;
+  window.focusOperationsCrewAccess = focusOperationsCrewAccess;
+  window.syncOperationsProjectSelection = syncOperationsProjectSelection;
+  window.renderOperationsDashboard = renderOperationsDashboard;
+  window.openOperationsTool = openOperationsTool;
+  window.openUpcomingOperationsTool = openUpcomingOperationsTool;
+  window.openOperationsOfficialForm = openOperationsOfficialForm;
+  window.saveOperationsDraft = saveOperationsDraft;
+  window.generateDailyAccess = generateDailyAccess;
+  window.previewDailyAccess = previewDailyAccess;
+  window.copyDailyAccessLink = copyDailyAccessLink;
+  window.shareDailyAccessLink = shareDailyAccessLink;
+  window.downloadDailyAccessQr = downloadDailyAccessQr;
+  window.loadDailyAccessSessions = loadDailyAccessSessions;
+  window.openDailyAccessSession = openDailyAccessSession;
+  window.closeDailyAccessSessionFromDashboard = closeDailyAccessSessionFromDashboard;
+  window.updateDailyAccessSignaturePreview = updateCrewAccessSignaturePreview;
+  window.updateCrewAccessSignaturePreview = updateCrewAccessSignaturePreview;
+  window.submitDailyCrewAccess = submitDailyCrewAccess;
+  window.saveDailyAccessCheckout = saveDailyAccessCheckout;
   window.showRegister = showRegister;
   window.showLogin = showLogin;
   window.openNewProjectModal = openNewProjectModal;
@@ -4125,6 +4420,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.downloadNewHireFullPacket = downloadNewHireFullPacket;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
   window.setNewHireStatus = setNewHireStatus;
+  window.setCurrentNewHireStatus = setCurrentNewHireStatus;
+  window.archiveNewHireIntake = archiveNewHireIntake;
+  window.archiveCurrentNewHireIntake = archiveCurrentNewHireIntake;
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.answerOrientationCheckpoint = answerOrientationCheckpoint;
@@ -4313,15 +4611,253 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   initializeAppLanguage();
 
+  function showPublicNewHireAccountMode(mode = 'create') {
+    const createMode = mode !== 'signin';
+    document.getElementById('newhire-account-create-tab')?.classList.toggle('active', createMode);
+    document.getElementById('newhire-account-signin-tab')?.classList.toggle('active', !createMode);
+    document.getElementById('newhire-account-create-panel')?.classList.toggle('active', createMode);
+    document.getElementById('newhire-account-signin-panel')?.classList.toggle('active', !createMode);
+    setPublicNewHireAccountError('');
+  }
+
+  function togglePublicNewHirePasswords() {
+    const showCreate = !!document.getElementById('newhire-account-show-password')?.checked;
+    const showSignIn = !!document.getElementById('newhire-signin-show-password')?.checked;
+    ['newhire-account-password', 'newhire-account-password-confirm'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.type = showCreate ? 'text' : 'password';
+    });
+    const signInPassword = document.getElementById('newhire-signin-password');
+    if (signInPassword) signInPassword.type = showSignIn ? 'text' : 'password';
+  }
+
+  function setPublicNewHireAccountError(message = '') {
+    const el = document.getElementById('newhire-account-error');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.toggle('show', !!message);
+  }
+
+  function publicNewHireAccountError(error) {
+    const code = error?.code || '';
+    if (code === 'auth/email-already-in-use') return 'An account already uses this email. Select “Already Have Account” and sign in.';
+    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return 'The email or password is incorrect. Try again or use Forgot Password.';
+    if (code === 'auth/invalid-email') return 'Enter a valid email address.';
+    if (code === 'auth/weak-password') return 'Choose a password with at least 6 characters.';
+    if (code === 'auth/too-many-requests') return 'Too many attempts. Wait a few minutes, then try again.';
+    if (code === 'permission-denied' || code === 'firestore/permission-denied') return 'This onboarding packet is already connected to another account. Sign out and use the original account, or contact the PAL office.';
+    return error?.message ? `We could not open your onboarding account. ${error.message}` : 'We could not open your onboarding account. Check your connection and try again.';
+  }
+
+  function setPublicNewHireAccountUi(ready, user = currentUser) {
+    publicNewHireAccountReady = !!ready;
+    const gate = document.getElementById('public-newhire-account-gate');
+    const signedIn = document.getElementById('public-newhire-account-signed-in');
+    const status = document.getElementById('public-intake-status-card');
+    const form = document.getElementById('public-intake-form-card');
+    const hero = document.getElementById('public-newhire-start-hero');
+    if (gate) gate.style.display = ready ? 'none' : '';
+    if (signedIn) signedIn.style.display = ready ? 'flex' : 'none';
+    const emailDisplay = document.getElementById('public-newhire-account-email-display');
+    if (emailDisplay) emailDisplay.textContent = user?.email || 'your PAL account';
+    if (!ready) {
+      if (status) status.style.display = 'none';
+      if (form) form.style.display = 'none';
+      if (hero) hero.style.display = 'none';
+    } else if (status) {
+      status.style.display = 'block';
+      status.innerHTML = '<h3>Opening Your Saved Packet...</h3><p class="helper-text">Please wait while PAL Safety Hub securely loads your progress.</p>';
+    }
+  }
+
+  function setPublicNewHireAccountBusy(kind, busy) {
+    const id = kind === 'signin' ? 'newhire-account-signin-btn' : 'newhire-account-create-btn';
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = busy;
+    btn.textContent = busy
+      ? (kind === 'signin' ? 'Signing In...' : 'Creating Account...')
+      : (kind === 'signin' ? 'Sign In & Resume' : 'Create Account & Start Orientation');
+  }
+
+  async function connectPublicNewHireAccount(user, profile = null) {
+    const connectionKey = `${user?.uid || ''}:${publicNewHireIntakeId || ''}`;
+    if (publicNewHireAccountConnectPromise && publicNewHireAccountConnectKey === connectionKey) {
+      return publicNewHireAccountConnectPromise;
+    }
+    publicNewHireAccountConnectKey = connectionKey;
+    publicNewHireAccountConnectPromise = connectPublicNewHireAccountInternal(user, profile);
+    try {
+      return await publicNewHireAccountConnectPromise;
+    } finally {
+      if (publicNewHireAccountConnectKey === connectionKey) {
+        publicNewHireAccountConnectPromise = null;
+        publicNewHireAccountConnectKey = '';
+      }
+    }
+  }
+
+  async function connectPublicNewHireAccountInternal(user, profile = null) {
+    currentUser = user;
+    currentUserProfile = profile || await loadUserProfile(user);
+
+    if (publicNewHireNeedsResumeLookup && currentUserProfile?.onboardingIntakeId) {
+      publicNewHireIntakeId = currentUserProfile.onboardingIntakeId;
+      const resumeUrl = new URL(window.location.href);
+      resumeUrl.searchParams.set('newhire', publicNewHireIntakeId);
+      resumeUrl.searchParams.delete('noLogin');
+      window.history.replaceState({}, '', resumeUrl.toString());
+    }
+
+    if (!publicNewHireIntakeId) throw new Error('This link is missing its PAL intake number. Ask PAL for a new orientation link.');
+
+    if (!isOfficeRole()) {
+      const intakeRef = doc(db, 'newHireIntakes', publicNewHireIntakeId);
+      const ownerPayload = {
+        ownerUid: user.uid,
+        ownerEmail: cleanAccessText(user.email || ''),
+        ownerLastSignedInAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      try {
+        await updateDoc(intakeRef, ownerPayload);
+      } catch (error) {
+        if (error?.code !== 'not-found' && error?.code !== 'firestore/not-found') throw error;
+        await setDoc(intakeRef, {
+          ownerUid: user.uid,
+          ownerEmail: cleanAccessText(user.email || ''),
+          status: 'Pending',
+          source: 'employee-account-intake',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: cleanAccessText(user.email || ''),
+        name: currentUserProfile?.name || user.displayName || user.email,
+        role: currentUserProfile?.role || 'employee',
+        accessLevel: currentUserProfile?.accessLevel || 'employee',
+        onboardingIntakeId: publicNewHireIntakeId,
+        onboardingUpdatedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      currentUserProfile = { ...currentUserProfile, onboardingIntakeId: publicNewHireIntakeId };
+    }
+
+    publicNewHireIntakeLoaded = false;
+    setPublicNewHireAccountUi(true, user);
+    await loadPublicNewHireIntake();
+  }
+
+  async function initializePublicNewHireAccount(user) {
+    if (!user) {
+      currentUser = null;
+      currentUserProfile = null;
+      currentPublicNewHireIntake = null;
+      publicNewHireIntakeLoaded = false;
+      setPublicNewHireAccountUi(false, null);
+      return;
+    }
+    try {
+      setPublicNewHireAccountError('');
+      await connectPublicNewHireAccount(user);
+    } catch (error) {
+      console.error('New hire account could not connect to intake', error);
+      setPublicNewHireAccountUi(false, user);
+      showPublicNewHireAccountMode('signin');
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    }
+  }
+
+  async function createPublicNewHireAccount() {
+    const email = cleanAccessText(document.getElementById('newhire-account-email')?.value || '');
+    const confirmEmail = cleanAccessText(document.getElementById('newhire-account-email-confirm')?.value || '');
+    const password = document.getElementById('newhire-account-password')?.value || '';
+    const confirmPassword = document.getElementById('newhire-account-password-confirm')?.value || '';
+    setPublicNewHireAccountError('');
+    if (!email || !confirmEmail || !password || !confirmPassword) return setPublicNewHireAccountError('Complete all four boxes before continuing.');
+    if (email !== confirmEmail) return setPublicNewHireAccountError('The email addresses do not match. Check both email boxes.');
+    if (password.length < 6) return setPublicNewHireAccountError('Your password must have at least 6 characters.');
+    if (password !== confirmPassword) return setPublicNewHireAccountError('The passwords do not match. Check both password boxes.');
+    setPublicNewHireAccountBusy('create', true);
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, 'users', credential.user.uid), {
+        uid: credential.user.uid,
+        email,
+        name: email,
+        role: 'employee',
+        accessLevel: 'employee',
+        admin: false,
+        disabled: false,
+        onboardingIntakeId: publicNewHireIntakeId,
+        createdAt: serverTimestamp(),
+        onboardingUpdatedAt: serverTimestamp()
+      });
+      await connectPublicNewHireAccount(credential.user);
+      toast('Account created. Your progress will save automatically.');
+    } catch (error) {
+      console.error('New hire account create failed', error);
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    } finally {
+      setPublicNewHireAccountBusy('create', false);
+    }
+  }
+
+  async function signInPublicNewHireAccount() {
+    const email = cleanAccessText(document.getElementById('newhire-signin-email')?.value || '');
+    const password = document.getElementById('newhire-signin-password')?.value || '';
+    setPublicNewHireAccountError('');
+    if (!email || !password) return setPublicNewHireAccountError('Enter your email and password.');
+    setPublicNewHireAccountBusy('signin', true);
+    try {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      await connectPublicNewHireAccount(credential.user);
+      toast('Signed in. Your saved progress is ready.');
+    } catch (error) {
+      console.error('New hire sign in failed', error);
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    } finally {
+      setPublicNewHireAccountBusy('signin', false);
+    }
+  }
+
+  async function resetPublicNewHirePassword() {
+    const email = cleanAccessText(document.getElementById('newhire-signin-email')?.value || '');
+    setPublicNewHireAccountError('');
+    if (!email) return setPublicNewHireAccountError('Enter your email above, then select Forgot Password again.');
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setPublicNewHireAccountError('');
+      toast('Password reset email sent. Check your inbox and spam folder.');
+    } catch (error) {
+      setPublicNewHireAccountError(publicNewHireAccountError(error));
+    }
+  }
+
+  async function signOutPublicNewHireAccount() {
+    publicNewHireAccountReady = false;
+    currentPublicNewHireIntake = null;
+    publicNewHireIntakeLoaded = false;
+    await signOut(auth);
+    showPublicNewHireAccountMode('signin');
+    setPublicNewHireAccountUi(false, null);
+  }
+
   //  Auth state 
   onAuthStateChanged(auth, async user => {
-    // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
-    // If an employee opens any public new-hire route, bypass the foreman/office login wall.
+    // Guest ticket/safety signature routes stay link-based. New-hire packets require an account.
     const palPublicParams = new URLSearchParams(window.location.search);
     if (publicSafetySignProjectId && publicSafetySignFormId && publicSafetySignToken) {
       currentUser = user || null;
       showView('view-public-safety-sign');
       if (!publicSafetySignatureLoaded) loadPublicSafetySignature();
+      return;
+    }
+    if (publicDailyAccessToken) {
+      currentUser = user || null;
+      showView('view-daily-crew-access');
+      loadPublicDailyAccess();
       return;
     }
     if (publicTicketSignProjectId && publicTicketSignTicketId && publicTicketSignToken) {
@@ -4336,7 +4872,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }
       currentUser = user || null;
       showView('view-public-newhire-intake');
-      if (!publicNewHireIntakeLoaded) loadPublicNewHireIntake();
+      await initializePublicNewHireAccount(user || null);
       return;
     }
     if (user) {
@@ -4355,6 +4891,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         toast('This account is Employee / Intake Only. Use the intake link from PAL to complete documents.');
       } else {
         showView('view-projects');
+        switchMainTab('main-operations-dashboard');
+        initializeOperationsDashboard();
         loadProjects();
         syncOfflineCloudQueue();
       }
@@ -4851,6 +5389,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       refreshTicketProjectOptions();
       refreshAiSafetyProjectOptions();
       renderProjectsList();
+      restoreOperationsDraft();
+      renderOperationsDashboard();
+      loadDailyAccessSessions();
       if (requestedProjectId) {
         const target = filtered.find(p => p.id === requestedProjectId);
         if (target) {
@@ -7109,9 +7650,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           ],
           tables: [{
             title: 'Worker Hours',
-            headers: ['#', 'Worker', 'LU #', 'Role', 'Time In', 'Time Out', 'Reg', 'OT', 'Total'],
+            headers: ['#', 'Worker', 'LU #', 'Last 4 SSN', 'Role', 'Time In', 'Time Out', 'Reg', 'OT', 'Total', 'Employee Signature'],
             rows: data.rows || [],
-            columns: ['row', 'workerName', 'luNumber', 'role', 'timeIn', 'timeOut', 'regularHours', 'overtimeHours', 'totalHours']
+            columns: ['row', 'workerName', 'luNumber', 'ssnLast4', 'role', 'timeIn', 'timeOut', 'regularHours', 'overtimeHours', 'totalHours', 'signature']
           }]
         })
       };
@@ -7980,7 +8521,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const frame = document.getElementById('official-project-form-frame');
     if (frame) frame.src = 'about:blank';
     modal?.classList.remove('open');
-    openProjectFieldFormsMenu();
+    if (currentProject) openProjectFieldFormsMenu();
   }
 
   window.addEventListener('message', event => {
@@ -9172,7 +9713,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="report-field"><span class="k">Foreman / Supervisor</span><div class="v">${esc(data.foreman || '')}</div></div>
         <div class="report-field"><span class="k">Week Of</span><div class="v">${esc(data.weekOf || '')}</div></div>
         <div class="report-field"><span class="k">Address</span><div class="v">${esc(data.address || '')}</div></div>
-        ${fieldFormTableHTML(['#','Worker','LU #','Role','Time In','Time Out','Reg','OT','Total'], data.rows, ['row','workerName','luNumber','role','timeIn','timeOut','regularHours','overtimeHours','totalHours'])}
+        ${fieldFormTableHTML(['#','Worker','LU #','Last 4 SSN','Role','Time In','Time Out','Reg','OT','Total','Employee Signature'], data.rows, ['row','workerName','luNumber','ssnLast4','role','timeIn','timeOut','regularHours','overtimeHours','totalHours','signature'])}
         <div class="report-field"><span class="k">Printed Name</span><div class="v">${esc(data.printedName || '')}</div></div>
         <div class="report-field"><span class="k">Date Signed</span><div class="v">${esc(data.dateSigned || '')}</div></div>
         <div class="report-field span-2"><span class="k">Signature</span><div class="v signature-script">${esc(data.signature || '')}</div></div>`;
@@ -9959,9 +10500,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     list.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading employee records...</p>';
     try {
       // Read all employees and sort in the browser so every saved employee shows.
-      const snap = await getDocs(collection(db, 'employees'));
+      let snap = await getDocs(collection(db, 'employees'));
+      let employeeRows = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      const approvedEmployeesAdded = await backfillApprovedNewHiresToEmployees(employeeRows);
+      if (approvedEmployeesAdded) {
+        snap = await getDocs(collection(db, 'employees'));
+        employeeRows = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      }
       allEmployees = [];
-      snap.forEach(docSnap => allEmployees.push({ id: docSnap.id, ...docSnap.data() }));
+      employeeRows.forEach(employee => allEmployees.push(employee));
       allEmployees = activeEmployeeRecords(allEmployees);
       allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       renderEmployeesList();
@@ -9999,7 +10546,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       allEmployees = activeEmployeeRecords(empSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       allEmployees.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
       const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-      allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allNewHireIntakes = activeNewHireIntakeRecords(nhSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       renderWorkforceOverview();
     } catch (e) {
       console.error(e);
@@ -10392,7 +10939,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
             ${currentProject ? `<button class="btn-sm" onclick="toggleEmployeeAssignment('${emp.id}', ${assigned ? 'false' : 'true'})">${assigned ? 'Remove from Project' : 'Assign to Project'}</button>` : ''}
             <button class="btn-sm" onclick="openEmployeeDetail('${emp.id}')">Open Employee File</button>
             <button class="btn-sm" onclick="editEmployee('${emp.id}')">Edit Employee</button>
-            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Archive Employee</button>
+            <button class="btn-sm danger" onclick="deleteEmployee('${emp.id}')">Remove Employee</button>
             <button class="btn-sm" onclick="openCertificationModal('${emp.id}')">Upload Certification</button>
           </div>
         </div>`;
@@ -10445,16 +10992,23 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         cert.expirationDate ? `Expires: ${esc(cert.expirationDate)}` : 'No expiration date',
         cert.fileName ? esc(cert.fileName) : ''
       ].filter(Boolean).join('<br>');
-      const preview = isImageCert(cert)
-        ? `<a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener"><img class="cert-preview-img" src="${esc(safeFileUrl(cert.url))}" alt="${title}"></a>`
+      const certUrl = safeFileUrl(cert.url);
+      const encodedCertPath = cert.path ? encodeURIComponent(String(cert.path)).replace(/'/g, '%27') : '';
+      const preview = certUrl && isImageCert(cert)
+        ? `<a href="${esc(certUrl)}" target="_blank" rel="noopener"><img class="cert-preview-img" src="${esc(certUrl)}" alt="${title}"></a>`
         : `<div class="cert-pdf-box"><div style="font-size:34px;"></div><div>PDF / Document</div></div>`;
+      const openCertControl = certUrl
+        ? `<a href="${esc(certUrl)}" target="_blank" rel="noopener" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>`
+        : encodedCertPath
+          ? `<button class="btn-sm" type="button" onclick="openNewHireStoredFile('${encodedCertPath}')">Open Full Cert</button>`
+          : '<span class="helper-text">Certification file is not available.</span>';
       return `<div class="cert-preview-card">
         <h4>${title}</h4>
         <p>${meta}</p>
         <div class="status-row" style="margin-bottom:8px;"><span class="pill ${key}">${getCertStatusText(cert.expirationDate)}</span></div>
         ${preview}
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="${esc(safeFileUrl(cert.url))}" target="_blank" rel="noopener" class="btn-sm" style="display:inline-block;text-decoration:none;">Open Full Cert</a>
+          ${openCertControl}
           <button class="btn-sm" onclick="editCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Edit Cert</button>
           <button class="btn-sm danger" onclick="deleteCertification('${employeeId}', '${esc(cert.uploadedAt || '')}')">Archive Cert</button>
         </div>
@@ -10471,7 +11025,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="helper-text">${emp.notes ? esc(emp.notes) : 'No employee notes added yet.'}</div>
         <div class="employee-actions" style="margin-top:12px;">
           <button class="btn-sm" onclick="editEmployee('${employeeId}')">Detail Edit Employee</button>
-          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Archive Employee</button>
+          <button class="btn-sm danger" onclick="deleteEmployee('${employeeId}')">Remove Employee</button>
         </div>
       </div>
       <div class="employee-detail-block" style="background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
@@ -10558,7 +11112,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!requireCloudConnection('archive an employee file')) return;
     const emp = allEmployees.find(e => e.id === employeeId);
     if (!emp) { toast('Employee record not found. Tap refresh and try again.'); return; }
-    const ok = confirm(`Archive ${emp.name || 'this employee'}? The record will be hidden from active lists but preserved for long-term history.`);
+    const ok = confirm(`Remove ${emp.name || 'this employee'} from Employee Records? The record will be hidden from normal lists but preserved so an accidental removal is recoverable.`);
     if (!ok) return;
     try {
       await updateDoc(doc(db, 'employees', employeeId), {
@@ -10574,10 +11128,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         closeModal('modal-employee-detail');
       }
       await loadEmployees(true);
-      toast('Employee archived');
+      toast('Employee removed from active records');
     } catch (e) {
       console.error(e);
-      toast('Could not archive employee');
+      toast('Could not remove employee');
     }
   }
 
@@ -12189,7 +12743,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   // PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15
   async function loadPublicNewHireIntake() {
-    if (!publicNewHireIntakeId) return;
+    if (!publicNewHireIntakeId || !publicNewHireAccountReady || !currentUser) return;
     publicNewHireIntakeLoaded = true;
     const statusCard = document.getElementById('public-intake-status-card');
     const formCard = document.getElementById('public-intake-form-card');
@@ -12251,8 +12805,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const cs = document.getElementById('public-cert-upload-status');
       if (cs) cs.textContent = `Certification Uploads: ${(x.certFiles || []).length ? (x.certFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
       const ps = document.getElementById('public-payroll-id-status');
-      if (ps) ps.textContent = `Payroll / ID Uploads: ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s) uploaded' : 'Pending'}`;
+      const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+      if (ps) ps.textContent = payrollStatus.complete
+        ? 'Payroll / ID Uploads: Completed — all 3 required documents uploaded'
+        : `Payroll / ID Uploads: ${payrollStatus.completedCount}/3 required documents — missing ${payrollStatus.missingLabels.join(', ')}`;
       updatePublicPacketChecklist(x);
+      const accountEmailInput = document.getElementById('pub-nh-email');
+      if (accountEmailInput && !isOfficeRole()) {
+        accountEmailInput.value = currentUser.email || accountEmailInput.value;
+        accountEmailInput.readOnly = true;
+        accountEmailInput.title = 'This email is connected to your PAL onboarding account.';
+      }
       showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     } catch (e) {
       // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
@@ -12379,7 +12942,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (step === 4) {
       const missing = [];
       if (!c.certs) missing.push('safety certification uploads');
-      if (!c.payroll) missing.push('payroll / ID uploads');
+      const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+      if (!c.payroll) missing.push(`payroll / ID uploads (${payrollStatus.missingLabels.join(', ')})`);
       return missing.length ? `Please complete ${missing.join(' and ')} before submitting.` : '';
     }
     if (step === 5) {
@@ -12389,7 +12953,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!c.safety) missing.push('Safety Agreement');
       if (!c.w4) missing.push('Federal W-4');
       if (!c.certs) missing.push('Cert Uploads');
-      if (!c.payroll) missing.push('Payroll / ID Uploads');
+      const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+      if (!c.payroll) missing.push(`Payroll / ID Uploads — missing ${payrollStatus.missingLabels.join(', ')}`);
       return missing.length ? `Before submitting, finish: ${missing.join(', ')}.` : '';
     }
     return '';
@@ -12537,7 +13102,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const fileError = validateNewHireUploadFile(file);
     if (fileError) throw new Error(`${label}: ${fileError}`);
     const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-    const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
+    const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${currentUser.uid}/${safeName}`;
     const storageRef = ref(storage, path);
     await uploadBytes(storageRef, file, newHireUploadMetadata(file));
     // Public users may write an intake file but may not read private payroll/cert files.
@@ -12597,6 +13162,29 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
+  const REQUIRED_PAYROLL_ID_DOCUMENTS = [
+    { key: 'driver-license', label: 'Driver’s License', matches: type => /driver|photo\s*id/i.test(type) },
+    { key: 'union-card', label: 'Union Book / Union Card', matches: type => /union/i.test(type) },
+    { key: 'social-security-card', label: 'Social Security Card', matches: type => /social\s*security|ssn/i.test(type) }
+  ];
+
+  function getRequiredPayrollIdStatus(files = []) {
+    const activeFiles = Array.isArray(files) ? files.filter(file => !isArchivedRecord(file)) : [];
+    const completed = REQUIRED_PAYROLL_ID_DOCUMENTS.filter(requirement =>
+      activeFiles.some(file => requirement.matches(String(file.type || file.title || file.name || '')))
+    );
+    const missing = REQUIRED_PAYROLL_ID_DOCUMENTS.filter(requirement =>
+      !completed.some(item => item.key === requirement.key)
+    );
+    return {
+      complete: missing.length === 0,
+      completedCount: completed.length,
+      total: REQUIRED_PAYROLL_ID_DOCUMENTS.length,
+      missing,
+      missingLabels: missing.map(item => item.label)
+    };
+  }
+
   async function saveNewHirePayrollIdUploads() {
     if (!requireCloudConnection('save payroll or ID uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
@@ -12608,7 +13196,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         ['newhire-payroll-driver-id', 'Driver License / Photo ID'],
         ['newhire-payroll-union-book', 'Union Book / Union Card'],
         ['newhire-payroll-ss-card', 'Social Security Card'],
-        ['newhire-payroll-w4', 'W-4 / Payroll Form'],
         ['newhire-payroll-extra', 'Additional Payroll / ID Document']
       ];
       const selectedPayroll = inputs.map(([inputId, label]) => ({ label, file: document.getElementById(inputId)?.files?.[0] })).filter(x => x.file);
@@ -12625,19 +13212,25 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
         if (snap.exists()) existing = snap.data().payrollIdFiles || [];
       } catch (e) { console.warn('Could not read existing payroll files before merge', e); }
+      const merged = [...existing, ...uploads];
+      const requirementStatus = getRequiredPayrollIdStatus(merged);
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        payrollIdFiles: [...existing, ...uploads],
+        payrollIdFiles: merged,
         payrollIdNotes: notes,
-        payrollIdUploadsCompleted: true,
-        payrollIdUploadCount: existing.length + uploads.length,
+        payrollIdUploadsCompleted: requirementStatus.complete,
+        payrollIdUploadCount: merged.length,
         updatedAt: serverTimestamp(),
         status: 'Ready for Review'
       }, { merge: true });
       const st = document.getElementById('public-payroll-id-status');
-      if (st) st.textContent = `Payroll / ID Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      if (st) st.textContent = requirementStatus.complete
+        ? 'Payroll / ID Uploads: Completed — all 3 required documents uploaded'
+        : `Payroll / ID Uploads: ${requirementStatus.completedCount}/3 required documents — missing ${requirementStatus.missingLabels.join(', ')}`;
       await refreshCurrentPublicIntakeQuiet();
       closeModal('modal-newhire-payroll-id-form');
-      toast('Payroll / ID uploads saved to intake packet.');
+      toast(requirementStatus.complete
+        ? 'All three required payroll / ID documents are saved.'
+        : `Uploads saved. Still required: ${requirementStatus.missingLabels.join(', ')}.`);
     } catch (e) {
       console.error('Payroll / ID upload save failed', e);
       toast(newHireUploadErrorMessage(e, 'Payroll / ID upload'));
@@ -12650,13 +13243,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   // PACKET_FINAL_REVIEW_PHASE7_2026_05_15
   function getNewHirePacketChecklist(x) {
     x = x || currentPublicNewHireIntake || {};
+    const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
     return {
       orientation: !!x.orientationForm?.completed,
       drug: !!x.drugConsentForm?.completed,
       safety: !!x.safetyAgreementForm?.completed,
       w4: !!x.w4Form?.completed,
       certs: !!(x.certUploadsCompleted || (x.certFiles || []).length),
-      payroll: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length),
+      payroll: payrollStatus.complete,
       submitted: !!x.packetSubmitted
     };
   }
@@ -12671,7 +13265,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     x = x || currentPublicNewHireIntake || {};
     const c = getNewHirePacketChecklist(x);
     const certDetail = (x.certFiles || []).length ? `${(x.certFiles || []).length} file(s)` : '';
-    const payrollDetail = (x.payrollIdFiles || []).length ? `${(x.payrollIdFiles || []).length} file(s)` : '';
+    const payrollStatus = getRequiredPayrollIdStatus(x.payrollIdFiles || []);
+    const payrollDetail = payrollStatus.complete
+      ? '3/3 required documents uploaded'
+      : `${payrollStatus.completedCount}/3 required — missing ${payrollStatus.missingLabels.join(', ')}`;
     const completeCount = [c.orientation, c.drug, c.safety, c.w4, c.certs, c.payroll].filter(Boolean).length;
     if (el) {
       el.innerHTML = [
@@ -12693,7 +13290,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     setStatus('public-safety-status', 'Safety Agreement', c.safety);
     setStatus('public-w4-status', 'Federal W-4 Form', c.w4);
     setStatus('public-cert-upload-status', 'Certification Uploads', c.certs, certDetail ? `${certDetail} uploaded` : 'Pending');
-    setStatus('public-payroll-id-status', 'Payroll / ID Uploads', c.payroll, payrollDetail ? `${payrollDetail} uploaded` : 'Pending');
+    setStatus('public-payroll-id-status', 'Payroll / ID Uploads', c.payroll, payrollDetail);
     const btn = document.getElementById('public-final-submit-btn');
     if (btn) {
       btn.textContent = c.submitted ? 'Packet Submitted to PAL Office' : 'Submit Full Packet to PAL Office';
@@ -12767,7 +13364,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (invalidCert) return toast(`${invalidCert.name}: ${validateNewHireUploadFile(invalidCert)}`);
       for (const file of files) {
         const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${safeName}`;
+        const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${currentUser.uid}/${safeName}`;
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, file, newHireUploadMetadata(file));
         uploaded.push({ name: file.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-cert' });
@@ -12787,7 +13384,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const payrollFile = document.getElementById(inputId)?.files?.[0];
         if (!payrollFile) continue;
         const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${payrollFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${safeName}`;
+        const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${currentUser.uid}/${safeName}`;
         const storageRef = ref(storage, path);
         await uploadBytes(storageRef, payrollFile, newHireUploadMetadata(payrollFile));
         payrollUploads.push({ type: label, name: payrollFile.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-payroll-id' });
@@ -12804,6 +13401,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         // Public rules may block read; continue with submission attempt.
         console.warn('Public intake submit could not pre-read existing files', readErr);
       }
+      const mergedPayrollIdFiles = [...existingPayrollIdFiles, ...payrollUploads];
+      const payrollRequirementStatus = getRequiredPayrollIdStatus(mergedPayrollIdFiles);
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         name: document.getElementById('pub-nh-name')?.value.trim() || '',
         phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
@@ -12813,13 +13412,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
         employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
         certFiles: [...existing, ...uploaded],
-        payrollIdFiles: [...existingPayrollIdFiles, ...payrollUploads],
-        payrollIdUploadCount: (existingPayrollIdFiles.length + payrollUploads.length),
-        status: 'Ready for Review',
+        payrollIdFiles: mergedPayrollIdFiles,
+        payrollIdUploadCount: mergedPayrollIdFiles.length,
+        payrollIdUploadsCompleted: payrollRequirementStatus.complete,
+        status: payrollRequirementStatus.complete ? 'Ready for Review' : 'Started',
         employeeSubmittedAt: new Date().toISOString(),
         updatedAt: serverTimestamp(),
         source: 'public-intake-fallback-safe'
       }, { merge: true });
+      if (!payrollRequirementStatus.complete) {
+        const statusCard = document.getElementById('public-intake-status-card');
+        if (statusCard) statusCard.innerHTML = `<h3>Payroll / ID Documents Still Required</h3><p class="helper-text">Your information was saved. Before final submission, upload: ${esc(payrollRequirementStatus.missingLabels.join(', '))}.</p>`;
+        toast(`Information saved. Still required: ${payrollRequirementStatus.missingLabels.join(', ')}.`);
+        return;
+      }
       const statusCard = document.getElementById('public-intake-status-card');
       const formCard = document.getElementById('public-intake-form-card');
       if (statusCard) statusCard.innerHTML = `<h3>Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
@@ -12988,7 +13594,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!currentUser) return;
     try {
       const snap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-      allNewHireIntakes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allNewHireIntakes = activeNewHireIntakeRecords(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       renderNewHireIntakes();
       renderRecentHires();
     } catch (e) {
@@ -13090,7 +13696,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       { key: 'drug', label: 'Drug Consent', done: !!x.drugConsentForm?.completed },
       { key: 'safety', label: 'Safety Agreement', done: !!x.safetyAgreementForm?.completed },
       { key: 'certs', label: 'Certs', done: !!(x.certUploadsCompleted || (x.certFiles || []).length) },
-      { key: 'payroll', label: 'Payroll/ID', done: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length) },
+      { key: 'payroll', label: 'Payroll/ID (3 required)', done: getRequiredPayrollIdStatus(x.payrollIdFiles || []).complete },
       { key: 'submitted', label: 'Final Submit', done: !!x.packetSubmitted }
     ];
     const done = checks.filter(c => c.done).length;
@@ -13164,6 +13770,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
         <button class="btn-sm" onclick="setNewHireStatus('${esc(x.id)}','Good To Work')">Good To Work</button>
         <button class="btn-sm danger" onclick="setNewHireStatus('${esc(x.id)}','Missing Info')">Missing Info</button>
+        <button class="btn-sm danger" onclick="archiveNewHireIntake('${esc(x.id)}')">Remove</button>
       </div>
     </div>`).join('');
   }
@@ -13231,6 +13838,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         <div class="newhire-actions">
           <button class="btn-sm" onclick="openNewHireReview('${esc(x.id)}')">Open / Review</button>
           <button class="btn-sm" onclick="copyNewHireIntakeTextById('${esc(x.id)}')">Copy Text Message</button>
+          <button class="btn-sm danger" onclick="archiveNewHireIntake('${esc(x.id)}')">Remove</button>
         </div>
       </div>`;
     }).join('');
@@ -13407,7 +14015,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         ${packetStatusHTML(!!x.safetyAgreementForm?.completed, 'Safety Agreement')}
         ${packetStatusHTML(!!x.w4Form?.completed, 'Federal W-4')}
         ${packetStatusHTML(!!(x.certUploadsCompleted || (x.certFiles || []).length), 'Cert Uploads', (x.certFiles || []).length ? (x.certFiles || []).length + ' file(s)' : '')}
-        ${packetStatusHTML(!!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length), 'Payroll / ID Uploads', (x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).length + ' file(s)' : '')}
+        ${packetStatusHTML(getRequiredPayrollIdStatus(x.payrollIdFiles || []).complete, 'Payroll / ID Uploads', (() => { const status = getRequiredPayrollIdStatus(x.payrollIdFiles || []); return status.complete ? '3/3 required documents' : `${status.completedCount}/3 required — missing ${status.missingLabels.join(', ')}`; })())}
         ${packetStatusHTML(!!x.packetSubmitted, 'Final Submit', x.packetSubmittedAt || '')}
       </div>
     </div>
@@ -13466,6 +14074,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     <div class="newhire-upload-list" style="margin-top:12px;">
       <strong>Payroll / ID Uploads</strong>
       <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
+      ${(() => { const status = getRequiredPayrollIdStatus(x.payrollIdFiles || []); return `<div class="mini-note" style="margin-bottom:8px;">${status.complete ? 'Complete: all 3 required documents received.' : `${status.completedCount}/3 required documents received. Missing: ${esc(status.missingLabels.join(', '))}.`}</div>`; })()}
       ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">${esc(f.type || 'Payroll / ID Document')}: ${newHireFileLinkHTML(f, 'Uploaded Document')}</div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
@@ -14428,6 +15037,144 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
 
+  async function setCurrentNewHireStatus(status) {
+    if (!currentNewHireReviewId) return toast('Open an intake request first.');
+    return setNewHireStatus(currentNewHireReviewId, status);
+  }
+
+  function activeNewHireIntakeRecords(rows = []) {
+    return (rows || []).filter(intake => !isArchivedRecord(intake));
+  }
+
+  async function archiveCurrentNewHireIntake() {
+    if (!currentNewHireReviewId) return toast('Open an intake request first.');
+    return archiveNewHireIntake(currentNewHireReviewId);
+  }
+
+  async function archiveNewHireIntake(id) {
+    if (!requireCloudConnection('remove an onboarding record')) return;
+    const intake = allNewHireIntakes.find(item => item.id === id);
+    if (!intake) return toast('Onboarding record not found. Refresh and try again.');
+    const ok = confirm(`Remove ${intake.name || 'this person'} from Onboarding? The record will be hidden from normal lists but preserved so an accidental removal is recoverable.`);
+    if (!ok) return;
+    try {
+      await updateDoc(doc(db, 'newHireIntakes', id), {
+        archived: true,
+        archivedAt: serverTimestamp(),
+        archivedBy: currentUser?.uid || '',
+        archivedByName: currentUser?.displayName || currentUser?.email || '',
+        status: 'Archived',
+        updatedAt: serverTimestamp()
+      });
+      await logAuditEvent('new_hire_intake.archived', {
+        intakeId: id,
+        employeeName: intake.name || '',
+        previousStatus: intake.status || '',
+        projectId: intake.projectId || '',
+        projectName: intake.projectName || ''
+      });
+      if (currentNewHireReviewId === id) {
+        currentNewHireReviewId = null;
+        closeModal('modal-newhire-review');
+      }
+      await loadNewHireIntakes(true);
+      toast(`${intake.name || 'Onboarding record'} removed from active onboarding.`);
+    } catch (error) {
+      console.error('Could not remove onboarding record', error);
+      toast('Could not remove onboarding record. Refresh and try again.');
+    }
+  }
+
+  function approvedNewHireCertifications(intake) {
+    return (intake?.certFiles || []).map(file => ({
+      type: file.type || 'Onboarding Certification',
+      title: file.type || file.title || 'Onboarding Certification',
+      issueDate: file.issueDate || '',
+      expirationDate: file.expirationDate || '',
+      fileName: file.name || file.fileName || 'Certification File',
+      mimeType: file.mimeType || '',
+      url: file.url || '',
+      path: file.path || '',
+      uploadedAt: file.uploadedAt || new Date().toISOString(),
+      uploadedBy: currentUser?.displayName || currentUser?.email || '',
+      source: 'new-hire-intake',
+      sourceIntakeId: intake.id
+    }));
+  }
+
+  function employeeCertIdentity(cert) {
+    return String(cert?.path || cert?.url || `${cert?.sourceIntakeId || ''}|${cert?.fileName || ''}|${cert?.uploadedAt || ''}`);
+  }
+
+  async function prepareApprovedNewHireEmployee(intake, employeeRows = null) {
+    const employeeSnap = employeeRows ? null : await getDocs(collection(db, 'employees'));
+    const employees = employeeRows || employeeSnap.docs.map(employeeDoc => ({ id: employeeDoc.id, ...employeeDoc.data() }));
+    const email = String(intake.email || '').trim().toLowerCase();
+    const phone = String(intake.phone || '').replace(/\D/g, '');
+    const existing = employees.find(emp => emp.sourceNewHireIntakeId === intake.id || emp.newHireIntakeId === intake.id)
+      || (email ? employees.find(emp => String(emp.email || '').trim().toLowerCase() === email) : null)
+      || (phone.length >= 7 ? employees.find(emp => String(emp.phone || '').replace(/\D/g, '') === phone) : null);
+    const employeeRef = existing
+      ? doc(db, 'employees', existing.id)
+      : doc(db, 'employees', `newhire-${intake.id}`);
+    const existingCerts = Array.isArray(existing?.certifications) ? existing.certifications : [];
+    const certIds = new Set(existingCerts.map(employeeCertIdentity));
+    const intakeCerts = approvedNewHireCertifications(intake).filter(cert => !certIds.has(employeeCertIdentity(cert)));
+    const assignedProjectIds = [...new Set([
+      ...(Array.isArray(existing?.assignedProjectIds) ? existing.assignedProjectIds : []),
+      ...(intake.projectId ? [intake.projectId] : [])
+    ])];
+    return {
+      employeeRef,
+      isNew: !existing,
+      payload: {
+        name: intake.name || existing?.name || 'New Employee',
+        email: intake.email || existing?.email || '',
+        phone: intake.phone || existing?.phone || '',
+        trade: intake.trade || existing?.trade || '',
+        notes: existing?.notes || intake.employeeNotes || intake.notes || '',
+        certifications: [...existingCerts, ...intakeCerts],
+        assignedProjectIds,
+        status: 'active',
+        archived: false,
+        sourceNewHireIntakeId: intake.id,
+        newHireIntakeId: intake.id,
+        onboardingStatus: 'Good To Work',
+        goodToWorkAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        updatedBy: currentUser?.displayName || currentUser?.email || '',
+        ...(!existing ? {
+          createdAt: serverTimestamp(),
+          createdBy: currentUser?.uid || '',
+          createdByName: currentUser?.displayName || currentUser?.email || '',
+          source: 'approved-new-hire-intake'
+        } : {})
+      }
+    };
+  }
+
+  async function backfillApprovedNewHiresToEmployees(employeeRows = []) {
+    if (!isOfficeRole()) return 0;
+    const approvedSnap = await getDocs(query(collection(db, 'newHireIntakes'), where('status', '==', 'Good To Work')));
+    const approvedIntakes = approvedSnap.docs.map(intakeDoc => ({ id: intakeDoc.id, ...intakeDoc.data() }));
+    const linkedIntakeIds = new Set(employeeRows.flatMap(employee => [employee.sourceNewHireIntakeId, employee.newHireIntakeId]).filter(Boolean));
+    const missing = approvedIntakes.filter(intake => !linkedIntakeIds.has(intake.id));
+    if (!missing.length) return 0;
+    const batch = writeBatch(db);
+    const workingEmployees = [...employeeRows];
+    for (const intake of missing) {
+      const employeeSync = await prepareApprovedNewHireEmployee(intake, workingEmployees);
+      batch.set(employeeSync.employeeRef, employeeSync.payload, { merge: true });
+      workingEmployees.push({ id: employeeSync.employeeRef.id, ...employeeSync.payload });
+    }
+    await batch.commit();
+    await logAuditEvent('employee.approved_intakes_backfilled', {
+      employeeCount: missing.length,
+      intakeIds: missing.map(intake => intake.id)
+    });
+    return missing.length;
+  }
+
   async function setNewHireStatus(id, status) {
     if (!requireCloudConnection('update the intake status')) return;
     if (!id) return;
@@ -14435,8 +15182,36 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       const payload = { status, updatedAt: serverTimestamp() };
       if (status === 'Good To Work') payload.approvedAt = serverTimestamp();
       if (status === 'Missing Info') payload.correctionRequestedAt = serverTimestamp();
-      await updateDoc(doc(db, 'newHireIntakes', id), payload);
-      const intake = allNewHireIntakes.find(x => x.id === id);
+      let intake = allNewHireIntakes.find(x => x.id === id);
+      if (!intake) {
+        const intakeSnap = await getDoc(doc(db, 'newHireIntakes', id));
+        if (intakeSnap.exists()) intake = { id: intakeSnap.id, ...intakeSnap.data() };
+      }
+      let employeeSync = null;
+      if (status === 'Good To Work') {
+        if (!intake) throw new Error('New hire intake not found for employee creation.');
+        const checklist = getNewHirePacketChecklist(intake);
+        const missingApprovalItems = [
+          !checklist.orientation ? 'Orientation' : '',
+          !checklist.drug ? 'Drug & Alcohol Consent' : '',
+          !checklist.safety ? 'Safety Agreement' : '',
+          !checklist.w4 ? 'Federal W-4' : '',
+          !checklist.certs ? 'Certification Uploads' : '',
+          !checklist.payroll ? `Payroll / ID: ${getRequiredPayrollIdStatus(intake.payrollIdFiles || []).missingLabels.join(', ')}` : '',
+          !checklist.submitted ? 'Final Packet Submission' : ''
+        ].filter(Boolean);
+        if (missingApprovalItems.length) {
+          toast(`Cannot mark Good To Work. Still required: ${missingApprovalItems.join('; ')}.`);
+          return;
+        }
+        employeeSync = await prepareApprovedNewHireEmployee(intake);
+        const batch = writeBatch(db);
+        batch.update(doc(db, 'newHireIntakes', id), payload);
+        batch.set(employeeSync.employeeRef, employeeSync.payload, { merge: true });
+        await batch.commit();
+      } else {
+        await updateDoc(doc(db, 'newHireIntakes', id), payload);
+      }
       await logAuditEvent('new_hire_intake.status_updated', {
         intakeId: id,
         employeeName: intake?.name || '',
@@ -14444,7 +15219,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         projectName: intake?.projectName || '',
         status
       });
-      toast(`Status updated: ${status}`);
+      if (employeeSync) {
+        await logAuditEvent(employeeSync.isNew ? 'employee.created_from_approved_intake' : 'employee.updated_from_approved_intake', {
+          employeeId: employeeSync.employeeRef.id,
+          employeeName: intake?.name || '',
+          intakeId: id,
+          projectId: intake?.projectId || '',
+          projectName: intake?.projectName || ''
+        });
+        await loadEmployees(true);
+      }
+      toast(employeeSync
+        ? `${intake?.name || 'Employee'} marked Good To Work and ${employeeSync.isNew ? 'added to' : 'updated in'} Employee Records.`
+        : `Status updated: ${status}`);
       await loadNewHireIntakes(true);
       if (document.getElementById('workforce-overview-status-board')) {
         renderWorkforceAttention();
@@ -14466,7 +15253,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (!allNewHireIntakes || !allNewHireIntakes.length) {
         try {
           const nhSnap = await getDocs(query(collection(db, 'newHireIntakes'), orderBy('createdAt', 'desc')));
-          allNewHireIntakes = nhSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          allNewHireIntakes = activeNewHireIntakeRecords(nhSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (e) { console.warn('New hire status load warning', e); }
       }
       if (!allEmployees || !allEmployees.length) {
@@ -14511,7 +15298,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       if (!x.drugConsentForm?.completed) missing.push('drug consent');
       if (!x.safetyAgreementForm?.completed) missing.push('safety agreement');
       if (!((x.certFiles || []).length || x.certUploadsCompleted)) missing.push('certs');
-      if (!((x.payrollIdFiles || []).length || x.payrollIdUploadsCompleted)) missing.push('payroll/ID');
+      if (!getRequiredPayrollIdStatus(x.payrollIdFiles || []).complete) missing.push('payroll/ID (3 required documents)');
       rows.push({
         priority: status === 'Ready for Review' ? 3 : 4,
         title: x.name || 'New Hire',
@@ -14691,7 +15478,399 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     }
   }
 
+  function operationsTodayDate() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+
+  function initializeOperationsDashboard() {
+    const date = document.getElementById('operations-work-date');
+    if (date && !date.value) date.value = operationsTodayDate();
+    const upcomingDate = document.getElementById('operations-upcoming-date');
+    if (upcomingDate && !upcomingDate.value) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      upcomingDate.value = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+    const displayName = currentUserProfile?.name || currentUser?.displayName || currentUser?.email?.split('@')[0] || '';
+    const firstName = String(displayName).trim().split(/\s+/)[0];
+    const welcome = document.getElementById('operations-welcome');
+    if (welcome) welcome.textContent = `Welcome back${firstName ? ', ' + firstName : ''}. Choose what you need to do today.`;
+    restoreOperationsDraft();
+    renderOperationsDashboard();
+  }
+
+  function showOperationsView(viewId, btn) {
+    document.querySelectorAll('.operations-view').forEach(view => view.classList.toggle('active', view.id === viewId));
+    document.querySelectorAll('.operations-nav button').forEach(button => button.classList.toggle('active', button.dataset.operationsView === viewId));
+    if (btn?.dataset?.operationsView) btn.classList.add('active');
+    if (viewId === 'operations-today' || viewId === 'operations-history') loadDailyAccessSessions(true);
+    if (viewId === 'operations-home') renderOperationsDashboard();
+  }
+
+  function scrollToOperationsSetup() {
+    document.getElementById('operations-setup-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function focusOperationsSetup() {
+    showOperationsView('operations-home');
+    scrollToOperationsSetup();
+    setTimeout(() => document.getElementById('operations-project-select')?.focus(), 250);
+  }
+
+  function focusOperationsCrewAccess() {
+    showOperationsView('operations-home');
+    document.getElementById('operations-crew-access-step')?.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+
+  function operationsProjectOptions(selectId, selectedValue = '') {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    const current = selectedValue || select.value || '';
+    const activeProjects = allProjects.filter(project => (project.status || 'active') === 'active');
+    select.innerHTML = '<option value="">Choose a project</option>' + activeProjects.map(project => `<option value="${esc(project.id)}">${esc(project.name || 'Project')}${project.jobNumber ? ' - ' + esc(project.jobNumber) : ''}</option>`).join('');
+    if (activeProjects.some(project => project.id === current)) select.value = current;
+  }
+
+  function renderOperationsDashboard() {
+    const selected = document.getElementById('operations-project-select')?.value || '';
+    const upcoming = document.getElementById('operations-upcoming-project')?.value || '';
+    operationsProjectOptions('operations-project-select', selected);
+    operationsProjectOptions('operations-upcoming-project', upcoming || selected);
+  }
+
+  function syncOperationsProjectSelection() {
+    const projectId = document.getElementById('operations-project-select')?.value || '';
+    const upcoming = document.getElementById('operations-upcoming-project');
+    if (upcoming && projectId) upcoming.value = projectId;
+    saveOperationsDraft(true);
+  }
+
+  function operationsDraftPayload() {
+    return {
+      projectId: document.getElementById('operations-project-select')?.value || '',
+      workDate: document.getElementById('operations-work-date')?.value || operationsTodayDate(),
+      safety: !!document.getElementById('operations-form-safety')?.checked,
+      payroll: !!document.getElementById('operations-form-payroll')?.checked,
+      toolbox: !!document.getElementById('operations-form-toolbox')?.checked,
+      other: !!document.getElementById('operations-form-other')?.checked
+    };
+  }
+
+  function saveOperationsDraft(silent = false) {
+    try {
+      localStorage.setItem('pal-operations-draft', JSON.stringify(operationsDraftPayload()));
+      if (!silent) toast('Today’s setup was saved on this device.');
+    } catch (e) {
+      if (!silent) toast('This browser could not save the setup draft.');
+    }
+  }
+
+  function restoreOperationsDraft() {
+    try {
+      const draft = JSON.parse(localStorage.getItem('pal-operations-draft') || 'null');
+      if (!draft) return;
+      const date = document.getElementById('operations-work-date');
+      if (date && draft.workDate) date.value = draft.workDate;
+      [['operations-form-safety','safety'],['operations-form-payroll','payroll'],['operations-form-toolbox','toolbox'],['operations-form-other','other']].forEach(([id,key]) => {
+        const el = document.getElementById(id);
+        if (el && typeof draft[key] === 'boolean') el.checked = draft[key];
+      });
+      operationsProjectOptions('operations-project-select', draft.projectId || '');
+    } catch (e) {
+      console.warn('Could not restore operations setup draft', e);
+    }
+  }
+
+  function selectedOperationsProject(mode = 'today') {
+    const selectId = mode === 'upcoming' ? 'operations-upcoming-project' : 'operations-project-select';
+    const projectId = document.getElementById(selectId)?.value || '';
+    return allProjects.find(project => project.id === projectId) || null;
+  }
+
+  function operationsToolFieldMap(toolId) {
+    return {
+      'foreman-tool-manual-safety': ['manual-safety-project-select','manual-sheet-date'],
+      'foreman-tool-weekly-toolbox': ['weekly-toolbox-project-select','weekly-toolbox-date'],
+      'foreman-tool-ai-safety': ['ai-safety-project-select','ai-sheet-date'],
+      'foreman-tool-manual-report': ['manual-report-project-select','manual-report-date'],
+      'foreman-tool-ai-report': ['ai-report-project-select','ai-report-date'],
+      'foreman-tool-daily-payroll': ['daily-payroll-project-select','daily-payroll-date'],
+      'foreman-tool-weekly-payroll': ['weekly-payroll-project-select','weekly-payroll-date'],
+      'foreman-tool-expense-report': ['expense-report-project-select','expense-report-date']
+    }[toolId] || [];
+  }
+
+  function prefillOperationsTool(toolId, project, workDate) {
+    const [projectSelectId, dateId] = operationsToolFieldMap(toolId);
+    const select = document.getElementById(projectSelectId);
+    if (select && project?.id) {
+      select.value = project.id;
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+    }
+    const date = document.getElementById(dateId);
+    if (date && workDate) date.value = workDate;
+    if (toolId === 'foreman-tool-manual-safety') syncManualSafetyProjectFields();
+    if (toolId === 'foreman-tool-weekly-toolbox') syncWeeklyToolboxProjectFields();
+  }
+
+  function openOperationsTool(toolId) {
+    const project = selectedOperationsProject('today');
+    if (!project) return toast('Select today’s project first.');
+    const date = document.getElementById('operations-work-date')?.value || operationsTodayDate();
+    openForemanToolModal(toolId);
+    setTimeout(() => prefillOperationsTool(toolId, project, date), 40);
+  }
+
+  function openUpcomingOperationsTool(toolId) {
+    const project = selectedOperationsProject('upcoming');
+    if (!project) return toast('Choose the project you are preparing.');
+    const date = document.getElementById('operations-upcoming-date')?.value || '';
+    if (!date) return toast('Choose the future work date.');
+    openForemanToolModal(toolId);
+    setTimeout(() => prefillOperationsTool(toolId, project, date), 40);
+  }
+
+  function openOperationsOfficialForm(formId) {
+    const project = selectedOperationsProject('today');
+    if (!project) return toast('Select today’s project first.');
+    try {
+      localStorage.setItem('pal-current-project', JSON.stringify({ id:project.id, name:project.name || '', jobNumber:project.jobNumber || '', location:project.location || '', status:project.status || 'active' }));
+    } catch (e) {}
+    openOfficialBlankForm(formId);
+  }
+
+  async function generateDailyAccess() {
+    if (!requireCloudConnection('generate daily crew access')) return;
+    const project = selectedOperationsProject('today');
+    if (!project) return toast('Select the project first.');
+    const draft = operationsDraftPayload();
+    if (!draft.workDate) return toast('Choose the work date.');
+    if (!draft.safety && !draft.payroll && !draft.toolbox) return toast('Select at least one crew document.');
+    if (draft.other) return toast('Choose a specific additional form before generating the crew link.');
+    const btn = document.getElementById('generate-daily-access-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Creating Access...'; }
+      const response = await createDailyAccessSessionCallable({
+        projectId: project.id,
+        workDate: draft.workDate,
+        forms: { safety:draft.safety, payroll:draft.payroll, toolbox:draft.toolbox },
+        publicBaseUrl: PAL_PUBLIC_PROJECTS_URL
+      });
+      currentDailyAccessResult = response.data || null;
+      if (!currentDailyAccessResult?.link) throw new Error('The crew link was not returned.');
+      renderDailyAccessResult(currentDailyAccessResult);
+      saveOperationsDraft(true);
+      loadDailyAccessSessions(true);
+      toast('Crew QR code and link are ready.');
+    } catch (e) {
+      console.error(e);
+      toast(e?.message || 'Could not create the daily crew access link.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Generate QR Code & Link'; }
+    }
+  }
+
+  function renderDailyAccessResult(result) {
+    const box = document.getElementById('daily-access-result');
+    const link = document.getElementById('daily-access-link');
+    const qr = document.getElementById('daily-access-qr');
+    const meta = document.getElementById('daily-access-result-meta');
+    if (link) link.value = result.link || '';
+    if (qr) qr.innerHTML = result.qrDataUrl ? `<img src="${esc(result.qrDataUrl)}" alt="Crew access QR code" />` : '<span class="helper-text">QR code unavailable. Use the link.</span>';
+    if (meta) meta.textContent = `${result.projectName || 'Project'} | ${result.workDate || ''} | ${(result.formTitles || []).join(', ')}`;
+    box?.classList.add('show');
+  }
+
+  function previewDailyAccess() {
+    const link = currentDailyAccessResult?.link || document.getElementById('daily-access-link')?.value || '';
+    if (!link) return toast('Generate the crew access link first.');
+    window.open(link, '_blank', 'noopener');
+  }
+
+  async function copyDailyAccessLink() {
+    const link = currentDailyAccessResult?.link || document.getElementById('daily-access-link')?.value || '';
+    if (!link) return toast('Generate the crew access link first.');
+    const copied = await writeClipboardText(link);
+    toast(copied ? 'Crew link copied.' : 'Select and copy the link shown.');
+  }
+
+  async function shareDailyAccessLink() {
+    const link = currentDailyAccessResult?.link || document.getElementById('daily-access-link')?.value || '';
+    if (!link) return toast('Generate the crew access link first.');
+    if (navigator.share) {
+      try { await navigator.share({ title:'PAL Daily Crew Access', text:'Open today’s PAL project forms:', url:link }); return; }
+      catch (e) { if (e?.name === 'AbortError') return; }
+    }
+    await copyDailyAccessLink();
+  }
+
+  function downloadDailyAccessQr() {
+    const dataUrl = currentDailyAccessResult?.qrDataUrl || document.querySelector('#daily-access-qr img')?.src || '';
+    if (!dataUrl) return toast('The QR image is not available. Use Copy Link instead.');
+    const anchor = document.createElement('a');
+    anchor.href = dataUrl;
+    anchor.download = `pal-crew-access-${exportSlug(currentDailyAccessResult?.projectName || 'project')}-${currentDailyAccessResult?.workDate || 'today'}.png`;
+    document.body.appendChild(anchor); anchor.click(); anchor.remove();
+  }
+
+  function sessionDateValue(value) {
+    if (!value) return '';
+    if (typeof value.toDate === 'function') return value.toDate().toISOString();
+    return String(value);
+  }
+
+  async function loadDailyAccessSessions(showErrors = false) {
+    if (!currentUser?.uid) return;
+    try {
+      const snap = await getDocs(query(collection(db, 'dailyAccessSessions'), where('createdBy', '==', currentUser.uid)));
+      const sessions = snap.docs.map(row => ({ id:row.id, ...row.data() })).sort((a,b) => Date.parse(sessionDateValue(b.createdAt) || b.createdAtText || '') - Date.parse(sessionDateValue(a.createdAt) || a.createdAtText || ''));
+      for (const session of sessions.slice(0, 40)) {
+        try {
+          const submissions = await getDocs(collection(db, 'dailyAccessSessions', session.id, 'submissions'));
+          session.submissions = submissions.docs.map(row => ({ id:row.id, ...row.data() }));
+        } catch (e) { session.submissions = []; }
+      }
+      dailyAccessSessions = sessions;
+      renderDailyAccessSessions();
+    } catch (e) {
+      console.error('Could not load daily access sessions', e);
+      if (showErrors) toast('Could not refresh daily crew access sessions.');
+    }
+  }
+
+  function dailyAccessSessionCard(session, includeCrew = false) {
+    const forms = Array.isArray(session.forms) ? session.forms.map(form => form.title).join(', ') : '';
+    const submissions = Array.isArray(session.submissions) ? session.submissions : [];
+    const status = session.status || 'Active';
+    const crewRows = includeCrew && submissions.length ? `<div style="width:100%;margin-top:12px;display:grid;gap:9px;">${submissions.map(row => `
+      <div class="operations-doc-choice" style="display:grid;grid-template-columns:minmax(160px,1fr) repeat(3,minmax(100px,.55fr)) auto;">
+        <div><strong>${esc(row.employeeName || '')}</strong><small>${esc(row.unionLocal || '')} | SSN ending ${esc(row.last4Ssn || '')}</small></div>
+        <div class="field"><label>Time In</label><input id="daily-access-in-${esc(row.id)}" type="time" value="${esc(row.timeIn || '')}" /></div>
+        <div class="field"><label>Time Out</label><input id="daily-access-out-${esc(row.id)}" type="time" value="${esc(row.timeOut || '')}" /></div>
+        <div><strong>${esc(row.totalHours || '')}</strong><small>Total hours</small></div>
+        <button class="btn-outline" type="button" onclick="saveDailyAccessCheckout('${esc(session.id)}','${esc(row.id)}')">Save</button>
+      </div>`).join('')}</div>` : '';
+    return `<div class="operations-list-card" style="flex-wrap:wrap;">
+      <div><h3>${esc(session.projectName || 'Project')}</h3><p>${esc(session.workDate || '')} | ${esc(forms)} | ${submissions.length} crew check-in${submissions.length === 1 ? '' : 's'}</p></div>
+      <div class="operations-inline-actions"><span class="pill ${String(status).toLowerCase() === 'active' ? 'active' : ''}">${esc(status)}</span><button class="btn-outline" type="button" onclick="openDailyAccessSession('${esc(session.id)}')">Open Link</button>${status === 'Active' ? `<button class="btn-outline" type="button" onclick="closeDailyAccessSessionFromDashboard('${esc(session.id)}')">Close Access</button>` : ''}</div>
+      ${crewRows}
+    </div>`;
+  }
+
+  function renderDailyAccessSessions() {
+    const today = operationsTodayDate();
+    const todaySessions = dailyAccessSessions.filter(session => session.workDate === today);
+    const todayList = document.getElementById('operations-today-list');
+    const historyList = document.getElementById('operations-history-list');
+    if (todayList) todayList.innerHTML = todaySessions.length ? todaySessions.map(session => dailyAccessSessionCard(session, true)).join('') : '<div class="operations-list-card"><p>No daily access session has been created for today yet.</p></div>';
+    if (historyList) historyList.innerHTML = dailyAccessSessions.length ? dailyAccessSessions.map(session => dailyAccessSessionCard(session, false)).join('') : '<div class="operations-list-card"><p>Your session history will appear here.</p></div>';
+    const crewCount = todaySessions.reduce((sum,session) => sum + (session.submissions?.length || 0), 0);
+    const set = (id,value) => { const el=document.getElementById(id); if(el) el.textContent=String(value); };
+    set('operations-today-project-count', todaySessions.length);
+    set('operations-today-crew-count', crewCount);
+    set('operations-today-open-count', todaySessions.filter(session => session.status === 'Active').length);
+  }
+
+  function dailyAccessLinkForToken(token) {
+    const url = new URL(PAL_PUBLIC_PROJECTS_URL);
+    url.searchParams.set('crewAccess', token);
+    return url.toString();
+  }
+
+  function openDailyAccessSession(token) {
+    window.open(dailyAccessLinkForToken(token), '_blank', 'noopener');
+  }
+
+  async function closeDailyAccessSessionFromDashboard(token) {
+    if (!confirm('Close this crew access link? Existing submissions will remain saved.')) return;
+    try {
+      await closeDailyAccessSessionCallable({ token });
+      await loadDailyAccessSessions();
+      toast('Crew access closed.');
+    } catch (e) { toast(e?.message || 'Could not close crew access.'); }
+  }
+
+  async function saveDailyAccessCheckout(token, submissionId) {
+    const timeIn = document.getElementById(`daily-access-in-${submissionId}`)?.value || '';
+    const timeOut = document.getElementById(`daily-access-out-${submissionId}`)?.value || '';
+    if (!timeIn || !timeOut) return toast('Enter both time in and time out.');
+    try {
+      await updateDailyAccessSubmissionCallable({ token, submissionId, timeIn, timeOut });
+      await loadDailyAccessSessions();
+      toast('Employee payroll time updated.');
+    } catch (e) { toast(e?.message || 'Could not update payroll time.'); }
+  }
+
+  async function loadPublicDailyAccess() {
+    const status = document.getElementById('crew-access-status-card');
+    const active = document.getElementById('crew-access-active');
+    try {
+      const snap = await getDoc(doc(db, 'dailyAccessSessions', publicDailyAccessToken));
+      if (!snap.exists()) throw new Error('This crew access link is not available.');
+      const session = { id:snap.id, ...snap.data() };
+      const expiresAt = session.expiresAt?.toDate ? session.expiresAt.toDate() : new Date(session.expiresAtText || 0);
+      if (session.status !== 'Active') throw new Error('This crew access link has been closed.');
+      if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) throw new Error('This crew access link has expired. Ask your foreman for today’s link.');
+      currentPublicDailyAccess = session;
+      const name = document.getElementById('crew-access-project-name');
+      const meta = document.getElementById('crew-access-project-meta');
+      if (name) name.textContent = session.projectName || 'Today’s Project Forms';
+      if (meta) meta.textContent = `Work date: ${session.workDate || ''} | Complete all items below`;
+      renderPublicDailyAccessForms(session.forms || []);
+      if (status) status.style.display = 'none';
+      if (active) active.style.display = 'block';
+    } catch (e) {
+      currentPublicDailyAccess = null;
+      if (active) active.style.display = 'none';
+      const friendlyMessage = String(e?.code || '').includes('permission-denied')
+        ? 'This crew access link is not available. Ask your foreman for today’s link.'
+        : (e?.message || 'Ask your foreman for a new link.');
+      if (status) status.innerHTML = `<h3>Crew Access Unavailable</h3><p class="helper-text">${esc(friendlyMessage)}</p>`;
+    }
+  }
+
+  function renderPublicDailyAccessForms(forms) {
+    const list = document.getElementById('crew-access-form-list');
+    if (!list) return;
+    list.innerHTML = forms.map((form,index) => `<div class="crew-access-form-item"><strong>${index + 1}. ${esc(form.title || 'Project Form')}</strong><p>${esc(form.employeeSummary || 'Review this project document before signing.')}</p><label class="crew-access-confirm"><input type="checkbox" class="crew-access-form-confirm" data-form-key="${esc(form.key || '')}" /> <span>I reviewed and understand this ${esc(form.shortLabel || 'document')}.</span></label></div>`).join('');
+  }
+
+  function updateCrewAccessSignaturePreview() {
+    const value = document.getElementById('crew-access-signature')?.value.trim() || '';
+    const preview = document.getElementById('crew-access-signature-preview');
+    if (preview) preview.textContent = value || 'Your signature appears here';
+  }
+
+  async function submitDailyCrewAccess() {
+    if (!currentPublicDailyAccess) return toast('Today’s forms are not loaded.');
+    const confirmations = Array.from(document.querySelectorAll('.crew-access-form-confirm'));
+    if (confirmations.some(input => !input.checked)) return toast('Review and confirm every document first.');
+    const employeeName = document.getElementById('crew-access-name')?.value.trim() || '';
+    const timeIn = document.getElementById('crew-access-time-in')?.value || '';
+    const unionLocal = document.getElementById('crew-access-union')?.value.trim() || '';
+    const last4Ssn = document.getElementById('crew-access-last4')?.value.trim() || '';
+    const signature = document.getElementById('crew-access-signature')?.value.trim() || '';
+    const certify = !!document.getElementById('crew-access-certify')?.checked;
+    if (!employeeName || !timeIn || !unionLocal || !/^\d{4}$/.test(last4Ssn) || !signature || !certify) return toast('Complete every employee check-in field, including exactly 4 SSN digits and certification.');
+    const btn = document.getElementById('crew-access-submit-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting to PAL...'; }
+      const result = await submitDailyAccessCallable({ token:publicDailyAccessToken, employeeName, timeIn, unionLocal, last4Ssn, signature, confirmedFormKeys:confirmations.map(input => input.dataset.formKey) });
+      const active = document.getElementById('crew-access-active');
+      if (active) active.innerHTML = `<div class="crew-access-card"><h3>Submitted to PAL</h3><p class="helper-text">Thank you, ${esc(employeeName)}. Your check-in and signatures were added to the foreman’s project records.</p><div class="pill active" style="margin-top:12px;">Confirmation ${esc(result.data?.confirmation || '')}</div></div>`;
+      toast('Today’s forms were submitted.');
+    } catch (e) {
+      console.error(e);
+      toast(e?.message || 'The forms could not be submitted. Try again.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Today’s Forms'; }
+    }
+  }
+
   function switchMainTab(tabId, btn) {
+    document.getElementById('view-projects')?.classList.toggle('operations-mode', tabId === 'main-operations-dashboard');
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     const supportTabMap = {
       'main-workforce-overview': 'main-employees',
@@ -14704,6 +15883,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
+    if (tabId === 'main-operations-dashboard') initializeOperationsDashboard();
     if (tabId === 'main-workforce-overview') loadWorkforceOverview(true);
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
