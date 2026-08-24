@@ -360,6 +360,29 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /dailyAccessSessions/{sessionId} {
+      allow get: if (
+        resource.data.token == sessionId
+        && resource.data.status == 'Active'
+        && resource.data.expiresAt is timestamp
+        && request.time < resource.data.expiresAt
+      ) || (
+        signedIn()
+        && (isOffice() || resource.data.createdBy == request.auth.uid)
+      );
+      allow list: if signedIn()
+        && (isOffice() || resource.data.createdBy == request.auth.uid);
+      allow create, update, delete: if false;
+
+      match /submissions/{submissionId} {
+        allow read: if signedIn() && (
+          isOffice()
+          || get(/databases/$(database)/documents/dailyAccessSessions/$(sessionId)).data.createdBy == request.auth.uid
+        );
+        allow create, update, delete: if false;
+      }
+    }
+
     match /integrationSettings/{settingsId} {
       allow read: if isAdmin();
       allow create, update: if isAdmin();

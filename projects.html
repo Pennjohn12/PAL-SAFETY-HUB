@@ -1511,7 +1511,7 @@
     @media(max-width:850px){ .workforce-status-grid, .workforce-board { grid-template-columns:1fr; } }
     @media(max-width:560px){ .workforce-actions .btn-sm { flex:1 1 100%; min-height:44px; } .workforce-person { padding:14px; } }
   </style>
-  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-07-26-onboarding-card-actions" />
+  <link rel="stylesheet" href="assets/css/projects-ui.css?v=2026-08-23-operations-dashboard-restored" />
   <link rel="stylesheet" href="assets/css/safety-record-center.css?v=2026-08-23-office-record-center" />
 
 <script>
@@ -1521,10 +1521,11 @@
     var isPublicNewHire = params.get('newhire') || params.get('intake') || params.get('publicStart');
     var isPublicTicket = params.get('ticketProjectId') && params.get('ticketId') && params.get('ticketToken');
     var isPublicSafety = params.get('safetyProjectId') && params.get('safetyFormId') && params.get('safetyToken');
-    if (!isPublicNewHire && !isPublicTicket && !isPublicSafety) return;
+    var isDailyAccess = params.get('crewAccess');
+    if (!isPublicNewHire && !isPublicTicket && !isPublicSafety && !isDailyAccess) return;
     document.addEventListener('DOMContentLoaded', function(){
       document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-      var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : 'view-public-newhire-intake');
+      var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : (isDailyAccess ? 'view-daily-crew-access' : 'view-public-newhire-intake'));
       var pub = document.getElementById(viewId);
       if (pub) pub.classList.add('active');
       var login = document.getElementById('view-login');
@@ -1550,15 +1551,16 @@
     var p = new URLSearchParams(window.location.search);
     var isPublicTicket = p.get('ticketProjectId') && p.get('ticketId') && p.get('ticketToken');
     var isPublicSafety = p.get('safetyProjectId') && p.get('safetyFormId') && p.get('safetyToken');
+    var isDailyAccess = p.get('crewAccess');
     var isPublicNewHire = p.get('newhire') || p.get('intake') || p.get('publicStart') || p.get('noLogin');
-    var isPublic = isPublicTicket || isPublicSafety || isPublicNewHire;
+    var isPublic = isPublicTicket || isPublicSafety || isDailyAccess || isPublicNewHire;
     if (!isPublic) return;
 
     // If this is a public route, never leave the login view active.
     function forcePublicView(){
       try {
         document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-        var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : 'view-public-newhire-intake');
+        var viewId = isPublicTicket ? 'view-public-ticket-sign' : (isPublicSafety ? 'view-public-safety-sign' : (isDailyAccess ? 'view-daily-crew-access' : 'view-public-newhire-intake'));
         var pub = document.getElementById(viewId);
         if (pub) pub.classList.add('active');
         var login = document.getElementById('view-login');
@@ -1917,6 +1919,47 @@
   </div>
 </div>
 
+<!-- PUBLIC DAILY CREW ACCESS - PROJECT/DATE BOUND, NO LOGIN REQUIRED -->
+<div class="view" id="view-daily-crew-access">
+  <div class="header">
+    <a class="brand" href="index.html">
+      <div class="pal-badge">PAL</div>
+      <div class="brand-text"><h1>PAL Safety Hub</h1><p>Daily Crew Access</p></div>
+    </a>
+  </div>
+  <div class="crew-access-wrap">
+    <div class="crew-access-hero">
+      <h2 id="crew-access-project-name">Today’s Project Forms</h2>
+      <p id="crew-access-project-meta">Loading the project and work date...</p>
+    </div>
+    <div class="crew-access-card" id="crew-access-status-card">
+      <h3>Opening Today’s Forms</h3>
+      <p class="helper-text">Please wait while PAL Safety Hub loads the forms selected by your foreman.</p>
+    </div>
+    <div id="crew-access-active" style="display:none;">
+      <div class="crew-access-card">
+        <h3>1. Review Today’s Documents</h3>
+        <p class="helper-text">Read each item and check the confirmation. Your submission is added to the foreman’s master project sheets.</p>
+        <div class="crew-access-form-list" id="crew-access-form-list"></div>
+      </div>
+      <div class="crew-access-card">
+        <h3>2. Employee Check-In</h3>
+        <p class="helper-text">Enter your information exactly as it should appear on today’s payroll sheet.</p>
+        <div class="crew-access-fields">
+          <div class="field full"><label>Full Name</label><input id="crew-access-name" autocomplete="name" placeholder="Your full legal name" /></div>
+          <div class="field"><label>Time In</label><input id="crew-access-time-in" type="time" value="07:00" /></div>
+          <div class="field"><label>Union / Local Number</label><input id="crew-access-union" placeholder="Example: Local 79" /></div>
+          <div class="field"><label>Last 4 Digits of SSN</label><input id="crew-access-last4" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000" /></div>
+          <div class="field full"><label>Typed Signature</label><input id="crew-access-signature" autocomplete="name" placeholder="Type your full legal name" oninput="updateCrewAccessSignaturePreview()" /></div>
+          <div class="field full"><div class="crew-signature-preview" id="crew-access-signature-preview">Your signature appears here</div></div>
+        </div>
+        <label class="crew-access-confirm" style="margin-top:15px;"><input type="checkbox" id="crew-access-certify" /> <span>I certify that the information above is correct and that my typed name is my electronic signature.</span></label>
+        <button class="btn-save crew-access-submit" id="crew-access-submit-btn" type="button" onclick="submitDailyCrewAccess()">Submit Today’s Forms</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 
      PROJECT LIST VIEW
  -->
@@ -1926,7 +1969,7 @@
       <div class="pal-badge">PAL</div>
       <div class="brand-text">
         <h1>PAL Safety Hub</h1>
-        <p>Projects</p>
+        <p>Environmental Services</p>
       </div>
     </a>
     <div class="header-right">
@@ -1940,8 +1983,8 @@
 
   <div class="page-wrap">
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
-      <button class="tab active" onclick="switchMainTab('main-projects', this)">Projects</button>
-      <button class="tab" onclick="switchMainTab('main-foreman-tools', this)">Foreman / Supervisor Tools</button>
+      <button class="tab active" onclick="switchMainTab('main-operations-dashboard', this)">My Operations</button>
+      <button class="tab" onclick="switchMainTab('main-projects', this)">Projects</button>
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
       <button class="tab" onclick="switchMainTab('main-employee-onboarding', this)">Onboarding</button>
       <button class="tab" onclick="switchMainTab('main-employees', this)">Employees</button>
@@ -1954,7 +1997,162 @@
       <button class="tab owner-only hidden-by-role" onclick="switchMainTab('main-user-access', this)">User Access</button>
     </div>
 
-    <div class="tab-pane active" id="main-projects">
+    <div class="tab-pane active" id="main-operations-dashboard">
+      <div class="operations-shell">
+        <div class="operations-nav" aria-label="My Project Operations">
+          <button type="button" class="active" data-operations-view="operations-home" onclick="showOperationsView('operations-home', this)">Home</button>
+          <button type="button" data-operations-view="operations-today" onclick="showOperationsView('operations-today', this)">Today</button>
+          <button type="button" data-operations-view="operations-upcoming" onclick="showOperationsView('operations-upcoming', this)">Upcoming</button>
+          <button type="button" data-operations-view="operations-history" onclick="showOperationsView('operations-history', this)">My History</button>
+          <button type="button" data-operations-view="operations-tools" onclick="showOperationsView('operations-tools', this)">Tools &amp; Blank Forms</button>
+        </div>
+
+        <section class="operations-view active" id="operations-home">
+          <div class="operations-title-row">
+            <div><h2>My Project’s Operations Dashboard</h2><p id="operations-welcome">Welcome back. Choose what you need to do today.</p></div>
+            <button class="btn-save" type="button" onclick="scrollToOperationsSetup()">Start Today’s Setup</button>
+          </div>
+
+          <div class="operations-actions-grid">
+            <button class="operations-action-card" type="button" onclick="focusOperationsSetup()">
+              <span class="operations-action-icon" aria-hidden="true">&#9881;</span>
+              <h3>Work on Today’s Project</h3>
+              <p>Select a project, prepare the required documents and manage today’s work.</p>
+            </button>
+            <button class="operations-action-card" type="button" onclick="focusOperationsCrewAccess()">
+              <span class="operations-action-icon" aria-hidden="true">QR</span>
+              <h3>Send Crew QR Code</h3>
+              <p>Create a QR code and clickable link for employees to complete today’s forms.</p>
+            </button>
+            <button class="operations-action-card active" type="button" onclick="showOperationsView('operations-upcoming')">
+              <span class="operations-action-icon" aria-hidden="true">+</span>
+              <h3>Prepare Tomorrow or This Week</h3>
+              <p>Create editable payroll and safety drafts ahead of time.</p>
+            </button>
+          </div>
+
+          <div class="operations-setup-card" id="operations-setup-card">
+            <div class="operations-title-row">
+              <div><h2 style="font-size:25px;">Set Up Today’s Work</h2><p>Complete these three steps, then send the QR code to the crew.</p></div>
+              <button class="btn-outline" type="button" onclick="saveOperationsDraft()">Save &amp; Finish Later</button>
+            </div>
+
+            <div class="operations-step">
+              <div class="operations-step-number">1</div>
+              <div>
+                <h3>Select the project you are working on</h3>
+                <div class="operations-project-row">
+                  <select id="operations-project-select" onchange="syncOperationsProjectSelection()"><option value="">Choose a project</option></select>
+                  <button class="btn-outline admin-only" type="button" onclick="openNewProjectModal()">Add Another Project</button>
+                </div>
+                <div class="operations-project-row" style="margin-top:10px;grid-template-columns:minmax(0,1fr);max-width:340px;">
+                  <input id="operations-work-date" type="date" onchange="renderOperationsDashboard()" />
+                </div>
+              </div>
+            </div>
+
+            <div class="operations-step">
+              <div class="operations-step-number">2</div>
+              <div>
+                <h3>Choose and prepare today’s documents</h3>
+                <div class="operations-doc-grid">
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-safety" checked /><span class="operations-doc-copy"><strong>Daily Safety Meeting</strong><small>Required today</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); openOperationsTool('foreman-tool-manual-safety')">Fill Out</button></label>
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-payroll" checked /><span class="operations-doc-copy"><strong>Daily Payroll</strong><small>Required today</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); openOperationsTool('foreman-tool-daily-payroll')">Set Up</button></label>
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-toolbox" /><span class="operations-doc-copy"><strong>Toolbox Talk</strong><small>Add when needed</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); openOperationsTool('foreman-tool-weekly-toolbox')">Add</button></label>
+                  <label class="operations-doc-choice"><input type="checkbox" id="operations-form-other" /><span class="operations-doc-copy"><strong>Another Document</strong><small>Optional form or signature</small></span><button class="btn-outline" type="button" onclick="event.preventDefault(); showOperationsView('operations-tools')">Choose</button></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="operations-step" id="operations-crew-access-step">
+              <div class="operations-step-number">3</div>
+              <div>
+                <h3>Create and send the crew access</h3>
+                <p class="helper-text" style="margin-bottom:13px;">Employees will see only the documents selected for this project and date.</p>
+                <div class="operations-inline-actions">
+                  <button class="btn-save" id="generate-daily-access-btn" type="button" onclick="generateDailyAccess()">Generate QR Code &amp; Link</button>
+                  <button class="btn-outline" type="button" onclick="previewDailyAccess()">Review Before Sending</button>
+                </div>
+                <div class="daily-access-result" id="daily-access-result">
+                  <div class="daily-access-share-grid">
+                    <div class="daily-access-qr" id="daily-access-qr"><span class="helper-text">QR code</span></div>
+                    <div>
+                      <h3 style="margin-top:0;">Crew Access Ready</h3>
+                      <p class="helper-text" id="daily-access-result-meta">Project and date</p>
+                      <input class="daily-access-link" id="daily-access-link" readonly />
+                      <div class="operations-inline-actions" style="margin-top:11px;">
+                        <button class="btn-save" type="button" onclick="copyDailyAccessLink()">Copy Link</button>
+                        <button class="btn-outline" type="button" onclick="shareDailyAccessLink()">Share</button>
+                        <button class="btn-outline" type="button" onclick="downloadDailyAccessQr()">Download QR</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="operations-actions-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+            <button class="operations-action-card" style="min-height:120px;background:var(--navy);" type="button" onclick="showOperationsView('operations-history')"><h3 style="color:#fff;font-size:19px;">My Project History</h3><p style="color:rgba(255,255,255,.78);">Review completed projects and submitted documents</p></button>
+            <button class="operations-action-card" style="min-height:120px;background:var(--navy);" type="button" onclick="showOperationsView('operations-tools')"><h3 style="color:#fff;font-size:19px;">Tools &amp; Blank Forms</h3><p style="color:rgba(255,255,255,.78);">Open the same PAL forms, reports, payroll and AI tools</p></button>
+          </div>
+        </section>
+
+        <section class="operations-view" id="operations-today">
+          <div class="operations-title-row"><div><h2>Today</h2><p>Open daily access sessions, review crew check-ins, and enter checkout times.</p></div><button class="btn-outline" type="button" onclick="loadDailyAccessSessions(true)">Refresh</button></div>
+          <div class="operations-status-grid"><div class="operations-status-card"><strong id="operations-today-project-count">0</strong><span>Active Project Sessions</span></div><div class="operations-status-card"><strong id="operations-today-crew-count">0</strong><span>Crew Check-Ins</span></div><div class="operations-status-card"><strong id="operations-today-open-count">0</strong><span>Open for Signatures</span></div></div>
+          <div class="operations-list" id="operations-today-list"><div class="operations-list-card"><p>No daily access session has been created for today yet.</p></div></div>
+        </section>
+
+        <section class="operations-view" id="operations-upcoming">
+          <div class="operations-title-row"><div><h2>Upcoming</h2><p>Prepare an editable safety sheet, payroll sheet, toolbox talk, report, or AI-assisted draft for a future date.</p></div></div>
+          <div class="operations-setup-card">
+            <div class="operations-project-row" style="grid-template-columns:minmax(0,1fr) minmax(180px,.45fr);margin-bottom:16px;"><select id="operations-upcoming-project"><option value="">Choose a project</option></select><input id="operations-upcoming-date" type="date" /></div>
+            <div class="operations-tools-grid">
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-manual-safety')"><strong>Daily Safety Meeting</strong><span>Open the existing PAL safety sheet with the future project and date filled in.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-daily-payroll')"><strong>Daily Payroll</strong><span>Open the existing PAL daily payroll sheet to prepare the crew.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-weekly-toolbox')"><strong>Toolbox Talk</strong><span>Prepare the current toolbox talk form ahead of time.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-ai-safety')"><strong>AI Assisted Safety Sheet</strong><span>Use the existing AI helper and review the draft before saving.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-manual-report')"><strong>Daily Report</strong><span>Prepare the existing PAL daily report form.</span></button>
+              <button class="operations-tool-button" type="button" onclick="openUpcomingOperationsTool('foreman-tool-ai-report')"><strong>AI Assisted Report</strong><span>Open the current AI report assistant without changing it.</span></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="operations-view" id="operations-history">
+          <div class="operations-title-row"><div><h2>My History</h2><p>Your daily access sessions and the project records connected to them.</p></div><button class="btn-outline" type="button" onclick="loadDailyAccessSessions(true)">Refresh</button></div>
+          <div class="operations-list" id="operations-history-list"><div class="operations-list-card"><p>Your session history will appear here.</p></div></div>
+        </section>
+
+        <section class="operations-view" id="operations-tools">
+          <div class="operations-title-row"><div><h2>Tools &amp; Blank Forms</h2><p>These buttons open the exact PAL forms and AI-assisted tools already in the app.</p></div></div>
+          <div class="operations-tools-grid">
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-manual-safety')"><strong>Manual Daily Safety Sheet</strong><span>Standard PAL daily safety meeting form.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-weekly-toolbox')"><strong>Weekly Toolbox Talk</strong><span>Topic, language, speaker and crew signatures.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-ai-safety')"><strong>AI Assisted Daily Safety Sheet</strong><span>Draft from the work plan, then review and edit.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-manual-report')"><strong>Manual Daily Report</strong><span>Current PAL daily field report.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-ai-report')"><strong>AI Assisted Daily Report</strong><span>Turn quick notes into an editable draft.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openExtraWorkTicketModal()"><strong>Extra Work Ticket</strong><span>Blank project-linked extra work ticket.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-daily-payroll')"><strong>Daily Payroll</strong><span>Daily worker time sheet and hour totals.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-weekly-payroll')"><strong>Weekly Payroll</strong><span>Weekly fireproofing payroll and cost codes.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsTool('foreman-tool-expense-report')"><strong>Expense Report</strong><span>Categories, totals, cash advance and amount due.</span></button>
+            <button class="operations-tool-button" type="button" onclick="switchMainTab('main-jha')"><strong>JHA / Pre-Task Plan</strong><span>Open the approved JHA library and checklist tools.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('incident-report')"><strong>Incident / Near-Miss Form</strong><span>Open the current official PAL incident form.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('scissor-lift-inspection')"><strong>Scissor Lift Inspection</strong><span>Open the current PAL pre-use lift inspection checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('scaffold-checklist')"><strong>Scaffold Checklist</strong><span>Open the official pre-use scaffold safety checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('harness-checklist')"><strong>Harness Checklist</strong><span>Open the current fall-protection inspection checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('decon-setup-checklist')"><strong>Decon Setup Checklist</strong><span>Open the PAL containment and decontamination setup checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('ppe-inspection-checklist')"><strong>PPE Inspection Checklist</strong><span>Open the current PAL PPE inspection checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('respirator-checklist')"><strong>Respirator Checklist</strong><span>Open the respiratory protection pre-use checklist.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('demolition-safety-checklist')"><strong>Demolition Safety Checklist</strong><span>Open the current pre-task demolition safety review.</span></button>
+            <button class="operations-tool-button" type="button" onclick="openOperationsOfficialForm('toolbox-signin')"><strong>Toolbox Talk Sign-In</strong><span>Open the existing blank toolbox attendance form.</span></button>
+            <button class="operations-tool-button" type="button" onclick="switchMainTab('main-projects')"><strong>All Project Forms</strong><span>Open a project to view every current field form and file.</span></button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="main-projects">
       <div class="page-header">
         <h2>Projects</h2>
         <div class="header-actions">
@@ -3908,7 +4106,11 @@
     sendAppEmailCallable,
     sendAppTextCallable,
     generateSafetyDraftCallable,
-    getIntegrationHealthCallable
+    getIntegrationHealthCallable,
+    createDailyAccessSessionCallable,
+    submitDailyAccessCallable,
+    updateDailyAccessSubmissionCallable,
+    closeDailyAccessSessionCallable
   } from "./assets/js/config/pal-firebase.js";
   import {
     capitalize,
@@ -4034,6 +4236,7 @@
   const publicSafetySignProjectId = publicTicketSignParams.get('safetyProjectId') || '';
   const publicSafetySignFormId = publicTicketSignParams.get('safetyFormId') || '';
   const publicSafetySignToken = publicTicketSignParams.get('safetyToken') || '';
+  const publicDailyAccessToken = publicTicketSignParams.get('crewAccess') || '';
 // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
   const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
@@ -4050,6 +4253,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   let currentPublicTicketSignature = null;
   let publicSafetySignatureLoaded = false;
   let currentPublicSafetySignature = null;
+  let currentPublicDailyAccess = null;
+  let dailyAccessSessions = [];
+  let currentDailyAccessResult = null;
   let foremanToolClearTimer = null;
   document.title = 'PAL Safety Hub';
   const APP_LANGUAGE_KEY = 'pal-language';
@@ -4063,6 +4269,28 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.doLogout = doLogout;
   window.showRegister = showRegister;
   window.showLogin = showLogin;
+  window.showOperationsView = showOperationsView;
+  window.scrollToOperationsSetup = scrollToOperationsSetup;
+  window.focusOperationsSetup = focusOperationsSetup;
+  window.focusOperationsCrewAccess = focusOperationsCrewAccess;
+  window.syncOperationsProjectSelection = syncOperationsProjectSelection;
+  window.renderOperationsDashboard = renderOperationsDashboard;
+  window.openOperationsTool = openOperationsTool;
+  window.openUpcomingOperationsTool = openUpcomingOperationsTool;
+  window.openOperationsOfficialForm = openOperationsOfficialForm;
+  window.saveOperationsDraft = saveOperationsDraft;
+  window.generateDailyAccess = generateDailyAccess;
+  window.previewDailyAccess = previewDailyAccess;
+  window.loadDailyAccessSessions = loadDailyAccessSessions;
+  window.copyDailyAccessLink = copyDailyAccessLink;
+  window.shareDailyAccessLink = shareDailyAccessLink;
+  window.downloadDailyAccessQr = downloadDailyAccessQr;
+  window.openDailyAccessSession = openDailyAccessSession;
+  window.closeDailyAccessSessionFromDashboard = closeDailyAccessSessionFromDashboard;
+  window.updateDailyAccessSignaturePreview = updateCrewAccessSignaturePreview;
+  window.updateCrewAccessSignaturePreview = updateCrewAccessSignaturePreview;
+  window.saveDailyAccessCheckout = saveDailyAccessCheckout;
+  window.submitDailyCrewAccess = submitDailyCrewAccess;
   window.openNewProjectModal = openNewProjectModal;
   window.closeModal = closeModal;
   window.saveNewProject = saveNewProject;
@@ -4423,6 +4651,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!publicSafetySignatureLoaded) loadPublicSafetySignature();
       return;
     }
+    if (publicDailyAccessToken) {
+      currentUser = user || null;
+      showView('view-daily-crew-access');
+      loadPublicDailyAccess();
+      return;
+    }
     if (publicTicketSignProjectId && publicTicketSignTicketId && publicTicketSignToken) {
       currentUser = user || null;
       showView('view-public-ticket-sign');
@@ -4454,6 +4688,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         toast('This account is Employee / Intake Only. Use the intake link from PAL to complete documents.');
       } else {
         showView('view-projects');
+        switchMainTab('main-operations-dashboard');
+        initializeOperationsDashboard();
         loadProjects();
         syncOfflineCloudQueue();
       }
@@ -4950,6 +5186,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       refreshTicketProjectOptions();
       refreshAiSafetyProjectOptions();
       renderProjectsList();
+      restoreOperationsDraft();
+      renderOperationsDashboard();
+      loadDailyAccessSessions();
       if (requestedProjectId) {
         const target = filtered.find(p => p.id === requestedProjectId);
         if (target) {
@@ -7208,9 +7447,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
           ],
           tables: [{
             title: 'Worker Hours',
-            headers: ['#', 'Worker', 'LU #', 'Role', 'Time In', 'Time Out', 'Reg', 'OT', 'Total'],
+            headers: ['#', 'Worker', 'LU #', 'Last 4 SSN', 'Role', 'Time In', 'Time Out', 'Reg', 'OT', 'Total', 'Employee Signature'],
             rows: data.rows || [],
-            columns: ['row', 'workerName', 'luNumber', 'role', 'timeIn', 'timeOut', 'regularHours', 'overtimeHours', 'totalHours']
+            columns: ['row', 'workerName', 'luNumber', 'ssnLast4', 'role', 'timeIn', 'timeOut', 'regularHours', 'overtimeHours', 'totalHours', 'signature']
           }]
         })
       };
@@ -8110,7 +8349,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const frame = document.getElementById('official-project-form-frame');
     if (frame) frame.src = 'about:blank';
     modal?.classList.remove('open');
-    openProjectFieldFormsMenu();
+    if (currentProject) openProjectFieldFormsMenu();
   }
 
   window.addEventListener('message', event => {
@@ -9302,7 +9541,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         <div class="report-field"><span class="k">Foreman / Supervisor</span><div class="v">${esc(data.foreman || '')}</div></div>
         <div class="report-field"><span class="k">Week Of</span><div class="v">${esc(data.weekOf || '')}</div></div>
         <div class="report-field"><span class="k">Address</span><div class="v">${esc(data.address || '')}</div></div>
-        ${fieldFormTableHTML(['#','Worker','LU #','Role','Time In','Time Out','Reg','OT','Total'], data.rows, ['row','workerName','luNumber','role','timeIn','timeOut','regularHours','overtimeHours','totalHours'])}
+        ${fieldFormTableHTML(['#','Worker','LU #','Last 4 SSN','Role','Time In','Time Out','Reg','OT','Total','Employee Signature'], data.rows, ['row','workerName','luNumber','ssnLast4','role','timeIn','timeOut','regularHours','overtimeHours','totalHours','signature'])}
         <div class="report-field"><span class="k">Printed Name</span><div class="v">${esc(data.printedName || '')}</div></div>
         <div class="report-field"><span class="k">Date Signed</span><div class="v">${esc(data.dateSigned || '')}</div></div>
         <div class="report-field span-2"><span class="k">Signature</span><div class="v signature-script">${esc(data.signature || '')}</div></div>`;
@@ -15186,7 +15425,399 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     toast('Employee safety record package saved to files.');
   }
 
+  function operationsTodayDate() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+
+  function initializeOperationsDashboard() {
+    const date = document.getElementById('operations-work-date');
+    if (date && !date.value) date.value = operationsTodayDate();
+    const upcomingDate = document.getElementById('operations-upcoming-date');
+    if (upcomingDate && !upcomingDate.value) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      upcomingDate.value = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+    const displayName = currentUserProfile?.name || currentUser?.displayName || currentUser?.email?.split('@')[0] || '';
+    const firstName = String(displayName).trim().split(/\s+/)[0];
+    const welcome = document.getElementById('operations-welcome');
+    if (welcome) welcome.textContent = `Welcome back${firstName ? ', ' + firstName : ''}. Choose what you need to do today.`;
+    restoreOperationsDraft();
+    renderOperationsDashboard();
+  }
+
+  function showOperationsView(viewId, btn) {
+    document.querySelectorAll('.operations-view').forEach(view => view.classList.toggle('active', view.id === viewId));
+    document.querySelectorAll('.operations-nav button').forEach(button => button.classList.toggle('active', button.dataset.operationsView === viewId));
+    if (btn?.dataset?.operationsView) btn.classList.add('active');
+    if (viewId === 'operations-today' || viewId === 'operations-history') loadDailyAccessSessions(true);
+    if (viewId === 'operations-home') renderOperationsDashboard();
+  }
+
+  function scrollToOperationsSetup() {
+    document.getElementById('operations-setup-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function focusOperationsSetup() {
+    showOperationsView('operations-home');
+    scrollToOperationsSetup();
+    setTimeout(() => document.getElementById('operations-project-select')?.focus(), 250);
+  }
+
+  function focusOperationsCrewAccess() {
+    showOperationsView('operations-home');
+    document.getElementById('operations-crew-access-step')?.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+
+  function operationsProjectOptions(selectId, selectedValue = '') {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    const current = selectedValue || select.value || '';
+    const activeProjects = allProjects.filter(project => (project.status || 'active') === 'active');
+    select.innerHTML = '<option value="">Choose a project</option>' + activeProjects.map(project => `<option value="${esc(project.id)}">${esc(project.name || 'Project')}${project.jobNumber ? ' - ' + esc(project.jobNumber) : ''}</option>`).join('');
+    if (activeProjects.some(project => project.id === current)) select.value = current;
+  }
+
+  function renderOperationsDashboard() {
+    const selected = document.getElementById('operations-project-select')?.value || '';
+    const upcoming = document.getElementById('operations-upcoming-project')?.value || '';
+    operationsProjectOptions('operations-project-select', selected);
+    operationsProjectOptions('operations-upcoming-project', upcoming || selected);
+  }
+
+  function syncOperationsProjectSelection() {
+    const projectId = document.getElementById('operations-project-select')?.value || '';
+    const upcoming = document.getElementById('operations-upcoming-project');
+    if (upcoming && projectId) upcoming.value = projectId;
+    saveOperationsDraft(true);
+  }
+
+  function operationsDraftPayload() {
+    return {
+      projectId: document.getElementById('operations-project-select')?.value || '',
+      workDate: document.getElementById('operations-work-date')?.value || operationsTodayDate(),
+      safety: !!document.getElementById('operations-form-safety')?.checked,
+      payroll: !!document.getElementById('operations-form-payroll')?.checked,
+      toolbox: !!document.getElementById('operations-form-toolbox')?.checked,
+      other: !!document.getElementById('operations-form-other')?.checked
+    };
+  }
+
+  function saveOperationsDraft(silent = false) {
+    try {
+      localStorage.setItem('pal-operations-draft', JSON.stringify(operationsDraftPayload()));
+      if (!silent) toast('Today’s setup was saved on this device.');
+    } catch (e) {
+      if (!silent) toast('This browser could not save the setup draft.');
+    }
+  }
+
+  function restoreOperationsDraft() {
+    try {
+      const draft = JSON.parse(localStorage.getItem('pal-operations-draft') || 'null');
+      if (!draft) return;
+      const date = document.getElementById('operations-work-date');
+      if (date && draft.workDate) date.value = draft.workDate;
+      [['operations-form-safety','safety'],['operations-form-payroll','payroll'],['operations-form-toolbox','toolbox'],['operations-form-other','other']].forEach(([id,key]) => {
+        const el = document.getElementById(id);
+        if (el && typeof draft[key] === 'boolean') el.checked = draft[key];
+      });
+      operationsProjectOptions('operations-project-select', draft.projectId || '');
+    } catch (e) {
+      console.warn('Could not restore operations setup draft', e);
+    }
+  }
+
+  function selectedOperationsProject(mode = 'today') {
+    const selectId = mode === 'upcoming' ? 'operations-upcoming-project' : 'operations-project-select';
+    const projectId = document.getElementById(selectId)?.value || '';
+    return allProjects.find(project => project.id === projectId) || null;
+  }
+
+  function operationsToolFieldMap(toolId) {
+    return {
+      'foreman-tool-manual-safety': ['manual-safety-project-select','manual-sheet-date'],
+      'foreman-tool-weekly-toolbox': ['weekly-toolbox-project-select','weekly-toolbox-date'],
+      'foreman-tool-ai-safety': ['ai-safety-project-select','ai-sheet-date'],
+      'foreman-tool-manual-report': ['manual-report-project-select','manual-report-date'],
+      'foreman-tool-ai-report': ['ai-report-project-select','ai-report-date'],
+      'foreman-tool-daily-payroll': ['daily-payroll-project-select','daily-payroll-date'],
+      'foreman-tool-weekly-payroll': ['weekly-payroll-project-select','weekly-payroll-date'],
+      'foreman-tool-expense-report': ['expense-report-project-select','expense-report-date']
+    }[toolId] || [];
+  }
+
+  function prefillOperationsTool(toolId, project, workDate) {
+    const [projectSelectId, dateId] = operationsToolFieldMap(toolId);
+    const select = document.getElementById(projectSelectId);
+    if (select && project?.id) {
+      select.value = project.id;
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+    }
+    const date = document.getElementById(dateId);
+    if (date && workDate) date.value = workDate;
+    if (toolId === 'foreman-tool-manual-safety') syncManualSafetyProjectFields();
+    if (toolId === 'foreman-tool-weekly-toolbox') syncWeeklyToolboxProjectFields();
+  }
+
+  function openOperationsTool(toolId) {
+    const project = selectedOperationsProject('today');
+    if (!project) return toast('Select today’s project first.');
+    const date = document.getElementById('operations-work-date')?.value || operationsTodayDate();
+    openForemanToolModal(toolId);
+    setTimeout(() => prefillOperationsTool(toolId, project, date), 40);
+  }
+
+  function openUpcomingOperationsTool(toolId) {
+    const project = selectedOperationsProject('upcoming');
+    if (!project) return toast('Choose the project you are preparing.');
+    const date = document.getElementById('operations-upcoming-date')?.value || '';
+    if (!date) return toast('Choose the future work date.');
+    openForemanToolModal(toolId);
+    setTimeout(() => prefillOperationsTool(toolId, project, date), 40);
+  }
+
+  function openOperationsOfficialForm(formId) {
+    const project = selectedOperationsProject('today');
+    if (!project) return toast('Select today’s project first.');
+    try {
+      localStorage.setItem('pal-current-project', JSON.stringify({ id:project.id, name:project.name || '', jobNumber:project.jobNumber || '', location:project.location || '', status:project.status || 'active' }));
+    } catch (e) {}
+    openOfficialBlankForm(formId);
+  }
+
+  async function generateDailyAccess() {
+    if (!requireCloudConnection('generate daily crew access')) return;
+    const project = selectedOperationsProject('today');
+    if (!project) return toast('Select the project first.');
+    const draft = operationsDraftPayload();
+    if (!draft.workDate) return toast('Choose the work date.');
+    if (!draft.safety && !draft.payroll && !draft.toolbox) return toast('Select at least one crew document.');
+    if (draft.other) return toast('Choose a specific additional form before generating the crew link.');
+    const btn = document.getElementById('generate-daily-access-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Creating Access...'; }
+      const response = await createDailyAccessSessionCallable({
+        projectId: project.id,
+        workDate: draft.workDate,
+        forms: { safety:draft.safety, payroll:draft.payroll, toolbox:draft.toolbox },
+        publicBaseUrl: PAL_PUBLIC_PROJECTS_URL
+      });
+      currentDailyAccessResult = response.data || null;
+      if (!currentDailyAccessResult?.link) throw new Error('The crew link was not returned.');
+      renderDailyAccessResult(currentDailyAccessResult);
+      saveOperationsDraft(true);
+      loadDailyAccessSessions(true);
+      toast('Crew QR code and link are ready.');
+    } catch (e) {
+      console.error(e);
+      toast(e?.message || 'Could not create the daily crew access link.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Generate QR Code & Link'; }
+    }
+  }
+
+  function renderDailyAccessResult(result) {
+    const box = document.getElementById('daily-access-result');
+    const link = document.getElementById('daily-access-link');
+    const qr = document.getElementById('daily-access-qr');
+    const meta = document.getElementById('daily-access-result-meta');
+    if (link) link.value = result.link || '';
+    if (qr) qr.innerHTML = result.qrDataUrl ? `<img src="${esc(result.qrDataUrl)}" alt="Crew access QR code" />` : '<span class="helper-text">QR code unavailable. Use the link.</span>';
+    if (meta) meta.textContent = `${result.projectName || 'Project'} | ${result.workDate || ''} | ${(result.formTitles || []).join(', ')}`;
+    box?.classList.add('show');
+  }
+
+  function previewDailyAccess() {
+    const link = currentDailyAccessResult?.link || document.getElementById('daily-access-link')?.value || '';
+    if (!link) return toast('Generate the crew access link first.');
+    window.open(link, '_blank', 'noopener');
+  }
+
+  async function copyDailyAccessLink() {
+    const link = currentDailyAccessResult?.link || document.getElementById('daily-access-link')?.value || '';
+    if (!link) return toast('Generate the crew access link first.');
+    const copied = await writeClipboardText(link);
+    toast(copied ? 'Crew link copied.' : 'Select and copy the link shown.');
+  }
+
+  async function shareDailyAccessLink() {
+    const link = currentDailyAccessResult?.link || document.getElementById('daily-access-link')?.value || '';
+    if (!link) return toast('Generate the crew access link first.');
+    if (navigator.share) {
+      try { await navigator.share({ title:'PAL Daily Crew Access', text:'Open today’s PAL project forms:', url:link }); return; }
+      catch (e) { if (e?.name === 'AbortError') return; }
+    }
+    await copyDailyAccessLink();
+  }
+
+  function downloadDailyAccessQr() {
+    const dataUrl = currentDailyAccessResult?.qrDataUrl || document.querySelector('#daily-access-qr img')?.src || '';
+    if (!dataUrl) return toast('The QR image is not available. Use Copy Link instead.');
+    const anchor = document.createElement('a');
+    anchor.href = dataUrl;
+    anchor.download = `pal-crew-access-${exportSlug(currentDailyAccessResult?.projectName || 'project')}-${currentDailyAccessResult?.workDate || 'today'}.png`;
+    document.body.appendChild(anchor); anchor.click(); anchor.remove();
+  }
+
+  function sessionDateValue(value) {
+    if (!value) return '';
+    if (typeof value.toDate === 'function') return value.toDate().toISOString();
+    return String(value);
+  }
+
+  async function loadDailyAccessSessions(showErrors = false) {
+    if (!currentUser?.uid) return;
+    try {
+      const snap = await getDocs(query(collection(db, 'dailyAccessSessions'), where('createdBy', '==', currentUser.uid)));
+      const sessions = snap.docs.map(row => ({ id:row.id, ...row.data() })).sort((a,b) => Date.parse(sessionDateValue(b.createdAt) || b.createdAtText || '') - Date.parse(sessionDateValue(a.createdAt) || a.createdAtText || ''));
+      for (const session of sessions.slice(0, 40)) {
+        try {
+          const submissions = await getDocs(collection(db, 'dailyAccessSessions', session.id, 'submissions'));
+          session.submissions = submissions.docs.map(row => ({ id:row.id, ...row.data() }));
+        } catch (e) { session.submissions = []; }
+      }
+      dailyAccessSessions = sessions;
+      renderDailyAccessSessions();
+    } catch (e) {
+      console.error('Could not load daily access sessions', e);
+      if (showErrors) toast('Could not refresh daily crew access sessions.');
+    }
+  }
+
+  function dailyAccessSessionCard(session, includeCrew = false) {
+    const forms = Array.isArray(session.forms) ? session.forms.map(form => form.title).join(', ') : '';
+    const submissions = Array.isArray(session.submissions) ? session.submissions : [];
+    const status = session.status || 'Active';
+    const crewRows = includeCrew && submissions.length ? `<div style="width:100%;margin-top:12px;display:grid;gap:9px;">${submissions.map(row => `
+      <div class="operations-doc-choice" style="display:grid;grid-template-columns:minmax(160px,1fr) repeat(3,minmax(100px,.55fr)) auto;">
+        <div><strong>${esc(row.employeeName || '')}</strong><small>${esc(row.unionLocal || '')} | SSN ending ${esc(row.last4Ssn || '')}</small></div>
+        <div class="field"><label>Time In</label><input id="daily-access-in-${esc(row.id)}" type="time" value="${esc(row.timeIn || '')}" /></div>
+        <div class="field"><label>Time Out</label><input id="daily-access-out-${esc(row.id)}" type="time" value="${esc(row.timeOut || '')}" /></div>
+        <div><strong>${esc(row.totalHours || '')}</strong><small>Total hours</small></div>
+        <button class="btn-outline" type="button" onclick="saveDailyAccessCheckout('${esc(session.id)}','${esc(row.id)}')">Save</button>
+      </div>`).join('')}</div>` : '';
+    return `<div class="operations-list-card" style="flex-wrap:wrap;">
+      <div><h3>${esc(session.projectName || 'Project')}</h3><p>${esc(session.workDate || '')} | ${esc(forms)} | ${submissions.length} crew check-in${submissions.length === 1 ? '' : 's'}</p></div>
+      <div class="operations-inline-actions"><span class="pill ${String(status).toLowerCase() === 'active' ? 'active' : ''}">${esc(status)}</span><button class="btn-outline" type="button" onclick="openDailyAccessSession('${esc(session.id)}')">Open Link</button>${status === 'Active' ? `<button class="btn-outline" type="button" onclick="closeDailyAccessSessionFromDashboard('${esc(session.id)}')">Close Access</button>` : ''}</div>
+      ${crewRows}
+    </div>`;
+  }
+
+  function renderDailyAccessSessions() {
+    const today = operationsTodayDate();
+    const todaySessions = dailyAccessSessions.filter(session => session.workDate === today);
+    const todayList = document.getElementById('operations-today-list');
+    const historyList = document.getElementById('operations-history-list');
+    if (todayList) todayList.innerHTML = todaySessions.length ? todaySessions.map(session => dailyAccessSessionCard(session, true)).join('') : '<div class="operations-list-card"><p>No daily access session has been created for today yet.</p></div>';
+    if (historyList) historyList.innerHTML = dailyAccessSessions.length ? dailyAccessSessions.map(session => dailyAccessSessionCard(session, false)).join('') : '<div class="operations-list-card"><p>Your session history will appear here.</p></div>';
+    const crewCount = todaySessions.reduce((sum,session) => sum + (session.submissions?.length || 0), 0);
+    const set = (id,value) => { const el=document.getElementById(id); if(el) el.textContent=String(value); };
+    set('operations-today-project-count', todaySessions.length);
+    set('operations-today-crew-count', crewCount);
+    set('operations-today-open-count', todaySessions.filter(session => session.status === 'Active').length);
+  }
+
+  function dailyAccessLinkForToken(token) {
+    const url = new URL(PAL_PUBLIC_PROJECTS_URL);
+    url.searchParams.set('crewAccess', token);
+    return url.toString();
+  }
+
+  function openDailyAccessSession(token) {
+    window.open(dailyAccessLinkForToken(token), '_blank', 'noopener');
+  }
+
+  async function closeDailyAccessSessionFromDashboard(token) {
+    if (!confirm('Close this crew access link? Existing submissions will remain saved.')) return;
+    try {
+      await closeDailyAccessSessionCallable({ token });
+      await loadDailyAccessSessions();
+      toast('Crew access closed.');
+    } catch (e) { toast(e?.message || 'Could not close crew access.'); }
+  }
+
+  async function saveDailyAccessCheckout(token, submissionId) {
+    const timeIn = document.getElementById(`daily-access-in-${submissionId}`)?.value || '';
+    const timeOut = document.getElementById(`daily-access-out-${submissionId}`)?.value || '';
+    if (!timeIn || !timeOut) return toast('Enter both time in and time out.');
+    try {
+      await updateDailyAccessSubmissionCallable({ token, submissionId, timeIn, timeOut });
+      await loadDailyAccessSessions();
+      toast('Employee payroll time updated.');
+    } catch (e) { toast(e?.message || 'Could not update payroll time.'); }
+  }
+
+  async function loadPublicDailyAccess() {
+    const status = document.getElementById('crew-access-status-card');
+    const active = document.getElementById('crew-access-active');
+    try {
+      const snap = await getDoc(doc(db, 'dailyAccessSessions', publicDailyAccessToken));
+      if (!snap.exists()) throw new Error('This crew access link is not available.');
+      const session = { id:snap.id, ...snap.data() };
+      const expiresAt = session.expiresAt?.toDate ? session.expiresAt.toDate() : new Date(session.expiresAtText || 0);
+      if (session.status !== 'Active') throw new Error('This crew access link has been closed.');
+      if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) throw new Error('This crew access link has expired. Ask your foreman for today’s link.');
+      currentPublicDailyAccess = session;
+      const name = document.getElementById('crew-access-project-name');
+      const meta = document.getElementById('crew-access-project-meta');
+      if (name) name.textContent = session.projectName || 'Today’s Project Forms';
+      if (meta) meta.textContent = `Work date: ${session.workDate || ''} | Complete all items below`;
+      renderPublicDailyAccessForms(session.forms || []);
+      if (status) status.style.display = 'none';
+      if (active) active.style.display = 'block';
+    } catch (e) {
+      currentPublicDailyAccess = null;
+      if (active) active.style.display = 'none';
+      const friendlyMessage = String(e?.code || '').includes('permission-denied')
+        ? 'This crew access link is not available. Ask your foreman for today’s link.'
+        : (e?.message || 'Ask your foreman for a new link.');
+      if (status) status.innerHTML = `<h3>Crew Access Unavailable</h3><p class="helper-text">${esc(friendlyMessage)}</p>`;
+    }
+  }
+
+  function renderPublicDailyAccessForms(forms) {
+    const list = document.getElementById('crew-access-form-list');
+    if (!list) return;
+    list.innerHTML = forms.map((form,index) => `<div class="crew-access-form-item"><strong>${index + 1}. ${esc(form.title || 'Project Form')}</strong><p>${esc(form.employeeSummary || 'Review this project document before signing.')}</p><label class="crew-access-confirm"><input type="checkbox" class="crew-access-form-confirm" data-form-key="${esc(form.key || '')}" /> <span>I reviewed and understand this ${esc(form.shortLabel || 'document')}.</span></label></div>`).join('');
+  }
+
+  function updateCrewAccessSignaturePreview() {
+    const value = document.getElementById('crew-access-signature')?.value.trim() || '';
+    const preview = document.getElementById('crew-access-signature-preview');
+    if (preview) preview.textContent = value || 'Your signature appears here';
+  }
+
+  async function submitDailyCrewAccess() {
+    if (!currentPublicDailyAccess) return toast('Today’s forms are not loaded.');
+    const confirmations = Array.from(document.querySelectorAll('.crew-access-form-confirm'));
+    if (confirmations.some(input => !input.checked)) return toast('Review and confirm every document first.');
+    const employeeName = document.getElementById('crew-access-name')?.value.trim() || '';
+    const timeIn = document.getElementById('crew-access-time-in')?.value || '';
+    const unionLocal = document.getElementById('crew-access-union')?.value.trim() || '';
+    const last4Ssn = document.getElementById('crew-access-last4')?.value.trim() || '';
+    const signature = document.getElementById('crew-access-signature')?.value.trim() || '';
+    const certify = !!document.getElementById('crew-access-certify')?.checked;
+    if (!employeeName || !timeIn || !unionLocal || !/^\d{4}$/.test(last4Ssn) || !signature || !certify) return toast('Complete every employee check-in field, including exactly 4 SSN digits and certification.');
+    const btn = document.getElementById('crew-access-submit-btn');
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting to PAL...'; }
+      const result = await submitDailyAccessCallable({ token:publicDailyAccessToken, employeeName, timeIn, unionLocal, last4Ssn, signature, confirmedFormKeys:confirmations.map(input => input.dataset.formKey) });
+      const active = document.getElementById('crew-access-active');
+      if (active) active.innerHTML = `<div class="crew-access-card"><h3>Submitted to PAL</h3><p class="helper-text">Thank you, ${esc(employeeName)}. Your check-in and signatures were added to the foreman’s project records.</p><div class="pill active" style="margin-top:12px;">Confirmation ${esc(result.data?.confirmation || '')}</div></div>`;
+      toast('Today’s forms were submitted.');
+    } catch (e) {
+      console.error(e);
+      toast(e?.message || 'The forms could not be submitted. Try again.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Today’s Forms'; }
+    }
+  }
+
   function switchMainTab(tabId, btn) {
+    document.getElementById('view-projects')?.classList.toggle('operations-mode', tabId === 'main-operations-dashboard');
     document.querySelectorAll('#main-dashboard-tabs .tab').forEach(t => t.classList.remove('active'));
     const supportTabMap = {
       'main-workforce-overview': 'main-employees',
@@ -15199,6 +15830,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     document.querySelectorAll('#view-projects > .page-wrap > .tab-pane').forEach(p => p.classList.remove('active'));
     const pane = document.getElementById(tabId);
     if (pane) pane.classList.add('active');
+    if (tabId === 'main-operations-dashboard') initializeOperationsDashboard();
     if (tabId === 'main-workforce-overview') loadWorkforceOverview(true);
     if (tabId === 'main-employees') loadEmployees(true);
     if (tabId === 'main-foreman-tools') refreshAiSafetyProjectOptions();
