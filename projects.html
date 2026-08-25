@@ -12933,7 +12933,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
   }
 
-  async function uploadNewHireFormFile(inputId, label, folder, expirationDate = '', onProgress) {
+  async function uploadNewHireFormFile(inputId, label, folder, expirationDate = '', notes = '', onProgress) {
     const file = document.getElementById(inputId)?.files?.[0];
     if (!file) return null;
     const fileError = validateNewHireUploadFile(file);
@@ -12950,7 +12950,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       type: label,
       contentType: newHireUploadMetadata(file).contentType,
       size: Number(file.size || 0),
-      expirationDate
+      expirationDate,
+      notes
     });
     return result?.data || { path };
   }
@@ -12975,17 +12976,16 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!selectedCerts.length) return toast('Choose at least one certification file first.');
       const invalidCert = selectedCerts.find(x => validateNewHireUploadFile(x.file));
       if (invalidCert) return toast(`${invalidCert.label}: ${validateNewHireUploadFile(invalidCert.file)}`);
+      const notes = document.getElementById('newhire-cert-notes')?.value.trim() || '';
       for (let index = 0; index < certInputs.length; index++) {
         const [inputId, label, expId] = certInputs[index];
         const expirationDate = expId ? (document.getElementById(expId)?.value || '') : '';
-        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads', expirationDate, percent => {
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads', expirationDate, notes, percent => {
           if (btn) btn.textContent = `Saving certification ${uploads.length + 1} (${percent}%)...`;
         });
         if (uploaded) uploads.push(uploaded);
       }
-      const notes = document.getElementById('newhire-cert-notes')?.value.trim() || '';
       saveStage = 'packet';
-      if (notes) await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), { certUploadNotes: notes, updatedAt: serverTimestamp() }, { merge: true });
       await refreshCurrentPublicIntakeQuiet();
       const savedCount = (currentPublicNewHireIntake?.certFiles || []).length;
       const st = document.getElementById('public-cert-upload-status');
@@ -13019,15 +13019,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!selectedPayroll.length) return toast('Choose at least one payroll / ID file first.');
       const invalidPayroll = selectedPayroll.find(x => validateNewHireUploadFile(x.file));
       if (invalidPayroll) return toast(`${invalidPayroll.label}: ${validateNewHireUploadFile(invalidPayroll.file)}`);
+      const notes = document.getElementById('newhire-payroll-notes')?.value.trim() || '';
       for (const [inputId, label] of inputs) {
-        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads', '', percent => {
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads', '', notes, percent => {
           if (btn) btn.textContent = `Saving payroll / ID ${uploads.length + 1} (${percent}%)...`;
         });
         if (uploaded) uploads.push(uploaded);
       }
-      const notes = document.getElementById('newhire-payroll-notes')?.value.trim() || '';
       saveStage = 'packet';
-      if (notes) await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), { payrollIdNotes: notes, updatedAt: serverTimestamp() }, { merge: true });
       await refreshCurrentPublicIntakeQuiet();
       const savedCount = (currentPublicNewHireIntake?.payrollIdFiles || []).length;
       const st = document.getElementById('public-payroll-id-status');
