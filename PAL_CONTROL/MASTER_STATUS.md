@@ -1,12 +1,12 @@
 # PAL Safety Hub Master Status
 
-Last verified: 2026-08-25  
-Repository: `https://github.com/Pennjohn12/PAL-SAFETY-HUB`  
-Authoritative branch: `main`  
-Verified GitHub baseline: `c6b6a2f` (`Restore foreman operations command center`)  
-Production Firebase project: `pal-safety-hub`  
-Verified production URL: `https://pal-safety-hub.web.app/` (HTTP 200 on 2026-08-25)  
-Protected app URL in code: `https://pal-safety-hub.web.app/projects.html`
+- Last verified: 2026-08-25
+- Repository: `https://github.com/Pennjohn12/PAL-SAFETY-HUB`
+- Authoritative branch: `main`
+- Verified GitHub baseline: `c6b6a2f` (`Restore foreman operations command center`)
+- Production Firebase project: `pal-safety-hub`
+- Verified production URL: `https://pal-safety-hub.web.app/` (HTTP 200 on 2026-08-25)
+- Protected app URL in code: `https://pal-safety-hub.web.app/projects.html`
 
 ## Governance state
 
