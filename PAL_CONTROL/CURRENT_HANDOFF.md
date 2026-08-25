@@ -19,7 +19,9 @@ Review and merge PR #14, then create a dedicated staging Firebase project with s
 ## Scheduled health check status observed on 2026-08-25
 
 - Automation `PAL Daily App Health Check` is active Monday through Saturday at 6:00 AM America/New_York.
-- The automation text assigns its special three-pass deep readiness test to Tuesday, August 25, 2026.
+- The automation text assigns its special three-pass strict buyer-acceptance audit to Tuesday, August 25, 2026.
+- The special run now explicitly requires every accessible tab/control, two complete synthetic orientations, synthetic certificate/ID/payroll uploads, representative documents saved and reopened in a clearly labeled QA project, attachment/edit/search/preview checks, mobile and plain-language usability review, console/log inspection, safe repairs, and live re-verification.
+- Results must distinguish verified pass, partial, inaccessible, blocked, and failed; untested behavior cannot be reported as passing.
 - The Wednesday, August 26 run is therefore currently the normal health check plus one synthetic end-to-end orientation test, unless the automation is deliberately updated.
 
 ## Tomorrow's opening instruction
