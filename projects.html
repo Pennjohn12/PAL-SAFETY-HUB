@@ -12873,9 +12873,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return '';
   }
 
-  function newHireUploadErrorMessage(error, label) {
-    const code = String(error?.code || '');
-    if (code.includes('unauthorized')) return `${label} could not be saved because upload permission was denied. Please refresh and try again.`;
+  function newHireUploadErrorMessage(error, label, stage = 'upload') {
+    const code = String(error?.code || '').toLowerCase();
+    if (stage === 'packet' && (code.includes('permission-denied') || code.includes('unauthorized'))) {
+      return `${label} reached PAL secure storage, but the intake packet could not be updated. Your packet link may need PAL office review. Keep this page open and contact PAL before uploading the files again.`;
+    }
+    if (code.includes('permission-denied') || code.includes('unauthorized')) return `${label} could not be uploaded because PAL storage permission was denied. Keep this page open and contact PAL; repeatedly selecting the file will not fix this permission problem.`;
     if (code.includes('retry-limit') || code.includes('network')) return `${label} did not finish uploading. Check your connection and try again.`;
     if (code.includes('quota')) return `${label} could not be saved because storage is temporarily unavailable.`;
     return `${label} could not be saved. Please refresh and try again. If it continues, tell PAL which file was selected.`;
@@ -12929,6 +12932,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!requireCloudConnection('save certification uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
     const btn = document.getElementById('save-newhire-cert-upload-btn');
+    let saveStage = 'upload';
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const uploads = [];
@@ -12957,6 +12961,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
         if (snap.exists()) existing = snap.data().certFiles || [];
       } catch (e) { console.warn('Could not read existing cert files before merge', e); }
+      saveStage = 'packet';
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         certFiles: [...existing, ...uploads],
         certUploadNotes: notes,
@@ -12971,7 +12976,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Certification uploads saved to intake packet.');
     } catch (e) {
       console.error('Cert upload save failed', e);
-      toast(newHireUploadErrorMessage(e, 'Certification upload'));
+      toast(newHireUploadErrorMessage(e, 'Certification upload', saveStage));
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Certification Uploads'; }
     }
@@ -12981,6 +12986,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!requireCloudConnection('save payroll or ID uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
     const btn = document.getElementById('save-newhire-payroll-id-btn');
+    let saveStage = 'upload';
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const uploads = [];
@@ -13005,6 +13011,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
         if (snap.exists()) existing = snap.data().payrollIdFiles || [];
       } catch (e) { console.warn('Could not read existing payroll files before merge', e); }
+      saveStage = 'packet';
       await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
         payrollIdFiles: [...existing, ...uploads],
         payrollIdNotes: notes,
@@ -13020,7 +13027,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Payroll / ID uploads saved to intake packet.');
     } catch (e) {
       console.error('Payroll / ID upload save failed', e);
-      toast(newHireUploadErrorMessage(e, 'Payroll / ID upload'));
+      toast(newHireUploadErrorMessage(e, 'Payroll / ID upload', saveStage));
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll / ID Uploads'; }
     }

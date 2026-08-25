@@ -123,6 +123,28 @@ service cloud.firestore {
         && request.auth.uid in request.resource.data.memberUids;
     }
 
+    function publicIntakeStatusUpdateAllowed() {
+      return (!('archived' in resource.data) || resource.data.archived != true)
+        && (!('status' in resource.data) || resource.data.status != 'Archived')
+        && (
+          !request.resource.data.diff(resource.data).changedKeys().hasAny(['status']) || (
+            (!('status' in resource.data) || resource.data.status in [
+              'Pending',
+              'Started',
+              'Missing Info',
+              'Ready for Review',
+              'Submitted'
+            ])
+            && request.resource.data.status in [
+              'Pending',
+              'Started',
+              'Ready for Review',
+              'Submitted'
+            ]
+          )
+        );
+    }
+
     match /users/{userId} {
       allow read: if signedIn() && (isOffice() || userId == request.auth.uid || resource.data.uid == request.auth.uid);
       allow create: if safeUserCreate(userId);
@@ -251,8 +273,7 @@ service cloud.firestore {
         ])
       );
       allow update: if isOffice() || (
-        (!('status' in request.resource.data) ||
-          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
+        publicIntakeStatusUpdateAllowed() &&
         (!request.resource.data.diff(resource.data).changedKeys().hasAny(['createdAt']) ||
           (!('createdAt' in resource.data) && request.resource.data.createdAt == request.time)) &&
         request.resource.data.diff(resource.data).changedKeys().hasOnly([
