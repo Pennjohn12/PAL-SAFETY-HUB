@@ -3863,6 +3863,7 @@
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
       <button class="btn-outline" onclick="printNewHireFullPacket()">Print Full Packet</button>
       <button class="btn-outline" onclick="downloadNewHireFullPacket()">Save Full Packet</button>
+      <button class="btn-secondary" id="verify-existing-payroll-btn" onclick="verifyExistingEmployeePayrollDocs(currentNewHireReviewId)">Verify Payroll Docs on File</button>
       <button class="btn-sm danger admin-only hidden-by-role" onclick="archiveNewHireIntake(currentNewHireReviewId)">Remove New Hire</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
@@ -4458,6 +4459,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.copyNewHireIntakeText = copyNewHireIntakeText;
   window.copyNewHireIntakeTextById = copyNewHireIntakeTextById;
   window.openNewHireReview = openNewHireReview;
+  window.verifyExistingEmployeePayrollDocs = verifyExistingEmployeePayrollDocs;
   window.printNewHireFullPacket = printNewHireFullPacket;
   window.downloadNewHireFullPacket = downloadNewHireFullPacket;
   window.uploadNewHireCertFiles = uploadNewHireCertFiles;
@@ -13933,7 +13935,44 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">${esc(f.type || 'Payroll / ID Document')}: ${newHireFileLinkHTML(f, 'Uploaded Document')}</div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
+    const payrollVerifyButton = document.getElementById('verify-existing-payroll-btn');
+    if (payrollVerifyButton) {
+      payrollVerifyButton.style.display = x.existingEmployeePayrollDocsOnFile ? 'none' : '';
+    }
     document.getElementById('modal-newhire-review')?.classList.add('open');
+  }
+
+  async function verifyExistingEmployeePayrollDocs(id) {
+    if (!requireCloudConnection('verify payroll documents on file')) return;
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can verify payroll documents on file.');
+    const intake = allNewHireIntakes.find(x => x.id === id);
+    if (!intake) return toast('Intake request not found. Refresh and try again.');
+    if (intake.existingEmployeePayrollDocsOnFile) return toast('Payroll and identity documents are already verified on file.');
+    const ok = confirm(`Confirm that ${intake.name || 'this employee'} is an existing PAL employee whose payroll and identity information is already verified in the office. This waives duplicate W-4, SSN, ID, union card/book, and Social Security card requirements. Safety certifications are still required.`);
+    if (!ok) return;
+    try {
+      const verifierName = currentUser?.displayName || currentUser?.email || 'PAL office';
+      await updateDoc(doc(db, 'newHireIntakes', id), {
+        existingEmployeePayrollDocsOnFile: true,
+        payrollDocsVerifiedAt: serverTimestamp(),
+        payrollDocsVerifiedBy: currentUser?.uid || '',
+        payrollDocsVerifiedByName: verifierName,
+        updatedAt: serverTimestamp()
+      });
+      await logAuditEvent('new_hire_intake.payroll_docs_verified_on_file', {
+        intakeId: id,
+        employeeName: intake.name || '',
+        projectId: intake.projectId || '',
+        projectName: intake.projectName || '',
+        verifiedBy: verifierName
+      });
+      toast('Payroll and identity documents verified on file. Duplicate payroll requirements were waived.');
+      await loadNewHireIntakes(true);
+      openNewHireReview(id);
+    } catch (e) {
+      console.error('Existing employee payroll verification failed', e);
+      toast('Could not verify payroll documents on file. Please try again.');
+    }
   }
 
   async function uploadNewHireCertFiles() {
