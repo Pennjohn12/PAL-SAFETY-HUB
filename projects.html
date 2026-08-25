@@ -12732,6 +12732,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   const PUBLIC_NEWHIRE_WIZARD_STEPS = ['welcome', 'info', 'orientation', 'forms', 'uploads', 'review'];
   let publicNewHireWizardStep = 0;
+  let publicIntakeUploadInProgress = false;
 
   function setPublicNewHireWizardAlert(message = '') {
     const alert = document.getElementById('public-newhire-wizard-alert');
@@ -12955,12 +12956,46 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function uploadNewHireFileResumable(storageRef, file, metadata, onProgress) {
     return new Promise((resolve, reject) => {
       const task = uploadBytesResumable(storageRef, file, metadata);
+      let lastPercent = 0;
+      let stallTimer = null;
+      const armStallNotice = () => {
+        clearTimeout(stallTimer);
+        stallTimer = setTimeout(() => onProgress?.(lastPercent, { stalled: true }), 15000);
+      };
+      armStallNotice();
       task.on('state_changed', snapshot => {
         const total = Number(snapshot.totalBytes || 0);
         const percent = total ? Math.round((Number(snapshot.bytesTransferred || 0) / total) * 100) : 0;
-        onProgress?.(percent);
-      }, reject, () => resolve(task.snapshot));
+        lastPercent = percent;
+        onProgress?.(percent, { stalled: false });
+        armStallNotice();
+      }, error => {
+        clearTimeout(stallTimer);
+        reject(error);
+      }, () => {
+        clearTimeout(stallTimer);
+        resolve(task.snapshot);
+      });
     });
+  }
+
+  function isTransientIntakeConfirmationError(error) {
+    const code = String(error?.code || '').toLowerCase();
+    return ['network', 'unavailable', 'deadline', 'internal', 'retry-limit'].some(part => code.includes(part));
+  }
+
+  async function confirmPublicIntakeUpload(payload, maxAttempts = 3) {
+    let lastError = null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await finalizePublicIntakeUploadCallable(payload);
+      } catch (error) {
+        lastError = error;
+        if (!isTransientIntakeConfirmationError(error) || attempt === maxAttempts) break;
+        await new Promise(resolve => setTimeout(resolve, attempt === 1 ? 600 : 1600));
+      }
+    }
+    throw lastError || new Error('The intake packet confirmation failed.');
   }
 
   async function uploadNewHireFormFile(inputId, label, folder, expirationDate = '', notes = '', onProgress) {
@@ -12974,7 +13009,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     await uploadNewHireFileResumable(storageRef, file, newHireUploadMetadata(file), onProgress);
     let result;
     try {
-      result = await finalizePublicIntakeUploadCallable({
+      result = await confirmPublicIntakeUpload({
         intakeId: publicNewHireIntakeId,
         folder,
         path,
@@ -13001,6 +13036,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById('save-newhire-cert-upload-btn');
     let saveStage = 'upload';
     try {
+      publicIntakeUploadInProgress = true;
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const uploads = [];
       const certInputs = [
@@ -13019,8 +13055,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       for (let index = 0; index < certInputs.length; index++) {
         const [inputId, label, expId] = certInputs[index];
         const expirationDate = expId ? (document.getElementById(expId)?.value || '') : '';
-        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads', expirationDate, notes, percent => {
-          if (btn) btn.textContent = `Saving certification ${uploads.length + 1} (${percent}%)...`;
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads', expirationDate, notes, (percent, state) => {
+          if (btn) btn.textContent = state?.stalled
+            ? `Connection slow — still retrying certification ${uploads.length + 1} at ${percent}%. Keep this page open.`
+            : `Saving certification ${uploads.length + 1} (${percent}%)...`;
         });
         if (uploaded) uploads.push(uploaded);
       }
@@ -13028,13 +13066,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       await refreshCurrentPublicIntakeQuiet();
       const savedCount = (currentPublicNewHireIntake?.certFiles || []).length;
       const st = document.getElementById('public-cert-upload-status');
-      if (st) st.textContent = `Certification Uploads: ${savedCount} file(s) securely saved`;
+      const confirmedCount = Math.max(savedCount, ...uploads.map(item => Number(item?.totalCount || 0)));
+      if (st) st.textContent = `Certification Uploads: ${confirmedCount} file(s) securely saved`;
+      certInputs.forEach(([inputId]) => { const input = document.getElementById(inputId); if (input) input.value = ''; });
+      const notesInput = document.getElementById('newhire-cert-notes'); if (notesInput) notesInput.value = '';
       closeModal('modal-newhire-cert-upload-form');
       toast('Certification uploads saved to intake packet.');
     } catch (e) {
       console.error('Cert upload save failed', e);
       toast(newHireUploadErrorMessage(e, 'Certification upload', e?.palUploadStage || saveStage));
     } finally {
+      publicIntakeUploadInProgress = false;
       if (btn) { btn.disabled = false; btn.textContent = 'Save Certification Uploads'; }
     }
   }
@@ -13046,6 +13088,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const btn = document.getElementById('save-newhire-payroll-id-btn');
     let saveStage = 'upload';
     try {
+      publicIntakeUploadInProgress = true;
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
       const uploads = [];
       const inputs = [
@@ -13061,8 +13104,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (invalidPayroll) return toast(`${invalidPayroll.label}: ${validateNewHireUploadFile(invalidPayroll.file)}`);
       const notes = document.getElementById('newhire-payroll-notes')?.value.trim() || '';
       for (const [inputId, label] of inputs) {
-        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads', '', notes, percent => {
-          if (btn) btn.textContent = `Saving payroll / ID ${uploads.length + 1} (${percent}%)...`;
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads', '', notes, (percent, state) => {
+          if (btn) btn.textContent = state?.stalled
+            ? `Connection slow — still retrying payroll / ID ${uploads.length + 1} at ${percent}%. Keep this page open.`
+            : `Saving payroll / ID ${uploads.length + 1} (${percent}%)...`;
         });
         if (uploaded) uploads.push(uploaded);
       }
@@ -13070,13 +13115,17 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       await refreshCurrentPublicIntakeQuiet();
       const savedCount = (currentPublicNewHireIntake?.payrollIdFiles || []).length;
       const st = document.getElementById('public-payroll-id-status');
-      if (st) st.textContent = `Payroll / ID Uploads: ${savedCount} file(s) securely saved`;
+      const confirmedCount = Math.max(savedCount, ...uploads.map(item => Number(item?.totalCount || 0)));
+      if (st) st.textContent = `Payroll / ID Uploads: ${confirmedCount} file(s) securely saved`;
+      inputs.forEach(([inputId]) => { const input = document.getElementById(inputId); if (input) input.value = ''; });
+      const notesInput = document.getElementById('newhire-payroll-notes'); if (notesInput) notesInput.value = '';
       closeModal('modal-newhire-payroll-id-form');
       toast('Payroll / ID uploads saved to intake packet.');
     } catch (e) {
       console.error('Payroll / ID upload save failed', e);
       toast(newHireUploadErrorMessage(e, 'Payroll / ID upload', e?.palUploadStage || saveStage));
     } finally {
+      publicIntakeUploadInProgress = false;
       if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll / ID Uploads'; }
     }
   }
@@ -13935,6 +13984,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   const ORIENTATION_COPY = PAL_TRANSLATIONS.orientation;
   let orientationSession = null;
   let orientationYouTubeApiPromise = null;
+  let orientationVideoLoadGeneration = 0;
 
   function loadOrientationYouTubeApi() {
     if (window.YT?.Player) return Promise.resolve();
@@ -13960,7 +14010,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           try { previousReady(); } catch (error) { console.warn('Earlier YouTube ready handler failed', error); }
         }
       };
-      const timeout = setTimeout(() => finish(new Error('YouTube player took too long to load.')), 12000);
+      const timeout = setTimeout(() => finish(new Error('YouTube player took too long to load.')), 8000);
       let script = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
       if (!script) {
         script = document.createElement('script');
@@ -13988,7 +14038,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     state.className = 'orientation-video-state';
     state.innerHTML = kind === 'loading'
       ? `<div class="orientation-video-spinner" aria-hidden="true"></div><strong>${isSpanish ? 'Cargando el video de orientación…' : 'Loading orientation video…'}</strong><p>${isSpanish ? 'Esto normalmente tarda solo unos segundos.' : 'This normally takes only a few seconds.'}</p>`
-      : `<strong>${isSpanish ? 'El video no pudo cargarse' : 'The video did not load'}</strong><p>${esc(message || (isSpanish ? 'Revise su conexión e inténtelo de nuevo.' : 'Check your connection and try again.'))}</p><div class="orientation-video-state-actions"><button type="button" onclick="retryOrientationVideo()">${isSpanish ? 'Intentar de nuevo' : 'Try Again'}</button><a href="https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}" target="_blank" rel="noopener">${isSpanish ? 'Comprobar YouTube' : 'Check YouTube'}</a></div>`;
+      : kind === 'retrying'
+        ? `<div class="orientation-video-spinner" aria-hidden="true"></div><strong>${isSpanish ? 'La conexión está lenta. Reintentando automáticamente…' : 'Connection is slow. Retrying automatically…'}</strong><p>${isSpanish ? 'No cierre esta página. Su progreso está guardado.' : 'Keep this page open. Your progress is saved.'}</p>`
+        : `<strong>${isSpanish ? 'Este dispositivo no pudo conectarse al video' : 'This device could not connect to the video'}</strong><p>${esc(message || (isSpanish ? 'PAL Safety Hub se abrió correctamente, pero este dispositivo o red no pudo conectarse a YouTube.' : 'PAL Safety Hub opened correctly, but this device or network could not connect to YouTube.'))}</p><div class="orientation-video-state-actions"><button type="button" onclick="retryOrientationVideo()">${isSpanish ? 'Intentar de nuevo' : 'Try Again'}</button><a href="https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}" target="_blank" rel="noopener">${isSpanish ? 'Comprobar YouTube' : 'Check YouTube'}</a></div>`;
   }
 
   function retryOrientationVideo() {
@@ -14191,9 +14243,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     saveOrientationLocalProgress();
   }
 
-  async function resetOrientationModule(form = {}) {
+  async function resetOrientationModule(form = {}, loadAttempt = 0) {
     const videoWrap = document.querySelector('#pal-orientation-module .orientation-video-wrap');
     if (!videoWrap) return;
+    const loadGeneration = ++orientationVideoLoadGeneration;
     if (orientationSession?.timer) clearInterval(orientationSession.timer);
     if (orientationSession?.loadTimer) clearTimeout(orientationSession.loadTimer);
     orientationSession?.player?.destroy?.();
@@ -14252,17 +14305,36 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     try {
       await loadOrientationYouTubeApi();
     } catch (error) {
+      if (loadGeneration !== orientationVideoLoadGeneration) return;
       console.error('Orientation video API load failed', error);
+      if (loadAttempt < 1) {
+        showOrientationVideoState('retrying');
+        setTimeout(() => {
+          if (loadGeneration === orientationVideoLoadGeneration) resetOrientationModule(form, loadAttempt + 1);
+        }, 700);
+        return;
+      }
       showOrientationVideoState('error', orientationSession.language === 'es'
-        ? 'YouTube está bloqueado, la conexión es lenta o el dispositivo está sin conexión. Toque Intentar de nuevo.'
-        : 'YouTube may be blocked, the connection may be slow, or the device may be offline. Tap Try Again.');
+        ? 'PAL Safety Hub se abrió correctamente, pero este dispositivo o red no pudo conectarse a YouTube. Revise Wi-Fi/datos, bloqueadores de contenido o restricciones de YouTube y toque Intentar de nuevo.'
+        : 'PAL Safety Hub opened correctly, but this device or network could not connect to YouTube. Check Wi-Fi/cellular data, content blockers, or YouTube restrictions, then tap Try Again.');
       return;
     }
+    if (loadGeneration !== orientationVideoLoadGeneration) return;
+    const sessionForLoad = orientationSession;
     orientationSession.loadTimer = setTimeout(() => {
+      if (orientationSession !== sessionForLoad) return;
+      if (loadAttempt < 1) {
+        showOrientationVideoState('retrying');
+        orientationSession?.player?.destroy?.();
+        setTimeout(() => {
+          if (loadGeneration === orientationVideoLoadGeneration) resetOrientationModule(form, loadAttempt + 1);
+        }, 700);
+        return;
+      }
       showOrientationVideoState('error', orientationSession?.language === 'es'
-        ? 'El reproductor tardó demasiado en responder. Toque Intentar de nuevo.'
-        : 'The player took too long to respond. Tap Try Again.');
-    }, 12000);
+        ? 'PAL Safety Hub se abrió correctamente, pero YouTube no respondió en este dispositivo. Revise la conexión o las restricciones y toque Intentar de nuevo.'
+        : 'PAL Safety Hub opened correctly, but YouTube did not respond on this device. Check the connection or restrictions, then tap Try Again.');
+    }, 10000);
     try {
       orientationSession.player = new YT.Player(videoHost, {
       videoId,
@@ -14271,6 +14343,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       playerVars: { playsinline: 1, rel: 0, controls: 1, fs: 0, origin: location.origin },
       events: {
         onReady: event => {
+          if (loadGeneration !== orientationVideoLoadGeneration || orientationSession !== sessionForLoad) {
+            event.target?.destroy?.();
+            return;
+          }
           clearTimeout(orientationSession?.loadTimer);
           showOrientationVideoState('ready');
           const resumeAt = sameSavedLanguage && form.orientationVideoCompleted ? orientationDuration() : Number(local.lastTime || 0);
@@ -14282,6 +14358,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           }
         },
         onStateChange: event => {
+          if (loadGeneration !== orientationVideoLoadGeneration || orientationSession !== sessionForLoad) return;
           if (event.data === YT.PlayerState.ENDED) {
             orientationSession.videoCompleted = true;
             orientationSession.ended = true;
@@ -14292,6 +14369,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           }
         },
         onError: event => {
+          if (loadGeneration !== orientationVideoLoadGeneration || orientationSession !== sessionForLoad) return;
           clearTimeout(orientationSession?.loadTimer);
           console.error('Orientation YouTube player error', event?.data);
           showOrientationVideoState('error', orientationSession?.language === 'es'
@@ -16079,6 +16157,11 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   window.addEventListener('online', () => { updateConnectionStatus(true); syncOfflineCloudQueue(); });
   window.addEventListener('offline', () => updateConnectionStatus(true));
+  window.addEventListener('beforeunload', event => {
+    if (!publicIntakeUploadInProgress) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
   window.addEventListener('unhandledrejection', event => {
     const message = String(event.reason?.message || event.reason || '');
     if (/offline|network|failed to fetch|unavailable/i.test(message)) {
