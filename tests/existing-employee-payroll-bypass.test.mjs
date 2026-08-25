@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const html = await readFile(new URL('../projects.html', import.meta.url), 'utf8');
 const rules = await readFile(new URL('../firestore.rules', import.meta.url), 'utf8');
+const functions = await readFile(new URL('../functions/index.js', import.meta.url), 'utf8');
 
 test('office intake form provides a narrowly scoped existing-employee waiver', () => {
   assert.match(html, /id="nh-existing-payroll-bypass"/);
@@ -31,4 +32,11 @@ test('public Firestore updates cannot grant the office waiver', () => {
   assert.match(rules, /match \/newHireIntakes\/\{intakeId\}/);
   assert.doesNotMatch(rules, /existingEmployeePayrollDocsOnFile/);
   assert.doesNotMatch(rules, /payrollDocsVerifiedBy/);
+});
+
+test('waived payroll uploads are rejected by both the screen and backend', () => {
+  assert.match(html, /function publicPayrollDocumentsBypassed\(\)/);
+  assert.match(html, /if \(publicPayrollDocumentsBypassed\(\)\) return toast\('PAL office already verified your payroll and identity documents/);
+  assert.match(functions, /folder === 'payrollIdUploads' && intake\.existingEmployeePayrollDocsOnFile === true/);
+  assert.match(functions, /folder === 'payrollIdUploads' && current\.existingEmployeePayrollDocsOnFile === true/);
 });
