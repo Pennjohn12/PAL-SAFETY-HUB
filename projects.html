@@ -4095,7 +4095,7 @@
 <script type="module">
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { collection, collectionGroup, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
   import {
     PAL_ADMIN_EMAILS,
@@ -4110,7 +4110,8 @@
     createDailyAccessSessionCallable,
     submitDailyAccessCallable,
     updateDailyAccessSubmissionCallable,
-    closeDailyAccessSessionCallable
+    closeDailyAccessSessionCallable,
+    finalizePublicIntakeUploadCallable
   } from "./assets/js/config/pal-firebase.js";
   import {
     capitalize,
@@ -12914,18 +12915,44 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  async function uploadNewHireFormFile(inputId, label, folder) {
+  function stableNewHireUploadName(file, label) {
+    const identity = `${Number(file?.size || 0)}_${Number(file?.lastModified || 0)}`;
+    const safeLabel = label.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const safeFile = String(file?.name || 'upload').replace(/[^a-zA-Z0-9._-]/g, '_');
+    return `${identity}_${safeLabel}_${safeFile}`;
+  }
+
+  function uploadNewHireFileResumable(storageRef, file, metadata, onProgress) {
+    return new Promise((resolve, reject) => {
+      const task = uploadBytesResumable(storageRef, file, metadata);
+      task.on('state_changed', snapshot => {
+        const total = Number(snapshot.totalBytes || 0);
+        const percent = total ? Math.round((Number(snapshot.bytesTransferred || 0) / total) * 100) : 0;
+        onProgress?.(percent);
+      }, reject, () => resolve(task.snapshot));
+    });
+  }
+
+  async function uploadNewHireFormFile(inputId, label, folder, expirationDate = '', onProgress) {
     const file = document.getElementById(inputId)?.files?.[0];
     if (!file) return null;
     const fileError = validateNewHireUploadFile(file);
     if (fileError) throw new Error(`${label}: ${fileError}`);
-    const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+    const safeName = stableNewHireUploadName(file, label);
     const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
     const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file, newHireUploadMetadata(file));
-    // Public users may write an intake file but may not read private payroll/cert files.
-    // Save the protected Storage path; office users resolve it only when they open it.
-    return { type: label, name: file.name, path, uploadedAt: new Date().toISOString(), source: folder };
+    await uploadNewHireFileResumable(storageRef, file, newHireUploadMetadata(file), onProgress);
+    const result = await finalizePublicIntakeUploadCallable({
+      intakeId: publicNewHireIntakeId,
+      folder,
+      path,
+      name: file.name,
+      type: label,
+      contentType: newHireUploadMetadata(file).contentType,
+      size: Number(file.size || 0),
+      expirationDate
+    });
+    return result?.data || { path };
   }
 
   async function saveNewHireCertUploads() {
@@ -12948,30 +12975,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (!selectedCerts.length) return toast('Choose at least one certification file first.');
       const invalidCert = selectedCerts.find(x => validateNewHireUploadFile(x.file));
       if (invalidCert) return toast(`${invalidCert.label}: ${validateNewHireUploadFile(invalidCert.file)}`);
-      for (const [inputId, label, expId] of certInputs) {
-        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads');
-        if (uploaded) {
-          uploaded.expirationDate = expId ? (document.getElementById(expId)?.value || '') : '';
-          uploads.push(uploaded);
-        }
+      for (let index = 0; index < certInputs.length; index++) {
+        const [inputId, label, expId] = certInputs[index];
+        const expirationDate = expId ? (document.getElementById(expId)?.value || '') : '';
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'certUploads', expirationDate, percent => {
+          if (btn) btn.textContent = `Saving certification ${uploads.length + 1} (${percent}%)...`;
+        });
+        if (uploaded) uploads.push(uploaded);
       }
       const notes = document.getElementById('newhire-cert-notes')?.value.trim() || '';
-      let existing = [];
-      try {
-        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-        if (snap.exists()) existing = snap.data().certFiles || [];
-      } catch (e) { console.warn('Could not read existing cert files before merge', e); }
       saveStage = 'packet';
-      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        certFiles: [...existing, ...uploads],
-        certUploadNotes: notes,
-        certUploadsCompleted: true,
-        updatedAt: serverTimestamp(),
-        status: 'Ready for Review'
-      }, { merge: true });
-      const st = document.getElementById('public-cert-upload-status');
-      if (st) st.textContent = `Certification Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      if (notes) await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), { certUploadNotes: notes, updatedAt: serverTimestamp() }, { merge: true });
       await refreshCurrentPublicIntakeQuiet();
+      const savedCount = (currentPublicNewHireIntake?.certFiles || []).length;
+      const st = document.getElementById('public-cert-upload-status');
+      if (st) st.textContent = `Certification Uploads: ${savedCount} file(s) securely saved`;
       closeModal('modal-newhire-cert-upload-form');
       toast('Certification uploads saved to intake packet.');
     } catch (e) {
@@ -13002,27 +13020,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const invalidPayroll = selectedPayroll.find(x => validateNewHireUploadFile(x.file));
       if (invalidPayroll) return toast(`${invalidPayroll.label}: ${validateNewHireUploadFile(invalidPayroll.file)}`);
       for (const [inputId, label] of inputs) {
-        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads');
+        const uploaded = await uploadNewHireFormFile(inputId, label, 'payrollIdUploads', '', percent => {
+          if (btn) btn.textContent = `Saving payroll / ID ${uploads.length + 1} (${percent}%)...`;
+        });
         if (uploaded) uploads.push(uploaded);
       }
       const notes = document.getElementById('newhire-payroll-notes')?.value.trim() || '';
-      let existing = [];
-      try {
-        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-        if (snap.exists()) existing = snap.data().payrollIdFiles || [];
-      } catch (e) { console.warn('Could not read existing payroll files before merge', e); }
       saveStage = 'packet';
-      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        payrollIdFiles: [...existing, ...uploads],
-        payrollIdNotes: notes,
-        payrollIdUploadsCompleted: true,
-        payrollIdUploadCount: existing.length + uploads.length,
-        updatedAt: serverTimestamp(),
-        status: 'Ready for Review'
-      }, { merge: true });
-      const st = document.getElementById('public-payroll-id-status');
-      if (st) st.textContent = `Payroll / ID Uploads: ${existing.length + uploads.length} file(s) uploaded`;
+      if (notes) await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), { payrollIdNotes: notes, updatedAt: serverTimestamp() }, { merge: true });
       await refreshCurrentPublicIntakeQuiet();
+      const savedCount = (currentPublicNewHireIntake?.payrollIdFiles || []).length;
+      const st = document.getElementById('public-payroll-id-status');
+      if (st) st.textContent = `Payroll / ID Uploads: ${savedCount} file(s) securely saved`;
       closeModal('modal-newhire-payroll-id-form');
       toast('Payroll / ID uploads saved to intake packet.');
     } catch (e) {

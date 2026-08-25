@@ -39,3 +39,4 @@ export const createDailyAccessSessionCallable = httpsCallable(functions, "create
 export const submitDailyAccessCallable = httpsCallable(functions, "submitDailyAccess");
 export const updateDailyAccessSubmissionCallable = httpsCallable(functions, "updateDailyAccessSubmission");
 export const closeDailyAccessSessionCallable = httpsCallable(functions, "closeDailyAccessSession");
+export const finalizePublicIntakeUploadCallable = httpsCallable(functions, "finalizePublicIntakeUpload");
