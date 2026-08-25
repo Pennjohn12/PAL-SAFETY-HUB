@@ -13948,8 +13948,6 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const intake = allNewHireIntakes.find(x => x.id === id);
     if (!intake) return toast('Intake request not found. Refresh and try again.');
     if (intake.existingEmployeePayrollDocsOnFile) return toast('Payroll and identity documents are already verified on file.');
-    const ok = confirm(`Confirm that ${intake.name || 'this employee'} is an existing PAL employee whose payroll and identity information is already verified in the office. This waives duplicate W-4, SSN, ID, union card/book, and Social Security card requirements. Safety certifications are still required.`);
-    if (!ok) return;
     try {
       const verifierName = currentUser?.displayName || currentUser?.email || 'PAL office';
       await updateDoc(doc(db, 'newHireIntakes', id), {
