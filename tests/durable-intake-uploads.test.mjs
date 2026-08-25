@@ -12,5 +12,7 @@ assert.match(functionsSource, /status === 'Archived'/, 'archived packets must re
 assert.match(appSource, /uploadBytesResumable\(/, 'intake uploads must use resumable transfer');
 assert.match(appSource, /finalizePublicIntakeUploadCallable\(/, 'each upload must be confirmed by the backend');
 assert.match(appSource, /stableNewHireUploadName\(/, 'retrying the same file must use a stable path');
+assert.match(functionsSource, /update\.certUploadNotes = notes/, 'cert notes must save in the backend transaction');
+assert.match(functionsSource, /update\.payrollIdNotes = notes/, 'payroll notes must save in the backend transaction');
 
 console.log('Durable intake upload regression checks passed.');

@@ -1070,6 +1070,7 @@ exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, t
   const name = cleanText(request.data?.name, 240);
   const type = cleanText(request.data?.type, 120);
   const expirationDate = cleanText(request.data?.expirationDate, 20);
+  const notes = cleanText(request.data?.notes, 1200);
   const expectedContentType = cleanText(request.data?.contentType, 120).toLowerCase();
   const expectedSize = Number(request.data?.size || 0);
 
@@ -1136,6 +1137,8 @@ exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, t
       update.payrollIdUploadsCompleted = true;
       update.payrollIdUploadCount = totalCount;
     }
+    if (folder === 'certUploads' && notes) update.certUploadNotes = notes;
+    if (folder === 'payrollIdUploads' && notes) update.payrollIdNotes = notes;
     transaction.update(intakeRef, update);
   });
 
