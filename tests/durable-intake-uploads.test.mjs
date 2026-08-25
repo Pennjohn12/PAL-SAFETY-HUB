@@ -23,5 +23,11 @@ assert.doesNotMatch(appSource, /publicUploads/, 'obsolete public upload folder m
 assert.doesNotMatch(storageRules, /'publicUploads'/, 'obsolete public upload folder must not remain writable');
 assert.doesNotMatch(firestoreRules, /'certFiles'/, 'public Firestore rules must not permit direct attachment of uploaded files');
 assert.doesNotMatch(firestoreRules, /'payrollIdFiles'/, 'public Firestore rules must not permit direct attachment of payroll files');
+assert.match(appSource, /async function confirmPublicIntakeUpload\(payload, maxAttempts = 3\)/, 'packet confirmation should retry transient failures automatically');
+assert.match(appSource, /publicIntakeUploadInProgress/, 'active uploads should be protected from accidental refresh');
+assert.match(appSource, /event\.returnValue = ''/, 'refreshing during an active upload should trigger a browser warning');
+assert.match(appSource, /input\.value = ''/, 'successful upload selections should be cleared to prevent accidental repeats');
+assert.match(appSource, /Connection slow — still retrying certification/, 'stalled certification uploads should reassure the employee that retry is active');
+assert.match(appSource, /Keep this page open/, 'slow upload guidance should prevent accidental interruption');
 
 console.log('Durable intake upload regression checks passed.');
