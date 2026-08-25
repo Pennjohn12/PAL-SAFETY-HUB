@@ -1059,3 +1059,85 @@ exports.closeDailyAccessSession = onCall({ region:'us-central1', cors:true, time
   await ref.update({ status:'Closed', closedAt:admin.firestore.FieldValue.serverTimestamp(), closedBy:request.auth.uid, updatedAt:admin.firestore.FieldValue.serverTimestamp() });
   return { status:'Closed' };
 });
+
+const PUBLIC_INTAKE_UPLOAD_FOLDERS = new Set(['certUploads', 'payrollIdUploads']);
+const PUBLIC_INTAKE_UPLOAD_TYPES = /^(image\/(jpeg|png|webp|heic|heif)|application\/pdf)$/i;
+
+exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, timeoutSeconds:60, memory:'256MiB' }, async request => {
+  const intakeId = cleanText(request.data?.intakeId, 180);
+  const folder = cleanText(request.data?.folder, 40);
+  const path = cleanText(request.data?.path, 900);
+  const name = cleanText(request.data?.name, 240);
+  const type = cleanText(request.data?.type, 120);
+  const expirationDate = cleanText(request.data?.expirationDate, 20);
+  const expectedContentType = cleanText(request.data?.contentType, 120).toLowerCase();
+  const expectedSize = Number(request.data?.size || 0);
+
+  if (!/^[A-Za-z0-9_-]{8,180}$/.test(intakeId)) throw new HttpsError('invalid-argument', 'This intake link is invalid. Ask PAL for a new link.');
+  if (!PUBLIC_INTAKE_UPLOAD_FOLDERS.has(folder)) throw new HttpsError('invalid-argument', 'This upload category is not allowed.');
+  if (!name || !type || !path.startsWith(`newHireIntakes/${intakeId}/${folder}/`)) throw new HttpsError('invalid-argument', 'The uploaded file does not match this intake packet.');
+  if (!PUBLIC_INTAKE_UPLOAD_TYPES.test(expectedContentType) || expectedSize <= 0 || expectedSize >= 25 * 1024 * 1024) {
+    throw new HttpsError('invalid-argument', 'Use a supported image or PDF under 25 MB.');
+  }
+
+  const intakeRef = db.collection('newHireIntakes').doc(intakeId);
+  const intakeSnap = await intakeRef.get();
+  if (!intakeSnap.exists) throw new HttpsError('not-found', 'This intake packet was not found. Ask PAL for a new link.');
+  const intake = intakeSnap.data() || {};
+  if (intake.archived === true || intake.status === 'Archived') throw new HttpsError('failed-precondition', 'This intake packet is closed. Contact PAL office.');
+  if (intake.status === 'Good To Work') throw new HttpsError('failed-precondition', 'This packet is already approved. PAL office must reopen it before documents are changed.');
+
+  const file = admin.storage().bucket().file(path);
+  let metadata;
+  try {
+    [metadata] = await file.getMetadata();
+  } catch (error) {
+    console.error('Public intake uploaded object verification failed', { intakeId, folder, path, code:error?.code || '' });
+    throw new HttpsError('not-found', 'The file did not finish reaching PAL secure storage. Please retry this file.');
+  }
+  const storedSize = Number(metadata?.size || 0);
+  const storedContentType = String(metadata?.contentType || '').toLowerCase();
+  if (storedSize !== expectedSize || storedSize <= 0 || storedSize >= 25 * 1024 * 1024 || !PUBLIC_INTAKE_UPLOAD_TYPES.test(storedContentType)) {
+    throw new HttpsError('failed-precondition', 'The saved file could not be verified. Please retry with a supported image or PDF under 25 MB.');
+  }
+
+  const record = {
+    type,
+    name,
+    path,
+    uploadedAt: new Date().toISOString(),
+    source: folder,
+    size: storedSize,
+    contentType: storedContentType
+  };
+  if (folder === 'certUploads' && expirationDate) record.expirationDate = expirationDate;
+
+  let totalCount = 0;
+  await db.runTransaction(async transaction => {
+    const snapshot = await transaction.get(intakeRef);
+    if (!snapshot.exists) throw new HttpsError('not-found', 'This intake packet was not found. Ask PAL for a new link.');
+    const current = snapshot.data() || {};
+    if (current.archived === true || current.status === 'Archived' || current.status === 'Good To Work') {
+      throw new HttpsError('failed-precondition', 'This packet is closed for employee uploads. Contact PAL office.');
+    }
+    const field = folder === 'certUploads' ? 'certFiles' : 'payrollIdFiles';
+    const files = Array.isArray(current[field]) ? current[field].filter(item => item && item.path !== path) : [];
+    files.push(record);
+    totalCount = files.length;
+    const update = {
+      [field]: files,
+      status: 'Ready for Review',
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      lastEmployeeUploadAt: admin.firestore.FieldValue.serverTimestamp(),
+      lastEmployeeUploadPath: path
+    };
+    if (folder === 'certUploads') update.certUploadsCompleted = true;
+    else {
+      update.payrollIdUploadsCompleted = true;
+      update.payrollIdUploadCount = totalCount;
+    }
+    transaction.update(intakeRef, update);
+  });
+
+  return { status:'saved', path, totalCount, record };
+});
