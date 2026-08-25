@@ -11,6 +11,7 @@ Protected app URL in code: `https://pal-safety-hub.web.app/projects.html`
 ## Governance state
 
 - Governance work is isolated on `chore/pal-governance`, based on current `origin/main`.
+- GitHub branch `staging` now exists at the governance checkpoint; it is not connected to a Firebase environment and must not be treated as safe application staging yet.
 - No production deploy, Firebase data write, rules change, or production configuration change was made during setup.
 - A dedicated staging Firebase project does not yet exist in the repository configuration.
 - The current frontend Firebase configuration points directly to production. A Firebase Hosting preview channel alone would still use production Auth, Firestore, Storage, and Functions and therefore is not a safe staging environment.

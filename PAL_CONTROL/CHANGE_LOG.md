@@ -9,6 +9,7 @@ Record meaningful governance, application, data-model, security, and deployment 
 - Verified the production Firebase Hosting URL responded successfully.
 - Identified that local checkout was 22 commits behind and fast-forwarded it to current GitHub `main` before documenting status.
 - Created governance branch `chore/pal-governance` before file edits.
+- Created GitHub `staging` branch at the governance checkpoint. No Firebase deployment or environment binding was performed.
 - Production impact: none. No deploys or Firebase data/configuration writes.
 - Validation: repository inspection, Git history/branch inspection, production HTTP availability check, and source inventory.
 

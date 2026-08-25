@@ -46,6 +46,6 @@ The branch itself does not provide data isolation. Environment configuration and
 ## Current setup status
 
 - Production project: confirmed in repository configuration.
-- Staging branch: to be created from the governance baseline after governance changes are committed.
+- Staging branch: created on GitHub from governance checkpoint `b9c9d31`; it has no Firebase deployment target yet.
 - Dedicated Staging Firebase project: blocked pending creation/ownership in Firebase Console and environment-specific identifiers.
 - Demo environment: proposed, not created.
