@@ -1434,9 +1434,18 @@
     .orientation-module-head h4 { color:var(--navy); margin:0 0 4px; }
     .orientation-module-head p { color:var(--muted); font-size:13px; line-height:1.45; margin:0; }
     .orientation-language { min-width:150px; }
-    .orientation-video-wrap { background:#071a2d; aspect-ratio:16/9; width:100%; }
+    .orientation-video-wrap { background:#071a2d; aspect-ratio:16/9; width:100%; position:relative; }
     .orientation-video-wrap video,
     .orientation-video-wrap iframe { display:block; width:100%; height:100%; border:0; background:#071a2d; }
+    .orientation-video-state { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:24px; text-align:center; color:#fff; background:#071a2d; }
+    .orientation-video-state.ready { display:none; }
+    .orientation-video-state strong { font-size:17px; }
+    .orientation-video-state p { max-width:520px; margin:0; color:#dbeafe; font-size:13px; line-height:1.5; }
+    .orientation-video-state-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+    .orientation-video-state button,
+    .orientation-video-state a { border:1px solid rgba(255,255,255,.45); border-radius:8px; padding:9px 12px; background:#fff; color:var(--navy); font:inherit; font-size:13px; font-weight:900; cursor:pointer; text-decoration:none; }
+    .orientation-video-spinner { width:30px; height:30px; border:3px solid rgba(255,255,255,.3); border-top-color:var(--green); border-radius:50%; animation:orientation-spin .8s linear infinite; }
+    @keyframes orientation-spin { to { transform:rotate(360deg); } }
     .orientation-progress { padding:12px 16px; background:#fff; border-top:1px solid var(--line); }
     .orientation-progress-track { height:8px; overflow:hidden; background:#e5e7eb; border-radius:4px; }
     .orientation-progress-fill { height:100%; width:0; background:var(--green); transition:width .2s ease; }
@@ -4462,6 +4471,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openNewHireOrientationForm = openNewHireOrientationForm;
   window.saveNewHireOrientationForm = saveNewHireOrientationForm;
   window.answerOrientationCheckpoint = answerOrientationCheckpoint;
+  window.retryOrientationVideo = retryOrientationVideo;
   window.openPublicNewHireOrientationForm = openPublicNewHireOrientationForm;
   window.openNewHireDrugConsentForm = openNewHireDrugConsentForm;
   window.saveNewHireDrugConsentForm = saveNewHireDrugConsentForm;
@@ -13989,19 +13999,58 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   function loadOrientationYouTubeApi() {
     if (window.YT?.Player) return Promise.resolve();
     if (orientationYouTubeApiPromise) return orientationYouTubeApiPromise;
-    orientationYouTubeApiPromise = new Promise(resolve => {
+    orientationYouTubeApiPromise = new Promise((resolve, reject) => {
+      let settled = false;
+      const finish = (error = null) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        if (error) {
+          orientationYouTubeApiPromise = null;
+          reject(error);
+        } else {
+          resolve();
+        }
+      };
       const previousReady = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => {
         if (typeof previousReady === 'function') previousReady();
-        resolve();
+        finish();
       };
-      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+      const timeout = setTimeout(() => finish(new Error('YouTube player took too long to load.')), 12000);
+      let script = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+      if (!script) {
         const script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
+        script.async = true;
+        script.onerror = () => finish(new Error('YouTube player could not be reached.'));
         document.head.appendChild(script);
+      } else {
+        script.addEventListener('error', () => finish(new Error('YouTube player could not be reached.')), { once: true });
       }
     });
     return orientationYouTubeApiPromise;
+  }
+
+  function showOrientationVideoState(kind = 'loading', message = '') {
+    const state = document.getElementById('nh-orientation-video-state');
+    if (!state) return;
+    if (kind === 'ready') {
+      state.className = 'orientation-video-state ready';
+      return;
+    }
+    const language = orientationSession?.language || selectedOrientationLanguage();
+    const videoId = ORIENTATION_VIDEO_SOURCES[language] || ORIENTATION_VIDEO_SOURCES.en;
+    const isSpanish = language === 'es';
+    state.className = 'orientation-video-state';
+    state.innerHTML = kind === 'loading'
+      ? `<div class="orientation-video-spinner" aria-hidden="true"></div><strong>${isSpanish ? 'Cargando el video de orientación…' : 'Loading orientation video…'}</strong><p>${isSpanish ? 'Esto normalmente tarda solo unos segundos.' : 'This normally takes only a few seconds.'}</p>`
+      : `<strong>${isSpanish ? 'El video no pudo cargarse' : 'The video did not load'}</strong><p>${esc(message || (isSpanish ? 'Revise su conexión e inténtelo de nuevo.' : 'Check your connection and try again.'))}</p><div class="orientation-video-state-actions"><button type="button" onclick="retryOrientationVideo()">${isSpanish ? 'Intentar de nuevo' : 'Try Again'}</button><a href="https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}" target="_blank" rel="noopener">${isSpanish ? 'Comprobar YouTube' : 'Check YouTube'}</a></div>`;
+  }
+
+  function retryOrientationVideo() {
+    const intake = allNewHireIntakes.find(i => i.id === currentNewHireOrientationId) || (currentPublicNewHireIntake?.id === currentNewHireOrientationId ? currentPublicNewHireIntake : null);
+    resetOrientationModule(intake?.orientationForm || {});
   }
 
   function orientationCurrentTime() {
@@ -14203,11 +14252,17 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     const videoWrap = document.querySelector('#pal-orientation-module .orientation-video-wrap');
     if (!videoWrap) return;
     if (orientationSession?.timer) clearInterval(orientationSession.timer);
+    if (orientationSession?.loadTimer) clearTimeout(orientationSession.loadTimer);
     orientationSession?.player?.destroy?.();
     const videoHost = document.createElement('div');
     videoHost.id = 'nh-orientation-video';
     videoHost.setAttribute('aria-label', 'PAL Employee Safety Orientation video');
-    videoWrap.replaceChildren(videoHost);
+    const videoState = document.createElement('div');
+    videoState.id = 'nh-orientation-video-state';
+    videoState.className = 'orientation-video-state';
+    videoState.setAttribute('role', 'status');
+    videoState.setAttribute('aria-live', 'polite');
+    videoWrap.replaceChildren(videoHost, videoState);
     const language = selectedOrientationLanguage();
     applyOrientationLanguageText(language);
     const videoId = ORIENTATION_VIDEO_SOURCES[language] || ORIENTATION_VIDEO_SOURCES.en;
@@ -14222,6 +14277,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     orientationSession = {
       player: null,
       timer: null,
+      loadTimer: null,
       language,
       answers: Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedAnswers?.[i]),
       quizAnswered: Array.from({ length: orientationQuestions(language).length }, (_, i) => !!savedQuizAnswered?.[i]),
@@ -14249,14 +14305,31 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (quiz) quiz.classList.remove('active');
     const ack = document.getElementById('nh-orient-module-complete');
     if (ack) ack.checked = !!(sameSavedLanguage && form.orientationModuleReviewed);
-    await loadOrientationYouTubeApi();
-    orientationSession.player = new YT.Player(videoHost, {
+    showOrientationVideoState('loading');
+    try {
+      await loadOrientationYouTubeApi();
+    } catch (error) {
+      console.error('Orientation video API load failed', error);
+      showOrientationVideoState('error', orientationSession.language === 'es'
+        ? 'YouTube está bloqueado, la conexión es lenta o el dispositivo está sin conexión. Toque Intentar de nuevo.'
+        : 'YouTube may be blocked, the connection may be slow, or the device may be offline. Tap Try Again.');
+      return;
+    }
+    orientationSession.loadTimer = setTimeout(() => {
+      showOrientationVideoState('error', orientationSession?.language === 'es'
+        ? 'El reproductor tardó demasiado en responder. Toque Intentar de nuevo.'
+        : 'The player took too long to respond. Tap Try Again.');
+    }, 12000);
+    try {
+      orientationSession.player = new YT.Player(videoHost, {
       videoId,
       // Keep playback inline so mobile/native fullscreen does not suspend the
       // parent page's checkpoint timer and allow the video to run past a stop.
       playerVars: { playsinline: 1, rel: 0, controls: 1, fs: 0, origin: location.origin },
       events: {
         onReady: event => {
+          clearTimeout(orientationSession?.loadTimer);
+          showOrientationVideoState('ready');
           const resumeAt = sameSavedLanguage && form.orientationVideoCompleted ? orientationDuration() : Number(local.lastTime || 0);
           event.target.seekTo(Math.min(Math.max(0, resumeAt), orientationDuration()), true);
           updateOrientationProgressUI();
@@ -14274,9 +14347,24 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
             const firstPending = orientationSession.quizAnswered.findIndex(answered => !answered);
             if (!orientationSession.quizPassed) showOrientationCheckpoint(firstPending < 0 ? 0 : firstPending);
           }
+        },
+        onError: event => {
+          clearTimeout(orientationSession?.loadTimer);
+          console.error('Orientation YouTube player error', event?.data);
+          showOrientationVideoState('error', orientationSession?.language === 'es'
+            ? 'YouTube no pudo reproducir este video en el dispositivo. Toque Intentar de nuevo o Comprobar YouTube.'
+            : 'YouTube could not play this video on the device. Tap Try Again or Check YouTube.');
         }
       }
-    });
+      });
+    } catch (error) {
+      clearTimeout(orientationSession?.loadTimer);
+      console.error('Orientation video player creation failed', error);
+      showOrientationVideoState('error', orientationSession?.language === 'es'
+        ? 'No se pudo iniciar el reproductor. Toque Intentar de nuevo.'
+        : 'The player could not start. Tap Try Again.');
+      return;
+    }
     orientationSession.timer = setInterval(() => {
       if (!orientationSession || orientationSession.activeQuestion >= 0) return;
       const currentTime = orientationCurrentTime();
