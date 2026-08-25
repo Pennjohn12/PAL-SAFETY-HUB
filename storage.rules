@@ -105,12 +105,8 @@ service firebase.storage {
       allow write: if (
         isOffice() ||
         folder in [
-          'publicUploads',
           'certUploads',
-          'payrollIdUploads',
-          'orientation',
-          'drugConsent',
-          'safetyAgreement'
+          'payrollIdUploads'
         ]
       ) && isSafeUpload(25 * 1024 * 1024);
       allow delete: if false;

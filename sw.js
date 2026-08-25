@@ -1,7 +1,7 @@
 // PAL Safety Hub Service Worker
 // Keeps the app usable offline, while always preferring fresh pages when online.
 
-const CACHE_NAME = 'pal-safety-hub-v2026-08-25-orientation-video-recovery';
+const CACHE_NAME = 'pal-safety-hub-v2026-08-25-orientation-three-update-audit';
 const ASSETS = [
   './',
   './index.html',

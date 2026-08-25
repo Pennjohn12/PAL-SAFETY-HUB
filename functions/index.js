@@ -1062,6 +1062,17 @@ exports.closeDailyAccessSession = onCall({ region:'us-central1', cors:true, time
 
 const PUBLIC_INTAKE_UPLOAD_FOLDERS = new Set(['certUploads', 'payrollIdUploads']);
 const PUBLIC_INTAKE_UPLOAD_TYPES = /^(image\/(jpeg|png|webp|heic|heif)|application\/pdf)$/i;
+const PUBLIC_INTAKE_UPLOAD_EXTENSIONS = new Map([
+  ['pdf', 'application/pdf'],
+  ['jpg', 'image/jpeg'],
+  ['jpeg', 'image/jpeg'],
+  ['png', 'image/png'],
+  ['webp', 'image/webp'],
+  ['heic', 'image/heic'],
+  ['heif', 'image/heif']
+]);
+const PUBLIC_INTAKE_CERT_LABELS = new Set(['OSHA 30 / OSHA 10', 'SST Card', 'Scaffold Certification', 'Lift Certification', 'Fire Watch / G60', 'Other Certification']);
+const PUBLIC_INTAKE_PAYROLL_LABELS = new Set(['Driver License / Photo ID', 'Union Book / Union Card', 'Social Security Card', 'W-4 / Payroll Form', 'Additional Payroll / ID Document']);
 
 exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, timeoutSeconds:60, memory:'256MiB' }, async request => {
   const intakeId = cleanText(request.data?.intakeId, 180);
@@ -1076,7 +1087,17 @@ exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, t
 
   if (!/^[A-Za-z0-9_-]{8,180}$/.test(intakeId)) throw new HttpsError('invalid-argument', 'This intake link is invalid. Ask PAL for a new link.');
   if (!PUBLIC_INTAKE_UPLOAD_FOLDERS.has(folder)) throw new HttpsError('invalid-argument', 'This upload category is not allowed.');
-  if (!name || !type || !path.startsWith(`newHireIntakes/${intakeId}/${folder}/`)) throw new HttpsError('invalid-argument', 'The uploaded file does not match this intake packet.');
+  const pathPrefix = `newHireIntakes/${intakeId}/${folder}/`;
+  const storedFileName = path.startsWith(pathPrefix) ? path.slice(pathPrefix.length) : '';
+  const extension = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+  const allowedContentType = PUBLIC_INTAKE_UPLOAD_EXTENSIONS.get(extension);
+  const allowedLabels = folder === 'certUploads' ? PUBLIC_INTAKE_CERT_LABELS : PUBLIC_INTAKE_PAYROLL_LABELS;
+  if (!name || !type || !storedFileName || storedFileName.includes('/') || storedFileName.length > 500 || !allowedLabels.has(type)) {
+    throw new HttpsError('invalid-argument', 'The uploaded file does not match this intake packet.');
+  }
+  if (!allowedContentType || allowedContentType !== expectedContentType) {
+    throw new HttpsError('invalid-argument', 'The file name and file type do not match. Use a supported image or PDF.');
+  }
   if (!PUBLIC_INTAKE_UPLOAD_TYPES.test(expectedContentType) || expectedSize <= 0 || expectedSize >= 25 * 1024 * 1024) {
     throw new HttpsError('invalid-argument', 'Use a supported image or PDF under 25 MB.');
   }
@@ -1087,6 +1108,9 @@ exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, t
   const intake = intakeSnap.data() || {};
   if (intake.archived === true || intake.status === 'Archived') throw new HttpsError('failed-precondition', 'This intake packet is closed. Contact PAL office.');
   if (intake.status === 'Good To Work') throw new HttpsError('failed-precondition', 'This packet is already approved. PAL office must reopen it before documents are changed.');
+  if (folder === 'payrollIdUploads' && intake.existingEmployeePayrollDocsOnFile === true) {
+    throw new HttpsError('failed-precondition', 'PAL office already verified the payroll and identity documents for this intake. No duplicate upload is required.');
+  }
 
   const file = admin.storage().bucket().file(path);
   let metadata;
@@ -1120,6 +1144,9 @@ exports.finalizePublicIntakeUpload = onCall({ region:'us-central1', cors:true, t
     const current = snapshot.data() || {};
     if (current.archived === true || current.status === 'Archived' || current.status === 'Good To Work') {
       throw new HttpsError('failed-precondition', 'This packet is closed for employee uploads. Contact PAL office.');
+    }
+    if (folder === 'payrollIdUploads' && current.existingEmployeePayrollDocsOnFile === true) {
+      throw new HttpsError('failed-precondition', 'PAL office already verified the payroll and identity documents for this intake. No duplicate upload is required.');
     }
     const field = folder === 'certUploads' ? 'certFiles' : 'payrollIdFiles';
     const files = Array.isArray(current[field]) ? current[field].filter(item => item && item.path !== path) : [];

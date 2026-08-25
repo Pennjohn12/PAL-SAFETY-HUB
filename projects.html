@@ -1842,12 +1842,6 @@
             </div>
           </section>
 
-          <input id="pub-nh-files" type="file" multiple accept=".pdf,image/*" style="display:none;" />
-          <input id="pub-nh-driver-id" type="file" accept=".pdf,image/*" style="display:none;" />
-          <input id="pub-nh-union-book" type="file" accept=".pdf,image/*" style="display:none;" />
-          <input id="pub-nh-ss-card" type="file" accept=".pdf,image/*" style="display:none;" />
-          <input id="pub-nh-payroll-extra" type="file" accept=".pdf,image/*" style="display:none;" />
-          <button id="pub-submit-intake-btn" type="button" onclick="submitPublicNewHireIntake()" style="display:none;">Submit Intake to PAL</button>
         </div>
       </div>
     </div>
@@ -4494,7 +4488,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveNewHireCertUploads = saveNewHireCertUploads;
   window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
   window.openNewHireStoredFile = openNewHireStoredFile;
-  window.submitPublicNewHireIntake = submitPublicNewHireIntake;
   window.finalSubmitPublicNewHirePacket = finalSubmitPublicNewHirePacket;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
@@ -12701,6 +12694,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function openPublicNewHireW4Form() {
     if (!publicNewHireIntakeId) return toast('Missing intake link.');
+    if (publicPayrollDocumentsBypassed()) return toast('PAL office already verified your payroll documents. A W-4 is not required for this intake.');
     if (currentPublicNewHireIntake && !allNewHireIntakes.some(x => x.id === currentPublicNewHireIntake.id)) {
       allNewHireIntakes.push(currentPublicNewHireIntake);
     }
@@ -12715,6 +12709,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     return true;
   }
 
+  function publicPayrollDocumentsBypassed() {
+    return !!(publicNewHireIntakeId
+      && currentPublicNewHireIntake?.id === publicNewHireIntakeId
+      && currentPublicNewHireIntake.existingEmployeePayrollDocsOnFile === true);
+  }
+
   function openPublicNewHireCertUploadForm() {
     if (!ensurePublicIntakeForUpload()) return;
     const label = document.getElementById('newhire-cert-upload-label');
@@ -12724,6 +12724,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function openPublicNewHirePayrollIdUploadForm() {
     if (!ensurePublicIntakeForUpload()) return;
+    if (publicPayrollDocumentsBypassed()) return toast('PAL office already verified your payroll and identity documents. No duplicate upload is required.');
     const label = document.getElementById('newhire-payroll-id-label');
     if (label) label.textContent = `Linked to intake/person packet: ${publicNewHireIntakeId}`;
     document.getElementById('modal-newhire-payroll-id-form')?.classList.add('open');
@@ -12892,8 +12893,21 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function newHireUploadErrorMessage(error, label, stage = 'upload') {
     const code = String(error?.code || '').toLowerCase();
+    const message = String(error?.message || '').toLowerCase();
+    if (code.includes('failed-precondition') && message.includes('already verified')) {
+      return 'PAL office already verified the payroll and identity documents for this intake. No duplicate upload is required.';
+    }
+    if (code.includes('failed-precondition') && (message.includes('closed') || message.includes('approved'))) {
+      return `${label} was not attached because this intake is already closed or approved. Contact PAL office before making changes.`;
+    }
     if (stage === 'packet' && (code.includes('permission-denied') || code.includes('unauthorized'))) {
       return `${label} reached PAL secure storage, but the intake packet could not be updated. Your packet link may need PAL office review. Keep this page open and contact PAL before uploading the files again.`;
+    }
+    if (stage === 'packet' && (code.includes('retry-limit') || code.includes('network') || code.includes('unavailable') || code.includes('deadline'))) {
+      return `${label} reached PAL secure storage, but confirmation did not finish. Check your connection and tap Save again; retrying the same file will not create a duplicate.`;
+    }
+    if (stage === 'packet') {
+      return `${label} reached PAL secure storage, but could not be attached to the intake packet. Tap Save once more. If it still fails, keep this page open and contact PAL.`;
     }
     if (code.includes('permission-denied') || code.includes('unauthorized')) return `${label} could not be uploaded because PAL storage permission was denied. Keep this page open and contact PAL; repeatedly selecting the file will not fix this permission problem.`;
     if (code.includes('retry-limit') || code.includes('network')) return `${label} did not finish uploading. Check your connection and try again.`;
@@ -12958,17 +12972,26 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
     const storageRef = ref(storage, path);
     await uploadNewHireFileResumable(storageRef, file, newHireUploadMetadata(file), onProgress);
-    const result = await finalizePublicIntakeUploadCallable({
-      intakeId: publicNewHireIntakeId,
-      folder,
-      path,
-      name: file.name,
-      type: label,
-      contentType: newHireUploadMetadata(file).contentType,
-      size: Number(file.size || 0),
-      expirationDate,
-      notes
-    });
+    let result;
+    try {
+      result = await finalizePublicIntakeUploadCallable({
+        intakeId: publicNewHireIntakeId,
+        folder,
+        path,
+        name: file.name,
+        type: label,
+        contentType: newHireUploadMetadata(file).contentType,
+        size: Number(file.size || 0),
+        expirationDate,
+        notes
+      });
+    } catch (error) {
+      const taggedError = new Error(error?.message || 'The intake packet confirmation failed.');
+      taggedError.code = error?.code || '';
+      taggedError.palUploadStage = 'packet';
+      taggedError.cause = error;
+      throw taggedError;
+    }
     return result?.data || { path };
   }
 
@@ -13010,7 +13033,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Certification uploads saved to intake packet.');
     } catch (e) {
       console.error('Cert upload save failed', e);
-      toast(newHireUploadErrorMessage(e, 'Certification upload', saveStage));
+      toast(newHireUploadErrorMessage(e, 'Certification upload', e?.palUploadStage || saveStage));
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Certification Uploads'; }
     }
@@ -13019,6 +13042,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function saveNewHirePayrollIdUploads() {
     if (!requireCloudConnection('save payroll or ID uploads')) return;
     if (!ensurePublicIntakeForUpload()) return;
+    if (publicPayrollDocumentsBypassed()) return toast('PAL office already verified your payroll and identity documents. No duplicate upload is required.');
     const btn = document.getElementById('save-newhire-payroll-id-btn');
     let saveStage = 'upload';
     try {
@@ -13051,7 +13075,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       toast('Payroll / ID uploads saved to intake packet.');
     } catch (e) {
       console.error('Payroll / ID upload save failed', e);
-      toast(newHireUploadErrorMessage(e, 'Payroll / ID upload', saveStage));
+      toast(newHireUploadErrorMessage(e, 'Payroll / ID upload', e?.palUploadStage || saveStage));
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Save Payroll / ID Uploads'; }
     }
@@ -13178,90 +13202,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       if (btn) btn.disabled = false;
     }
   }
-
-  async function submitPublicNewHireIntake() {
-    if (!publicNewHireIntakeId) return toast('Missing intake link.');
-    const btn = document.getElementById('pub-submit-intake-btn');
-    const input = document.getElementById('pub-nh-files');
-    const files = Array.from(input?.files || []);
-    try {
-      if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
-      const uploaded = [];
-      const invalidCert = files.find(file => validateNewHireUploadFile(file));
-      if (invalidCert) return toast(`${invalidCert.name}: ${validateNewHireUploadFile(invalidCert)}`);
-      for (const file of files) {
-        const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireIntakeId}/publicUploads/${safeName}`;
-        const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file, newHireUploadMetadata(file));
-        uploaded.push({ name: file.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-cert' });
-      }
-      const payrollUploads = [];
-      const payrollInputs = [
-        ['pub-nh-driver-id', 'Driver License / Photo ID'],
-        ['pub-nh-union-book', 'Union Book / Union Card'],
-        ['pub-nh-ss-card', 'Social Security Card'],
-        ['pub-nh-payroll-extra', 'Additional Payroll / ID Document']
-      ];
-      const invalidPayroll = payrollInputs
-        .map(([inputId, label]) => ({ label, file: document.getElementById(inputId)?.files?.[0] }))
-        .find(item => item.file && validateNewHireUploadFile(item.file));
-      if (invalidPayroll) return toast(`${invalidPayroll.label}: ${validateNewHireUploadFile(invalidPayroll.file)}`);
-      for (const [inputId, label] of payrollInputs) {
-        const payrollFile = document.getElementById(inputId)?.files?.[0];
-        if (!payrollFile) continue;
-        const safeName = `${Date.now()}_${label.replace(/[^a-zA-Z0-9._-]/g,'_')}_${payrollFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-        const path = `newHireIntakes/${publicNewHireIntakeId}/payrollIdUploads/${safeName}`;
-        const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, payrollFile, newHireUploadMetadata(payrollFile));
-        payrollUploads.push({ type: label, name: payrollFile.name, path, uploadedAt: new Date().toISOString(), source: 'public-intake-payroll-id' });
-      }
-      let existing = [];
-      let existingPayrollIdFiles = [];
-      try {
-        const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-        if (snap.exists()) {
-          existing = snap.data().certFiles || [];
-          existingPayrollIdFiles = snap.data().payrollIdFiles || [];
-        }
-      } catch (readErr) {
-        // Public rules may block read; continue with submission attempt.
-        console.warn('Public intake submit could not pre-read existing files', readErr);
-      }
-      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        name: document.getElementById('pub-nh-name')?.value.trim() || '',
-        phone: document.getElementById('pub-nh-phone')?.value.trim() || '',
-        email: document.getElementById('pub-nh-email')?.value.trim() || '',
-        trade: document.getElementById('pub-nh-trade')?.value.trim() || '',
-        emergencyContactName: document.getElementById('pub-nh-emergency-name')?.value.trim() || '',
-        emergencyContactPhone: document.getElementById('pub-nh-emergency-phone')?.value.trim() || '',
-        employeeNotes: document.getElementById('pub-nh-notes')?.value.trim() || '',
-        certFiles: [...existing, ...uploaded],
-        payrollIdFiles: [...existingPayrollIdFiles, ...payrollUploads],
-        payrollIdUploadCount: (existingPayrollIdFiles.length + payrollUploads.length),
-        status: 'Ready for Review',
-        employeeSubmittedAt: new Date().toISOString(),
-        updatedAt: serverTimestamp(),
-        source: 'public-intake-fallback-safe'
-      }, { merge: true });
-      const statusCard = document.getElementById('public-intake-status-card');
-      const formCard = document.getElementById('public-intake-form-card');
-      if (statusCard) statusCard.innerHTML = `<h3>Intake Submitted to PAL</h3><p class="helper-text">Thank you. Your information and certification files were submitted. PAL office/foreman will review and confirm your status before you enter the site.</p>`;
-      if (formCard) formCard.style.display = 'none';
-      toast('Intake submitted to PAL.');
-    } catch (e) {
-      console.error('Public intake submit failed', e);
-      toast('Could not submit intake. PAL may need to enable public intake upload permissions.');
-      const statusCard = document.getElementById('public-intake-status-card');
-      if (statusCard) statusCard.innerHTML += `<p style="color:var(--red);font-weight:800;margin-top:10px;">Submission failed. Please contact PAL office or your foreman.</p>`;
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Submit Intake to PAL'; }
-    }
-  }
-
-
-
-
 
   // NEW_HIRE_INTAKE_PHASE2_REVIEW_UPLOAD_2026_05_12
   function newHireStatusClass(status) {
@@ -14006,6 +13946,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         settled = true;
         clearTimeout(timeout);
         if (error) {
+          script?.remove();
           orientationYouTubeApiPromise = null;
           reject(error);
         } else {
@@ -14014,13 +13955,15 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       };
       const previousReady = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => {
-        if (typeof previousReady === 'function') previousReady();
         finish();
+        if (typeof previousReady === 'function') {
+          try { previousReady(); } catch (error) { console.warn('Earlier YouTube ready handler failed', error); }
+        }
       };
       const timeout = setTimeout(() => finish(new Error('YouTube player took too long to load.')), 12000);
       let script = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
       if (!script) {
-        const script = document.createElement('script');
+        script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
         script.async = true;
         script.onerror = () => finish(new Error('YouTube player could not be reached.'));
@@ -14921,6 +14864,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     if (!requireCloudConnection('save the W-4 form')) return;
     if (!currentUser && !publicNewHireIntakeId) return toast('Please sign in first.');
     if (!currentNewHireW4Id) return toast('Open an intake request first.');
+    if (currentNewHireW4Id === publicNewHireIntakeId && publicPayrollDocumentsBypassed()) return toast('PAL office already verified your payroll documents. A W-4 is not required for this intake.');
     const btn = document.getElementById('save-newhire-w4-btn');
     const val = id => document.getElementById(id)?.value?.trim?.() || document.getElementById(id)?.value || '';
     const required = [

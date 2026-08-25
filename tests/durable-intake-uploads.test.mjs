@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 
 const functionsSource = readFileSync(new URL('../functions/index.js', import.meta.url), 'utf8');
 const appSource = readFileSync(new URL('../projects.html', import.meta.url), 'utf8');
+const firestoreRules = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
+const storageRules = readFileSync(new URL('../storage.rules', import.meta.url), 'utf8');
 
 assert.match(functionsSource, /exports\.finalizePublicIntakeUpload = onCall/, 'backend finalizer must be deployed as a callable function');
 assert.match(functionsSource, /file\.getMetadata\(\)/, 'backend must verify the stored object before attaching it');
@@ -14,5 +16,12 @@ assert.match(appSource, /finalizePublicIntakeUploadCallable\(/, 'each upload mus
 assert.match(appSource, /stableNewHireUploadName\(/, 'retrying the same file must use a stable path');
 assert.match(functionsSource, /update\.certUploadNotes = notes/, 'cert notes must save in the backend transaction');
 assert.match(functionsSource, /update\.payrollIdNotes = notes/, 'payroll notes must save in the backend transaction');
+assert.match(functionsSource, /PUBLIC_INTAKE_UPLOAD_EXTENSIONS/, 'backend must verify file extensions against content types');
+assert.match(functionsSource, /PUBLIC_INTAKE_CERT_LABELS/, 'backend must allow only known certification categories');
+assert.doesNotMatch(appSource, /submitPublicNewHireIntake/, 'obsolete direct public uploader must remain removed');
+assert.doesNotMatch(appSource, /publicUploads/, 'obsolete public upload folder must remain removed from the app');
+assert.doesNotMatch(storageRules, /'publicUploads'/, 'obsolete public upload folder must not remain writable');
+assert.doesNotMatch(firestoreRules, /'certFiles'/, 'public Firestore rules must not permit direct attachment of uploaded files');
+assert.doesNotMatch(firestoreRules, /'payrollIdFiles'/, 'public Firestore rules must not permit direct attachment of payroll files');
 
 console.log('Durable intake upload regression checks passed.');

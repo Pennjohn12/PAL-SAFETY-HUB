@@ -24,3 +24,9 @@ test('retry control is callable from the orientation form', () => {
   assert.match(html, /window\.retryOrientationVideo = retryOrientationVideo/);
 });
 
+test('a failed YouTube script is removed so retry makes a fresh request', () => {
+  assert.match(html, /script\?\.remove\(\)/);
+  assert.match(html, /orientationYouTubeApiPromise = null/);
+  assert.match(html, /script = document\.createElement\('script'\)/);
+});
+
