@@ -13554,7 +13554,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       { key: 'drug', label: 'Drug Consent', done: !!x.drugConsentForm?.completed },
       { key: 'safety', label: 'Safety Agreement', done: !!x.safetyAgreementForm?.completed },
       { key: 'certs', label: 'Certs', done: !!(x.certUploadsCompleted || (x.certFiles || []).length) },
-      { key: 'payroll', label: 'Payroll/ID', done: !!(x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length) },
+      { key: 'payroll', label: 'Payroll/ID', done: !!(x.existingEmployeePayrollDocsOnFile || x.payrollIdUploadsCompleted || (x.payrollIdFiles || []).length) },
       { key: 'submitted', label: 'Final Submit', done: !!x.packetSubmitted }
     ];
     const done = checks.filter(c => c.done).length;
@@ -15041,15 +15041,88 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
   }
 
 
+  function normalizedEmployeePhone(value = '') {
+    return String(value || '').replace(/\D/g, '').slice(-10);
+  }
+
+  function intakeCertificationsForEmployee(intake) {
+    return (intake?.certFiles || []).map((file, index) => ({
+      type: file.type || 'Safety Certification',
+      title: file.type || file.name || file.fileName || 'Safety Certification',
+      issueDate: file.issueDate || '',
+      expirationDate: file.expirationDate || '',
+      fileName: file.name || file.fileName || '',
+      mimeType: file.contentType || file.mimeType || '',
+      url: file.url || '',
+      path: file.path || '',
+      uploadedAt: file.uploadedAt || new Date().toISOString(),
+      uploadedBy: file.uploadedBy || intake.name || 'PAL onboarding',
+      sourceIntakeId: intake.id,
+      sourceKey: file.path || `${intake.id}-${index}`
+    }));
+  }
+
+  async function moveApprovedIntakeToEmployees(intake) {
+    if (!intake?.id) throw new Error('Intake request not found.');
+    const employeeSnap = await getDocs(collection(db, 'employees'));
+    const employees = activeEmployeeRecords(employeeSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const email = String(intake.email || '').trim().toLowerCase();
+    const phone = normalizedEmployeePhone(intake.phone);
+    const name = String(intake.name || '').trim().toLowerCase();
+    let existing = intake.employeeId ? employees.find(emp => emp.id === intake.employeeId) : null;
+    if (!existing && email) existing = employees.find(emp => String(emp.email || '').trim().toLowerCase() === email);
+    if (!existing && phone) existing = employees.find(emp => normalizedEmployeePhone(emp.phone) === phone);
+    if (!existing && name) {
+      const nameMatches = employees.filter(emp => String(emp.name || '').trim().toLowerCase() === name);
+      if (nameMatches.length === 1) existing = nameMatches[0];
+    }
+
+    const employeeId = existing?.id || `intake-${intake.id}`;
+    const currentCerts = Array.isArray(existing?.certifications) ? existing.certifications : [];
+    const currentKeys = new Set(currentCerts.map(cert => cert.sourceKey || cert.path).filter(Boolean));
+    const importedCerts = intakeCertificationsForEmployee(intake).filter(cert => !currentKeys.has(cert.sourceKey));
+    const assignedProjectIds = Array.from(new Set([
+      ...(Array.isArray(existing?.assignedProjectIds) ? existing.assignedProjectIds : []),
+      ...(intake.projectId ? [intake.projectId] : [])
+    ]));
+    const employeeData = {
+      name: existing?.name || intake.name || 'PAL Employee',
+      email: existing?.email || intake.email || '',
+      phone: existing?.phone || intake.phone || '',
+      trade: existing?.trade || intake.trade || '',
+      notes: existing?.notes || intake.employeeNotes || intake.notes || '',
+      certifications: [...currentCerts, ...importedCerts],
+      assignedProjectIds,
+      status: 'active',
+      goodToWork: true,
+      onboardingIntakeIds: arrayUnion(intake.id),
+      approvedFromIntakeAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      updatedBy: currentUser?.uid || '',
+      updatedByName: currentUser?.displayName || currentUser?.email || ''
+    };
+    if (!existing) {
+      employeeData.createdBy = currentUser?.uid || '';
+      employeeData.createdByName = currentUser?.displayName || currentUser?.email || '';
+      employeeData.createdAt = serverTimestamp();
+    }
+    await setDoc(doc(db, 'employees', employeeId), employeeData, { merge: true });
+    return employeeId;
+  }
+
   async function setNewHireStatus(id, status) {
     if (!requireCloudConnection('update the intake status')) return;
     if (!id) return;
     try {
+      const intake = allNewHireIntakes.find(x => x.id === id);
       const payload = { status, updatedAt: serverTimestamp() };
-      if (status === 'Good To Work') payload.approvedAt = serverTimestamp();
+      if (status === 'Good To Work') {
+        payload.approvedAt = serverTimestamp();
+        payload.employeeId = await moveApprovedIntakeToEmployees(intake);
+        payload.movedToEmployeesAt = serverTimestamp();
+      }
       if (status === 'Missing Info') payload.correctionRequestedAt = serverTimestamp();
       await updateDoc(doc(db, 'newHireIntakes', id), payload);
-      const intake = allNewHireIntakes.find(x => x.id === id);
       await logAuditEvent('new_hire_intake.status_updated', {
         intakeId: id,
         employeeName: intake?.name || '',
@@ -15057,8 +15130,9 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         projectName: intake?.projectName || '',
         status
       });
-      toast(`Status updated: ${status}`);
+      toast(status === 'Good To Work' ? 'Good To Work — employee record is now in Employees.' : `Status updated: ${status}`);
       await loadNewHireIntakes(true);
+      if (status === 'Good To Work') await loadEmployees(true);
       if (document.getElementById('workforce-overview-status-board')) {
         renderWorkforceAttention();
         renderWorkforceStatusDashboardEnhanced('workforce-overview-status-summary', 'workforce-overview-status-board', 'workforce-status-filter');
