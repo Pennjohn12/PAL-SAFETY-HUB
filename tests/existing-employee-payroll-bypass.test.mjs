@@ -40,3 +40,11 @@ test('waived payroll uploads are rejected by both the screen and backend', () =>
   assert.match(functions, /folder === 'payrollIdUploads' && intake\.existingEmployeePayrollDocsOnFile === true/);
   assert.match(functions, /folder === 'payrollIdUploads' && current\.existingEmployeePayrollDocsOnFile === true/);
 });
+
+test('review modal actions resolve the selected intake inside module scope', () => {
+  assert.match(html, /onclick="setCurrentNewHireStatus\('Good To Work'\)"/);
+  assert.match(html, /onclick="setCurrentNewHireStatus\('Ready for Review'\)"/);
+  assert.match(html, /onclick="setCurrentNewHireStatus\('Missing Info'\)"/);
+  assert.match(html, /function setCurrentNewHireStatus\(status\) \{[\s\S]*setNewHireStatus\(currentNewHireReviewId, status\)/);
+  assert.doesNotMatch(html, /onclick="setNewHireStatus\(currentNewHireReviewId/);
+});
