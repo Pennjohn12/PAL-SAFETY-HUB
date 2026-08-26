@@ -3015,7 +3015,7 @@
           <div class="value" id="integration-sms-value" style="font-size:24px;">Loading...</div>
           <div class="integration-meter"><span id="integration-sms-meter"></span></div>
           <div class="integration-state" id="integration-sms-state">Checking monthly usage...</div>
-          <div class="sub">Twilio connected; A2P campaign is submitted and waiting on carrier approval.</div>
+          <div class="sub">Twilio connected. A2P Brand approved and messaging campaign verified.</div>
         </div>
         <div class="stat-card">
           <div class="label">AI Assistance</div>
@@ -3040,7 +3040,7 @@
         <h3>Production Status</h3>
         <div class="report-grid">
           <div class="report-field"><span class="k">Email</span><div class="v">Production sending and Monday certification automation are active.</div></div>
-          <div class="report-field"><span class="k">SMS</span><div class="v">Backend, monthly cap, audit logging, and A2P campaign submission are active; carrier approval is pending.</div></div>
+          <div class="report-field"><span class="k">SMS</span><div class="v"><span class="pill active">Ready</span> Twilio backend, monthly cap, audit logging, approved A2P Brand, and verified messaging campaign are active.</div></div>
           <div class="report-field"><span class="k">AI</span><div class="v">Protected drafting endpoint, project/user tracking, and monthly limit are active.</div></div>
           <div class="report-field"><span class="k">Backups</span><div class="v">Manual export verification and Google Cloud retention notes are active for launch review.</div></div>
         </div>
@@ -3049,7 +3049,7 @@
         <h3>Launch Readiness</h3>
         <div class="report-grid">
           <div class="report-field"><span class="k">Ready</span><div class="v">Firebase hosting, custom domain site, role-based access, backup verification, email automation, and OpenAI drafting.</div></div>
-          <div class="report-field"><span class="k">Waiting</span><div class="v">Twilio A2P campaign carrier approval before employee intake text delivery can be switched live.</div></div>
+          <div class="report-field"><span class="k">Text Messaging</span><div class="v"><span class="pill active">Ready</span> PAL number (516) 400-4507 is assigned to the verified A2P messaging service.</div></div>
           <div class="report-field"><span class="k">Before PAL Rollout</span><div class="v">Remove sample project records or clearly label them as training records, then run one iPhone and one iPad field test.</div></div>
           <div class="report-field"><span class="k">Retention Note</span><div class="v">PAL should approve a written retention schedule before any document purge policy is enabled.</div></div>
         </div>
@@ -3062,7 +3062,7 @@
           <div class="report-field"><span class="k">Cost Controls</span><div class="v"><span class="pill active">Ready</span> Email, text, and AI usage are tracked with monthly caps and admin-visible status.</div></div>
           <div class="report-field"><span class="k">Long-Term Records</span><div class="v"><span class="pill active">Ready</span> Backup export, backup verification, soft-delete archive behavior, and retention-policy notes are documented.</div></div>
           <div class="report-field"><span class="k">Mobile Field Use</span><div class="v"><span class="pill active">Ready</span> Current project, form, ticket, JHA, orientation, and tablet/phone flows have been field-tested.</div></div>
-          <div class="report-field"><span class="k">Open Items</span><div class="v"><span class="pill pending">Waiting</span> Twilio carrier approval, PAL's official retention policy, and controlled document translation batches.</div></div>
+          <div class="report-field"><span class="k">Open Items</span><div class="v"><span class="pill pending">Waiting</span> PAL's official retention policy and controlled document translation batches.</div></div>
         </div>
       </div>
       <div class="detail-card">
@@ -3837,7 +3837,7 @@
         <h4>Direct Text Message</h4>
         <span class="pill blue">Twilio Connected</span>
       </div>
-      <div class="helper-text">Save the intake and send its secure link directly to the employee. Carrier delivery begins when Twilio finishes A2P campaign approval.</div>
+      <div class="helper-text">Save the intake and send its secure link directly to the employee from PAL's verified Twilio number, (516) 400-4507.</div>
       <div class="newhire-text-actions">
         <div class="helper-text">Copy Text Message remains available as a backup.</div>
         <button class="btn-save" id="send-newhire-text-btn" type="button" onclick="sendNewHireIntakeText()">Save &amp; Send Text</button>

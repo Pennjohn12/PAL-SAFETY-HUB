@@ -30,3 +30,9 @@ test('Twilio supports an orientation-specific message', () => {
   assert.match(functions, /\['new-hire-intake', 'orientation-only'\]\.includes\(feature\)/);
   assert.match(functions, /Please complete your required PAL safety orientation/);
 });
+
+test('PAL dashboard reflects verified Twilio A2P registration', () => {
+  assert.match(html, /A2P Brand approved and messaging campaign verified/);
+  assert.match(html, /PAL number \(516\) 400-4507 is assigned to the verified A2P messaging service/);
+  assert.doesNotMatch(html, /Twilio[^<]*(carrier approval is pending|waiting on carrier approval)/i);
+});
