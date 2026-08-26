@@ -485,7 +485,7 @@ exports.sendAppText = onCall({
 }, async request => {
   const access = await assertOfficeAccess(request.auth);
   const feature = cleanText(request.data?.feature, 80);
-  if (feature !== 'new-hire-intake') {
+  if (!['new-hire-intake', 'orientation-only'].includes(feature)) {
     throw new HttpsError('invalid-argument', 'This text-message type is not supported.');
   }
 
@@ -494,7 +494,9 @@ exports.sendAppText = onCall({
   const employeeName = cleanText(request.data?.employeeName, 80);
   const projectName = cleanText(request.data?.projectName, 100) || 'your PAL jobsite';
   const greeting = employeeName ? `${employeeName}, please` : 'Please';
-  const body = `PAL Safety Hub: ${greeting} complete your pre-site intake for ${projectName}: ${intakeUrl} Reply STOP to opt out.`;
+  const body = feature === 'orientation-only'
+    ? `PAL Safety Hub: Please complete your required PAL safety orientation: ${intakeUrl} Reply STOP to opt out.`
+    : `PAL Safety Hub: ${greeting} complete your pre-site intake for ${projectName}: ${intakeUrl} Reply STOP to opt out.`;
   const usage = await reserveSmsMessage();
 
   try {

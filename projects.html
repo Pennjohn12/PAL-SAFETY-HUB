@@ -2027,6 +2027,11 @@
               <h3>Send Crew QR Code</h3>
               <p>Create a QR code and clickable link for employees to complete today’s forms.</p>
             </button>
+            <button class="operations-action-card" type="button" onclick="openOrientationInviteModal()">
+              <span class="operations-action-icon" aria-hidden="true">SMS</span>
+              <h3>Send Orientation Link</h3>
+              <p>Enter employee phone numbers and text each person a private PAL orientation link.</p>
+            </button>
             <button class="operations-action-card active" type="button" onclick="showOperationsView('operations-upcoming')">
               <span class="operations-action-icon" aria-hidden="true">+</span>
               <h3>Prepare Tomorrow or This Week</h3>
@@ -4096,6 +4101,21 @@
   </div>
 </div>
 
+<!-- QUICK ORIENTATION TEXT INVITES -->
+<div class="modal-overlay" id="modal-orientation-invites">
+  <div class="modal" style="max-width:680px;">
+    <h3>Send New Employee Orientation Links</h3>
+    <div class="helper-text" style="margin:6px 0 14px;">Enter mobile numbers only. PAL creates a separate private orientation packet and link for every number. Employees enter their own information after opening the link.</div>
+    <div id="orientation-invite-rows"></div>
+    <button class="btn-outline" type="button" onclick="addOrientationInviteRow()">+ Add Another Number</button>
+    <div class="mini-note" id="orientation-invite-summary" style="margin-top:12px;">No messages sent yet.</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" type="button" onclick="closeModal('modal-orientation-invites')">Cancel</button>
+      <button class="btn-save" id="send-orientation-invites-btn" type="button" onclick="sendOrientationInvites()">Send Orientation Links</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -4447,6 +4467,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.switchMainTab = switchMainTab;
 
   window.openNewHireIntakeModal = openNewHireIntakeModal;
+  window.openOrientationInviteModal = openOrientationInviteModal;
+  window.addOrientationInviteRow = addOrientationInviteRow;
+  window.sendOrientationInvites = sendOrientationInvites;
   window.saveNewHireIntake = saveNewHireIntake;
   window.sendNewHireIntakeText = sendNewHireIntakeText;
   window.loadNewHireIntakes = loadNewHireIntakes;
@@ -15043,6 +15066,118 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
   function normalizedEmployeePhone(value = '') {
     return String(value || '').replace(/\D/g, '').slice(-10);
+  }
+
+  function orientationInviteRowHTML(index) {
+    return `<div class="field orientation-invite-row" data-orientation-invite-row style="margin-bottom:10px;">
+      <label for="orientation-invite-phone-${index}">Employee Mobile Number ${index + 1}</label>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;">
+        <input id="orientation-invite-phone-${index}" data-orientation-invite-phone type="tel" inputmode="tel" autocomplete="tel" placeholder="516 555 0123" />
+        <button class="btn-sm danger" type="button" aria-label="Remove phone number row ${index + 1}" onclick="this.closest('[data-orientation-invite-row]').remove()">Remove</button>
+      </div>
+      <span class="mini-note" data-orientation-invite-status></span>
+    </div>`;
+  }
+
+  function addOrientationInviteRow() {
+    const host = document.getElementById('orientation-invite-rows');
+    if (!host) return;
+    const count = host.querySelectorAll('[data-orientation-invite-row]').length;
+    if (count >= 25) return toast('Send up to 25 orientation links at a time.');
+    host.insertAdjacentHTML('beforeend', orientationInviteRowHTML(count));
+  }
+
+  function openOrientationInviteModal() {
+    if (!currentUser) return toast('Please sign in first.');
+    const host = document.getElementById('orientation-invite-rows');
+    if (!host) return;
+    host.innerHTML = Array.from({ length: 5 }, (_, index) => orientationInviteRowHTML(index)).join('');
+    const summary = document.getElementById('orientation-invite-summary');
+    if (summary) summary.textContent = 'Enter one or more mobile numbers. Blank rows will be ignored.';
+    const button = document.getElementById('send-orientation-invites-btn');
+    if (button) { button.disabled = false; button.textContent = 'Send Orientation Links'; }
+    document.getElementById('modal-orientation-invites')?.classList.add('open');
+  }
+
+  function validOrientationInvitePhone(value = '') {
+    const digits = String(value || '').replace(/\D/g, '');
+    return digits.length === 10 || (digits.length === 11 && digits.startsWith('1'));
+  }
+
+  async function sendOrientationInvites() {
+    if (!requireCloudConnection('send orientation links')) return;
+    if (!isOfficeRole()) return toast('Only Office/Admin accounts can send orientation links.');
+    const rows = Array.from(document.querySelectorAll('[data-orientation-invite-row]'));
+    const entries = rows.map(row => ({
+      row,
+      input: row.querySelector('[data-orientation-invite-phone]'),
+      status: row.querySelector('[data-orientation-invite-status]')
+    })).filter(item => item.input?.value.trim() && !item.input.disabled);
+    if (!entries.length) return toast('Enter at least one employee mobile number.');
+    const invalid = entries.find(item => !validOrientationInvitePhone(item.input.value));
+    if (invalid) {
+      invalid.input.focus();
+      if (invalid.status) invalid.status.textContent = 'Enter a valid 10-digit U.S. mobile number.';
+      return toast('Please correct the highlighted phone number.');
+    }
+    const normalized = entries.map(item => String(item.input.value).replace(/\D/g, '').slice(-10));
+    if (new Set(normalized).size !== normalized.length) return toast('Remove duplicate phone numbers before sending.');
+
+    const button = document.getElementById('send-orientation-invites-btn');
+    const summary = document.getElementById('orientation-invite-summary');
+    let sent = 0;
+    let failed = 0;
+    if (button) { button.disabled = true; button.textContent = `Sending 0 of ${entries.length}...`; }
+    for (let index = 0; index < entries.length; index++) {
+      const item = entries[index];
+      try {
+        if (item.status) item.status.textContent = 'Creating private orientation link...';
+        const intakeData = {
+          name: '', phone: item.input.value.trim(), email: '', trade: '',
+          projectId: '', projectName: '', projectJobNumber: '', foreman: '', startDate: '',
+          status: 'Pending', required: 'Upload all current PAL-required safety certifications.',
+          notes: 'Orientation link sent from My Operations. Employee will enter their own information.',
+          source: 'operations-orientation-invite', certFiles: [],
+          createdBy: currentUser.uid,
+          createdByName: currentUser.displayName || currentUser.email,
+          createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        };
+        let intakeId = item.row.dataset.orientationIntakeId || '';
+        let intakeLink = item.row.dataset.orientationIntakeLink || '';
+        if (!intakeId || !intakeLink) {
+          const docRef = await addDoc(collection(db, 'newHireIntakes'), intakeData);
+          intakeId = docRef.id;
+          intakeLink = `${window.location.origin}${window.location.pathname}?intake=${intakeId}`;
+          await updateDoc(doc(db, 'newHireIntakes', intakeId), { intakeLink });
+          item.row.dataset.orientationIntakeId = intakeId;
+          item.row.dataset.orientationIntakeLink = intakeLink;
+        }
+        if (item.status) item.status.textContent = 'Sending text message...';
+        await sendAppTextCallable({
+          feature: 'orientation-only', to: intakeData.phone, intakeId,
+          intakeUrl: intakeLink, employeeName: '', projectName: 'PAL Safety Orientation'
+        });
+        await logAuditEvent('new_hire_intake.orientation_link_sent', {
+          intakeId, recipientNumberLast4: normalized[index].slice(-4), source: intakeData.source
+        });
+        sent++;
+        if (item.status) item.status.textContent = 'Sent successfully.';
+        item.input.disabled = true;
+      } catch (error) {
+        failed++;
+        console.error('Orientation invite failed', error);
+        if (item.status) item.status.textContent = error?.message || 'Could not send this message.';
+      }
+      if (button) button.textContent = `Sending ${index + 1} of ${entries.length}...`;
+      if (summary) summary.textContent = `${sent} sent${failed ? ` • ${failed} failed` : ''}`;
+    }
+    if (button) { button.disabled = false; button.textContent = failed ? 'Retry Unsent Numbers' : 'Send More Orientation Links'; }
+    if (!failed) {
+      toast(`${sent} orientation link${sent === 1 ? '' : 's'} sent.`);
+      await loadNewHireIntakes(true);
+    } else {
+      toast(`${sent} sent. ${failed} could not be sent; review the row messages and retry.`);
+    }
   }
 
   function intakeCertificationsForEmployee(intake) {
