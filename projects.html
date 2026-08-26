@@ -3863,7 +3863,7 @@
       <button class="btn-secondary" onclick="closeModal('modal-newhire-review')">Close</button>
       <button class="btn-outline" onclick="printNewHireFullPacket()">Print Full Packet</button>
       <button class="btn-outline" onclick="downloadNewHireFullPacket()">Save Full Packet</button>
-      <button class="btn-secondary" id="verify-existing-payroll-btn" onclick="verifyExistingEmployeePayrollDocs(currentNewHireReviewId)">Verify Payroll Docs on File</button>
+      <button class="btn-secondary" id="verify-existing-payroll-btn" onclick="verifyExistingEmployeePayrollDocs()">Verify Payroll Docs on File</button>
       <button class="btn-sm danger admin-only hidden-by-role" onclick="archiveNewHireIntake(currentNewHireReviewId)">Remove New Hire</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Missing Info')">Mark Missing Info</button>
       <button class="btn-secondary" onclick="setNewHireStatus(currentNewHireReviewId, 'Ready for Review')">Ready for Review</button>
@@ -13942,7 +13942,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     document.getElementById('modal-newhire-review')?.classList.add('open');
   }
 
-  async function verifyExistingEmployeePayrollDocs(id) {
+  async function verifyExistingEmployeePayrollDocs(id = currentNewHireReviewId) {
     if (!requireCloudConnection('verify payroll documents on file')) return;
     if (!isOfficeRole()) return toast('Only Office/Admin accounts can verify payroll documents on file.');
     const intake = allNewHireIntakes.find(x => x.id === id);
