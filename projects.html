@@ -3039,6 +3039,11 @@
         <div class="loaded-stamp" id="integration-health-stamp" style="margin-top:12px;"></div>
       </div>
       <div class="detail-card">
+        <h3>Recent Text Delivery</h3>
+        <div class="helper-text">Shows Twilio's final carrier result. Phone numbers are limited to the last four digits.</div>
+        <div id="integration-sms-delivery-list" class="integration-failure-list"><div class="helper-text">Loading text delivery history...</div></div>
+      </div>
+      <div class="detail-card">
         <h3>Production Status</h3>
         <div class="report-grid">
           <div class="report-field"><span class="k">Email</span><div class="v">Production sending and Monday certification automation are active.</div></div>
@@ -15540,6 +15545,14 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         const date = item.createdAt ? new Date(item.createdAt).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }) : 'Time unavailable';
         return `<div class="integration-failure-item"><strong>${esc(String(item.service || 'Service').toUpperCase())} - ${esc(item.feature || 'Operation')}</strong><span>${esc(item.message || 'Provider request failed.')}</span><span>${esc(date)}${item.code ? ` - Code: ${esc(item.code)}` : ''}</span></div>`;
       }).join('') : '<div class="helper-text">No provider failures have been recorded.</div>';
+      const smsDelivery = document.getElementById('integration-sms-delivery-list');
+      const smsRows = Array.isArray(data.recentSms) ? data.recentSms : [];
+      if (smsDelivery) smsDelivery.innerHTML = smsRows.length ? smsRows.map(item => {
+        const date = item.sentAt ? new Date(item.sentAt).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }) : 'Time unavailable';
+        const status = String(item.status || 'pending').toLowerCase();
+        const code = item.errorCode ? ` • Twilio code ${esc(item.errorCode)}` : '';
+        return `<div class="integration-failure-item"><strong>Text ending ${esc(item.destinationLast4 || '----')} — ${esc(status.toUpperCase())}</strong><span>${esc(item.feature || 'PAL message')}${code}</span><span>${esc(date)}</span></div>`;
+      }).join('') : '<div class="helper-text">No text delivery attempts have been recorded.</div>';
       const stamp = document.getElementById('integration-health-stamp');
       if (stamp) stamp.textContent = `Usage month ${data.usageId || ''} - refreshed ${new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })}`;
     } catch (error) {

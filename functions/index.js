@@ -106,10 +106,11 @@ async function recordIntegrationFailure(payload = {}) {
 
 async function getIntegrationHealthData() {
   const usageId = currentUsageId();
-  const [usageSnap, settingsSnap, failuresSnap] = await Promise.all([
+  const [usageSnap, settingsSnap, failuresSnap, smsSnap] = await Promise.all([
     db.collection('usage').doc(usageId).get(),
     db.collection('integrationSettings').doc('pal').get(),
-    db.collection('integrationFailureLogs').orderBy('createdAt', 'desc').limit(12).get()
+    db.collection('integrationFailureLogs').orderBy('createdAt', 'desc').limit(12).get(),
+    db.collection('integrationSmsLogs').orderBy('sentAt', 'desc').limit(12).get()
   ]);
   const usage = usageSnap.data() || {};
   const settings = settingsSnap.data() || {};
@@ -136,6 +137,18 @@ async function getIntegrationHealthData() {
         id: doc.id, service: cleanText(row.service, 40), feature: cleanText(row.feature, 80),
         code: cleanText(row.code, 80), message: cleanText(row.message, 300),
         createdAt: row.createdAt?.toDate ? row.createdAt.toDate().toISOString() : ''
+      };
+    }),
+    recentSms: smsSnap.docs.map(doc => {
+      const row = doc.data() || {};
+      const digits = String(row.to || '').replace(/\D/g, '');
+      return {
+        id: doc.id,
+        feature: cleanText(row.feature, 80),
+        destinationLast4: digits.slice(-4),
+        status: cleanText(row.status, 40),
+        errorCode: cleanText(row.errorCode, 30),
+        sentAt: row.sentAt?.toDate ? row.sentAt.toDate().toISOString() : ''
       };
     })
   };
@@ -624,6 +637,13 @@ exports.updateTextDeliveryStatus = onRequest({
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   });
+  if (['undelivered', 'failed'].includes(status)) {
+    await recordIntegrationFailure({
+      service: 'sms', feature: snap.data()?.feature || 'text-delivery',
+      code: errorCode || status,
+      message: `Twilio reported ${status} for a text ending in ${String(snap.data()?.to || '').replace(/\D/g, '').slice(-4)}.`
+    }).catch(error => console.error('SMS delivery failure logging failed', error));
+  }
   response.status(204).send();
 });
 

@@ -41,6 +41,14 @@ test('orientation texts distinguish queue acceptance from carrier delivery', () 
   assert.doesNotMatch(html, /item\.status\.textContent = 'Sent successfully\.'/);
 });
 
+test('administrators can see masked carrier delivery results and Twilio error codes', () => {
+  assert.match(functions, /recentSms/);
+  assert.match(functions, /destinationLast4/);
+  assert.match(functions, /errorCode/);
+  assert.match(html, /Recent Text Delivery/);
+  assert.match(html, /Twilio code/);
+});
+
 test('PAL dashboard reflects verified Twilio A2P registration', () => {
   assert.match(html, /A2P Brand approved and messaging campaign verified/);
   assert.match(html, /PAL number \(516\) 400-4507 is assigned to the verified A2P messaging service/);
