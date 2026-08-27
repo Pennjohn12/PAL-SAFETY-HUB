@@ -783,6 +783,7 @@
       font: inherit; font-weight: 600; font-size: 14px; white-space: nowrap;
       border-bottom: 3px solid transparent;
       box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      text-decoration: none;
     }
     .tab.active { color: var(--navy); border-bottom-color: var(--green); }
 
@@ -1986,6 +1987,7 @@
 
   <div class="page-wrap">
     <div class="tabs" id="main-dashboard-tabs" style="margin-bottom:20px;">
+      <a class="tab" href="index.html" title="Return to New Hire Orientation and Safety Checklists">PAL Home</a>
       <button class="tab active" onclick="switchMainTab('main-operations-dashboard', this)">My Operations</button>
       <button class="tab" onclick="switchMainTab('main-projects', this)">Projects</button>
       <button class="tab" onclick="switchMainTab('main-jha', this)">JHA</button>
@@ -3083,7 +3085,10 @@
  -->
 <div class="view" id="view-detail">
   <div class="header">
-    <button class="back-btn" onclick="backToProjects()"><- Projects</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="back-btn" onclick="backToProjects()"><- Projects</button>
+      <button class="back-btn" onclick="window.location.href='index.html'">PAL Home</button>
+    </div>
     <div class="header-right">
       <div class="user-chip">
         <div class="avatar" id="detail-avatar">?</div>
