@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
-export const PAL_PUBLIC_PROJECTS_URL = "https://pal-safety-hub.web.app/projects.html";
+export const PAL_PUBLIC_PROJECTS_URL = "https://pal.jobsiteresources.com/projects.html";
 
 export const PAL_ADMIN_EMAILS = [
   "jvpanettiere@gmail.com",

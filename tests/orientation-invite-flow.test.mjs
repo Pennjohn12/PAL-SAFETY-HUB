@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const html = await readFile(new URL('../projects.html', import.meta.url), 'utf8');
 const functions = await readFile(new URL('../functions/index.js', import.meta.url), 'utf8');
+const firebaseConfig = await readFile(new URL('../assets/js/config/pal-firebase.js', import.meta.url), 'utf8');
 
 test('My Operations exposes a simple multi-number orientation sender', () => {
   assert.match(html, /<h3>Send Orientation Link<\/h3>/);
@@ -14,7 +15,7 @@ test('My Operations exposes a simple multi-number orientation sender', () => {
 
 test('each recipient receives a unique tracked intake link', () => {
   assert.match(html, /await addDoc\(collection\(db, 'newHireIntakes'\), intakeData\)/);
-  assert.match(html, /\?intake=\$\{intakeId\}/);
+  assert.match(html, /buildPublicIntakeLink\(intakeId\)/);
   assert.match(html, /feature: 'orientation-only'/);
   assert.match(html, /source: 'operations-orientation-invite'/);
 });
@@ -28,7 +29,14 @@ test('bulk sender validates numbers, blocks duplicates, and safely retries faile
 
 test('Twilio supports an orientation-specific message', () => {
   assert.match(functions, /\['new-hire-intake', 'orientation-only'\]\.includes\(feature\)/);
-  assert.match(functions, /Please complete your required PAL safety orientation/);
+  assert.match(functions, /PAL Environmental Services: Your required safety orientation is ready/);
+});
+
+test('orientation texts use the branded PAL domain instead of the generic hosting domain', () => {
+  assert.match(firebaseConfig, /https:\/\/pal\.jobsiteresources\.com\/projects\.html/);
+  assert.match(html, /buildPublicIntakeLink\(intakeId\)/);
+  assert.match(html, /buildPublicIntakeLink\(docRef\.id\)/);
+  assert.doesNotMatch(html, /intakeLink = `\$\{window\.location\.origin\}/);
 });
 
 test('orientation texts distinguish queue acceptance from carrier delivery', () => {

@@ -4152,7 +4152,7 @@
     updateDailyAccessSubmissionCallable,
     closeDailyAccessSessionCallable,
     finalizePublicIntakeUploadCallable
-  } from "./assets/js/config/pal-firebase.js";
+  } from "./assets/js/config/pal-firebase.js?v=2026-08-27-branded-sms";
   import {
     capitalize,
     docIcon,
@@ -13313,7 +13313,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const startLine = data.startDate ? `Expected start date: ${data.startDate}` : '';
     const fallbackIntakeId = String(data.id || data.intakeId || '').trim();
     const fallbackLink = fallbackIntakeId
-      ? `${window.location.origin}${window.location.pathname}?intake=${encodeURIComponent(fallbackIntakeId)}`
+      ? buildPublicIntakeLink(fallbackIntakeId)
       : '';
     const link = data.intakeLink || fallbackLink || 'Intake link will be added after saving the request.';
     return `PAL New Hire / Pre-Site Intake
@@ -13398,7 +13398,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
-      const intakeLink = `${window.location.origin}${window.location.pathname}?intake=${docRef.id}`;
+      const intakeLink = buildPublicIntakeLink(docRef.id);
       await updateDoc(doc(db, 'newHireIntakes', docRef.id), { intakeLink });
       await logAuditEvent('new_hire_intake.created', {
         intakeId: docRef.id,
@@ -15114,6 +15114,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return digits.length === 10 || (digits.length === 11 && digits.startsWith('1'));
   }
 
+  function buildPublicIntakeLink(intakeId) {
+    const url = new URL(PAL_PUBLIC_PROJECTS_URL);
+    url.searchParams.set('intake', String(intakeId || ''));
+    return url.toString();
+  }
+
   async function watchOrientationTextDelivery(logId, statusElement) {
     if (!logId || !statusElement) return;
     const finalLabels = {
@@ -15182,7 +15188,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         if (!intakeId || !intakeLink) {
           const docRef = await addDoc(collection(db, 'newHireIntakes'), intakeData);
           intakeId = docRef.id;
-          intakeLink = `${window.location.origin}${window.location.pathname}?intake=${intakeId}`;
+          intakeLink = buildPublicIntakeLink(intakeId);
           await updateDoc(doc(db, 'newHireIntakes', intakeId), { intakeLink });
           item.row.dataset.orientationIntakeId = intakeId;
           item.row.dataset.orientationIntakeLink = intakeLink;

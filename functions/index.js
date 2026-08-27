@@ -509,8 +509,8 @@ exports.sendAppText = onCall({
   const projectName = cleanText(request.data?.projectName, 100) || 'your PAL jobsite';
   const greeting = employeeName ? `${employeeName}, please` : 'Please';
   const body = feature === 'orientation-only'
-    ? `PAL Safety Hub: Please complete your required PAL safety orientation: ${intakeUrl} Reply STOP to opt out.`
-    : `PAL Safety Hub: ${greeting} complete your pre-site intake for ${projectName}: ${intakeUrl} Reply STOP to opt out.`;
+    ? `PAL Environmental Services: Your required safety orientation is ready. Open your secure PAL link: ${intakeUrl} Reply STOP to opt out.`
+    : `PAL Environmental Services: ${greeting} complete your pre-site intake for ${projectName}: ${intakeUrl} Reply STOP to opt out.`;
   const usage = await reserveSmsMessage();
   const smsLogRef = db.collection('integrationSmsLogs').doc();
   const callbackToken = crypto.randomBytes(32).toString('hex');
