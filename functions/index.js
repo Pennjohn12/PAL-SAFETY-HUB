@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { housekeepingPromptGuidance } = require('./approved-safety-guidance');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineSecret } = require('firebase-functions/params');
@@ -16,6 +16,7 @@ const twilioAccountSid = defineSecret('TWILIO_ACCOUNT_SID');
 const twilioApiKeySid = defineSecret('TWILIO_API_KEY_SID');
 const twilioApiKeySecret = defineSecret('TWILIO_API_KEY_SECRET');
 const TWILIO_FROM_NUMBER = '+15164004507';
+const TWILIO_STATUS_CALLBACK_URL = 'https://us-central1-pal-safety-hub.cloudfunctions.net/updateTextDeliveryStatus';
 
 const BOOTSTRAP_ADMIN_EMAILS = new Set([
   'jvpanettiere@gmail.com',
@@ -498,9 +499,26 @@ exports.sendAppText = onCall({
     ? `PAL Safety Hub: Please complete your required PAL safety orientation: ${intakeUrl} Reply STOP to opt out.`
     : `PAL Safety Hub: ${greeting} complete your pre-site intake for ${projectName}: ${intakeUrl} Reply STOP to opt out.`;
   const usage = await reserveSmsMessage();
+  const smsLogRef = db.collection('integrationSmsLogs').doc();
+  const callbackToken = crypto.randomBytes(32).toString('hex');
+  const callbackTokenHash = crypto.createHash('sha256').update(callbackToken).digest('hex');
 
   try {
-    const form = new URLSearchParams({ To: to, From: TWILIO_FROM_NUMBER, Body: body });
+    await smsLogRef.set({
+      provider: 'twilio', providerId: '', feature, to,
+      intakeId: cleanText(request.data?.intakeId, 160), projectName,
+      sentByUid: request.auth.uid, sentByEmail: access.email,
+      usageId: usage.usageId, status: 'submitting', callbackTokenHash,
+      sentAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    const statusCallback = new URL(TWILIO_STATUS_CALLBACK_URL);
+    statusCallback.searchParams.set('logId', smsLogRef.id);
+    statusCallback.searchParams.set('token', callbackToken);
+    const form = new URLSearchParams({
+      To: to, From: TWILIO_FROM_NUMBER, Body: body,
+      StatusCallback: statusCallback.toString()
+    });
     const credentials = Buffer.from(`${twilioApiKeySid.value()}:${twilioApiKeySecret.value()}`).toString('base64');
     const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid.value()}/Messages.json`, {
       method: 'POST',
@@ -522,12 +540,15 @@ exports.sendAppText = onCall({
       );
     }
 
-    await db.collection('integrationSmsLogs').add({
-      provider: 'twilio', providerId: result.sid || '', feature, to,
-      intakeId: cleanText(request.data?.intakeId, 160), projectName,
-      sentByUid: request.auth.uid, sentByEmail: access.email,
-      usageId: usage.usageId, status: result.status || 'queued',
-      sentAt: admin.firestore.FieldValue.serverTimestamp()
+    await db.runTransaction(async transaction => {
+      const currentSnap = await transaction.get(smsLogRef);
+      const currentStatus = String(currentSnap.data()?.status || '');
+      const terminal = ['delivered', 'undelivered', 'failed'].includes(currentStatus);
+      transaction.set(smsLogRef, {
+        providerId: result.sid || '',
+        ...(terminal ? {} : { status: result.status || 'queued' }),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
     });
     await db.collection('auditLogs').add({
       action: 'text.sent', createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -535,8 +556,15 @@ exports.sendAppText = onCall({
       recipientCount: 1, provider: 'twilio', providerId: result.sid || '',
       usageId: usage.usageId
     });
-    return { ok: true, providerId: result.sid || '', status: result.status || 'queued', usageId: usage.usageId };
+    return {
+      ok: true, providerId: result.sid || '', status: result.status || 'queued',
+      logId: smsLogRef.id, usageId: usage.usageId
+    };
   } catch (error) {
+    await smsLogRef.set({
+      status: 'failed', failureMessage: cleanText(error?.message, 300),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(logError => console.error('SMS log update failed', logError));
     await releaseSmsMessage(usage.usageId).catch(refundError => console.error('SMS usage refund failed', refundError));
     await recordIntegrationFailure({
       service: 'sms', feature, code: error?.code, message: error?.message,
@@ -546,6 +574,57 @@ exports.sendAppText = onCall({
     console.error('Text send failed', error);
     throw new HttpsError('internal', 'The text could not be sent. Try again shortly.');
   }
+});
+
+exports.updateTextDeliveryStatus = onRequest({
+  region: 'us-central1',
+  invoker: 'public',
+  timeoutSeconds: 15,
+  memory: '256MiB'
+}, async (request, response) => {
+  if (request.method !== 'POST') {
+    response.status(405).send('Method not allowed');
+    return;
+  }
+  const logId = cleanText(request.query?.logId, 160);
+  const token = cleanText(request.query?.token, 160);
+  if (!logId || !token) {
+    response.status(403).send('Invalid callback');
+    return;
+  }
+  const logRef = db.collection('integrationSmsLogs').doc(logId);
+  const snap = await logRef.get();
+  const expectedHash = String(snap.data()?.callbackTokenHash || '');
+  const actualHash = crypto.createHash('sha256').update(token).digest('hex');
+  if (!snap.exists || !expectedHash || expectedHash.length !== actualHash.length
+      || !crypto.timingSafeEqual(Buffer.from(expectedHash), Buffer.from(actualHash))) {
+    response.status(403).send('Invalid callback');
+    return;
+  }
+  const allowedStatuses = new Set(['queued', 'accepted', 'sending', 'sent', 'delivered', 'undelivered', 'failed']);
+  const status = cleanText(request.body?.MessageStatus || request.body?.SmsStatus, 40).toLowerCase();
+  if (!allowedStatuses.has(status)) {
+    response.status(400).send('Invalid status');
+    return;
+  }
+  const providerId = cleanText(request.body?.MessageSid, 80);
+  const savedProviderId = cleanText(snap.data()?.providerId, 80);
+  if (savedProviderId && providerId && savedProviderId !== providerId) {
+    response.status(403).send('Message mismatch');
+    return;
+  }
+  const errorCode = cleanText(request.body?.ErrorCode, 30);
+  await db.runTransaction(async transaction => {
+    const currentSnap = await transaction.get(logRef);
+    const currentStatus = String(currentSnap.data()?.status || '');
+    if (['delivered', 'undelivered', 'failed'].includes(currentStatus) && currentStatus !== status) return;
+    transaction.set(logRef, {
+      status, providerId: providerId || savedProviderId, errorCode,
+      ...(status === 'delivered' ? { deliveredAt: admin.firestore.FieldValue.serverTimestamp() } : {}),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  });
+  response.status(204).send();
 });
 
 exports.generateSafetyDraft = onCall({

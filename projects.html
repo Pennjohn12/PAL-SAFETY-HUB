@@ -15109,6 +15109,31 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return digits.length === 10 || (digits.length === 11 && digits.startsWith('1'));
   }
 
+  async function watchOrientationTextDelivery(logId, statusElement) {
+    if (!logId || !statusElement) return;
+    const finalLabels = {
+      delivered: 'Delivered to phone.',
+      undelivered: 'Not delivered by the carrier. Check the number or contact PAL office.',
+      failed: 'Delivery failed. Check the number or contact PAL office.'
+    };
+    for (let attempt = 0; attempt < 6; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      try {
+        const snap = await getDoc(doc(db, 'integrationSmsLogs', logId));
+        const status = String(snap.data()?.status || '').toLowerCase();
+        if (finalLabels[status]) {
+          statusElement.textContent = finalLabels[status];
+          statusElement.dataset.deliveryStatus = status;
+          return;
+        }
+      } catch (error) {
+        console.warn('Could not refresh text delivery status', error);
+        return;
+      }
+    }
+    statusElement.textContent = 'Queued with Twilio; final carrier confirmation is still pending.';
+  }
+
   async function sendOrientationInvites() {
     if (!requireCloudConnection('send orientation links')) return;
     if (!isOfficeRole()) return toast('Only Office/Admin accounts can send orientation links.');
@@ -15130,7 +15155,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
 
     const button = document.getElementById('send-orientation-invites-btn');
     const summary = document.getElementById('orientation-invite-summary');
-    let sent = 0;
+    let queued = 0;
     let failed = 0;
     if (button) { button.disabled = true; button.textContent = `Sending 0 of ${entries.length}...`; }
     for (let index = 0; index < entries.length; index++) {
@@ -15158,15 +15183,18 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
           item.row.dataset.orientationIntakeLink = intakeLink;
         }
         if (item.status) item.status.textContent = 'Sending text message...';
-        await sendAppTextCallable({
+        const delivery = await sendAppTextCallable({
           feature: 'orientation-only', to: intakeData.phone, intakeId,
           intakeUrl: intakeLink, employeeName: '', projectName: 'PAL Safety Orientation'
         });
         await logAuditEvent('new_hire_intake.orientation_link_sent', {
           intakeId, recipientNumberLast4: normalized[index].slice(-4), source: intakeData.source
         });
-        sent++;
-        if (item.status) item.status.textContent = 'Sent successfully.';
+        queued++;
+        if (item.status) {
+          item.status.textContent = 'Queued with Twilio—waiting for delivery confirmation.';
+          watchOrientationTextDelivery(delivery?.data?.logId, item.status);
+        }
         item.input.disabled = true;
       } catch (error) {
         failed++;
@@ -15174,14 +15202,14 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         if (item.status) item.status.textContent = error?.message || 'Could not send this message.';
       }
       if (button) button.textContent = `Sending ${index + 1} of ${entries.length}...`;
-      if (summary) summary.textContent = `${sent} sent${failed ? ` • ${failed} failed` : ''}`;
+      if (summary) summary.textContent = `${queued} queued${failed ? ` • ${failed} failed to queue` : ''}`;
     }
     if (button) { button.disabled = false; button.textContent = failed ? 'Retry Unsent Numbers' : 'Send More Orientation Links'; }
     if (!failed) {
-      toast(`${sent} orientation link${sent === 1 ? '' : 's'} sent.`);
+      toast(`${queued} orientation link${queued === 1 ? '' : 's'} queued. PAL is waiting for carrier confirmation.`);
       await loadNewHireIntakes(true);
     } else {
-      toast(`${sent} sent. ${failed} could not be sent; review the row messages and retry.`);
+      toast(`${queued} queued. ${failed} could not be queued; review the row messages and retry.`);
     }
   }
 

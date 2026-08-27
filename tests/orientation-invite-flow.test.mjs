@@ -31,6 +31,16 @@ test('Twilio supports an orientation-specific message', () => {
   assert.match(functions, /Please complete your required PAL safety orientation/);
 });
 
+test('orientation texts distinguish queue acceptance from carrier delivery', () => {
+  assert.match(functions, /StatusCallback/);
+  assert.match(functions, /exports\.updateTextDeliveryStatus = onRequest/);
+  assert.match(functions, /callbackTokenHash/);
+  assert.match(html, /watchOrientationTextDelivery/);
+  assert.match(html, /Queued with Twilio—waiting for delivery confirmation/);
+  assert.match(html, /Delivered to phone/);
+  assert.doesNotMatch(html, /item\.status\.textContent = 'Sent successfully\.'/);
+});
+
 test('PAL dashboard reflects verified Twilio A2P registration', () => {
   assert.match(html, /A2P Brand approved and messaging campaign verified/);
   assert.match(html, /PAL number \(516\) 400-4507 is assigned to the verified A2P messaging service/);
