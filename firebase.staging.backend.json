@@ -1,4 +1,10 @@
 {
+  "firestore": {
+    "rules": "firestore.staging.rules"
+  },
+  "storage": {
+    "rules": "storage.staging.rules"
+  },
   "functions": [
     {
       "source": "functions-staging",

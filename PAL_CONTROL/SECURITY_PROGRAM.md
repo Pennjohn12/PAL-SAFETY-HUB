@@ -57,8 +57,10 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - An isolated Node.js 22 Staging Functions codebase is deployed with one synthetic-data-only health function, `stagingEnvironmentHealth`. It has no provider secrets or Production integrations, is capped at one instance, and is the only listed Staging function.
 - An anonymous HTTP invocation of the Staging health function returned `403 Forbidden`; public invocation is therefore not enabled. Authenticated app integration remains to be designed and tested before relying on this endpoint.
 - The Staging Artifact Registry cleanup policy removes container images older than one day to limit buildup and cost.
-- Automated tests pass **47 of 47**, including Staging host isolation, banner/header checks, and the isolated backend configuration.
-- Not complete: hardened Staging rules, Auth policy/MFA configuration, synthetic accounts/data, integration allowlists, and end-to-end role/workflow verification.
+- Staging-specific Firestore rules are deployed with public access denied, cross-user listing denied, verified-email-only employee bootstrap, and no client-controlled role elevation or profile updates.
+- Staging Storage remains fully closed for reads and writes until Package 5 defines and validates narrow upload authorization.
+- Automated tests pass **50 of 50**, including Staging host isolation, banner/header checks, isolated backend configuration, and static assertions for the Staging rule boundaries. Firebase also compiled and released both rule files successfully.
+- Not complete: emulator-backed rule behavior tests, Auth policy/MFA configuration, synthetic accounts/data, integration allowlists, and end-to-end role/workflow verification.
 
 ## Sequencing
 
