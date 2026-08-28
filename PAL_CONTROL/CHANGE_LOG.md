@@ -2,6 +2,15 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-28 — Package 2 registration compatibility verification
+
+- Added Firebase emulator coverage for the exact permitted employee bootstrap, the current app registration payload, and subsequent synthetic project access.
+- Result: 10 of 10 emulator tests passed. The tests reproduced two Staging defects: the app registration payload is rejected by the profile-create rule, and the rule uses incompatible Boolean/string synthetic markers across profile creation and project authorization.
+- Repair: the Staging website now sends only the constrained Employee bootstrap profile, unverified users remain unable to read it, and project authorization accepts both the new Boolean marker and existing string-marked fixtures while retaining verified-email and explicit-membership checks.
+- Staging deployment: corrected Firestore rules and Hosting were released only to `pal-safety-hub-staging`. Live Hosting returned HTTP 200, no-store, frame denial, no-index, the Staging banner, and the corrected registration code.
+- Data/credential impact: none. Tests were local and synthetic; no live account, password, token, Production rule, or Production data was created, read, or changed.
+- Follow-up: complete isolated browser workflows when test credentials are specifically authorized, and resolve the MFA/Identity Platform and account self-delete decisions.
+
 ## 2026-08-28 — Security program Package 2 started
 
 - Objective and scope: establish a Firebase Staging environment isolated from Production and restricted to synthetic data.

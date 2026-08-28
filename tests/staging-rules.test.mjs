@@ -4,6 +4,7 @@ import test from "node:test";
 
 const firestoreRules = fs.readFileSync("firestore.staging.rules", "utf8");
 const storageRules = fs.readFileSync("storage.staging.rules", "utf8");
+const projectsHtml = fs.readFileSync("projects.html", "utf8");
 
 test("Staging Firestore denies public and cross-user access", () => {
   assert.match(firestoreRules, /allow list: if false/);
@@ -12,12 +13,16 @@ test("Staging Firestore denies public and cross-user access", () => {
 });
 
 test("Staging self-registration cannot grant privileged roles", () => {
-  assert.match(firestoreRules, /request\.auth\.token\.email_verified == true/);
+  assert.match(firestoreRules, /function safeEmployeeBootstrap\(userId\)[\s\S]*return signedIn\(\)/);
+  assert.match(firestoreRules, /request\.auth\.token\.email != null/);
   assert.match(firestoreRules, /request\.resource\.data\.role == 'employee'/);
   assert.match(firestoreRules, /request\.resource\.data\.accessLevel == 'employee'/);
   assert.match(firestoreRules, /request\.resource\.data\.admin == false/);
   assert.match(firestoreRules, /request\.resource\.data\.isAdmin == false/);
   assert.match(firestoreRules, /allow update, delete: if false/);
+  assert.match(projectsHtml, /const profilePayload = PAL_IS_STAGING/);
+  assert.match(projectsHtml, /environment: 'staging'/);
+  assert.match(projectsHtml, /synthetic: true/);
 });
 
 test("Staging Storage remains completely closed", () => {
@@ -27,7 +32,8 @@ test("Staging Storage remains completely closed", () => {
 
 test("Staging project reads require verified active synthetic membership", () => {
   assert.match(firestoreRules, /function activeSyntheticProfile\(\)/);
-  assert.match(firestoreRules, /profile\(\)\.status != 'disabled-test'/);
+  assert.match(firestoreRules, /profile\(\)\.get\('status', ''\) != 'disabled-test'/);
+  assert.match(firestoreRules, /profile\(\)\.synthetic == true/);
   assert.match(firestoreRules, /function syntheticProjectMember\(project\)/);
   assert.match(firestoreRules, /request\.auth\.uid in \[/);
   assert.match(firestoreRules, /allow get: if syntheticProjectMember\(resource\.data\)/);

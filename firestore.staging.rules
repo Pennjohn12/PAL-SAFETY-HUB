@@ -13,7 +13,8 @@ service cloud.firestore {
     }
 
     function safeEmployeeBootstrap(userId) {
-      return verifiedEmail()
+      return signedIn()
+        && request.auth.token.email != null
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
           'uid',
@@ -46,8 +47,8 @@ service cloud.firestore {
     function activeSyntheticProfile() {
       return verifiedEmail()
         && profile().environment == 'staging'
-        && profile().synthetic == 'true'
-        && profile().status != 'disabled-test';
+        && (profile().synthetic == true || profile().synthetic == 'true')
+        && profile().get('status', '') != 'disabled-test';
     }
 
     function syntheticProjectMember(project) {

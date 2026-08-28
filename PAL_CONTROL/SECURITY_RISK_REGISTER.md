@@ -68,9 +68,9 @@ These are not confirmed vulnerabilities until evidence establishes the condition
 
 - Checked-in Firestore and Storage rules have not been proven identical to the deployed Production revisions.
 - Deployed Function source has not been mapped conclusively to the current Git commit. An older `us-central1` `submitEmployeeFieldForm` entry is reported with `UNKNOWN` state in addition to the active `us-east1` deployment; callability and removal status require safe verification.
-- No Firebase Emulator rule suite verifies the complete anonymous/Employee/Foreman/Supervisor/Office/Admin and cross-project matrix.
-- Isolated Staging infrastructure exists, but synthetic role fixtures and complete authorization/abuse tests are not yet established.
-- Auth settings such as email verification enforcement, MFA enrollment, password policy, authorized domains, session revocation, and abuse protection require an explicit configuration audit.
+- The Staging emulator suite covers ten core allow/deny cases, but it does not yet verify the complete anonymous/Employee/Foreman/Supervisor/Office/Admin, cross-project, Functions, and end-to-end workflow matrix.
+- Isolated Staging infrastructure and synthetic role fixtures exist. Emulator evidence identified registration-profile and synthetic-marker incompatibilities; both were repaired and deployed to Staging with regression coverage. Full interactive and cross-role workflow validation remains pending.
+- Staging Auth settings were audited and its password policy hardened. MFA, blocking functions, Auth activity logging, session-revocation behavior, and abuse protection still require decisions or testing; several require an Identity Platform upgrade.
 - IAM roles, service-account privilege, API-key restrictions, billing alerts, log retention, and secret access policies require a Google Cloud configuration audit without revealing secret values.
 - Storage object versioning, malware scanning, download logging, and retention/lifecycle enforcement are unverified.
 - Firestore backups exist, but a restore exercise, recovery time/objectives, and Storage-file recovery are unverified.

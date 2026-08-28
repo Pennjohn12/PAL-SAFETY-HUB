@@ -47,5 +47,15 @@ On 2026-08-28, a narrow Staging-only project rule was compiled and released. It 
 - Static authorization assertion: **Passed**.
 - Firebase rule compilation and release: **Passed**.
 - Live Rules Playground membership simulation: **Inconclusive**. The simulator remained in a loading state and returned neither allow nor deny; no console error was exposed.
-- Firebase Local Emulator Suite: **7 of 7 tests passed** on 2026-08-28. Tests verified anonymous denial, own-versus-cross-profile access, verified-email enforcement, explicit active project membership, outsider and disabled-profile denial, collection-list denial, all tested client mutations denied, and Storage read/upload denial.
+- Firebase Local Emulator Suite: **10 of 10 tests passed** on 2026-08-28. Tests verified anonymous denial, own-versus-cross-profile access, verified-email enforcement, explicit active project membership, outsider and disabled-profile denial, collection-list denial, all tested client mutations denied, and Storage read/upload denial.
 - Safety interpretation: the deployed rule text has now passed local behavioral verification with synthetic data. This does not verify complete application workflows, Functions authorization, or Production rules.
+
+## Resolved Staging registration incompatibilities
+
+The emulator reproduced two Staging-only workflow defects. They were availability/integration defects in the isolated environment, not verified Production vulnerabilities.
+
+- The Staging registration path now writes only the exact Employee bootstrap fields accepted by the Staging rule. Production registration behavior is unchanged.
+- An unverified signed-in user may create only their own constrained Employee profile. Profile reads still require verified email; lists, updates, deletes, privileged roles, and arbitrary fields remain denied.
+- The active-project predicate now accepts the Boolean marker created by registration while retaining compatibility with the existing string-marked synthetic fixtures. Explicit membership and verified email remain required.
+- The repaired rule compiled and was released to `pal-safety-hub-staging`; the corrected Staging website was also released. Live Hosting returned HTTP 200 with no-store, frame-denial, and no-index protections and contained the Staging-only registration path.
+- No live account or credential was created, changed, or tested to establish these results.

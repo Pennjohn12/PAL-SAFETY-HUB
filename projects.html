@@ -4229,6 +4229,7 @@
     closeDailyAccessSessionCallable,
     finalizePublicIntakeUploadCallable
   } from "./assets/js/config/pal-firebase.js?v=2026-08-27-branded-sms";
+  import { PAL_IS_STAGING } from "./assets/js/config/pal-environment.js";
   import {
     capitalize,
     docIcon,
@@ -5183,20 +5184,33 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       const role = adminRole ? 'admin' : 'employee';
       const grant = await loadEmailAccessGrant(normalizedEmail);
       const grantedPayload = grant ? rolePayloadForAccess(grant.role || grant.accessLevel) : null;
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        ...(grantedPayload || {
-          role,
-          admin: adminRole,
-          accessLevel: adminRole ? 'admin' : 'employee',
-          disabled: false
-        }),
-        uid: cred.user.uid,
-        name,
-        email: normalizedEmail || email,
-        accessGrantId: grant?.id || '',
-        accessGrantAppliedAt: grant ? serverTimestamp() : null,
-        createdAt: serverTimestamp()
-      });
+      const profilePayload = PAL_IS_STAGING
+        ? {
+            uid: cred.user.uid,
+            email: normalizedEmail || email,
+            role: 'employee',
+            accessLevel: 'employee',
+            admin: false,
+            isAdmin: false,
+            disabled: false,
+            environment: 'staging',
+            synthetic: true
+          }
+        : {
+            ...(grantedPayload || {
+              role,
+              admin: adminRole,
+              accessLevel: adminRole ? 'admin' : 'employee',
+              disabled: false
+            }),
+            uid: cred.user.uid,
+            name,
+            email: normalizedEmail || email,
+            accessGrantId: grant?.id || '',
+            accessGrantAppliedAt: grant ? serverTimestamp() : null,
+            createdAt: serverTimestamp()
+          };
+      await setDoc(doc(db, 'users', cred.user.uid), profilePayload);
       toast(`Welcome, ${name}! `);
     } catch(e) {
       showError(errEl, friendlyError(e.code));

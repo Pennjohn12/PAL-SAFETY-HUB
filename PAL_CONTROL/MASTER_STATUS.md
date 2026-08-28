@@ -60,7 +60,7 @@ Present in current source and covered by current automated checks where noted:
 ## Testing / QA baseline
 
 - Automated tests: **54 passed, 0 failed** on 2026-08-28.
-- Staging Firebase emulator authorization tests: **7 passed, 0 failed** on 2026-08-28.
+- Staging Firebase emulator authorization tests: **10 passed, 0 failed** on 2026-08-28. The added tests safely reproduced and regression-tested repairs for registration/profile and synthetic-marker incompatibilities without creating live credentials.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
@@ -87,7 +87,7 @@ Present in current source and covered by current automated checks where noted:
 ## Security program status
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
-- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, six synthetic Authentication identities/profiles, one fake project, and a passing 7-test Firebase emulator authorization suite. The MFA/Identity Platform decision, self-delete restriction, and full workflow validation remain incomplete.
+- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, six synthetic Authentication identities/profiles, one fake project, and a passing 10-test Firebase emulator authorization suite. The repaired Staging registration contract is deployed and verified without live credentials. The MFA/Identity Platform decision, self-delete restriction, and full workflow validation remain incomplete.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.

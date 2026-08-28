@@ -24,6 +24,8 @@ const employeeUid = "synthetic-employee";
 const foremanUid = "synthetic-foreman";
 const disabledUid = "synthetic-disabled";
 const outsiderUid = "synthetic-outsider";
+const bootstrapUid = "synthetic-bootstrap";
+const appRegistrationUid = "synthetic-app-registration";
 const projectDocId = "staging-test-project-001";
 
 let environment;
@@ -86,7 +88,7 @@ before(async () => {
       synthetic: "true",
       employeeUid,
       foremanUid,
-      supervisorUid: "synthetic-supervisor",
+      supervisorUid: bootstrapUid,
       officeUid: "synthetic-office",
       adminUid: "synthetic-admin",
     });
@@ -117,6 +119,56 @@ test("unverified users cannot read their own profile", async () => {
     .authenticatedContext(employeeUid, claims(employeeUid, "employee", false))
     .firestore();
   await assertFails(getDoc(doc(db, "users", employeeUid)));
+});
+
+test("unverified clients can create only the exact employee bootstrap shape", async () => {
+  const db = environment
+    .authenticatedContext(bootstrapUid, claims(bootstrapUid, "bootstrap", false))
+    .firestore();
+  await assertSucceeds(
+    setDoc(doc(db, "users", bootstrapUid), {
+      uid: bootstrapUid,
+      email: "pal.synthetic.bootstrap@example.com",
+      role: "employee",
+      accessLevel: "employee",
+      admin: false,
+      isAdmin: false,
+      disabled: false,
+      environment: "staging",
+      synthetic: true,
+    }),
+  );
+  await assertFails(getDoc(doc(db, "users", bootstrapUid)));
+});
+
+test("Production-shaped registration payload remains rejected by the Staging profile rule", async () => {
+  const db = environment
+    .authenticatedContext(
+      appRegistrationUid,
+      claims(appRegistrationUid, "app-registration"),
+    )
+    .firestore();
+  await assertFails(
+    setDoc(doc(db, "users", appRegistrationUid), {
+      uid: appRegistrationUid,
+      email: "pal.synthetic.app-registration@example.com",
+      name: "STAGING TEST USER",
+      role: "employee",
+      accessLevel: "employee",
+      admin: false,
+      disabled: false,
+      accessGrantId: "",
+      accessGrantAppliedAt: null,
+      createdAt: "synthetic-timestamp",
+    }),
+  );
+});
+
+test("verified bootstrap profile can satisfy the project active-profile predicate", async () => {
+  const db = environment
+    .authenticatedContext(bootstrapUid, claims(bootstrapUid, "bootstrap"))
+    .firestore();
+  await assertSucceeds(getDoc(doc(db, "projects", projectDocId)));
 });
 
 test("explicit active members can read the synthetic project", async () => {
