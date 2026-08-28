@@ -16,7 +16,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 | # | Work package | Status | Finish line / required evidence |
 |---|---|---|---|
 | 1 | Security inventory and risk register | Passed PAL tests | Current source, configuration, Production metadata, data classes, trust boundaries, controls, verified risks, and verification gaps are recorded in `SECURITY_RISK_REGISTER.md`. No destructive testing or real-data inspection is used. |
-| 2 | Isolated Staging/Test environment | Not started | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
+| 2 | Isolated Staging/Test environment | In progress | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
 | 3 | Controlled Production maintenance mode | Not started | John approves the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented. |
 | 4 | Secure public orientation/intake access | Not started | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
 | 5 | Secure sensitive-upload authorization | Not started | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
@@ -34,10 +34,21 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 ## Current program position
 
 - Completed: **1 of 15** packages at the PAL internal-assessment level.
+- In progress: **Package 2 — Isolated Staging/Test environment**.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **No**.
 - Isolated Staging available: **No**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
+
+## Package 2 verified progress
+
+- Firebase project `pal-safety-hub-staging` exists separately from Production.
+- A Staging Firebase web app and default Hosting site exist.
+- The Firestore API is enabled only on the Staging project.
+- The default Staging Firestore database exists in `us-east1`, has deletion protection enabled, and began with closed rules.
+- Repository aliases explicitly distinguish `production` and `staging`; the Production default was not changed.
+- Not complete: billing attachment/approval, PITR, Storage, Auth provider configuration, Functions, Staging-only browser configuration, safe rules deployment, integration isolation, budgets/alerts, synthetic accounts/data, visible banner, and end-to-end verification.
+- No Hosting deployment is permitted yet because the current browser configuration still points to Production.
 
 ## Sequencing
 

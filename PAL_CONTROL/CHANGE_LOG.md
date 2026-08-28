@@ -2,6 +2,16 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-28 — Security program Package 2 started
+
+- Objective and scope: establish a Firebase Staging environment isolated from Production and restricted to synthetic data.
+- Created Staging project `pal-safety-hub-staging`, its Firebase web app, and default Hosting site.
+- Enabled the Firestore API for Staging and created the default database in `us-east1` with deletion protection and initially closed rules.
+- Added explicit repository aliases for Production and Staging without changing the existing Production default.
+- Billing-dependent controls remain incomplete: point-in-time recovery, Storage, Functions, budgets, and alerts.
+- No Staging or Production deployment occurred. No Production configuration, secret, user, permission, or data was accessed or changed.
+- Safety gate: do not deploy the current frontend to Staging until its Firebase configuration is isolated from Production and a visible staging banner is present.
+
 ## 2026-08-28 — Security program Package 1 baseline
 
 - Objective and scope: create the durable 15-package security tracker and evidence-based security inventory/risk register; documentation only.

@@ -80,6 +80,7 @@ Present in current source and covered by current automated checks where noted:
 ## Security program status
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
+- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging`, its web app/default Hosting site, and a deletion-protected `us-east1` Firestore database now exist; the app has not been deployed or connected.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.

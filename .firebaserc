@@ -1,6 +1,8 @@
 {
   "projects": {
-    "default": "pal-safety-hub"
+    "default": "pal-safety-hub",
+    "production": "pal-safety-hub",
+    "staging": "pal-safety-hub-staging"
   },
   "targets": {
     "pal-safety-hub": {
@@ -10,6 +12,13 @@
         ],
         "pal-safety-hub": [
           "pal-safety-hub"
+        ]
+      }
+    },
+    "pal-safety-hub-staging": {
+      "hosting": {
+        "pal-safety-hub-staging": [
+          "pal-safety-hub-staging"
         ]
       }
     }
