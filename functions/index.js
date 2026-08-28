@@ -590,7 +590,7 @@ exports.sendAppText = onCall({
 });
 
 exports.getMyEmployeeCenter = onCall({
-  region: 'us-central1',
+  region: 'us-east1',
   invoker: 'public',
   enforceAppCheck: false,
   timeoutSeconds: 30,
