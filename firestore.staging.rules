@@ -37,11 +37,42 @@ service cloud.firestore {
         && request.resource.data.synthetic == true;
     }
 
+    function profile() {
+      return signedIn()
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+        : {};
+    }
+
+    function activeSyntheticProfile() {
+      return verifiedEmail()
+        && profile().environment == 'staging'
+        && profile().synthetic == 'true'
+        && profile().status != 'disabled-test';
+    }
+
+    function syntheticProjectMember(project) {
+      return activeSyntheticProfile()
+        && project.environment == 'staging'
+        && project.synthetic == 'true'
+        && request.auth.uid in [
+          project.employeeUid,
+          project.foremanUid,
+          project.supervisorUid,
+          project.officeUid,
+          project.adminUid
+        ];
+    }
+
     match /users/{userId} {
       allow get: if verifiedEmail() && request.auth.uid == userId;
       allow list: if false;
       allow create: if safeEmployeeBootstrap(userId);
       allow update, delete: if false;
+    }
+
+    match /projects/{projectId} {
+      allow get: if syntheticProjectMember(resource.data);
+      allow list, create, update, delete: if false;
     }
 
     match /{document=**} {

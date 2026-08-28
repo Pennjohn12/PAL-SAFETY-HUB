@@ -24,3 +24,12 @@ test("Staging Storage remains completely closed", () => {
   assert.match(storageRules, /allow read, write: if false/);
   assert.doesNotMatch(storageRules, /allow\s+(read|write):\s*if\s+true/);
 });
+
+test("Staging project reads require verified active synthetic membership", () => {
+  assert.match(firestoreRules, /function activeSyntheticProfile\(\)/);
+  assert.match(firestoreRules, /profile\(\)\.status != 'disabled-test'/);
+  assert.match(firestoreRules, /function syntheticProjectMember\(project\)/);
+  assert.match(firestoreRules, /request\.auth\.uid in \[/);
+  assert.match(firestoreRules, /allow get: if syntheticProjectMember\(resource\.data\)/);
+  assert.match(firestoreRules, /allow list, create, update, delete: if false/);
+});

@@ -36,6 +36,7 @@ Last verified: **2026-08-28, America/New_York**
 - Read-only Auth settings review found email-enumeration protection enabled, but password enforcement remains notify-only at six characters; self-sign-up/self-deletion are enabled; MFA, blocking functions, and Auth activity logging require an Identity Platform upgrade.
 - Staging password policy is now enforced at 12 characters with uppercase, lowercase, numeric, special-character, and forced-upgrade requirements. Self-sign-up remains enabled for testing. The console did not accept the approved self-delete restriction, so self-delete remains enabled and tracked as a gap.
 - Staging integration allowlist is currently limited to the single synthetic health Function; email, SMS, AI, schedules, Production Function code, and provider credentials remain absent.
+- A narrow synthetic project-member read rule compiled and deployed to Staging; lists and all project writes remain denied. Its live Rules Playground membership simulation hung without an allow/deny result, so the allow path remains unverified.
 - Status: **Partially established. Use synthetic data only; emulator-backed authorization and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
 
 ## Demo status
@@ -58,7 +59,7 @@ Present in current source and covered by current automated checks where noted:
 
 ## Testing / QA baseline
 
-- Automated tests: **53 passed, 0 failed** on 2026-08-28.
+- Automated tests: **54 passed, 0 failed** on 2026-08-28.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
