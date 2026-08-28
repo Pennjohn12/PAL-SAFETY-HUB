@@ -34,6 +34,8 @@ Last verified: **2026-08-28, America/New_York**
 - Six synthetic Staging Authentication identities and matching Firestore profiles now cover Employee, Foreman, Supervisor, Office, Admin, and disabled-user cases; no credentials are stored in source. One unmistakably fake Staging project references only those synthetic identities.
 - Live Rules Playground checks passed the current bootstrap boundary: own verified profile allowed; anonymous, cross-user, unverified-email, project, profile-mutation, and all tested Storage access denied.
 - Read-only Auth settings review found email-enumeration protection enabled, but password enforcement remains notify-only at six characters; self-sign-up/self-deletion are enabled; MFA, blocking functions, and Auth activity logging require an Identity Platform upgrade.
+- Staging password policy is now enforced at 12 characters with uppercase, lowercase, numeric, special-character, and forced-upgrade requirements. Self-sign-up remains enabled for testing. The console did not accept the approved self-delete restriction, so self-delete remains enabled and tracked as a gap.
+- Staging integration allowlist is currently limited to the single synthetic health Function; email, SMS, AI, schedules, Production Function code, and provider credentials remain absent.
 - Status: **Partially established. Use synthetic data only; emulator-backed authorization and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
 
 ## Demo status
