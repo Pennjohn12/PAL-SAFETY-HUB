@@ -2310,9 +2310,10 @@
               <div class="field"><label>Inspector Name</label><input name="inspector_name"></div>
               <div class="field"><label>Date of First Use</label><input type="date" name="date_first_use"></div>
               <div class="field"><label>Date</label><input type="date" name="date"></div>
-              <div class="field"><label>Date of Manufacture</label><input name="date_manufacture"></div>
-              <div class="field"><label>System Number</label><input name="system_number"></div>
-              <div class="field"><label>Model Serial Number</label><input name="model_serial"></div>
+              <div class="field"><label>Manufacturer Name</label><input type="text" name="manufacturer_name" autocomplete="off"></div>
+              <div class="field"><label>Date of Manufacture</label><input type="date" name="date_manufacture"></div>
+              <div class="field"><label>System Number</label><input type="text" name="system_number" autocomplete="off"></div>
+              <div class="field"><label>Model / Serial Number</label><input type="text" name="model_serial" autocomplete="off"></div>
             </div>
           </form>
           <!-- Inspection Table -->
@@ -5296,24 +5297,24 @@ function returnToApp() {
         if (buttons[3]) buttons[3].textContent = footerText.saveFiles;
       });
     }
-    function saveCurrentPageToFiles() {
-      saveActiveFormSilently();
-      const title = (typeof getCleanDocumentTitle === 'function' ? getCleanDocumentTitle() : 'PAL-Safety-Document')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '') || 'pal-safety-document';
-      const html = typeof getCleanPrintableHTML === 'function' ? getCleanPrintableHTML() : document.documentElement.outerHTML;
-      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${title}.html`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
-      if (typeof toastPalMessage === 'function') toastPalMessage('Document saved to files.');
-      else palNotice('Document saved to files.');
+    async function saveCurrentPageToFiles() {
+      try {
+        const title = (typeof getCleanDocumentTitle === 'function' ? getCleanDocumentTitle() : 'PAL-Safety-Document').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'pal-safety-document';
+        const html = typeof getCleanPrintableHTML === 'function' ? getCleanPrintableHTML() : document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `${title}.html`; a.style.display = 'none';
+        document.body.appendChild(a); a.click(); a.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 10000);
+        if (typeof toastPalMessage === 'function') toastPalMessage('Document saved to your files.');
+        else palNotice('Document saved to your files.');
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        console.error('Save to Files failed', error);
+        if (typeof toastPalMessage === 'function') toastPalMessage('Could not save the file. Try Print / PDF instead.');
+        else palNotice('Could not save the file. Try Print / PDF instead.');
+      }
     }
 function syncJobNumber(value) {
       document.querySelectorAll('.job-number-field').forEach(field => {
@@ -5631,6 +5632,7 @@ function closeTalk() {
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, serverTimestamp, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
     const firebaseConfig = {
       apiKey: "AIzaSyCxV6nTIqaaSZCtKq74lx72IBgUwKwEa80",
       authDomain: "pal-safety-hub.firebaseapp.com",
@@ -5642,6 +5644,8 @@ function closeTalk() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const functions = getFunctions(app, 'us-central1');
+    const submitEmployeeFieldFormCallable = httpsCallable(functions, 'submitEmployeeFieldForm');
     let palProjects = [];
     let palCurrentUser = null;
     let palCurrentUserProfile = null;
@@ -5857,7 +5861,22 @@ applyProjectSelectionFromStorage();
       const active = document.querySelector('.page.active');
       if (!active) return { active: null, form: null, data: {} };
       const form = active.querySelector('form[data-save-key]');
-      const data = form && window.formToJSON ? window.formToJSON(form) : (form ? Object.fromEntries(new FormData(form).entries()) : {});
+      const data = {};
+      active.querySelectorAll('input[name], select[name], textarea[name]').forEach(control => {
+        if (control.disabled) return;
+        const name = control.name;
+        if (control.type === 'radio') {
+          if (control.checked) data[name] = control.value;
+          return;
+        }
+        if (control.type === 'checkbox') {
+          if (!control.checked) return;
+          if (Object.prototype.hasOwnProperty.call(data, name)) data[name] = Array.isArray(data[name]) ? [...data[name], control.value || true] : [data[name], control.value || true];
+          else data[name] = control.value || true;
+          return;
+        }
+        data[name] = control.value;
+      });
       return { active, form, data };
     }
     function cleanProjectValue(value) {
@@ -5928,6 +5947,20 @@ applyProjectSelectionFromStorage();
         }
       }
       try {
+        const employeeCenterRoute = new URLSearchParams(window.location.search).get('employeeCenter') === '1';
+        if (employeeCenterRoute) {
+          const hints = getDocumentProjectHints(data);
+          const title = active.querySelector('.form-head h2, h2, h1')?.textContent?.trim() || 'PAL Safety Document';
+          const result = await submitEmployeeFieldFormCallable({
+            formKey: form?.dataset.saveKey || active.id || '', formTitle: title,
+            projectName: hints.projectName, jobNumber: hints.jobNumber,
+            submittedByName: hints.submittedBy || palCurrentUser?.displayName || palCurrentUser?.email || '', documentData: data
+          });
+          const savedProject = result.data || {};
+          if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Submitted to ' + (savedProject.projectName || 'PAL project') + '.');
+          window.setTimeout(() => { window.location.href = 'projects.html?employeeCenter=1&tab=history'; }, 700);
+          return;
+        }
         const project = await findProjectForDocument(data);
         if (!project?.id) {
           if (typeof window.toastPalMessage === 'function') {
@@ -5955,13 +5988,11 @@ applyProjectSelectionFromStorage();
         await addDoc(collection(db, 'projects', project.id, 'fieldForms'), payload);
         setStoredCurrentProject(project);
         if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Submitted to ' + (project.name || 'project') + '.');
-        if (new URLSearchParams(window.location.search).get('employeeCenter') === '1') {
-          window.setTimeout(() => { window.location.href = 'projects.html?employeeCenter=1&tab=history'; }, 500);
-        }
       } catch (err) {
         console.error('Submit to project failed', err);
         if (typeof window.toastPalMessage === 'function') {
-          window.toastPalMessage('Saved on this device. Project submit needs sign-in or access.');
+          const code = String(err?.code || '');
+          window.toastPalMessage(code.includes('not-found') ? 'No PAL project matched that name or job number. Check the project information and try again.' : code.includes('unauthenticated') ? 'Sign in to My PAL again before submitting.' : 'Saved on this device. The project submission did not complete—check the project name and connection.');
         }
       } finally {
         if (submitButton) {

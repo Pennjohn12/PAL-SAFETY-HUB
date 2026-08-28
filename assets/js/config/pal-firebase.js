@@ -36,6 +36,7 @@ export const sendAppTextCallable = httpsCallable(functions, "sendAppText");
 export const generateSafetyDraftCallable = httpsCallable(functions, "generateSafetyDraft");
 export const getIntegrationHealthCallable = httpsCallable(functions, "getIntegrationHealth");
 export const getMyEmployeeCenterCallable = httpsCallable(functions, "getMyEmployeeCenter");
+export const submitEmployeeFieldFormCallable = httpsCallable(functions, "submitEmployeeFieldForm");
 export const createDailyAccessSessionCallable = httpsCallable(functions, "createDailyAccessSession");
 export const submitDailyAccessCallable = httpsCallable(functions, "submitDailyAccess");
 export const updateDailyAccessSubmissionCallable = httpsCallable(functions, "updateDailyAccessSubmission");

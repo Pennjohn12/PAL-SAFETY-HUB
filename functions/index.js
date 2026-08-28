@@ -674,6 +674,59 @@ exports.getMyEmployeeCenter = onCall({
   };
 });
 
+exports.submitEmployeeFieldForm = onCall({
+  region: 'us-central1',
+  invoker: 'public',
+  enforceAppCheck: false,
+  timeoutSeconds: 30,
+  memory: '256MiB'
+}, async request => {
+  if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in before submitting a PAL form.');
+  const allowedForms = new Set(['harness-checklist','scissor-lift-inspection','scaffold-checklist','incident-report','decon-setup-checklist','ppe-inspection-checklist','respirator-checklist','demolition-safety-checklist']);
+  const formKey = cleanText(request.data?.formKey, 100);
+  if (!allowedForms.has(formKey)) throw new HttpsError('invalid-argument', 'This form is not available for employee submission.');
+  const projectName = cleanText(request.data?.projectName, 160);
+  const jobNumber = cleanText(request.data?.jobNumber, 80);
+  if (!projectName && !jobNumber) throw new HttpsError('invalid-argument', 'Enter the project name or PAL job number.');
+  const rawDocument = request.data?.documentData;
+  if (!rawDocument || typeof rawDocument !== 'object' || Array.isArray(rawDocument)) throw new HttpsError('invalid-argument', 'The form data is missing.');
+  const serialized = JSON.stringify(rawDocument);
+  if (serialized.length > 150000) throw new HttpsError('invalid-argument', 'This form is too large to submit.');
+  const documentData = JSON.parse(serialized);
+  let projectDoc = null;
+  if (jobNumber) {
+    const snap = await db.collection('projects').where('jobNumber', '==', jobNumber).limit(1).get();
+    if (!snap.empty) projectDoc = snap.docs[0];
+  }
+  if (!projectDoc && projectName) {
+    const snap = await db.collection('projects').where('name', '==', projectName).limit(1).get();
+    if (!snap.empty) projectDoc = snap.docs[0];
+  }
+  if (!projectDoc) {
+    const snap = await db.collection('projects').limit(200).get();
+    const nameNeedle = projectName.toLowerCase();
+    const jobNeedle = jobNumber.toLowerCase();
+    projectDoc = snap.docs.find(doc => {
+      const row = doc.data() || {};
+      return (jobNeedle && String(row.jobNumber || '').trim().toLowerCase() === jobNeedle) ||
+        (nameNeedle && String(row.name || '').trim().toLowerCase() === nameNeedle);
+    }) || null;
+  }
+  if (!projectDoc) throw new HttpsError('not-found', 'No PAL project matched that project name or job number.');
+  const project = projectDoc.data() || {};
+  const profile = await getUserProfile(request.auth.uid);
+  const title = cleanText(request.data?.formTitle, 160) || 'PAL Safety Document';
+  const submission = {
+    formTitle: title, formKey, sourcePageId: formKey,
+    projectId: projectDoc.id, projectName: cleanText(project.name, 160), jobNumber: cleanText(project.jobNumber, 80),
+    submittedByName: cleanText(request.data?.submittedByName || profile.name || request.auth.token?.name || request.auth.token?.email, 160),
+    submittedByEmail: cleanEmail(request.auth.token?.email), submittedByUid: request.auth.uid,
+    submittedAt: admin.firestore.FieldValue.serverTimestamp(), localSubmittedAt: new Date().toISOString(), documentData
+  };
+  const ref = await projectDoc.ref.collection('fieldForms').add(submission);
+  return { ok: true, id: ref.id, projectId: projectDoc.id, projectName: submission.projectName, jobNumber: submission.jobNumber };
+});
+
 exports.updateTextDeliveryStatus = onRequest({
   region: 'us-central1',
   invoker: 'public',

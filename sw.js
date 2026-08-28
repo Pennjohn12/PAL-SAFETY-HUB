@@ -1,7 +1,7 @@
 // PAL Safety Hub Service Worker
 // Keeps the app usable offline, while always preferring fresh pages when online.
 
-const CACHE_NAME = 'pal-safety-hub-v2026-08-28-my-pal-form-shell';
+const CACHE_NAME = 'pal-safety-hub-v2026-08-28-form-save-submit-fix';
 const ASSETS = [
   './',
   './index.html',
