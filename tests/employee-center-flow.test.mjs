@@ -24,6 +24,16 @@ test('My PAL launches every approved existing PAL safety form', () => {
   }
 });
 
+test('safety form buttons render even when employee records fail to load', () => {
+  assert.match(projects, /window\.loadMyEmployeeCenter = async function[\s\S]*?renderEmployeeCenterFormButtons\(\);[\s\S]*?try \{/);
+  assert.match(projects, /No project assigned — contact your foreman/);
+});
+
+test('employee project assignments grant project-member access', () => {
+  assert.match(projects, /toggleEmployeeAssignment[\s\S]*?memberEmails: assign \? arrayUnion\(employeeEmail\) : arrayRemove\(employeeEmail\)/);
+  assert.match(functions, /employee\?\.assignedProjectIds/);
+});
+
 test('employee form routes have a fixed safe return to My PAL', () => {
   assert.match(home, /employeeCenter.*projects\.html\?employeeCenter=1&tab=forms/s);
   assert.match(home, /projects\.html\?employeeCenter=1&tab=history/);

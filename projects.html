@@ -4837,6 +4837,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   };
 
   window.loadMyEmployeeCenter = async function(force = false) {
+    renderEmployeeCenterFormButtons();
     if (myEmployeeCenterData && !force) return renderMyEmployeeCenter(myEmployeeCenterData);
     try {
       const result = await getMyEmployeeCenterCallable({});
@@ -4847,8 +4848,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     } catch (error) {
       console.error('My PAL load failed', error);
       document.getElementById('employee-center-attention').textContent = 'We could not load your records. Check your connection and try again.';
+      document.getElementById('employee-center-project-select').innerHTML = '<option value="">Projects could not load — refresh and try again</option>';
     }
   };
+
+  function renderEmployeeCenterFormButtons() {
+    const grid = document.getElementById('employee-center-form-grid');
+    if (!grid) return;
+    grid.innerHTML = employeeCenterForms.map(form => '<button class="employee-center-card" type="button" onclick="openEmployeePalForm(\'' + form[0] + '\')"><h3>' + escapeHtml(form[1]) + '</h3><p>Open the current approved PAL form.</p></button>').join('');
+  }
 
   function renderMyEmployeeCenter(data) {
     const profile = data.profile || {};
@@ -4862,8 +4870,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const certs = data.certifications || [];
     document.getElementById('employee-center-cert-list').innerHTML = certs.length ? certs.map(cert => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(cert.title) + '</strong><div class="helper-text">' + escapeHtml(cert.expirationDate ? 'Expires ' + cert.expirationDate : 'No expiration date listed') + '</div></div>' + (cert.url ? '<a class="btn-outline" target="_blank" rel="noopener" href="' + escapeHtml(cert.url) + '">View</a>' : '') + '</div>').join('') : '<p class="helper-text">No certifications are on file yet.</p>';
     const projects = data.projects || [];
-    document.getElementById('employee-center-project-select').innerHTML = '<option value="">Choose an assigned project</option>' + projects.map(project => '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.name + (project.jobNumber ? ' — ' + project.jobNumber : '')) + '</option>').join('');
-    document.getElementById('employee-center-form-grid').innerHTML = employeeCenterForms.map(form => '<button class="employee-center-card" type="button" onclick="openEmployeePalForm(\'' + form[0] + '\')"><h3>' + escapeHtml(form[1]) + '</h3><p>Open the current approved PAL form.</p></button>').join('');
+    document.getElementById('employee-center-project-select').innerHTML = projects.length ? '<option value="">Choose an assigned project</option>' + projects.map(project => '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.name + (project.jobNumber ? ' — ' + project.jobNumber : '')) + '</option>').join('') : '<option value="">No project assigned — contact your foreman</option>';
+    renderEmployeeCenterFormButtons();
     const rows = data.history || [];
     const historyHtml = rows.length ? rows.map(row => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(row.formTitle || 'PAL Safety Form') + '</strong><div class="helper-text">' + escapeHtml(row.projectName || '') + ' • ' + escapeHtml(row.submittedAt ? new Date(row.submittedAt).toLocaleDateString() : '') + '</div></div></div>').join('') : '<p class="helper-text">You have not submitted any project forms yet.</p>';
     document.getElementById('employee-center-history-list').innerHTML = historyHtml;
@@ -11146,6 +11154,10 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         createdByName: currentUser.displayName || currentUser.email,
         createdAt: serverTimestamp()
       });
+      const employeeEmail = cleanAccessText(document.getElementById('emp-email').value);
+      if (currentProject?.id && employeeEmail) {
+        await updateDoc(doc(db, 'projects', currentProject.id), { memberEmails: arrayUnion(employeeEmail) });
+      }
       await logAuditEvent('employee.created', {
         employeeId: employeeRef.id,
         employeeName: name,
@@ -11171,6 +11183,12 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         assignedProjectIds: assign ? arrayUnion(currentProject.id) : arrayRemove(currentProject.id)
       });
       const emp = allEmployees.find(e => e.id === employeeId);
+      const employeeEmail = cleanAccessText(emp?.email);
+      if (employeeEmail) {
+        await updateDoc(doc(db, 'projects', currentProject.id), {
+          memberEmails: assign ? arrayUnion(employeeEmail) : arrayRemove(employeeEmail)
+        });
+      }
       await logAuditEvent(assign ? 'employee.assigned_to_project' : 'employee.removed_from_project', {
         employeeId,
         employeeName: emp?.name || '',

@@ -620,6 +620,10 @@ exports.getMyEmployeeCenter = onCall({
     const snap = await promise.catch(() => null);
     snap?.docs?.forEach(doc => projectMap.set(doc.id, { id: doc.id, ...(doc.data() || {}) }));
   }
+  for (const projectId of (Array.isArray(employee?.assignedProjectIds) ? employee.assignedProjectIds : []).slice(0, 50)) {
+    const projectSnap = await db.collection('projects').doc(String(projectId)).get().catch(() => null);
+    if (projectSnap?.exists) projectMap.set(projectSnap.id, { id: projectSnap.id, ...(projectSnap.data() || {}) });
+  }
   const projects = [...projectMap.values()];
   const history = [];
   for (const project of projects.slice(0, 20)) {
