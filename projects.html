@@ -2018,7 +2018,16 @@
     <section class="tab-pane" id="employee-center-forms">
       <div class="page-header"><div><h2>PAL Safety Forms</h2><p class="helper-text">These are the existing approved PAL forms.</p></div></div>
       <div class="field" style="max-width:500px;"><label>Submit to project</label><select id="employee-center-project-select"><option value="">Choose an assigned project</option></select></div>
-      <div class="employee-center-form-grid" style="margin-top:16px;" id="employee-center-form-grid"></div>
+      <div class="employee-center-form-grid" style="margin-top:16px;" id="employee-center-form-grid">
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('harness-checklist')"><h3>Harness Checklist</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scissor-lift-inspection')"><h3>Scissor Lift Inspection</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scaffold-checklist')"><h3>Scaffold Checklist</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('incident-report')"><h3>Incident Report</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('decon-setup-checklist')"><h3>Decontamination Setup Checklist</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('ppe-inspection-checklist')"><h3>PPE Inspection Checklist</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('respirator-checklist')"><h3>Respirator Checklist</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('demolition-safety-checklist')"><h3>Demolition Safety Checklist</h3><p>Open the current approved PAL form.</p></button>
+      </div>
       <div class="detail-card" style="margin-top:16px;"><h3>Reuse a previous inspection</h3><p class="helper-text">A previous inspection may copy project, equipment, location, and responses. Review every answer for today’s conditions, confirm today’s inspection, then enter a new date and signature. PAL creates a new daily record and preserves the original.</p><div id="employee-center-reuse-list" class="employee-center-list"></div></div>
     </section>
   </main>

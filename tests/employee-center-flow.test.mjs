@@ -25,6 +25,9 @@ test('My PAL launches every approved existing PAL safety form', () => {
 });
 
 test('safety form buttons render even when employee records fail to load', () => {
+  const formGridMarkup = projects.slice(projects.indexOf('id="employee-center-form-grid"'), projects.indexOf('id="employee-center-reuse-list"'));
+  assert.match(formGridMarkup, /openEmployeePalForm\('harness-checklist'\)/);
+  assert.match(formGridMarkup, /openEmployeePalForm\('scissor-lift-inspection'\)/);
   assert.match(projects, /window\.loadMyEmployeeCenter = async function[\s\S]*?renderEmployeeCenterFormButtons\(\);[\s\S]*?try \{/);
   assert.match(projects, /No project assigned — contact your foreman/);
 });
