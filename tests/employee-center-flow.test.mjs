@@ -11,6 +11,12 @@ test('employee accounts route into My PAL instead of being blocked at login', ()
   assert.doesNotMatch(projects, /This account is Employee \/ Intake Only/);
 });
 
+test('signed-in dashboards no longer link to the retired public PAL Home', () => {
+  const dashboard = projects.slice(projects.indexOf('<div class="view" id="view-projects">'));
+  assert.doesNotMatch(dashboard, />PAL Home</);
+  assert.match(dashboard, />My Dashboard</);
+});
+
 test('My PAL launches every approved existing PAL safety form', () => {
   for (const id of ['harness-checklist','scissor-lift-inspection','scaffold-checklist','incident-report','decon-setup-checklist','ppe-inspection-checklist','respirator-checklist','demolition-safety-checklist']) {
     assert.match(projects, new RegExp("\\['" + id.replaceAll('-', '\\-') + "'"));
