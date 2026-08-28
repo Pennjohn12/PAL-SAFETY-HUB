@@ -36,8 +36,7 @@ Data boundary: synthetic identities and synthetic records only
 ## Verification limitations
 
 - The Firebase console Rules Playground evaluates individual operations; it does not replace an automated emulator suite.
-- The current workstation has no Java runtime, so the Firebase Local Emulator Suite could not be run here without installing additional software.
-- Collection-query behavior, complete create payloads, multi-document reads, transactions, Functions authorization, disabled-session revocation, and complete workflow behavior still require automated or isolated end-to-end tests.
+- Collection-query denial and the current single-document rules were exercised in the Firebase Local Emulator Suite. Complete create payloads, multi-document reads, transactions, Functions authorization, disabled-session revocation, and complete workflow behavior still require isolated end-to-end tests.
 - The synthetic accounts were created with random passwords that were not retained. Rules Playground claims were used for these rule simulations; interactive password login was not tested.
 - No Production rule, account, permission, configuration, or data was changed or tested.
 
@@ -48,4 +47,5 @@ On 2026-08-28, a narrow Staging-only project rule was compiled and released. It 
 - Static authorization assertion: **Passed**.
 - Firebase rule compilation and release: **Passed**.
 - Live Rules Playground membership simulation: **Inconclusive**. The simulator remained in a loading state and returned neither allow nor deny; no console error was exposed.
-- Safety interpretation: do not treat synthetic project membership as live-verified until an emulator-backed or successful live simulation is captured.
+- Firebase Local Emulator Suite: **7 of 7 tests passed** on 2026-08-28. Tests verified anonymous denial, own-versus-cross-profile access, verified-email enforcement, explicit active project membership, outsider and disabled-profile denial, collection-list denial, all tested client mutations denied, and Storage read/upload denial.
+- Safety interpretation: the deployed rule text has now passed local behavioral verification with synthetic data. This does not verify complete application workflows, Functions authorization, or Production rules.
