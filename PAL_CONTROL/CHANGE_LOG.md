@@ -2,6 +2,17 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-28 — Security program Package 1 baseline
+
+- Objective and scope: create the durable 15-package security tracker and evidence-based security inventory/risk register; documentation only.
+- Starting source/Production commit: `4b2e54e214eebe7615a36ddf6b2c7e7e394199be`.
+- Branch: `codex/security-baseline-program`, created with the verified `main` commit plus the governance-baseline commit as its ancestry.
+- Verified findings: one Critical, four High, and five Medium source/configuration risks; verification gaps are separately identified and are not presented as confirmed vulnerabilities.
+- Evidence: current source/rules/functions, Firebase project/Hosting/Functions/backup metadata, live Hosting content and headers, dependency audit, and 43 passing automated tests.
+- Data and Production impact: none. No real records were opened; no account, permission, rule, Function, Hosting, secret, or Production configuration was changed.
+- Preserved local work: five untracked synthetic `PAL_QA_*_NOT_REAL.pdf` fixtures were not altered.
+- Follow-up: Package 2 must establish isolated Staging before write-based authorization testing or security implementation.
+
 ## 2026-08-28 — Verified clean source/Production checkpoint
 
 - Current Source Commit: `4b2e54e214eebe7615a36ddf6b2c7e7e394199be` — `Route Employee Center history through east region`.

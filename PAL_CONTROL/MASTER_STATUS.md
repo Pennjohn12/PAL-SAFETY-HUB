@@ -69,11 +69,21 @@ Present in current source and covered by current automated checks where noted:
 
 ## Active priorities
 
-1. Create a dedicated Firebase Staging project with synthetic data and isolated integrations.
-2. Add a release/build identifier tied to the Git commit.
-3. Add automated rule tests and broader critical-workflow coverage.
-4. Verify deployed Functions, rules, backup jobs, and recovery procedure.
-5. Decide whether Demo requires its own isolated Firebase project.
+1. Execute the 15-package security hardening program recorded in `SECURITY_PROGRAM.md`.
+2. Create a dedicated Firebase Staging project with synthetic data and isolated integrations.
+3. Repair the verified identity-linking, backend project-authorization, public-intake, upload, signature, and role-creation risks in `SECURITY_RISK_REGISTER.md`.
+4. Add a release/build identifier tied to the Git commit.
+5. Add automated rule tests and broader critical-workflow coverage.
+6. Verify deployed Functions, rules, backup jobs, and recovery procedure.
+7. Decide whether Demo requires its own isolated Firebase project.
+
+## Security program status
+
+- Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
+- Packages independently verified: **0 of 15**.
+- Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
+- This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.
+- Detailed status: `SECURITY_PROGRAM.md`. Verified risks and gaps: `SECURITY_RISK_REGISTER.md`.
 
 ## Production authorization
 

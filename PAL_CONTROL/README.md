@@ -20,6 +20,8 @@ This folder is the concise living record for PAL Safety Hub. Current verified Pr
 - `RELEASE_CHECKLIST.md`: staging and Production release gates.
 - `CHANGE_LOG.md`: concise change, deployment, Git checkpoint, and verification history.
 - `BACKLOG.md`: active evidence-based priorities only.
+- `SECURITY_PROGRAM.md`: durable status of the 15 security hardening work packages.
+- `SECURITY_RISK_REGISTER.md`: current security inventory, verified risks, controls, and verification gaps.
 - `TASK_START_TEMPLATE.md`: opening contract for module/task work.
 
 Keep current facts in `MASTER_STATUS.md`, history in `CHANGE_LOG.md`, and future work in `BACKLOG.md`. Do not create growing narrative handoffs.
