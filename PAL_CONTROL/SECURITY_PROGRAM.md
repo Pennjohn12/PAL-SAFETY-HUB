@@ -60,9 +60,10 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - Staging-specific Firestore rules are deployed with public access denied, cross-user listing denied, verified-email-only employee bootstrap, and no client-controlled role elevation or profile updates.
 - Staging Storage remains fully closed for reads and writes until Package 5 defines and validates narrow upload authorization.
 - Six reserved-domain synthetic Authentication identities exist for Employee, Foreman, Supervisor, Office, Admin, and disabled-user test cases. The disabled fixture is verified disabled. No passwords or tokens are stored in the repository or governance records.
-- These are Authentication fixtures only; privileged application roles have not yet been granted and no synthetic Firestore employee/project data has been created.
-- Automated tests pass **52 of 52**, including Staging host isolation, banner/header checks, isolated backend configuration, static assertions for the Staging rule boundaries, and fixture checks that reject credentials and non-reserved email domains. Firebase also compiled and released both rule files successfully.
-- Not complete: emulator-backed rule behavior tests, Auth policy/MFA configuration, server-controlled synthetic role grants/data, integration allowlists, and end-to-end role/workflow verification.
+- Matching synthetic Firestore profiles now exist for all six Authentication fixtures. Each profile records only the fake UID/email, role/access level, environment, test label, and fixture metadata.
+- Synthetic project `staging-test-project-001` is labeled `STAGING TEST — NOT REAL` and references only the fake Employee, Foreman, Supervisor, Office, and Admin UIDs. No PAL project or employee data was copied.
+- Automated tests pass **53 of 53**, including Staging host isolation, banner/header checks, isolated backend configuration, static assertions for the Staging rule boundaries, and fixture checks that reject credentials/non-reserved email domains and require unmistakable test labeling. Firebase also compiled and released both rule files successfully.
+- Not complete: emulator-backed rule behavior tests, Auth policy/MFA configuration, integration allowlists, and end-to-end role/workflow verification. The Staging rules intentionally still deny project reads; role-by-role access must be introduced narrowly and tested next.
 
 ## Sequencing
 

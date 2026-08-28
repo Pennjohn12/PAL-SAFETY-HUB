@@ -2,6 +2,15 @@
   "projectId": "pal-safety-hub-staging",
   "createdOn": "2026-08-28",
   "credentialsStored": false,
+  "firestoreProfilesCreated": true,
+  "syntheticProject": {
+    "collection": "projects",
+    "documentId": "staging-test-project-001",
+    "name": "STAGING TEST — NOT REAL",
+    "jobNumber": "STAGING-TEST-001",
+    "environment": "staging",
+    "synthetic": "true"
+  },
   "identities": [
     {
       "roleFixture": "employee",
