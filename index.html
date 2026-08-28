@@ -20,7 +20,10 @@
   <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PAL Safety Hub</title>
+  <script>if(new URLSearchParams(location.search).get('palProjectForm')==='1')document.documentElement.classList.add('pal-direct-form-route');</script>
   <style>
+    .pal-direct-form-route body { visibility:hidden; }
+    .pal-direct-form-route.pal-direct-form-ready body { visibility:visible; }
     :root {
       --navy: #1b3a5c;
       --pal-brand-blue: var(--navy);
@@ -4142,6 +4145,9 @@
         showPage(requestedForm);
       }
       configureProjectFormReturn();
+      window.setTimeout(configureProjectFormReturn, 0);
+      window.setTimeout(configureProjectFormReturn, 300);
+      document.documentElement.classList.add('pal-direct-form-ready');
     }
     function returnToProjectFieldForms() {
       const params = new URLSearchParams(window.location.search);
@@ -4150,16 +4156,19 @@
         window.parent.postMessage({ type: 'pal-close-official-project-form' }, targetOrigin);
         return;
       }
-      const returnUrl = params.get('return') || 'projects.html';
-      window.location.href = returnUrl;
+      if (params.get('employeeCenter') === '1') {
+        window.location.href = 'projects.html?employeeCenter=1&tab=forms';
+        return;
+      }
+      window.location.href = 'projects.html';
     }
     function configureProjectFormReturn() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('palProjectForm') !== '1') return;
       document.querySelectorAll('.page .toolbar button').forEach(btn => {
         const action = btn.getAttribute('onclick') || '';
-        if (!action.includes("showPage('employee-safety')") && !action.includes("showPage('foreman-kit')")) return;
-        btn.textContent = 'Back to Project Field Forms';
+        if (!action.includes("showPage('employee-safety')") && !action.includes("showPage('foreman-kit')") && !action.includes('returnToProjectFieldForms')) return;
+        btn.textContent = params.get('employeeCenter') === '1' ? 'Back to My PAL' : 'Back to Project Field Forms';
         btn.setAttribute('onclick', 'returnToProjectFieldForms()');
       });
     }
@@ -5931,6 +5940,9 @@ applyProjectSelectionFromStorage();
         await addDoc(collection(db, 'projects', project.id, 'fieldForms'), payload);
         setStoredCurrentProject(project);
         if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Submitted to ' + (project.name || 'project') + '.');
+        if (new URLSearchParams(window.location.search).get('employeeCenter') === '1') {
+          window.setTimeout(() => { window.location.href = 'projects.html?employeeCenter=1&tab=history'; }, 500);
+        }
       } catch (err) {
         console.error('Submit to project failed', err);
         if (typeof window.toastPalMessage === 'function') {

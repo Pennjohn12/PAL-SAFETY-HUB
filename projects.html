@@ -789,6 +789,27 @@
 
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
+    .employee-center-shell { max-width:1100px; margin:0 auto; padding:24px 16px 100px; }
+    .employee-center-hero { background:linear-gradient(135deg,var(--navy),var(--navy-light)); color:#fff; border-radius:20px; padding:26px; display:flex; justify-content:space-between; gap:18px; align-items:center; }
+    .employee-center-hero h2 { margin:0 0 6px; font-size:28px; }
+    .employee-center-hero p { color:rgba(255,255,255,.78); }
+    .employee-center-meta { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .employee-center-meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:6px 10px; font-size:12px; font-weight:800; }
+    .employee-center-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:14px; margin-top:18px; }
+    .employee-center-card { grid-column:span 3; background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; text-align:left; color:var(--text); font:inherit; }
+    button.employee-center-card { cursor:pointer; }
+    button.employee-center-card:hover { border-color:#aebdcc; box-shadow:0 8px 22px rgba(27,58,92,.1); transform:translateY(-1px); }
+    .employee-center-card h3 { color:var(--navy); margin:0 0 7px; }
+    .employee-center-card p { color:var(--muted); font-size:13px; line-height:1.45; }
+    .employee-center-card.wide { grid-column:span 12; }
+    .employee-center-list { display:grid; gap:9px; margin-top:12px; }
+    .employee-center-list-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .employee-center-list-row strong { display:block; color:var(--navy); }
+    .employee-center-list-row small { color:var(--muted); }
+    .employee-center-form-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+    .employee-center-form-grid button { min-height:125px; }
+    @media(max-width:780px){ .employee-center-hero{align-items:flex-start;flex-direction:column}.employee-center-card{grid-column:span 6}.employee-center-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media(max-width:520px){ .employee-center-card{grid-column:span 12}.employee-center-form-grid{grid-template-columns:1fr} }
     #view-detail .tab-pane.project-section-window {
       position: fixed;
       inset: 0;
@@ -1964,9 +1985,46 @@
   </div>
 </div>
 
-<!-- 
-     PROJECT LIST VIEW
- -->
+<!-- MY PAL EMPLOYEE CENTER -->
+<div class="view" id="view-employee-center">
+  <div class="header">
+    <a class="brand" href="projects.html"><div class="pal-badge">PAL</div><div class="brand-text"><h1>My PAL</h1><p>Employee Center</p></div></a>
+    <div class="header-right"><div class="user-chip"><div class="avatar" id="employee-center-avatar">?</div><span id="employee-center-user-name">Employee</span></div><button class="btn-icon" onclick="doLogout()">Sign out</button></div>
+  </div>
+  <main class="employee-center-shell">
+    <div class="tabs" id="employee-center-tabs">
+      <button class="tab active" onclick="switchEmployeeCenterTab('employee-center-home',this)">My Home</button>
+      <button class="tab" onclick="switchEmployeeCenterTab('employee-center-orientation',this)">Orientation</button>
+      <button class="tab" onclick="switchEmployeeCenterTab('employee-center-certs',this)">My Certifications</button>
+      <button class="tab" onclick="switchEmployeeCenterTab('employee-center-history',this)">My Submitted Forms</button>
+      <button class="tab" onclick="switchEmployeeCenterTab('employee-center-forms',this)">Safety Forms</button>
+    </div>
+    <section class="tab-pane active" id="employee-center-home">
+      <div class="employee-center-hero"><div><h2 id="employee-center-greeting">Welcome to My PAL</h2><p id="employee-center-role-line">Your personal safety and work records.</p><div class="employee-center-meta" id="employee-center-meta"></div></div><button class="btn-add" onclick="switchEmployeeCenterTab('employee-center-forms')">Complete a Safety Form</button></div>
+      <div class="employee-center-grid">
+        <button class="employee-center-card" onclick="switchEmployeeCenterTab('employee-center-orientation')"><h3>My Orientation</h3><p>Start, continue, or review your PAL orientation.</p></button>
+        <button class="employee-center-card" onclick="switchEmployeeCenterTab('employee-center-certs')"><h3>My Certifications</h3><p>Review certificates and expiration dates.</p></button>
+        <button class="employee-center-card" onclick="switchEmployeeCenterTab('employee-center-history')"><h3>My Submitted Forms</h3><p>See the records you submitted to PAL projects.</p></button>
+        <button class="employee-center-card" onclick="switchEmployeeCenterTab('employee-center-forms')"><h3>Safety Forms</h3><p>Open PAL’s approved inspection forms.</p></button>
+        <div class="employee-center-card wide"><h3>What needs my attention</h3><div id="employee-center-attention" class="employee-center-list"><p class="helper-text">Loading your PAL records...</p></div></div>
+      </div>
+    </section>
+    <section class="tab-pane" id="employee-center-orientation">
+      <div class="page-header"><div><h2>PAL Safety Orientation</h2><p class="helper-text">Open an assigned orientation or review your completed record.</p></div><button class="btn-add" onclick="openEmployeeOrientation()">Open Orientation</button></div>
+      <div class="detail-card"><h3>Orientation access</h3><p class="helper-text">Private new-hire links still open orientation immediately. Account creation is offered after completion so registration never delays safety training.</p><div id="employee-center-orientation-status" class="loaded-stamp">Checking your orientation record...</div></div>
+    </section>
+    <section class="tab-pane" id="employee-center-certs"><div class="page-header"><h2>My Certifications</h2></div><div id="employee-center-cert-list" class="employee-center-list"><p class="helper-text">Loading certifications...</p></div></section>
+    <section class="tab-pane" id="employee-center-history"><div class="page-header"><h2>My Submitted Forms</h2></div><div class="helper-text" style="margin-bottom:12px;">Official records remain in the linked project. Your history here is read-only.</div><div id="employee-center-history-list" class="employee-center-list"><p class="helper-text">Loading submissions...</p></div></section>
+    <section class="tab-pane" id="employee-center-forms">
+      <div class="page-header"><div><h2>PAL Safety Forms</h2><p class="helper-text">These are the existing approved PAL forms.</p></div></div>
+      <div class="field" style="max-width:500px;"><label>Submit to project</label><select id="employee-center-project-select"><option value="">Choose an assigned project</option></select></div>
+      <div class="employee-center-form-grid" style="margin-top:16px;" id="employee-center-form-grid"></div>
+      <div class="detail-card" style="margin-top:16px;"><h3>Reuse a previous inspection</h3><p class="helper-text">A previous inspection may copy project, equipment, location, and responses. Review every answer for today’s conditions, confirm today’s inspection, then enter a new date and signature. PAL creates a new daily record and preserves the original.</p><div id="employee-center-reuse-list" class="employee-center-list"></div></div>
+    </section>
+  </main>
+</div>
+
+<!-- PROJECT LIST VIEW -->
 <div class="view" id="view-projects">
   <div class="header">
     <a class="brand" href="index.html">
@@ -4147,6 +4205,7 @@
     sendAppTextCallable,
     generateSafetyDraftCallable,
     getIntegrationHealthCallable,
+    getMyEmployeeCenterCallable,
     createDailyAccessSessionCallable,
     submitDailyAccessCallable,
     updateDailyAccessSubmissionCallable,
@@ -4730,8 +4789,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }
       applyRoleUI();
       if (isEmployeeOnlyRole()) {
-        showView('view-login');
-        toast('This account is Employee / Intake Only. Use the intake link from PAL to complete documents.');
+        showView('view-employee-center');
+        loadMyEmployeeCenter(true);
       } else {
         showView('view-projects');
         switchMainTab('main-operations-dashboard');
@@ -4755,9 +4814,76 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function updateUserUI(user) {
     const name = user.displayName || user.email.split('@')[0];
     const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-    ['user-avatar','detail-avatar'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = initials; });
-    ['user-name-display','detail-name-display'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = name; });
+    ['user-avatar','detail-avatar','employee-center-avatar'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = initials; });
+    ['user-name-display','detail-name-display','employee-center-user-name'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = name; });
   }
+
+  let myEmployeeCenterData = null;
+  const employeeCenterForms = [
+    ['harness-checklist', 'Harness Checklist'],
+    ['scissor-lift-inspection', 'Scissor Lift Inspection'],
+    ['scaffold-checklist', 'Scaffold Checklist'],
+    ['incident-report', 'Incident Report'],
+    ['decon-setup-checklist', 'Decontamination Setup Checklist'],
+    ['ppe-inspection-checklist', 'PPE Inspection Checklist'],
+    ['respirator-checklist', 'Respirator Checklist'],
+    ['demolition-safety-checklist', 'Demolition Safety Checklist']
+  ];
+
+  window.switchEmployeeCenterTab = function(tabId, button) {
+    document.querySelectorAll('#view-employee-center .tab-pane').forEach(el => el.classList.toggle('active', el.id === tabId));
+    document.querySelectorAll('#employee-center-tabs .tab').forEach(el => el.classList.toggle('active', el === button || el.getAttribute('onclick')?.includes("'" + tabId + "'")));
+    history.replaceState(null, '', 'projects.html?employeeCenter=1&tab=' + encodeURIComponent(tabId.replace('employee-center-', '')));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.loadMyEmployeeCenter = async function(force = false) {
+    if (myEmployeeCenterData && !force) return renderMyEmployeeCenter(myEmployeeCenterData);
+    try {
+      const result = await getMyEmployeeCenterCallable({});
+      myEmployeeCenterData = result.data || {};
+      renderMyEmployeeCenter(myEmployeeCenterData);
+      const requestedTab = new URLSearchParams(location.search).get('tab');
+      if (requestedTab) switchEmployeeCenterTab('employee-center-' + requestedTab);
+    } catch (error) {
+      console.error('My PAL load failed', error);
+      document.getElementById('employee-center-attention').textContent = 'We could not load your records. Check your connection and try again.';
+    }
+  };
+
+  function renderMyEmployeeCenter(data) {
+    const profile = data.profile || {};
+    const fullName = profile.name || currentUser?.displayName || 'PAL employee';
+    document.getElementById('employee-center-greeting').textContent = 'Welcome, ' + fullName.split(' ')[0];
+    document.getElementById('employee-center-role-line').textContent = [profile.trade, profile.unionLocal].filter(Boolean).join(' • ') || 'Your personal safety and work records.';
+    document.getElementById('employee-center-meta').innerHTML = [profile.sinceYear ? 'With PAL since ' + escapeHtml(profile.sinceYear) : '', (data.projects || []).length + ' assigned project(s)'].filter(Boolean).map(x => '<span>' + x + '</span>').join('');
+    const orientation = data.orientation;
+    const orientationText = orientation ? (orientation.completed ? 'Orientation complete' : 'Orientation assigned — continue when ready') : 'No orientation is currently assigned to this email.';
+    document.getElementById('employee-center-orientation-status').textContent = orientationText;
+    const certs = data.certifications || [];
+    document.getElementById('employee-center-cert-list').innerHTML = certs.length ? certs.map(cert => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(cert.title) + '</strong><div class="helper-text">' + escapeHtml(cert.expirationDate ? 'Expires ' + cert.expirationDate : 'No expiration date listed') + '</div></div>' + (cert.url ? '<a class="btn-outline" target="_blank" rel="noopener" href="' + escapeHtml(cert.url) + '">View</a>' : '') + '</div>').join('') : '<p class="helper-text">No certifications are on file yet.</p>';
+    const projects = data.projects || [];
+    document.getElementById('employee-center-project-select').innerHTML = '<option value="">Choose an assigned project</option>' + projects.map(project => '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.name + (project.jobNumber ? ' — ' + project.jobNumber : '')) + '</option>').join('');
+    document.getElementById('employee-center-form-grid').innerHTML = employeeCenterForms.map(form => '<button class="employee-center-card" type="button" onclick="openEmployeePalForm(\'' + form[0] + '\')"><h3>' + escapeHtml(form[1]) + '</h3><p>Open the current approved PAL form.</p></button>').join('');
+    const rows = data.history || [];
+    const historyHtml = rows.length ? rows.map(row => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(row.formTitle || 'PAL Safety Form') + '</strong><div class="helper-text">' + escapeHtml(row.projectName || '') + ' • ' + escapeHtml(row.submittedAt ? new Date(row.submittedAt).toLocaleDateString() : '') + '</div></div></div>').join('') : '<p class="helper-text">You have not submitted any project forms yet.</p>';
+    document.getElementById('employee-center-history-list').innerHTML = historyHtml;
+    document.getElementById('employee-center-reuse-list').innerHTML = '<p class="helper-text">Open one of today’s approved forms above. Reuse of a previous inspection will be enabled only after PAL can safely copy it as a new record without altering the original.</p>';
+    document.getElementById('employee-center-attention').innerHTML = '<div class="employee-center-list-row"><strong>' + escapeHtml(orientationText) + '</strong></div><div class="employee-center-list-row"><strong>' + certs.length + ' certification(s) on file</strong></div>';
+  }
+
+  window.openEmployeeOrientation = function() {
+    const id = myEmployeeCenterData?.orientation?.id;
+    if (!id) return toast('No orientation is assigned to your account. Ask the PAL office to send your private orientation link.');
+    location.href = 'projects.html?intake=' + encodeURIComponent(id);
+  };
+
+  window.openEmployeePalForm = function(formId) {
+    if (!employeeCenterForms.some(row => row[0] === formId)) return;
+    const projectId = document.getElementById('employee-center-project-select')?.value;
+    if (!projectId) return toast('Choose the project this form belongs to first.');
+    location.href = 'index.html?palProjectForm=1&employeeCenter=1&form=' + encodeURIComponent(formId) + '&projectId=' + encodeURIComponent(projectId);
+  };
 
   async function loadUserProfile(user) {
     try {
@@ -4973,8 +5099,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       }
       applyRoleUI();
       if (isEmployeeOnlyRole()) {
-        showView('view-login');
-        toast('This account is Employee / Intake Only. Use the intake link from PAL to complete documents.');
+        showView('view-employee-center');
+        loadMyEmployeeCenter(true);
       } else {
         showView('view-projects');
         loadProjects();

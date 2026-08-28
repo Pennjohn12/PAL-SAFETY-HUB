@@ -1,0 +1,32 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const projects = fs.readFileSync(new URL('../projects.html', import.meta.url), 'utf8');
+const home = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const functions = fs.readFileSync(new URL('../functions/index.js', import.meta.url), 'utf8');
+
+test('employee accounts route into My PAL instead of being blocked at login', () => {
+  assert.match(projects, /showView\('view-employee-center'\);\s*loadMyEmployeeCenter\(true\)/);
+  assert.doesNotMatch(projects, /This account is Employee \/ Intake Only/);
+});
+
+test('My PAL launches every approved existing PAL safety form', () => {
+  for (const id of ['harness-checklist','scissor-lift-inspection','scaffold-checklist','incident-report','decon-setup-checklist','ppe-inspection-checklist','respirator-checklist','demolition-safety-checklist']) {
+    assert.match(projects, new RegExp("\\['" + id.replaceAll('-', '\\-') + "'"));
+    assert.match(home, new RegExp('id="' + id + '"'));
+  }
+});
+
+test('employee form routes have a fixed safe return to My PAL', () => {
+  assert.match(home, /employeeCenter.*projects\.html\?employeeCenter=1&tab=forms/s);
+  assert.match(home, /projects\.html\?employeeCenter=1&tab=history/);
+  assert.doesNotMatch(home, /const returnUrl = params\.get\('return'\)/);
+});
+
+test('employee center data is authenticated and does not mutate records', () => {
+  assert.match(functions, /exports\.getMyEmployeeCenter = onCall/);
+  assert.match(functions, /if \(!request\.auth\?\.uid\) throw new HttpsError\('unauthenticated'/);
+  const body = functions.slice(functions.indexOf('exports.getMyEmployeeCenter'), functions.indexOf('exports.updateTextDeliveryStatus'));
+  assert.doesNotMatch(body, /(?:doc|collection)\([^\n]+\)\.(?:set|update|delete)\(/);
+});

@@ -589,6 +589,87 @@ exports.sendAppText = onCall({
   }
 });
 
+exports.getMyEmployeeCenter = onCall({
+  region: 'us-central1',
+  invoker: 'public',
+  enforceAppCheck: false,
+  timeoutSeconds: 30,
+  memory: '256MiB'
+}, async request => {
+  if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in to open My PAL.');
+  const uid = request.auth.uid;
+  const email = cleanEmail(request.auth.token?.email);
+  const profile = await getUserProfile(uid);
+  let employee = null;
+  const employeeQueries = [];
+  if (email) employeeQueries.push(db.collection('employees').where('email', '==', email).limit(1).get());
+  employeeQueries.push(db.collection('employees').where('accountUid', '==', uid).limit(1).get());
+  for (const promise of employeeQueries) {
+    const snap = await promise.catch(() => null);
+    if (snap && !snap.empty) {
+      employee = { id: snap.docs[0].id, ...(snap.docs[0].data() || {}) };
+      break;
+    }
+  }
+  const projectMap = new Map();
+  const projectQueries = [
+    db.collection('projects').where('memberUids', 'array-contains', uid).limit(50).get()
+  ];
+  if (email) projectQueries.push(db.collection('projects').where('memberEmails', 'array-contains', email).limit(50).get());
+  for (const promise of projectQueries) {
+    const snap = await promise.catch(() => null);
+    snap?.docs?.forEach(doc => projectMap.set(doc.id, { id: doc.id, ...(doc.data() || {}) }));
+  }
+  const projects = [...projectMap.values()];
+  const history = [];
+  for (const project of projects.slice(0, 20)) {
+    const snap = await db.collection('projects').doc(project.id).collection('fieldForms')
+      .where('submittedByUid', '==', uid).limit(25).get().catch(() => null);
+    snap?.docs?.forEach(doc => {
+      const row = doc.data() || {};
+      history.push({
+        id: doc.id, projectId: project.id, projectName: cleanText(project.name, 120),
+        formTitle: cleanText(row.formTitle, 160), formKey: cleanText(row.formKey, 100),
+        submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : cleanText(row.localSubmittedAt, 80)
+      });
+    });
+  }
+  history.sort((a, b) => String(b.submittedAt).localeCompare(String(a.submittedAt)));
+  let orientation = null;
+  if (email) {
+    const intakeSnap = await db.collection('newHireIntakes').where('email', '==', email).limit(10).get().catch(() => null);
+    const intakes = (intakeSnap?.docs || []).map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
+    intakes.sort((a, b) => String(b.updatedAt?.toDate?.()?.toISOString?.() || b.createdAt?.toDate?.()?.toISOString?.() || '').localeCompare(String(a.updatedAt?.toDate?.()?.toISOString?.() || a.createdAt?.toDate?.()?.toISOString?.() || '')));
+    if (intakes[0]) {
+      const row = intakes[0];
+      orientation = {
+        id: row.id,
+        status: cleanText(row.status || row.orientationStatus || 'assigned', 40),
+        completed: Boolean(row.orientationComplete || row.orientationCompleted || row.completedAt || String(row.status || '').toLowerCase() === 'complete')
+      };
+    }
+  }
+  const certifications = Array.isArray(employee?.certifications) ? employee.certifications : [];
+  return {
+    ok: true,
+    profile: {
+      name: cleanText(employee?.name || profile.name || request.auth.token?.name || email, 120),
+      email, phone: cleanText(employee?.phone || profile.phone, 40),
+      trade: cleanText(employee?.trade || profile.trade, 80),
+      unionLocal: cleanText(employee?.unionLocal || employee?.local || profile.unionLocal, 80),
+      sinceYear: cleanText(employee?.sinceYear || profile.sinceYear, 12), employeeId: employee?.id || ''
+    },
+    certifications: certifications.slice(0, 50).map(cert => ({
+      title: cleanText(cert.title || cert.type || cert.name || 'Certification', 120),
+      expirationDate: cleanText(cert.expirationDate || cert.expires || '', 40),
+      fileName: cleanText(cert.fileName || cert.name || '', 160), url: cleanText(cert.url || '', 700)
+    })),
+    projects: projects.map(project => ({ id: project.id, name: cleanText(project.name, 120), jobNumber: cleanText(project.jobNumber, 50), location: cleanText(project.location, 160) })),
+    history: history.slice(0, 100),
+    orientation
+  };
+});
+
 exports.updateTextDeliveryStatus = onRequest({
   region: 'us-central1',
   invoker: 'public',
