@@ -47,8 +47,15 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - The Firestore API is enabled only on the Staging project.
 - The default Staging Firestore database exists in `us-east1`, has deletion protection enabled, and began with closed rules.
 - Repository aliases explicitly distinguish `production` and `staging`; the Production default was not changed.
-- Not complete: billing attachment/approval, PITR, Storage, Auth provider configuration, Functions, Staging-only browser configuration, safe rules deployment, integration isolation, budgets/alerts, synthetic accounts/data, visible banner, and end-to-end verification.
-- No Hosting deployment is permitted yet because the current browser configuration still points to Production.
+- Billing is attached to Staging with a $5 monthly alert scoped only to the Staging project at 50%, 90%, and 100%; alerts do not enforce a hard spending cap.
+- Firestore point-in-time recovery is enabled with seven-day version retention; database deletion protection remains enabled.
+- Staging Authentication is initialized with email/password enabled; no synthetic or real users have been created yet.
+- A separate `us-east1` Storage bucket exists with closed production-mode rules and no files.
+- Staging Hosting is deployed with a permanent synthetic-data warning, no-store caching, no indexing, and frame blocking.
+- Browser configuration selects Production only for recognized Production domains. Staging, localhost, and local files select Staging; unknown hosts are blocked.
+- Secret Manager infrastructure is enabled but contains no PAL provider secret created by this work. Email, SMS, AI, and scheduled integrations remain absent.
+- Not complete: isolated Functions deployment, hardened Staging rules, Auth policy/MFA configuration, synthetic accounts/data, integration allowlists, and end-to-end role/workflow verification.
+- Functions deployment was intentionally stopped when the CLI requested a Production provider secret during source analysis; no value was entered and no Staging Function was created.
 
 ## Sequencing
 

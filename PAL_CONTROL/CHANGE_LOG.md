@@ -10,7 +10,20 @@ Newest entries go first. Git history remains the detailed code record.
 - Added explicit repository aliases for Production and Staging without changing the existing Production default.
 - Billing-dependent controls remain incomplete: point-in-time recovery, Storage, Functions, budgets, and alerts.
 - No Staging or Production deployment occurred. No Production configuration, secret, user, permission, or data was accessed or changed.
-- Safety gate: do not deploy the current frontend to Staging until its Firebase configuration is isolated from Production and a visible staging banner is present.
+- Safety gate applied: Hosting was not deployed until its Firebase configuration was isolated from Production and a visible staging banner was present.
+
+### Package 2 progress checkpoint
+
+- Attached the authorized billing account to Staging only and created a $5 monthly alert at 50%, 90%, and 100% for billing admins and project owners. This alert does not cap spending.
+- Enabled Firestore PITR with seven-day version retention; deletion protection remains enabled.
+- Enabled email/password Authentication without creating users.
+- Created an empty `us-east1` Storage bucket with deny-all production-mode rules.
+- Added a domain-based environment guard: recognized Production domains use Production, Staging/local hosts use Staging, and unknown hosts are blocked.
+- Deployed Hosting only to `https://pal-safety-hub-staging.web.app`; verified the visible **STAGING — TEST DATA ONLY** banner, HTTP 200, no-store caching, no-index header, and frame denial.
+- Automated checks: 46 passed; Functions and environment-module syntax passed; Staging Hosting configuration parsed successfully.
+- Enabled empty Secret Manager infrastructure but did not create or copy any provider secret.
+- Attempted a selected non-integration Functions deployment; Firebase requested the declared email-provider secret while analyzing the shared source. The deployment was stopped, no secret was entered, and the verified Staging Functions list remained empty.
+- Production impact: none. No Production deployment, rule, Function, account, secret, permission, or data change occurred.
 
 ## 2026-08-28 — Security program Package 1 baseline
 
