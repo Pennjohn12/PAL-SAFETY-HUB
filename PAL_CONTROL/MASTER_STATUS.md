@@ -28,10 +28,10 @@ Last verified: **2026-08-28, America/New_York**
 ## Staging/Test status
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
-- No dedicated Staging Firebase project is configured in this repository or visible to the verified Firebase account.
-- No non-live PAL Hosting preview channel was present at baseline inspection.
-- Current frontend configuration connects directly to Production Firebase services; deploying it to another URL would not create safe staging.
-- Status: **Not established. Do not perform write-based application testing against Production.**
+- Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
+- Staging Hosting, Auth, Firestore/PITR, closed empty Storage, environment routing, and a visible synthetic-data warning are established.
+- One isolated synthetic-data-only health Function is active; it contains no Production integrations or secrets and anonymous invocation was denied.
+- Status: **Partially established. Use synthetic data only; role fixtures and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
 
 ## Demo status
 
@@ -53,7 +53,7 @@ Present in current source and covered by current automated checks where noted:
 
 ## Testing / QA baseline
 
-- Automated tests: **43 passed, 0 failed** on 2026-08-28.
+- Automated tests: **47 passed, 0 failed** on 2026-08-28.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
@@ -61,7 +61,7 @@ Present in current source and covered by current automated checks where noted:
 
 ## Known issues / verification gaps
 
-- Dedicated Staging and Demo environments do not exist.
+- Staging is partially established; synthetic roles and end-to-end workflow validation remain incomplete. Demo does not exist.
 - Production releases lack a built-in visible Git commit identifier; current mapping required content hashing.
 - Deployed Functions and rules need a separate evidence-backed revision comparison.
 - Backup configuration is documented as active, but a current restore exercise is not verified here.
@@ -70,7 +70,7 @@ Present in current source and covered by current automated checks where noted:
 ## Active priorities
 
 1. Execute the 15-package security hardening program recorded in `SECURITY_PROGRAM.md`.
-2. Create a dedicated Firebase Staging project with synthetic data and isolated integrations.
+2. Complete synthetic identities, hardened rules, and isolated workflow validation in the dedicated Staging project.
 3. Repair the verified identity-linking, backend project-authorization, public-intake, upload, signature, and role-creation risks in `SECURITY_RISK_REGISTER.md`.
 4. Add a release/build identifier tied to the Git commit.
 5. Add automated rule tests and broader critical-workflow coverage.
@@ -80,7 +80,7 @@ Present in current source and covered by current automated checks where noted:
 ## Security program status
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
-- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, closed Storage, a $5 monthly alert, environment guards, and a visible test-data banner. Functions and synthetic role fixtures remain incomplete.
+- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, and one isolated health Function. Synthetic role fixtures and full workflow validation remain incomplete.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.

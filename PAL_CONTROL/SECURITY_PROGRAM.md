@@ -37,7 +37,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - In progress: **Package 2 — Isolated Staging/Test environment**.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **No**.
-- Isolated Staging available: **No**.
+- Isolated Staging available: **Partially established; safe foundation available, synthetic role fixtures and full workflow validation remain incomplete**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
 
 ## Package 2 verified progress
@@ -54,8 +54,11 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - Staging Hosting is deployed with a permanent synthetic-data warning, no-store caching, no indexing, and frame blocking.
 - Browser configuration selects Production only for recognized Production domains. Staging, localhost, and local files select Staging; unknown hosts are blocked.
 - Secret Manager infrastructure is enabled but contains no PAL provider secret created by this work. Email, SMS, AI, and scheduled integrations remain absent.
-- Not complete: isolated Functions deployment, hardened Staging rules, Auth policy/MFA configuration, synthetic accounts/data, integration allowlists, and end-to-end role/workflow verification.
-- Functions deployment was intentionally stopped when the CLI requested a Production provider secret during source analysis; no value was entered and no Staging Function was created.
+- An isolated Node.js 22 Staging Functions codebase is deployed with one synthetic-data-only health function, `stagingEnvironmentHealth`. It has no provider secrets or Production integrations, is capped at one instance, and is the only listed Staging function.
+- An anonymous HTTP invocation of the Staging health function returned `403 Forbidden`; public invocation is therefore not enabled. Authenticated app integration remains to be designed and tested before relying on this endpoint.
+- The Staging Artifact Registry cleanup policy removes container images older than one day to limit buildup and cost.
+- Automated tests pass **47 of 47**, including Staging host isolation, banner/header checks, and the isolated backend configuration.
+- Not complete: hardened Staging rules, Auth policy/MFA configuration, synthetic accounts/data, integration allowlists, and end-to-end role/workflow verification.
 
 ## Sequencing
 

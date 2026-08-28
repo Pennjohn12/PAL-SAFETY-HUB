@@ -1,0 +1,11 @@
+{
+  "name": "pal-safety-hub-staging-bootstrap",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "firebase-functions": "^6.3.2"
+  }
+}

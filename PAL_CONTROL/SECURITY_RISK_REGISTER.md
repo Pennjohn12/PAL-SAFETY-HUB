@@ -30,7 +30,7 @@ PAL must protect employee identity, payroll, onboarding, safety, certification, 
 - Privileged backend: Firebase Functions using the Admin SDK; these functions bypass client security rules and therefore require their own authorization checks.
 - Public capabilities: intake document IDs, ticket-signature tokens, safety-signature tokens, and daily-access tokens.
 - External providers: email, SMS, AI, Firebase/Google Cloud Hosting and backups; provider keys are referenced as backend secrets.
-- Environments: Production exists; isolated Staging and Demo do not currently exist. The frontend configuration points directly to Production services.
+- Environments: Production exists; isolated Staging is now partially established with separate Firebase services and guarded frontend routing. Synthetic roles and complete workflow validation are pending. Demo does not exist.
 - Recovery: current Firestore backups were listed as `READY`; restore execution and Storage recovery remain unverified.
 
 ## Verified protective controls
@@ -69,7 +69,7 @@ These are not confirmed vulnerabilities until evidence establishes the condition
 - Checked-in Firestore and Storage rules have not been proven identical to the deployed Production revisions.
 - Deployed Function source has not been mapped conclusively to the current Git commit. An older `us-central1` `submitEmployeeFieldForm` entry is reported with `UNKNOWN` state in addition to the active `us-east1` deployment; callability and removal status require safe verification.
 - No Firebase Emulator rule suite verifies the complete anonymous/Employee/Foreman/Supervisor/Office/Admin and cross-project matrix.
-- No isolated Staging environment exists, preventing safe write-based authorization and abuse testing.
+- Isolated Staging infrastructure exists, but synthetic role fixtures and complete authorization/abuse tests are not yet established.
 - Auth settings such as email verification enforcement, MFA enrollment, password policy, authorized domains, session revocation, and abuse protection require an explicit configuration audit.
 - IAM roles, service-account privilege, API-key restrictions, billing alerts, log retention, and secret access policies require a Google Cloud configuration audit without revealing secret values.
 - Storage object versioning, malware scanning, download logging, and retention/lifecycle enforcement are unverified.
@@ -87,4 +87,4 @@ These are not confirmed vulnerabilities until evidence establishes the condition
 
 ## Assessment conclusion
 
-PAL has a meaningful security foundation, but the current handling of identity/payroll data and several backend/public authorization paths do not yet meet the intended high-assurance standard. The security program should proceed before broader use. Package 2 should establish isolated Staging so the known issues can be repaired and tested without Production data or Production writes.
+PAL has a meaningful security foundation, but the current handling of identity/payroll data and several backend/public authorization paths do not yet meet the intended high-assurance standard. The security program should proceed before broader use. Package 2 has established the isolated Staging foundation; synthetic roles, hardened rules, and full workflow testing must be completed before the known issues can be safely repaired and verified for Production.
