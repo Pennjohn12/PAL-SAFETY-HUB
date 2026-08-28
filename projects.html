@@ -806,8 +806,9 @@
     .employee-center-list-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:12px; padding:12px; }
     .employee-center-list-row strong { display:block; color:var(--navy); }
     .employee-center-list-row small { color:var(--muted); }
-    .employee-center-form-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-    .employee-center-form-grid button { min-height:125px; }
+    .employee-center-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .employee-center-form-grid .employee-center-card { grid-column:auto; min-height:145px; width:100%; }
+    .employee-center-form-grid .employee-center-card h3 { font-size:20px; }
     @media(max-width:780px){ .employee-center-hero{align-items:flex-start;flex-direction:column}.employee-center-card{grid-column:span 6}.employee-center-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
     @media(max-width:520px){ .employee-center-card{grid-column:span 12}.employee-center-form-grid{grid-template-columns:1fr} }
     #view-detail .tab-pane.project-section-window {
@@ -2016,8 +2017,7 @@
     <section class="tab-pane" id="employee-center-certs"><div class="page-header"><h2>My Certifications</h2></div><div id="employee-center-cert-list" class="employee-center-list"><p class="helper-text">Loading certifications...</p></div></section>
     <section class="tab-pane" id="employee-center-history"><div class="page-header"><h2>My Submitted Forms</h2></div><div class="helper-text" style="margin-bottom:12px;">Official records remain in the linked project. Your history here is read-only.</div><div id="employee-center-history-list" class="employee-center-list"><p class="helper-text">Loading submissions...</p></div></section>
     <section class="tab-pane" id="employee-center-forms">
-      <div class="page-header"><div><h2>PAL Safety Forms</h2><p class="helper-text">These are the existing approved PAL forms.</p></div></div>
-      <div class="field" style="max-width:500px;"><label>Submit to project</label><select id="employee-center-project-select"><option value="">Choose an assigned project</option></select></div>
+      <div class="page-header"><div><h2>PAL Safety Forms</h2><p class="helper-text">Choose the form you need. Enter the project or PAL job number inside the form before submitting.</p></div></div>
       <div class="employee-center-form-grid" style="margin-top:16px;" id="employee-center-form-grid">
         <button class="employee-center-card" type="button" onclick="openEmployeePalForm('harness-checklist')"><h3>Harness Checklist</h3><p>Open the current approved PAL form.</p></button>
         <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scissor-lift-inspection')"><h3>Scissor Lift Inspection</h3><p>Open the current approved PAL form.</p></button>
@@ -4857,7 +4857,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     } catch (error) {
       console.error('My PAL load failed', error);
       document.getElementById('employee-center-attention').textContent = 'We could not load your records. Check your connection and try again.';
-      document.getElementById('employee-center-project-select').innerHTML = '<option value="">Projects could not load — refresh and try again</option>';
     }
   };
 
@@ -4879,7 +4878,6 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const certs = data.certifications || [];
     document.getElementById('employee-center-cert-list').innerHTML = certs.length ? certs.map(cert => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(cert.title) + '</strong><div class="helper-text">' + escapeHtml(cert.expirationDate ? 'Expires ' + cert.expirationDate : 'No expiration date listed') + '</div></div>' + (cert.url ? '<a class="btn-outline" target="_blank" rel="noopener" href="' + escapeHtml(cert.url) + '">View</a>' : '') + '</div>').join('') : '<p class="helper-text">No certifications are on file yet.</p>';
     const projects = data.projects || [];
-    document.getElementById('employee-center-project-select').innerHTML = projects.length ? '<option value="">Choose an assigned project</option>' + projects.map(project => '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.name + (project.jobNumber ? ' — ' + project.jobNumber : '')) + '</option>').join('') : '<option value="">No project assigned — contact your foreman</option>';
     renderEmployeeCenterFormButtons();
     const rows = data.history || [];
     const historyHtml = rows.length ? rows.map(row => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(row.formTitle || 'PAL Safety Form') + '</strong><div class="helper-text">' + escapeHtml(row.projectName || '') + ' • ' + escapeHtml(row.submittedAt ? new Date(row.submittedAt).toLocaleDateString() : '') + '</div></div></div>').join('') : '<p class="helper-text">You have not submitted any project forms yet.</p>';
@@ -4896,9 +4894,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   window.openEmployeePalForm = function(formId) {
     if (!employeeCenterForms.some(row => row[0] === formId)) return;
-    const projectId = document.getElementById('employee-center-project-select')?.value;
-    if (!projectId) return toast('Choose the project this form belongs to first.');
-    location.href = 'index.html?palProjectForm=1&employeeCenter=1&form=' + encodeURIComponent(formId) + '&projectId=' + encodeURIComponent(projectId);
+    location.href = 'index.html?palProjectForm=1&employeeCenter=1&form=' + encodeURIComponent(formId);
   };
 
   async function loadUserProfile(user) {

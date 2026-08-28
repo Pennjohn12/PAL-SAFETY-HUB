@@ -29,7 +29,15 @@ test('safety form buttons render even when employee records fail to load', () =>
   assert.match(formGridMarkup, /openEmployeePalForm\('harness-checklist'\)/);
   assert.match(formGridMarkup, /openEmployeePalForm\('scissor-lift-inspection'\)/);
   assert.match(projects, /window\.loadMyEmployeeCenter = async function[\s\S]*?renderEmployeeCenterFormButtons\(\);[\s\S]*?try \{/);
-  assert.match(projects, /No project assigned — contact your foreman/);
+  assert.doesNotMatch(projects, /Choose the project this form belongs to first/);
+  assert.match(projects, /Enter the project or PAL job number inside the form before submitting/);
+});
+
+test('employees can open a blank form before choosing a project', () => {
+  const launcher = projects.slice(projects.indexOf('window.openEmployeePalForm'), projects.indexOf('async function loadUserProfile'));
+  assert.match(launcher, /palProjectForm=1&employeeCenter=1&form=/);
+  assert.doesNotMatch(launcher, /employee-center-project-select/);
+  assert.doesNotMatch(launcher, /projectId=/);
 });
 
 test('employee project assignments grant project-member access', () => {
