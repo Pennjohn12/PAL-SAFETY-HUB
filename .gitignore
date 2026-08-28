@@ -6,6 +6,7 @@ media/*.webm
 
 # Generated Firebase deployment cache.
 .firebase/
+**/node_modules/
 
 # Local/generated files that should not ship with app source.
 .DS_Store
