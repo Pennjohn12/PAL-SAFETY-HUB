@@ -30,13 +30,14 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 const functions = getFunctions(app, "us-central1");
+const eastFunctions = getFunctions(app, "us-east1");
 
 export const sendAppEmailCallable = httpsCallable(functions, "sendAppEmail");
 export const sendAppTextCallable = httpsCallable(functions, "sendAppText");
 export const generateSafetyDraftCallable = httpsCallable(functions, "generateSafetyDraft");
 export const getIntegrationHealthCallable = httpsCallable(functions, "getIntegrationHealth");
 export const getMyEmployeeCenterCallable = httpsCallable(functions, "getMyEmployeeCenter");
-export const submitEmployeeFieldFormCallable = httpsCallable(functions, "submitEmployeeFieldForm");
+export const submitEmployeeFieldFormCallable = httpsCallable(eastFunctions, "submitEmployeeFieldForm");
 export const createDailyAccessSessionCallable = httpsCallable(functions, "createDailyAccessSession");
 export const submitDailyAccessCallable = httpsCallable(functions, "submitDailyAccess");
 export const updateDailyAccessSubmissionCallable = httpsCallable(functions, "updateDailyAccessSubmission");

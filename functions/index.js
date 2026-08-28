@@ -675,7 +675,7 @@ exports.getMyEmployeeCenter = onCall({
 });
 
 exports.submitEmployeeFieldForm = onCall({
-  region: 'us-central1',
+  region: 'us-east1',
   invoker: 'public',
   enforceAppCheck: false,
   timeoutSeconds: 30,
