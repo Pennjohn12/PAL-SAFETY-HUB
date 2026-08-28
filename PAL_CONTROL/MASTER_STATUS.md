@@ -32,6 +32,7 @@ Last verified: **2026-08-28, America/New_York**
 - Staging Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed empty Storage, environment routing, and a visible synthetic-data warning are established.
 - One isolated synthetic-data-only health Function is active; it contains no Production integrations or secrets and anonymous invocation was denied.
 - Six synthetic Staging Authentication identities and matching Firestore profiles now cover Employee, Foreman, Supervisor, Office, Admin, and disabled-user cases; no credentials are stored in source. One unmistakably fake Staging project references only those synthetic identities.
+- Live Rules Playground checks passed the current bootstrap boundary: own verified profile allowed; anonymous, cross-user, unverified-email, project, profile-mutation, and all tested Storage access denied.
 - Status: **Partially established. Use synthetic data only; emulator-backed authorization and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
 
 ## Demo status
