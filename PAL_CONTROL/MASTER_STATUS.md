@@ -1,0 +1,80 @@
+# PAL Safety Hub Master Status
+
+Last verified: **2026-08-28, America/New_York**
+
+## Current Production status
+
+- Status: **Online; sampled deploy-critical Hosting content matches current source.**
+- Production URL: `https://pal-safety-hub.web.app/`
+- Custom PAL URL: `https://pal.jobsiteresources.com/`
+- Firebase project: `pal-safety-hub`
+- Current Production commit: `4b2e54e214eebe7615a36ddf6b2c7e7e394199be`
+- Production Hosting version: `d9ef60e643ff9f11`
+- Production release time: `2026-08-28T18:01:25.005Z`
+- Deployment identity: `jvpanettiere@gmail.com`
+- Evidence: live `index.html`, `projects.html`, Firebase client configuration, `manifest.json`, and `sw.js` matched the Git blobs at the Production commit.
+- Boundary: Hosting verification does not independently prove deployed Functions or security-rule revisions.
+
+## Current source and Git checkpoint
+
+- Repository: `https://github.com/Pennjohn12/PAL-SAFETY-HUB`
+- Authoritative source branch: `main`
+- Current Source Commit: `4b2e54e214eebe7615a36ddf6b2c7e7e394199be`
+- Subject: `Route Employee Center history through east region`
+- Local `main`: safely fast-forwarded to the same commit on 2026-08-28.
+- Governance refresh branch: `codex/pal-governance-refresh`, based directly on the source commit above.
+- Preserved local QA fixtures: five clearly marked `PAL_QA_*_NOT_REAL.pdf` files under `tests/fixtures/`; untracked and not altered.
+
+## Staging/Test status
+
+- GitHub branch `staging` exists but is stale and is not an environment boundary.
+- No dedicated Staging Firebase project is configured in this repository or visible to the verified Firebase account.
+- No non-live PAL Hosting preview channel was present at baseline inspection.
+- Current frontend configuration connects directly to Production Firebase services; deploying it to another URL would not create safe staging.
+- Status: **Not established. Do not perform write-based application testing against Production.**
+
+## Demo status
+
+- No isolated Demo Firebase environment was verified.
+- Status: **Not established.**
+
+## Completed / verified features
+
+Present in current source and covered by current automated checks where noted:
+
+- PAL public/PWA experience and signed-in role dashboards.
+- Project operations, reports, field forms, tickets/signatures, documents, and offline form queue.
+- Employee onboarding, orientation, payroll-waiver, certification, and Good To Work flows.
+- My PAL Employee Center with authenticated form access, submission, history, safe inspection reuse, and fixed return paths.
+- Foreman operations and daily access workflows.
+- Email, SMS, AI, integration-health, onboarding, daily-access, and Employee Center callable Functions in source.
+- Firestore and Storage rules, audit model, archive protections, and backup-export support in source.
+- Production Hosting availability and source match at the commit recorded above.
+
+## Testing / QA baseline
+
+- Automated tests: **43 passed, 0 failed** on 2026-08-28.
+- Test files: all current `tests/*.test.mjs` files.
+- Functions JavaScript syntax: **passed** for `functions/index.js`.
+- Production Hosting comparison: **passed** for five deploy-critical frontend files.
+- Not yet verified in this checkpoint: full signed-in role-by-role Production smoke testing; deployed Functions source equivalence; deployed Firestore/Storage rules equivalence; backup restore exercise.
+
+## Known issues / verification gaps
+
+- Dedicated Staging and Demo environments do not exist.
+- Production releases lack a built-in visible Git commit identifier; current mapping required content hashing.
+- Deployed Functions and rules need a separate evidence-backed revision comparison.
+- Backup configuration is documented as active, but a current restore exercise is not verified here.
+- Stale remote `staging` and `chore/pal-governance` branches must not overwrite current `main`.
+
+## Active priorities
+
+1. Create a dedicated Firebase Staging project with synthetic data and isolated integrations.
+2. Add a release/build identifier tied to the Git commit.
+3. Add automated rule tests and broader critical-workflow coverage.
+4. Verify deployed Functions, rules, backup jobs, and recovery procedure.
+5. Decide whether Demo requires its own isolated Firebase project.
+
+## Production authorization
+
+No Production deployment is authorized by this document. John must explicitly approve each Production deployment.
