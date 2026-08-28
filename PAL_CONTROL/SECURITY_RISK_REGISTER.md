@@ -30,7 +30,7 @@ PAL must protect employee identity, payroll, onboarding, safety, certification, 
 - Privileged backend: Firebase Functions using the Admin SDK; these functions bypass client security rules and therefore require their own authorization checks.
 - Public capabilities: intake document IDs, ticket-signature tokens, safety-signature tokens, and daily-access tokens.
 - External providers: email, SMS, AI, Firebase/Google Cloud Hosting and backups; provider keys are referenced as backend secrets.
-- Environments: Production exists; isolated Staging is now partially established with separate Firebase services and guarded frontend routing. Synthetic roles and complete workflow validation are pending. Demo does not exist.
+- Environments: Production exists; isolated Staging is established for synthetic security work with separate Firebase services, guarded frontend routing, synthetic role fixtures, and no Production data copy. Broad workflow validation remains assigned to Package 14. Demo does not exist.
 - Recovery: current Firestore backups were listed as `READY`; restore execution and Storage recovery remain unverified.
 
 ## Verified protective controls
@@ -45,7 +45,7 @@ PAL must protect employee identity, payroll, onboarding, safety, certification, 
 - Important retained project, safety, employee, certification, and intake records cannot normally be deleted by clients.
 - Current Firestore backups exist and are reported ready.
 - Live deploy-critical Hosting content matches current source after line-ending normalization.
-- Existing automated suite passes 43 tests and Functions JavaScript syntax passes.
+- Existing core automated suite passes 54 tests, the Staging Firebase emulator suite passes 10 authorization tests, and Functions JavaScript syntax passes.
 
 ## Verified risks
 
@@ -87,4 +87,4 @@ These are not confirmed vulnerabilities until evidence establishes the condition
 
 ## Assessment conclusion
 
-PAL has a meaningful security foundation, but the current handling of identity/payroll data and several backend/public authorization paths do not yet meet the intended high-assurance standard. The security program should proceed before broader use. Package 2 has established the isolated Staging foundation; synthetic roles, hardened rules, and full workflow testing must be completed before the known issues can be safely repaired and verified for Production.
+PAL has a meaningful security foundation, but the current handling of identity/payroll data and several backend/public authorization paths do not yet meet the intended high-assurance standard. The security program should proceed before broader use. Package 2 has established and tested the isolated Staging foundation; the known issues can now be repaired and verified there before any separately approved Production change.

@@ -16,7 +16,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 | # | Work package | Status | Finish line / required evidence |
 |---|---|---|---|
 | 1 | Security inventory and risk register | Passed PAL tests | Current source, configuration, Production metadata, data classes, trust boundaries, controls, verified risks, and verification gaps are recorded in `SECURITY_RISK_REGISTER.md`. No destructive testing or real-data inspection is used. |
-| 2 | Isolated Staging/Test environment | In progress | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
+| 2 | Isolated Staging/Test environment | Passed PAL tests | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
 | 3 | Controlled Production maintenance mode | Not started | John approves the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented. |
 | 4 | Secure public orientation/intake access | Not started | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
 | 5 | Secure sensitive-upload authorization | Not started | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
@@ -33,11 +33,11 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 
 ## Current program position
 
-- Completed: **1 of 15** packages at the PAL internal-assessment level.
-- In progress: **Package 2 — Isolated Staging/Test environment**.
+- Completed: **2 of 15** packages at the PAL internal-assessment level.
+- In progress: **None. Package 3 requires a separately defined Production-maintenance decision coordinated through 00 — PAL CONTROL ROOM.**
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **No**.
-- Isolated Staging available: **Partially established; safe foundation available, synthetic role fixtures and full workflow validation remain incomplete**.
+- Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
 
 ## Package 2 verified progress
@@ -71,7 +71,8 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - A separate Firebase Local Emulator Suite passes **10 of 10** authorization tests against the actual Staging rule files. It verifies explicit active project-member reads while denying outsiders, the disabled fixture, lists, mutations, and all tested Storage access. The earlier live Rules Playground membership simulation remained inconclusive, but the same allow path is now behaviorally verified in the emulator.
 - Emulator tests first verified and then regression-tested repairs for two Staging workflow defects: registration now writes the constrained profile shape accepted by the rule, and Boolean synthetic bootstrap profiles can satisfy the verified-member predicate. Unverified accounts still cannot read profiles or project data, and no live credential was created or changed.
 - The corrected rules and Staging-only registration path are deployed to `pal-safety-hub-staging`. Live Hosting verification passed HTTP, cache, frame, indexing, banner, and corrected-content checks.
-- Not complete: approved MFA/Identity Platform decision, self-delete restriction, and end-to-end role/workflow verification.
+- A live Staging lifecycle test created a temporary unverified reserved-domain account, created only its constrained Employee profile, verified the profile read was denied before email verification, and removed both the exact profile and account. No credential was printed or retained.
+- Package 2 finish line: **Passed PAL tests on 2026-08-28**. MFA and privileged-account controls remain assigned to Package 9; controlled account deletion and role lifecycle remain assigned to Package 7; complete workflow validation remains assigned to Package 14.
 
 ## Sequencing
 

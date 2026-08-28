@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-28 — Security program Package 2 completed
+
+- Result: **Passed PAL tests**. The isolated Staging project satisfies the Package 2 finish line for separate Firebase services, synthetic fixtures, environment guards, cost alerting, closed integrations/files, visible warnings, and authorization evidence.
+- Live lifecycle evidence: one temporary reserved-domain unverified account created its exact constrained Employee profile; pre-verification reading was denied; the exact profile and account were then removed successfully. Its generated password was not printed or retained.
+- Test evidence: 54 of 54 core checks and 10 of 10 Firebase emulator authorization tests passed; Staging Hosting returned HTTP 200 with no-store, frame-denial, and no-index protections.
+- Production and data impact: none. No Production deployment/configuration and no real PAL data were used.
+- Program position: 2 of 15 packages passed PAL tests. Package 3 requires a separately defined Production-maintenance decision coordinated through **00 — PAL CONTROL ROOM**.
+
 ## 2026-08-28 — Package 2 registration compatibility verification
 
 - Added Firebase emulator coverage for the exact permitted employee bootstrap, the current app registration payload, and subsequent synthetic project access.

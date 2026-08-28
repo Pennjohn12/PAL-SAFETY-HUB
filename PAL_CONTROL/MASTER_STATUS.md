@@ -37,7 +37,7 @@ Last verified: **2026-08-28, America/New_York**
 - Staging password policy is now enforced at 12 characters with uppercase, lowercase, numeric, special-character, and forced-upgrade requirements. Self-sign-up remains enabled for testing. The console did not accept the approved self-delete restriction, so self-delete remains enabled and tracked as a gap.
 - Staging integration allowlist is currently limited to the single synthetic health Function; email, SMS, AI, schedules, Production Function code, and provider credentials remain absent.
 - A narrow synthetic project-member read rule compiled and deployed to Staging; lists and all project writes remain denied. Its earlier live Rules Playground simulation was inconclusive, but the same authorization path passed local Firebase emulator behavior tests.
-- Status: **Partially established. Use synthetic data only; complete workflow validation remains pending. Do not perform write-based application testing against Production.**
+- Status: **Established for controlled synthetic security work. Do not use real PAL data and do not perform write-based application testing against Production.**
 
 ## Demo status
 
@@ -68,7 +68,7 @@ Present in current source and covered by current automated checks where noted:
 
 ## Known issues / verification gaps
 
-- Staging is partially established; synthetic role fixtures exist, but interactive and end-to-end workflow validation remain incomplete. Demo does not exist.
+- Staging is established for synthetic security work; broad end-to-end workflow validation belongs to Package 14. Demo does not exist.
 - Production releases lack a built-in visible Git commit identifier; current mapping required content hashing.
 - Deployed Functions and rules need a separate evidence-backed revision comparison.
 - Backup configuration is documented as active, but a current restore exercise is not verified here.
@@ -87,7 +87,7 @@ Present in current source and covered by current automated checks where noted:
 ## Security program status
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
-- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, six synthetic Authentication identities/profiles, one fake project, and a passing 10-test Firebase emulator authorization suite. The repaired Staging registration contract is deployed and verified without live credentials. The MFA/Identity Platform decision, self-delete restriction, and full workflow validation remain incomplete.
+- Package 2 of 15, isolated Staging/Test environment: **Passed PAL tests** on 2026-08-28. The separate project has isolated Hosting, Auth, Firestore/PITR, hardened rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, synthetic identities/profiles/project data, 10 passing emulator tests, and a successful temporary-account live lifecycle with complete cleanup. MFA is tracked in Package 9, account/role lifecycle in Package 7, and broad workflow validation in Package 14.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.

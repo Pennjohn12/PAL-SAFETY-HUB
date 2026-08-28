@@ -58,4 +58,15 @@ The emulator reproduced two Staging-only workflow defects. They were availabilit
 - An unverified signed-in user may create only their own constrained Employee profile. Profile reads still require verified email; lists, updates, deletes, privileged roles, and arbitrary fields remain denied.
 - The active-project predicate now accepts the Boolean marker created by registration while retaining compatibility with the existing string-marked synthetic fixtures. Explicit membership and verified email remain required.
 - The repaired rule compiled and was released to `pal-safety-hub-staging`; the corrected Staging website was also released. Live Hosting returned HTTP 200 with no-store, frame-denial, and no-index protections and contained the Staging-only registration path.
-- No live account or credential was created, changed, or tested to establish these results.
+- The rule-repair results above were established locally without changing credentials; the separate temporary-account lifecycle below supplied live Staging confirmation and cleanup evidence.
+
+## Live temporary-account lifecycle
+
+With John's explicit authorization, one temporary reserved-domain synthetic account was created in Staging using a generated password that was neither printed nor retained.
+
+- Authentication account creation: **Passed**.
+- Exact constrained Employee profile creation: **Passed**.
+- Profile read before email verification: **Denied as required**.
+- Exact synthetic profile cleanup: **Passed**.
+- Temporary Authentication account cleanup: **Passed**.
+- Production impact and real-data use: **None**.
