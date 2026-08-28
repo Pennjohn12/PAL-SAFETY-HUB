@@ -40,6 +40,17 @@ test('employees can open a blank form before choosing a project', () => {
   assert.doesNotMatch(launcher, /projectId=/);
 });
 
+test('employee forms replace the retired public navigation with a My PAL return', () => {
+  assert.match(home, /pal-direct-form-route body > \.header,[\s\S]*?nav#tabs \{ display:none !important; \}/);
+  assert.match(home, /class="pal-employee-form-header"/);
+  assert.match(home, />Back to Employee Center</);
+});
+
+test('employee safety forms use the approved prototype card layout', () => {
+  assert.match(projects, /grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  for (const code of ['HAR','LIFT','SCF','IR','DEC','PPE','RESP','DEMO']) assert.match(projects, new RegExp('employee-form-code[^>]*>' + code + '<'));
+});
+
 test('employee project assignments grant project-member access', () => {
   assert.match(projects, /toggleEmployeeAssignment[\s\S]*?memberEmails: assign \? arrayUnion\(employeeEmail\) : arrayRemove\(employeeEmail\)/);
   assert.match(functions, /employee\?\.assignedProjectIds/);

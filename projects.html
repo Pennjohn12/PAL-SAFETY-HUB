@@ -806,10 +806,13 @@
     .employee-center-list-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; border:1px solid var(--line); border-radius:12px; padding:12px; }
     .employee-center-list-row strong { display:block; color:var(--navy); }
     .employee-center-list-row small { color:var(--muted); }
-    .employee-center-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
-    .employee-center-form-grid .employee-center-card { grid-column:auto; min-height:145px; width:100%; }
-    .employee-center-form-grid .employee-center-card h3 { font-size:20px; }
-    @media(max-width:780px){ .employee-center-hero{align-items:flex-start;flex-direction:column}.employee-center-card{grid-column:span 6}.employee-center-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    .employee-center-form-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
+    .employee-center-form-grid .employee-center-card { grid-column:auto; min-height:240px; width:100%; padding:26px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .employee-center-form-grid .employee-center-card h3 { font-size:20px; line-height:1.25; margin:16px 0 8px; }
+    .employee-center-form-grid .employee-center-card p { font-size:15px; margin:0; }
+    .employee-form-code { width:58px; height:58px; border-radius:16px; background:#edf4f8; color:var(--navy); display:grid; place-items:center; font-weight:900; font-size:17px; }
+    @media(max-width:980px){ .employee-center-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media(max-width:780px){ .employee-center-hero{align-items:flex-start;flex-direction:column}.employee-center-card{grid-column:span 6} }
     @media(max-width:520px){ .employee-center-card{grid-column:span 12}.employee-center-form-grid{grid-template-columns:1fr} }
     #view-detail .tab-pane.project-section-window {
       position: fixed;
@@ -2019,14 +2022,14 @@
     <section class="tab-pane" id="employee-center-forms">
       <div class="page-header"><div><h2>PAL Safety Forms</h2><p class="helper-text">Choose the form you need. Enter the project or PAL job number inside the form before submitting.</p></div></div>
       <div class="employee-center-form-grid" style="margin-top:16px;" id="employee-center-form-grid">
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('harness-checklist')"><h3>Harness Checklist</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scissor-lift-inspection')"><h3>Scissor Lift Inspection</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scaffold-checklist')"><h3>Scaffold Checklist</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('incident-report')"><h3>Incident Report</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('decon-setup-checklist')"><h3>Decontamination Setup Checklist</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('ppe-inspection-checklist')"><h3>PPE Inspection Checklist</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('respirator-checklist')"><h3>Respirator Checklist</h3><p>Open the current approved PAL form.</p></button>
-        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('demolition-safety-checklist')"><h3>Demolition Safety Checklist</h3><p>Open the current approved PAL form.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('harness-checklist')"><span class="employee-form-code">HAR</span><h3>Harness Inspection Checklist</h3><p>PAL’s live fall-protection inspection.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scissor-lift-inspection')"><span class="employee-form-code">LIFT</span><h3>Scissor Lift Pre-Use Inspection</h3><p>PAL’s live lift and work-area inspection.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('scaffold-checklist')"><span class="employee-form-code">SCF</span><h3>Scaffold Safety Checklist</h3><p>PAL’s live pre-use scaffold inspection.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('incident-report')"><span class="employee-form-code">IR</span><h3>Near Miss / Incident Report</h3><p>Report injuries, incidents, and close calls.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('decon-setup-checklist')"><span class="employee-form-code">DEC</span><h3>Decon Setup Checklist</h3><p>Containment and cleanup controls.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('ppe-inspection-checklist')"><span class="employee-form-code">PPE</span><h3>PPE Inspection Checklist</h3><p>Required personal protective equipment.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('respirator-checklist')"><span class="employee-form-code">RESP</span><h3>Respirator Checklist</h3><p>Respiratory protection pre-use check.</p></button>
+        <button class="employee-center-card" type="button" onclick="openEmployeePalForm('demolition-safety-checklist')"><span class="employee-form-code">DEMO</span><h3>Demolition Safety Checklist</h3><p>Pre-task demolition controls.</p></button>
       </div>
       <div class="detail-card" style="margin-top:16px;"><h3>Reuse a previous inspection</h3><p class="helper-text">A previous inspection may copy project, equipment, location, and responses. Review every answer for today’s conditions, confirm today’s inspection, then enter a new date and signature. PAL creates a new daily record and preserves the original.</p><div id="employee-center-reuse-list" class="employee-center-list"></div></div>
     </section>
@@ -4828,14 +4831,14 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   let myEmployeeCenterData = null;
   const employeeCenterForms = [
-    ['harness-checklist', 'Harness Checklist'],
-    ['scissor-lift-inspection', 'Scissor Lift Inspection'],
-    ['scaffold-checklist', 'Scaffold Checklist'],
-    ['incident-report', 'Incident Report'],
-    ['decon-setup-checklist', 'Decontamination Setup Checklist'],
-    ['ppe-inspection-checklist', 'PPE Inspection Checklist'],
-    ['respirator-checklist', 'Respirator Checklist'],
-    ['demolition-safety-checklist', 'Demolition Safety Checklist']
+    ['harness-checklist', 'Harness Inspection Checklist', 'HAR', 'PAL’s live fall-protection inspection.'],
+    ['scissor-lift-inspection', 'Scissor Lift Pre-Use Inspection', 'LIFT', 'PAL’s live lift and work-area inspection.'],
+    ['scaffold-checklist', 'Scaffold Safety Checklist', 'SCF', 'PAL’s live pre-use scaffold inspection.'],
+    ['incident-report', 'Near Miss / Incident Report', 'IR', 'Report injuries, incidents, and close calls.'],
+    ['decon-setup-checklist', 'Decon Setup Checklist', 'DEC', 'Containment and cleanup controls.'],
+    ['ppe-inspection-checklist', 'PPE Inspection Checklist', 'PPE', 'Required personal protective equipment.'],
+    ['respirator-checklist', 'Respirator Checklist', 'RESP', 'Respiratory protection pre-use check.'],
+    ['demolition-safety-checklist', 'Demolition Safety Checklist', 'DEMO', 'Pre-task demolition controls.']
   ];
 
   window.switchEmployeeCenterTab = function(tabId, button) {
@@ -4863,7 +4866,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   function renderEmployeeCenterFormButtons() {
     const grid = document.getElementById('employee-center-form-grid');
     if (!grid) return;
-    grid.innerHTML = employeeCenterForms.map(form => '<button class="employee-center-card" type="button" onclick="openEmployeePalForm(\'' + form[0] + '\')"><h3>' + escapeHtml(form[1]) + '</h3><p>Open the current approved PAL form.</p></button>').join('');
+    grid.innerHTML = employeeCenterForms.map(form => '<button class="employee-center-card" type="button" onclick="openEmployeePalForm(\'' + form[0] + '\')"><span class="employee-form-code">' + escapeHtml(form[2]) + '</span><h3>' + escapeHtml(form[1]) + '</h3><p>' + escapeHtml(form[3]) + '</p></button>').join('');
   }
 
   function renderMyEmployeeCenter(data) {

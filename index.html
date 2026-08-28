@@ -24,6 +24,17 @@
   <style>
     .pal-direct-form-route body { visibility:hidden; }
     .pal-direct-form-route.pal-direct-form-ready body { visibility:visible; }
+    .pal-employee-form-header { display:none; }
+    .pal-direct-form-route body > .header,
+    .pal-direct-form-route nav#tabs { display:none !important; }
+    .pal-direct-form-route .pal-employee-form-header {
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:14px 22px; background:#1b3a5c; color:#fff; border-bottom:4px solid #78c240;
+      position:sticky; top:0; z-index:1000;
+    }
+    .pal-employee-form-header strong { font-size:20px; }
+    .pal-employee-form-header span { display:block; color:rgba(255,255,255,.75); font-size:13px; margin-top:2px; }
+    .pal-employee-form-header button { border:1px solid rgba(255,255,255,.45); background:#fff; color:#1b3a5c; border-radius:10px; padding:10px 15px; font:inherit; font-weight:800; cursor:pointer; }
     :root {
       --navy: #1b3a5c;
       --pal-brand-blue: var(--navy);
@@ -1092,6 +1103,10 @@
 </script>
 </head>
 <body class="home-view">
+  <div class="pal-employee-form-header">
+    <div><strong>My PAL</strong><span>Employee Safety Form</span></div>
+    <button type="button" onclick="returnToProjectFieldForms()">Back to Employee Center</button>
+  </div>
   <div class="pal-modal-overlay" id="pal-modal-overlay" role="dialog" aria-modal="true">
     <div class="pal-modal-box">
       <h3 id="pal-modal-title">PAL Safety Hub</h3>
