@@ -33,6 +33,7 @@ Last verified: **2026-08-28, America/New_York**
 - One isolated synthetic-data-only health Function is active; it contains no Production integrations or secrets and anonymous invocation was denied.
 - Six synthetic Staging Authentication identities and matching Firestore profiles now cover Employee, Foreman, Supervisor, Office, Admin, and disabled-user cases; no credentials are stored in source. One unmistakably fake Staging project references only those synthetic identities.
 - Live Rules Playground checks passed the current bootstrap boundary: own verified profile allowed; anonymous, cross-user, unverified-email, project, profile-mutation, and all tested Storage access denied.
+- Read-only Auth settings review found email-enumeration protection enabled, but password enforcement remains notify-only at six characters; self-sign-up/self-deletion are enabled; MFA, blocking functions, and Auth activity logging require an Identity Platform upgrade.
 - Status: **Partially established. Use synthetic data only; emulator-backed authorization and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
 
 ## Demo status

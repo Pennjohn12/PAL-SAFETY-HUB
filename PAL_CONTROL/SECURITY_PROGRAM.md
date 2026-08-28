@@ -64,8 +64,9 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - Synthetic project `staging-test-project-001` is labeled `STAGING TEST — NOT REAL` and references only the fake Employee, Foreman, Supervisor, Office, and Admin UIDs. No PAL project or employee data was copied.
 - Live Firestore Rules Playground checks verified anonymous denial, verified own-profile access, cross-user denial, unverified-email denial, project denial, profile-update denial, and profile-delete denial.
 - Live Storage Rules Playground checks verified anonymous read denial, authenticated read denial, and authenticated upload/create denial. Detailed evidence and limitations are recorded in `STAGING_AUTHORIZATION_EVIDENCE.md`.
+- Read-only Staging Authentication review verified email-enumeration protection and narrow default Staging domains, but also found a six-character notify-only password policy, self-sign-up and self-deletion enabled, and MFA/blocking/activity logging unavailable without an Identity Platform upgrade. Evidence is recorded in `STAGING_AUTH_SETTINGS_REVIEW.md`.
 - Automated tests pass **53 of 53**, including Staging host isolation, banner/header checks, isolated backend configuration, static assertions for the Staging rule boundaries, and fixture checks that reject credentials/non-reserved email domains and require unmistakable test labeling. Firebase also compiled and released both rule files successfully.
-- Not complete: emulator-backed rule behavior tests, Auth policy/MFA configuration, integration allowlists, and end-to-end role/workflow verification. The Staging rules intentionally still deny project reads; role-by-role access must be introduced narrowly and tested next.
+- Not complete: emulator-backed rule behavior tests, approved Auth policy/MFA changes, integration allowlists, and end-to-end role/workflow verification. The Staging rules intentionally still deny project reads; role-by-role access must be introduced narrowly and tested next.
 
 ## Sequencing
 
