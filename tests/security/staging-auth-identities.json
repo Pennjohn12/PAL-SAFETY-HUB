@@ -1,0 +1,43 @@
+{
+  "projectId": "pal-safety-hub-staging",
+  "createdOn": "2026-08-28",
+  "credentialsStored": false,
+  "identities": [
+    {
+      "roleFixture": "employee",
+      "email": "pal.synthetic.employee.20260828@example.com",
+      "uid": "OkZRVdFaedc6LZDm9A4Oo72ZyT33",
+      "authDisabled": false
+    },
+    {
+      "roleFixture": "foreman",
+      "email": "pal.synthetic.foreman.20260828@example.com",
+      "uid": "0mVPGvmED0SIUz7gPlvxMKi9xOC2",
+      "authDisabled": false
+    },
+    {
+      "roleFixture": "supervisor",
+      "email": "pal.synthetic.supervisor.20260828@example.com",
+      "uid": "ysVfNbv9gAfZ2I9T1TGPBJuZjPG3",
+      "authDisabled": false
+    },
+    {
+      "roleFixture": "office",
+      "email": "pal.synthetic.office.20260828@example.com",
+      "uid": "h68bd90eZ3Vy7E0SZjmE69wCcjL2",
+      "authDisabled": false
+    },
+    {
+      "roleFixture": "admin",
+      "email": "pal.synthetic.admin.20260828@example.com",
+      "uid": "rhiUfxXth7X5dLBgxgNQpVHbCYx2",
+      "authDisabled": false
+    },
+    {
+      "roleFixture": "disabled",
+      "email": "pal.synthetic.disabled.20260828@example.com",
+      "uid": "n5KkGrIBG8gZi9T3XhxpWjc4g8C3",
+      "authDisabled": true
+    }
+  ]
+}

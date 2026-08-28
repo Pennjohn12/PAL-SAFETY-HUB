@@ -31,7 +31,8 @@ Last verified: **2026-08-28, America/New_York**
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
 - Staging Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed empty Storage, environment routing, and a visible synthetic-data warning are established.
 - One isolated synthetic-data-only health Function is active; it contains no Production integrations or secrets and anonymous invocation was denied.
-- Status: **Partially established. Use synthetic data only; role fixtures and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
+- Six synthetic Staging Authentication identities now cover Employee, Foreman, Supervisor, Office, Admin, and disabled-user cases; no credentials are stored in source. Application role grants and synthetic Firestore data remain pending.
+- Status: **Partially established. Use synthetic data only; server-controlled role grants and complete workflow validation remain pending. Do not perform write-based application testing against Production.**
 
 ## Demo status
 
@@ -53,7 +54,7 @@ Present in current source and covered by current automated checks where noted:
 
 ## Testing / QA baseline
 
-- Automated tests: **50 passed, 0 failed** on 2026-08-28.
+- Automated tests: **52 passed, 0 failed** on 2026-08-28.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
@@ -80,7 +81,7 @@ Present in current source and covered by current automated checks where noted:
 ## Security program status
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
-- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, and one isolated health Function. Synthetic role fixtures, emulator-backed rule tests, and full workflow validation remain incomplete.
+- Package 2 of 15, isolated Staging/Test environment: **In progress**. Project `pal-safety-hub-staging` now has isolated Hosting, Auth, Firestore/PITR, hardened bootstrap Firestore rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, and six synthetic Authentication identities. Server-controlled application role grants, emulator-backed rule tests, synthetic Firestore data, and full workflow validation remain incomplete.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.

@@ -59,8 +59,10 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - The Staging Artifact Registry cleanup policy removes container images older than one day to limit buildup and cost.
 - Staging-specific Firestore rules are deployed with public access denied, cross-user listing denied, verified-email-only employee bootstrap, and no client-controlled role elevation or profile updates.
 - Staging Storage remains fully closed for reads and writes until Package 5 defines and validates narrow upload authorization.
-- Automated tests pass **50 of 50**, including Staging host isolation, banner/header checks, isolated backend configuration, and static assertions for the Staging rule boundaries. Firebase also compiled and released both rule files successfully.
-- Not complete: emulator-backed rule behavior tests, Auth policy/MFA configuration, synthetic accounts/data, integration allowlists, and end-to-end role/workflow verification.
+- Six reserved-domain synthetic Authentication identities exist for Employee, Foreman, Supervisor, Office, Admin, and disabled-user test cases. The disabled fixture is verified disabled. No passwords or tokens are stored in the repository or governance records.
+- These are Authentication fixtures only; privileged application roles have not yet been granted and no synthetic Firestore employee/project data has been created.
+- Automated tests pass **52 of 52**, including Staging host isolation, banner/header checks, isolated backend configuration, static assertions for the Staging rule boundaries, and fixture checks that reject credentials and non-reserved email domains. Firebase also compiled and released both rule files successfully.
+- Not complete: emulator-backed rule behavior tests, Auth policy/MFA configuration, server-controlled synthetic role grants/data, integration allowlists, and end-to-end role/workflow verification.
 
 ## Sequencing
 
