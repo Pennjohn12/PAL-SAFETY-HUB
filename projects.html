@@ -786,6 +786,8 @@
       text-decoration: none;
     }
     .tab.active { color: var(--navy); border-bottom-color: var(--green); }
+    #employee-center-tabs .tab:hover,
+    #employee-center-tabs .tab:focus-visible { color:var(--navy); background:#f4ffe9; border-color:var(--green); box-shadow:0 0 0 3px rgba(120,194,64,.18); outline:none; }
 
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
@@ -798,7 +800,10 @@
     .employee-center-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:14px; margin-top:18px; }
     .employee-center-card { grid-column:span 3; background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; text-align:left; color:var(--text); font:inherit; }
     button.employee-center-card { cursor:pointer; }
-    button.employee-center-card:hover { border-color:#aebdcc; box-shadow:0 8px 22px rgba(27,58,92,.1); transform:translateY(-1px); }
+    button.employee-center-card:hover,
+    button.employee-center-card:focus-visible { border-color:var(--green); background:#f8fff1; box-shadow:0 8px 24px rgba(120,194,64,.22); transform:translateY(-2px); outline:none; }
+    button.employee-center-card:hover .employee-form-code,
+    button.employee-center-card:focus-visible .employee-form-code { background:var(--green); color:var(--navy); }
     .employee-center-card h3 { color:var(--navy); margin:0 0 7px; }
     .employee-center-card p { color:var(--muted); font-size:13px; line-height:1.45; }
     .employee-center-card.wide { grid-column:span 12; }
@@ -4885,7 +4890,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     const rows = data.history || [];
     const historyHtml = rows.length ? rows.map(row => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(row.formTitle || 'PAL Safety Form') + '</strong><div class="helper-text">' + escapeHtml(row.projectName || '') + ' • ' + escapeHtml(row.submittedAt ? new Date(row.submittedAt).toLocaleDateString() : '') + '</div></div></div>').join('') : '<p class="helper-text">You have not submitted any project forms yet.</p>';
     document.getElementById('employee-center-history-list').innerHTML = historyHtml;
-    document.getElementById('employee-center-reuse-list').innerHTML = '<p class="helper-text">Open one of today’s approved forms above. Reuse of a previous inspection will be enabled only after PAL can safely copy it as a new record without altering the original.</p>';
+    const reusableKeys = new Set(['harness-checklist','scissor-lift-inspection','scaffold-checklist','decon-setup-checklist','ppe-inspection-checklist','respirator-checklist','demolition-safety-checklist']);
+    const reusableRows = rows.filter(row => reusableKeys.has(row.formKey) && row.documentData && typeof row.documentData === 'object').slice(0, 8);
+    document.getElementById('employee-center-reuse-list').innerHTML = reusableRows.length ? reusableRows.map(row => '<div class="employee-center-list-row"><div><strong>' + escapeHtml(row.formTitle || 'PAL Inspection') + ' — ' + escapeHtml(row.projectName || 'PAL Project') + '</strong><div class="helper-text">Last submitted ' + escapeHtml(row.submittedAt ? new Date(row.submittedAt).toLocaleDateString() : '') + '. The original will remain unchanged.</div></div><button class="btn-outline" type="button" onclick="startEmployeeFormReuse(\'' + escapeHtml(row.id) + '\')">Copy &amp; Review</button></div>').join('') : '<div class="loaded-stamp">No previous inspection is available yet. After you submit your first eligible inspection, it will appear here for safe copying and review.</div>';
     document.getElementById('employee-center-attention').innerHTML = '<div class="employee-center-list-row"><strong>' + escapeHtml(orientationText) + '</strong></div><div class="employee-center-list-row"><strong>' + certs.length + ' certification(s) on file</strong></div>';
   }
 
@@ -4898,6 +4905,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.openEmployeePalForm = function(formId) {
     if (!employeeCenterForms.some(row => row[0] === formId)) return;
     location.href = 'index.html?palProjectForm=1&employeeCenter=1&form=' + encodeURIComponent(formId);
+  };
+
+  window.startEmployeeFormReuse = function(submissionId) {
+    const row = (myEmployeeCenterData?.history || []).find(item => item.id === submissionId);
+    if (!row?.documentData || !employeeCenterForms.some(form => form[0] === row.formKey)) return toast('That previous inspection could not be loaded. Refresh My PAL and try again.');
+    sessionStorage.setItem('pal-employee-form-reuse', JSON.stringify({
+      submissionId: row.id, formKey: row.formKey, projectId: row.projectId || '', projectName: row.projectName || '', documentData: row.documentData
+    }));
+    location.href = 'index.html?palProjectForm=1&employeeCenter=1&reuse=1&form=' + encodeURIComponent(row.formKey);
   };
 
   async function loadUserProfile(user) {

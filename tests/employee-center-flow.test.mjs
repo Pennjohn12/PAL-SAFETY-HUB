@@ -68,3 +68,18 @@ test('employee center data is authenticated and does not mutate records', () => 
   const body = functions.slice(functions.indexOf('exports.getMyEmployeeCenter'), functions.indexOf('exports.updateTextDeliveryStatus'));
   assert.doesNotMatch(body, /(?:doc|collection)\([^\n]+\)\.(?:set|update|delete)\(/);
 });
+
+test('previous inspections can be copied only as a reviewed new record', () => {
+  assert.match(projects, /Copy &amp; Review/);
+  assert.match(projects, /sessionStorage\.setItem\('pal-employee-form-reuse'/);
+  assert.match(home, /Copied from a previous inspection — review required/);
+  assert.match(home, /pal-reuse-review-confirm/);
+  assert.match(home, /sessionStorage\.removeItem\('pal-employee-form-reuse'\)/);
+  assert.match(functions, /collectionGroup\('fieldForms'\)\.where\('submittedByUid', '==', uid\)/);
+});
+
+test('Employee Center tabs and cards have green hover and keyboard focus states', () => {
+  assert.match(projects, /#employee-center-tabs \.tab:hover/);
+  assert.match(projects, /button\.employee-center-card:hover/);
+  assert.match(projects, /border-color:var\(--green\)/);
+});

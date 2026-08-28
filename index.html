@@ -4159,11 +4159,36 @@
       const requestedForm = params.get('form');
       if (requestedForm && document.getElementById(requestedForm)) {
         showPage(requestedForm);
+        applyEmployeeFormReuse(requestedForm);
       }
       configureProjectFormReturn();
       window.setTimeout(configureProjectFormReturn, 0);
       window.setTimeout(configureProjectFormReturn, 300);
       document.documentElement.classList.add('pal-direct-form-ready');
+    }
+    function applyEmployeeFormReuse(requestedForm) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('employeeCenter') !== '1' || params.get('reuse') !== '1') return;
+      let reuse;
+      try { reuse = JSON.parse(sessionStorage.getItem('pal-employee-form-reuse') || 'null'); } catch { reuse = null; }
+      if (!reuse || reuse.formKey !== requestedForm || !reuse.documentData) return;
+      const page = document.getElementById(requestedForm);
+      if (!page || page.querySelector('.pal-reuse-review-box')) return;
+      page.querySelectorAll('input[name], select[name], textarea[name]').forEach(control => {
+        const name = control.name;
+        if (!Object.prototype.hasOwnProperty.call(reuse.documentData, name)) return;
+        if (/(signature|signed)/i.test(name) || /^(date|inspection_date|report_date|date_signed|submitted_date)$/i.test(name)) { if (control.type !== 'radio' && control.type !== 'checkbox') control.value = ''; return; }
+        const value = reuse.documentData[name];
+        if (control.type === 'radio') control.checked = String(control.value) === String(value);
+        else if (control.type === 'checkbox') control.checked = Array.isArray(value) ? value.map(String).includes(String(control.value)) : Boolean(value === true || String(value) === String(control.value));
+        else control.value = value == null ? '' : String(value);
+      });
+      const box = document.createElement('div');
+      box.className = 'pal-reuse-review-box';
+      box.style.cssText = 'margin:14px 0;padding:16px;border:2px solid #f59e0b;border-radius:14px;background:#fff8e6;color:#1b3a5c;line-height:1.45;';
+      box.innerHTML = '<strong>Copied from a previous inspection — review required</strong><p style="margin:6px 0 10px;">Review every copied response for today’s equipment and site conditions. Enter today’s date and sign again. PAL will create a separate record and will not alter the original.</p><label style="display:flex;gap:9px;align-items:flex-start;font-weight:800;"><input type="checkbox" id="pal-reuse-review-confirm" name="reuse_review_confirmed" value="yes" style="margin-top:4px;"> I performed and reviewed today’s inspection and updated anything that changed.</label>';
+      const toolbar = page.querySelector('.toolbar');
+      (toolbar?.parentNode || page).insertBefore(box, toolbar?.nextSibling || page.firstChild);
     }
     function returnToProjectFieldForms() {
       const params = new URLSearchParams(window.location.search);
@@ -5949,6 +5974,10 @@ applyProjectSelectionFromStorage();
       try {
         const employeeCenterRoute = new URLSearchParams(window.location.search).get('employeeCenter') === '1';
         if (employeeCenterRoute) {
+          if (new URLSearchParams(window.location.search).get('reuse') === '1' && !document.getElementById('pal-reuse-review-confirm')?.checked) {
+            if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Review the copied inspection and check the confirmation before submitting.');
+            return;
+          }
           const hints = getDocumentProjectHints(data);
           const title = active.querySelector('.form-head h2, h2, h1')?.textContent?.trim() || 'PAL Safety Document';
           const result = await submitEmployeeFieldFormCallable({
@@ -5958,6 +5987,7 @@ applyProjectSelectionFromStorage();
           });
           const savedProject = result.data || {};
           if (typeof window.toastPalMessage === 'function') window.toastPalMessage('Submitted to ' + (savedProject.projectName || 'PAL project') + '.');
+          sessionStorage.removeItem('pal-employee-form-reuse');
           window.setTimeout(() => { window.location.href = 'projects.html?employeeCenter=1&tab=history'; }, 700);
           return;
         }

@@ -634,8 +634,24 @@ exports.getMyEmployeeCenter = onCall({
       history.push({
         id: doc.id, projectId: project.id, projectName: cleanText(project.name, 120),
         formTitle: cleanText(row.formTitle, 160), formKey: cleanText(row.formKey, 100),
-        submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : cleanText(row.localSubmittedAt, 80)
+        submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : cleanText(row.localSubmittedAt, 80),
+        documentData: row.documentData && typeof row.documentData === 'object' ? JSON.parse(JSON.stringify(row.documentData)) : null
       });
+    });
+  }
+  const knownHistoryIds = new Set(history.map(row => `${row.projectId}/${row.id}`));
+  const employeeFormsSnap = await db.collectionGroup('fieldForms').where('submittedByUid', '==', uid).limit(100).get().catch(() => null);
+  for (const formDoc of (employeeFormsSnap?.docs || [])) {
+    const projectRef = formDoc.ref.parent.parent;
+    if (!projectRef || knownHistoryIds.has(`${projectRef.id}/${formDoc.id}`)) continue;
+    const row = formDoc.data() || {};
+    const projectSnap = await projectRef.get().catch(() => null);
+    const project = projectSnap?.data() || {};
+    history.push({
+      id: formDoc.id, projectId: projectRef.id, projectName: cleanText(project.name || row.projectName, 120),
+      formTitle: cleanText(row.formTitle, 160), formKey: cleanText(row.formKey, 100),
+      submittedAt: row.submittedAt?.toDate ? row.submittedAt.toDate().toISOString() : cleanText(row.localSubmittedAt, 80),
+      documentData: row.documentData && typeof row.documentData === 'object' ? JSON.parse(JSON.stringify(row.documentData)) : null
     });
   }
   history.sort((a, b) => String(b.submittedAt).localeCompare(String(a.submittedAt)));
@@ -669,7 +685,7 @@ exports.getMyEmployeeCenter = onCall({
       fileName: cleanText(cert.fileName || cert.name || '', 160), url: cleanText(cert.url || '', 700)
     })),
     projects: projects.map(project => ({ id: project.id, name: cleanText(project.name, 120), jobNumber: cleanText(project.jobNumber, 50), location: cleanText(project.location, 160) })),
-    history: history.slice(0, 100),
+    history: history.slice(0, 30),
     orientation
   };
 });
