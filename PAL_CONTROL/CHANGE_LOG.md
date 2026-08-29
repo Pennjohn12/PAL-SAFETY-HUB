@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 audit chain deployed to isolated Staging
+
+- Deployed exact commit `acb318844a52ffae76652e9e9c16a3caabc8e443` only to the `public-intake-v2` Functions codebase in `pal-safety-hub-staging`; all nine functions updated successfully.
+- Verified the three Node.js 22 vault callables are active in `us-central1`. Empty anonymous calls returned HTTP 401, and anonymous Firestore reads of the audit-event and chain-head collections returned HTTP 403.
+- No Hosting, rules, Production service, real data, secret, credential, or identity changed. Live authenticated chain/head/concurrency testing remains open because the existing synthetic accounts have no stored credentials and credential creation was not authorized for this step.
+
 ## 2026-08-29 — Package 6 tamper-evident vault audit prepared
 
 - Replaced independent sensitive-vault audit inserts with transaction-created, SHA-256-linked events and a server-only chain head.

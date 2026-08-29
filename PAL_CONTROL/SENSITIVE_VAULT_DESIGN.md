@@ -186,6 +186,13 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - Browser rules deny all reads, creates, updates, and deletes for both `sensitiveVaultAuditEvents` and the new `sensitiveVaultAuditState` collection. The chain provides tamper evidence; it does not claim protection against a fully privileged project administrator or replace external log export in Package 12.
 - Local verification passes **81 of 81** core/static tests, Functions syntax, and the diff check. Staging deployment and live synthetic chain verification remain pending at this checkpoint; Production is not authorized.
 
+### 2026-08-29 Staging audit deployment boundary
+
+- Exact commit `acb318844a52ffae76652e9e9c16a3caabc8e443` was deployed only to the `public-intake-v2` Functions codebase in `pal-safety-hub-staging`. All nine functions in that codebase updated successfully; the three vault actions list ACTIVE as Node.js 22 V2 callables in `us-central1`.
+- Empty anonymous calls to `getSensitiveIntakeVaultV1`, `requestSensitiveIntakeDownloadV1`, and `approveSensitiveIntakeDownloadV1` each returned HTTP 401 with the expected PAL Office authentication requirement. Anonymous Firestore REST reads of both `sensitiveVaultAuditEvents` and `sensitiveVaultAuditState` returned HTTP 403.
+- No Hosting, Firestore rules, Storage rules, Production service, real record, secret, credential, or synthetic identity was created or changed. Production remains closed.
+- This verifies deployment health and the unauthenticated/client-denial boundary. It does **not** yet credit live chained-event creation, head consistency, or concurrent-write serialization. The six existing synthetic identities have no stored credentials, and creating a new password, custom token, or other authentication credential was outside the authorization for this step. Those live tests remain pending specific credential authorization or an approved credential-free harness.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
