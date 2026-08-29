@@ -48,10 +48,35 @@ test('trusted initial results are bucket path digest and pending-record bound', 
   assert.equal(mayApplyInitialScan({ authorization: { intakeId: evidence.intakeId, folder: evidence.folder,
     path: originalIdentity.path, scanObjectPath: evidence.scanObjectPath, state: 'scan-queued' },
   record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), true);
+  const recording = { intakeId: evidence.intakeId, folder: evidence.folder, path: originalIdentity.path,
+    scanObjectPath: evidence.scanObjectPath, state: 'scan-result-recording', scanResult: 'clean', scanResultObjectGeneration: '999' };
+  assert.equal(mayApplyInitialScan({ authorization: recording,
+    record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), true);
+  assert.equal(mayApplyInitialScan({ authorization: { ...recording, scanResult: 'manual-review' },
+    record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
+  assert.equal(mayApplyInitialScan({ authorization: { ...recording, scanResultObjectGeneration: '1000' },
+    record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
   assert.throws(() => initialScanEvidence({ result: 'clean', bucket: 'wrong', expectedBucket: 'pal-synthetic-clean',
     name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64), metadata }));
   assert.throws(() => initialScanEvidence({ result: 'clean', bucket: 'pal-synthetic-clean', expectedBucket: 'pal-synthetic-clean',
     name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'b'.repeat(64), metadata }));
+});
+
+test('initial scan retries serialize result audit and stale queue transitions', () => {
+  assert.match(backend, /async function writeInitialScanAuditOnce/);
+  assert.match(backend, /scanResultAuditCompleted === true/);
+  assert.match(backend, /scanResultAuditCompleted: true/);
+  assert.match(backend, /initial-scan-audit-incomplete/);
+  assert.match(backend, /async function markInitialScanStale/);
+  assert.match(backend, /row\.state !== 'scan-queued'/);
+  assert.match(backend, /queuedAt !== expected\.queuedAt/);
+  assert.match(backend, /scanObjectGeneration, 80\) !== expected\.scanObjectGeneration/);
+});
+
+test('scanner quarantine is locked for manual review rather than mislabeled infected', () => {
+  assert.match(backend, /exports\.recordQuarantinedInitialScanV1/);
+  assert.match(backend, /recordInitialScanResult\(event, 'manual-review'/);
+  assert.match(backend, /securityStatus: evidence\.result === 'clean' \? 'verified-clean' : 'manual-review'/);
 });
 
 test('clean certifications use a simple purpose-bound server download while identity stays separately entitled', () => {

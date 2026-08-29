@@ -116,6 +116,33 @@ async function writeVaultAudit(input) {
   return eventId;
 }
 
+async function writeInitialScanAuditOnce(authorizationRef, evidence) {
+  const eventId = crypto.randomUUID();
+  const occurredAt = new Date().toISOString();
+  const headRef = db.collection('sensitiveVaultAuditState').doc('head');
+  const eventRef = db.collection('sensitiveVaultAuditEvents').doc(eventId);
+  return db.runTransaction(async transaction => {
+    const [authorizationSnap, head] = await Promise.all([transaction.get(authorizationRef), transaction.get(headRef)]);
+    const authorization = authorizationSnap.data() || {};
+    if (!authorizationSnap.exists || authorization.state !== 'scan-result-recording'
+        || authorization.scanResult !== evidence.result
+        || text(authorization.scanResultObjectGeneration, 80) !== evidence.outputGeneration) {
+      throw new Error('initial-scan-audit-state-mismatch');
+    }
+    if (authorization.scanResultAuditCompleted === true) return false;
+    const previousHash = head.exists ? text(head.data()?.eventHash, 64) : '';
+    const event = chainedAuditEvent({ action: 'scan-result', actorUid: process.env.PAL_TRUSTED_SCANNER_IDENTITY,
+      actorEmail: '', intakeId: evidence.intakeId, objectPath: evidence.originalIdentity.path,
+      purpose: 'Automated first malware scan', decision: evidence.result, correlationId: evidence.authorizationId,
+      reason: `trusted-initial-scan-${evidence.result}` }, previousHash, occurredAt);
+    transaction.create(eventRef, { ...event, occurredAtTimestamp: Timestamp.fromDate(new Date(occurredAt)) });
+    transaction.set(headRef, { version: 1, eventId, eventHash: event.eventHash, updatedAt: FieldValue.serverTimestamp() });
+    transaction.update(authorizationRef, { scanResultAuditCompleted: true, scanResultAuditEventId: eventId,
+      scanResultAuditCompletedAt: FieldValue.serverTimestamp() });
+    return true;
+  });
+}
+
 function sha256StorageFile(file) {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash('sha256');
@@ -714,7 +741,7 @@ async function recordInitialScanResult(event, result, expectedBucket) {
     size: Number(data.size), contentType: data.contentType, sha256, metadata: data.metadata || {} });
   const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(evidence.authorizationId);
   const currentAuthorization = await authorizationRef.get();
-  if (['scan-clean', 'scan-infected'].includes(currentAuthorization.data()?.state)) return { status: 'duplicate' };
+  if (['scan-clean', 'scan-infected', 'scan-manual-review'].includes(currentAuthorization.data()?.state)) return { status: 'duplicate' };
   await updateInitialScanRecord({ authorizationId: evidence.authorizationId, allowedStates: ['scan-queued', 'scan-result-recording'],
     mutate: ({ authorization, record }) => {
       if (!mayApplyInitialScan({ authorization, record, evidence })) throw new Error('initial-scan-evidence-rejected');
@@ -724,22 +751,21 @@ async function recordInitialScanResult(event, result, expectedBucket) {
           scanResultObjectGeneration: evidence.outputGeneration, scanResultReceivedAt: FieldValue.serverTimestamp() }
       };
     } });
-  await writeVaultAudit({ action: 'scan-result', actorUid: process.env.PAL_TRUSTED_SCANNER_IDENTITY, actorEmail: '',
-    intakeId: evidence.intakeId, objectPath: evidence.originalIdentity.path, purpose: 'Automated first malware scan',
-    decision: evidence.result, correlationId: evidence.authorizationId, reason: `trusted-initial-scan-${evidence.result}` });
+  await writeInitialScanAuditOnce(authorizationRef, evidence);
   await updateInitialScanRecord({ authorizationId: evidence.authorizationId, allowedStates: ['scan-result-recording'],
     mutate: ({ authorization, record }) => {
       if (!mayApplyInitialScan({ authorization, record, evidence })) throw new Error('initial-scan-finalization-rejected');
+      if (authorization.scanResultAuditCompleted !== true) throw new Error('initial-scan-audit-incomplete');
       const completedAt = new Date().toISOString();
       return {
-        record: { ...record, malwareScanStatus: evidence.result, securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'quarantined',
+        record: { ...record, malwareScanStatus: evidence.result, securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'manual-review',
           scanQueueState: 'complete', scanCompletedAt: completedAt, downloadable: false, initialScanEvidence: {
             result: evidence.result, scannerPrincipal: process.env.PAL_TRUSTED_SCANNER_IDENTITY, scannedAt: completedAt,
             scanObjectPath: evidence.scanObjectPath, scanObjectGeneration: evidence.outputGeneration,
             objectIdentity: evidence.originalIdentity
           } },
-        authorization: { state: evidence.result === 'clean' ? 'scan-clean' : 'scan-infected', malwareScanStatus: evidence.result,
-          scanCompletedAt: FieldValue.serverTimestamp(), securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'quarantined' }
+        authorization: { state: evidence.result === 'clean' ? 'scan-clean' : 'scan-manual-review', malwareScanStatus: evidence.result,
+          scanCompletedAt: FieldValue.serverTimestamp(), securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'manual-review' }
       };
     } });
   return { status: evidence.result };
@@ -749,9 +775,23 @@ exports.recordCleanInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucke
   timeoutSeconds: 120, memory: '512MiB', maxInstances: 2, serviceAccount: VAULT_SERVICE_ACCOUNT, retry: true },
 async event => recordInitialScanResult(event, 'clean', SCANNER_CLEAN_BUCKET.value()));
 
-exports.recordInfectedInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucket: SCANNER_QUARANTINE_BUCKET,
+exports.recordQuarantinedInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucket: SCANNER_QUARANTINE_BUCKET,
   timeoutSeconds: 120, memory: '512MiB', maxInstances: 2, serviceAccount: VAULT_SERVICE_ACCOUNT, retry: true },
-async event => recordInitialScanResult(event, 'infected', SCANNER_QUARANTINE_BUCKET.value()));
+async event => recordInitialScanResult(event, 'manual-review', SCANNER_QUARANTINE_BUCKET.value()));
+
+async function markInitialScanStale(authorizationRef, expected) {
+  return db.runTransaction(async transaction => {
+    const snap = await transaction.get(authorizationRef);
+    const row = snap.data() || {};
+    const queuedAt = row.scanQueuedAt?.toMillis?.() || 0;
+    if (!snap.exists || row.state !== 'scan-queued' || queuedAt !== expected.queuedAt
+        || text(row.scanObjectPath, 1024) !== expected.scanObjectPath
+        || text(row.scanObjectGeneration, 80) !== expected.scanObjectGeneration) return false;
+    transaction.update(authorizationRef, { state: 'scan-queue-failed', scanQueueError: 'result-timeout',
+      scanQueueFailedAt: FieldValue.serverTimestamp() });
+    return true;
+  });
+}
 
 exports.retryPendingInitialScansV1 = onSchedule({ region: REGION, schedule: 'every 10 minutes', timeZone: 'America/New_York',
   timeoutSeconds: 300, memory: '256MiB', maxInstances: 1, serviceAccount: VAULT_SERVICE_ACCOUNT }, async () => {
@@ -764,8 +804,9 @@ exports.retryPendingInitialScansV1 = onSchedule({ region: REGION, schedule: 'eve
   for (const doc of queued.docs) {
     const queuedAt = doc.data()?.scanQueuedAt?.toMillis?.() || 0;
     if (queuedAt && queuedAt <= staleBefore) {
-      await doc.ref.update({ state: 'scan-queue-failed', scanQueueError: 'result-timeout', scanQueueFailedAt: FieldValue.serverTimestamp() });
-      retryIds.add(doc.id);
+      const marked = await markInitialScanStale(doc.ref, { queuedAt, scanObjectPath: text(doc.data()?.scanObjectPath, 1024),
+        scanObjectGeneration: text(doc.data()?.scanObjectGeneration, 80) });
+      if (marked) retryIds.add(doc.id);
     }
   }
   let queuedCount = 0;

@@ -324,6 +324,13 @@ Newest entries go first. Git history remains the detailed code record.
 - Production impact from this checkpoint task: none. No deploy, Firebase data write, rule change, secret change, or fixture deletion.
 - Verification boundary: deployed Functions and rules were not independently mapped to a source revision.
 
+### 2026-08-29 — Package 6 initial-scan concurrency correction
+
+- Control Room review identified two local predeployment races: conflicting result evidence could enter an in-progress result state, and the timeout worker could overwrite an authorization advanced concurrently by a result event.
+- The corrected source binds an in-progress retry to the identical result and output generation, commits the chained result audit with a durable once-only marker, requires that marker before finalization, and transactionally rechecks queue state/timestamp/path/generation before marking a scan stale.
+- The existing scanner quarantine output is intentionally mapped to locked manual review because it can contain encrypted or otherwise non-clean files and does not provide a trustworthy ordinary first-scan malware classification. Errors/timeouts remain fail-closed without a trusted result event.
+- Local validation: 99/99 tests, Functions syntax, and diff checks passed. No cloud, IAM, credential, image scan, Production, real-data, or direct-cost action occurred.
+
 ## Entry template
 
 ### YYYY-MM-DD — Short title

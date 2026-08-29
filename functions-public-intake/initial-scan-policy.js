@@ -36,7 +36,7 @@ function initialScanMetadata({ authorizationId, intakeId, folder, name, original
 
 function initialScanEvidence({ result, bucket, expectedBucket, name, generation, size, contentType, sha256, metadata }) {
   const normalizedResult = bounded(result, 40).toLowerCase();
-  if (!['clean', 'infected'].includes(normalizedResult) || bounded(bucket, 220) !== bounded(expectedBucket, 220)) {
+  if (!['clean', 'infected', 'manual-review'].includes(normalizedResult) || bounded(bucket, 220) !== bounded(expectedBucket, 220)) {
     throw new Error('invalid-scan-result');
   }
   const authorizationId = bounded(metadata?.palInitialScanAuthorizationId, 180);
@@ -68,6 +68,9 @@ function mayApplyInitialScan({ authorization, record, evidence }) {
   if (authorization.intakeId !== evidence.intakeId || authorization.folder !== evidence.folder
       || authorization.path !== evidence.originalIdentity.path || authorization.scanObjectPath !== evidence.scanObjectPath) return false;
   if (!['scan-queued', 'scan-result-recording'].includes(authorization.state)) return false;
+  if (authorization.state === 'scan-result-recording'
+      && (authorization.scanResult !== evidence.result
+        || bounded(authorization.scanResultObjectGeneration, 80) !== evidence.outputGeneration)) return false;
   if (!['pending', 'scanning'].includes(record.malwareScanStatus)) return false;
   return sameObjectIdentity(record.objectIdentity, evidence.originalIdentity);
 }
