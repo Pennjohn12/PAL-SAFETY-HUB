@@ -337,3 +337,22 @@ The first request failed closed because the synthetic fixture path was outside t
 Hosting packaging inspection also found and closed a source-exposure gap: every maintained Hosting configuration now excludes `functions*/**` and `scanner/**`. Representative live Staging requests for backend and scanner source return 404.
 
 Cleanup verification returned zero temporary Auth accounts, profile/intake/vault documents, approvals/notifications, and synthetic objects. Append-only synthetic audit events remain intact. No Production, real data, IAM, scanner image, credential, or direct scan charge changed. All isolated Staging functional gates are now credited; posted billing reconciliation and an exact Production proposal/approval remain.
+
+## Initial sensitive-upload scanner handoff blocker
+
+The subsequent exact Production-proposal inspection found that the preceding final sentence was too broad. The current first-time upload lifecycle ends at `finalizePublicIntakeUploadV2`: the Firebase-quarantine object is validated and the vault record is stored with `malwareScanStatus: pending`, but no code copies that exact generation into the isolated scanner's unscanned bucket. The accepted scanner's trusted reporting path is deliberately limited to metadata-tagged false-positive rescans, so it does not update an ordinary initial upload record.
+
+The observed behavior fails closed: the object remains private, `downloadable` remains false, and the release policy rejects `pending`. It is nevertheless a Production-blocking availability and lifecycle defect because a legitimate new sensitive upload can never become available to entitled Office staff.
+
+The required correction must preserve these properties:
+
+- validate and persist the authorization/vault target before any scanner event can arrive;
+- bind the original Firebase path, generation, byte size, content type, and SHA-256;
+- enqueue only the exact verified generation into the private isolated unscanned bucket with an idempotent destination key;
+- accept clean/infected/error evidence only from the trusted scanner path and only for the matching pending record;
+- keep the original Firebase object locked, use clean evidence only to authorize a later short-lived exact-generation download, and never use the isolated scanner copy as the Office download source;
+- record queue, result, retry, and terminal decisions in the chained audit without secrets;
+- safely retry a copy/callback interruption without duplicating release or overwriting a terminal result;
+- leave legacy/existing objects untouched and require separate authorization for any real-data migration or deletion.
+
+No Production proposal is ready until this first-scan path passes a complete synthetic Staging upload → validation → queue → scanner → result → Office release regression, including infected/error/timeout and retry behavior. A design that changes the accepted scanner image requires a newly pushed digest and separately approved `$0.26` Artifact Analysis scan; a design using new Eventarc/Function identities or bucket permissions requires exact Staging IAM/deployment approval. Production remains closed.

@@ -34,7 +34,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 ## Current program position
 
 - Completed: **5 of 15** packages at the PAL internal-assessment level.
-- In progress: **Package 6**. Scanner, signed download, different-person approval, tamper-evident audit, retention/legal-hold/deletion, entitled notification, false-positive handling, and the purpose-bound Office workflow passed in isolated Staging. The bounded Admin queue, no-direct-link/export controls, Hosting source exclusions, and complete synthetic cleanup are verified; all 94/94 tests pass. The no-migration legacy-file plan remains controlling. Posted billing reconciliation and the exact Production proposal/approval remain open in `SENSITIVE_VAULT_DESIGN.md`; Production remains closed.
+- In progress: **Package 6**. Scanner, signed download, different-person approval, tamper-evident audit, retention/legal-hold/deletion, entitled notification, false-positive handling, and the purpose-bound Office workflow passed in isolated Staging. Production-proposal inspection found the ordinary first-scan handoff is still missing: newly finalized sensitive uploads remain locked pending and are not enqueued to the scanner. An idempotent exact-object queue/result/retry path and complete synthetic Staging regression are required before billing reconciliation and an exact Production proposal; Production remains closed.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **Package 4 and Package 5 exact cutovers were approved and completed; no further Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.

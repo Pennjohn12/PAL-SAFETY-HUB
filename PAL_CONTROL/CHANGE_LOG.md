@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 initial-upload scanner handoff remains blocked
+
+- Exact Production-proposal inspection found a verified integration gap after the Office workflow checkpoint: `finalizePublicIntakeUploadV2` validates and records a new payroll/identity upload as `pending`, but it does not enqueue that exact Firebase-quarantine object into the isolated scanner.
+- The accepted scanner image and private callback intentionally recognize only separately requested false-positive rescans. They do not record the first scan result for an ordinary new upload. Therefore a new Package 5 sensitive upload remains locked indefinitely rather than progressing from pending to a trusted clean/infected result.
+- This is a fail-closed availability/integration gap, not a confidentiality bypass: the browser still cannot read the object, the vault download gate still requires exact clean evidence, and Production Package 6 remains absent.
+- Package 6 cannot be proposed for Production until an idempotent exact-object first-scan queue, trusted result handoff, retry/recovery path, and complete synthetic upload-to-release regression pass in Staging. No cloud, IAM, image, credential, Production, real-data, or cost action occurred in recording this blocker.
+
 ## 2026-08-29 — Package 6 Office vault workflow passed in Staging
 
 - With John's approval, deployed only the new Admin approval-queue callable and Staging Hosting/client, then focus-updated the existing protected-download callable with bounded, non-sensitive failure-stage logging. No IAM, scanner image, credential, Production, real-data, or direct image-scan charge changed.
