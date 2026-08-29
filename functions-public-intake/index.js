@@ -451,12 +451,16 @@ exports.requestSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async requ
     rescanObjectPath: rescanPath, requestedAt: new Date().toISOString(), createdAt: FieldValue.serverTimestamp() });
   try {
     // Persist the callback target before object creation can emit its finalize event.
-    await source.copy(destination, { preconditionOpts: { ifSourceGenerationMatch: Number(currentIdentity.generation) }, metadata: {
-      contentType: currentIdentity.contentType, cacheControl: 'private, no-store, max-age=0', metadata: {
+    await source.copy(destination, {
+      preconditionOpts: { ifSourceGenerationMatch: Number(currentIdentity.generation) },
+      contentType: currentIdentity.contentType,
+      cacheControl: 'private, no-store, max-age=0',
+      metadata: {
         palFalsePositiveReviewId: ref.id, palOriginalIntakeId: intakeId, palOriginalPath: currentIdentity.path,
         palOriginalGeneration: currentIdentity.generation, palOriginalSize: String(currentIdentity.size),
         palOriginalContentType: currentIdentity.contentType, palOriginalSha256: currentIdentity.sha256, palRescanObjectPath: rescanPath
-      } } });
+      }
+    });
   } catch (_) {
     await ref.update({ state: 'copy-failed', failedAt: FieldValue.serverTimestamp() }).catch(() => {});
     throw new HttpsError('unavailable', 'The protected rescan could not be queued. The file remains locked.');

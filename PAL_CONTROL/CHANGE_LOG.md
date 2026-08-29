@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 rescan metadata handoff defect isolated and corrected in code
+
+- Focus-deployed the prior review-before-copy correction to Staging and reran the approved two-account synthetic workflow. The request action was ACTIVE on the dedicated vault identity; the run failed closed and completed full synthetic cleanup, with no approval or download.
+- Retained logs proved Eventarc delivered the exact 67-byte object, the accepted scanner classified it CLEAN in 95 ms, moved it to the isolated clean bucket, and safely ignored duplicate deliveries. The configured callback URL exactly matched the ACTIVE private vault callback, but the callback received no request and the vault received no trusted evidence.
+- Source inspection against the official Cloud Storage copy option shape found the cause: content type, cache control, and PAL security labels were nested inside the custom `metadata` value instead of being sibling copy options. The scanner therefore saw no false-positive review label and correctly treated the object as an ordinary scan.
+- Corrected the copy-option shape and added a regression that rejects the invalid nesting. The complete PAL suite passes 91/91, Functions syntax passes, and the diff check passes. This correction is local/predeployment only; another focused Staging deployment and full authenticated synthetic regression require approval. Production and real data remain untouched. Direct image-scan cost remains five scans / `$1.30`.
+
 ## 2026-08-29 — Package 6 rescan lifecycle race corrected in code
 
 - Reordered false-positive review creation so the private callback target exists before the isolated rescan object can emit its finalize event. A failed copy now records `copy-failed` and returns a locked/unavailable result rather than leaving a pending review.

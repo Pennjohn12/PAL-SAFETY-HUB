@@ -48,6 +48,14 @@ test('false-positive review exists before rescan object creation can trigger its
   assert.match(requestBlock, /The file remains locked/);
 });
 
+test('false-positive rescan labels use the Cloud Storage copy option shape', () => {
+  const requestStart = backend.indexOf('exports.requestSensitiveFalsePositiveReviewV1');
+  const callbackStart = backend.indexOf('exports.recordSensitiveFalsePositiveRescanV1');
+  const requestBlock = backend.slice(requestStart, callbackStart);
+  assert.match(requestBlock, /contentType: currentIdentity\.contentType,\s+cacheControl: 'private, no-store, max-age=0',\s+metadata: \{\s+palFalsePositiveReviewId/);
+  assert.doesNotMatch(requestBlock, /metadata: \{\s+contentType: currentIdentity\.contentType/);
+});
+
 test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {
   assert.match(retention, /retentionDecision\(record, now\)/);
   assert.match(retention, /sameObjectIdentity\(identity, \{ \.\.\.identity, path: record\.path \}\)/);
