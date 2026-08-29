@@ -59,3 +59,15 @@ test('scanner identity is exact and audit records mask email and exclude secrets
   assert.equal(JSON.stringify(event).includes('token'), false);
   assert.equal(JSON.stringify(event).includes('signedUrl'), false);
 });
+
+test('audit chain is deterministic, linked, and rejects invalid predecessors', () => {
+  const input = { action: 'vault-download', actorUid: 'synthetic-office', actorEmail: 'synthetic.office@example.invalid', intakeId: 'PAL_SYNTHETIC_DO_NOT_USE', objectPath: identity.path, purpose: 'Payroll identity verification', decision: 'allowed', correlationId: 'synthetic-correlation', reason: 'verified clean' };
+  const first = policy.chainedAuditEvent(input, '', '2026-08-29T17:00:00.000Z');
+  const repeated = policy.chainedAuditEvent(input, '', '2026-08-29T17:00:00.000Z');
+  const second = policy.chainedAuditEvent({ ...input, correlationId: 'synthetic-second' }, first.eventHash, '2026-08-29T17:01:00.000Z');
+  assert.match(first.eventHash, /^[a-f0-9]{64}$/);
+  assert.equal(first.eventHash, repeated.eventHash);
+  assert.equal(second.previousHash, first.eventHash);
+  assert.notEqual(second.eventHash, first.eventHash);
+  assert.throws(() => policy.chainedAuditEvent(input, 'not-a-hash', '2026-08-29T17:00:00.000Z'), /invalid-audit-chain/);
+});

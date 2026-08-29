@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 tamper-evident vault audit prepared
+
+- Replaced independent sensitive-vault audit inserts with transaction-created, SHA-256-linked events and a server-only chain head.
+- Added browser-deny rules for the chain state and deterministic tests covering hash linkage, invalid predecessors, append-only event creation, and direct-access denial.
+- Local verification passed 81/81 tests, Functions syntax, and diff check. No Staging deployment, Production change, credential, or real-data action is credited yet.
+
 ## 2026-08-29 — Package 6 scanner memory and failure recovery passed in Staging
 
 - Cloud Monitoring measured peak scanner memory utilization at about 30.8%, approximately 1.23 GiB of the enforced 4-GiB limit.

@@ -4,7 +4,7 @@ const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
-const { auditEvent, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
+const { chainedAuditEvent, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
 const db = getFirestore();
@@ -92,8 +92,18 @@ function requireVaultActor(actor) {
 function vaultRef(intakeId) { return db.collection('sensitiveIntakeVaults').doc(intakeId); }
 
 async function writeVaultAudit(input) {
-  const event = auditEvent(input);
-  await db.collection('sensitiveVaultAuditEvents').add({ ...event, occurredAt: FieldValue.serverTimestamp() });
+  const eventId = crypto.randomUUID();
+  const occurredAt = new Date().toISOString();
+  const headRef = db.collection('sensitiveVaultAuditState').doc('head');
+  const eventRef = db.collection('sensitiveVaultAuditEvents').doc(eventId);
+  await db.runTransaction(async transaction => {
+    const head = await transaction.get(headRef);
+    const previousHash = head.exists ? text(head.data()?.eventHash, 64) : '';
+    const event = chainedAuditEvent(input, previousHash, occurredAt);
+    transaction.create(eventRef, { ...event, occurredAtTimestamp: Timestamp.fromDate(new Date(occurredAt)) });
+    transaction.set(headRef, { version: 1, eventId, eventHash: event.eventHash, updatedAt: FieldValue.serverTimestamp() });
+  });
+  return eventId;
 }
 
 function accessState(intake, suppliedToken) {

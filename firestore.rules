@@ -214,6 +214,10 @@ service cloud.firestore {
       allow read, write, delete: if false;
     }
 
+    match /sensitiveVaultAuditState/{stateId} {
+      allow read, write, delete: if false;
+    }
+
     match /sensitiveDownloadApprovals/{approvalId} {
       allow read, write, delete: if false;
     }

@@ -179,6 +179,13 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - An authenticated malformed synthetic CloudEvent referencing a nonexistent object returned HTTP 400 with `invalid request`; the object was absent from unscanned, clean, and quarantine. No secret or real file was used.
 - Peak-memory, forced-timeout fail-closed behavior, timeout recovery, and malformed-request error handling are now evidenced. Remaining Package 6 gates are signed Office release/download integration, immutable audit, retention/legal hold/deletion, false-positive review, notifications, existing-file planning, billing reconciliation, and Production design/approval.
 
+### 2026-08-29 tamper-evident vault-audit checkpoint
+
+- Vault audit writes now use a Firestore transaction that creates a new event at a random immutable document ID and advances one server-only chain head. Each event contains a SHA-256 hash over a fixed canonical field order, ISO occurrence time, and the prior event hash.
+- Concurrent audit writes serialize through the chain-head document. Invalid predecessor hashes and timestamps fail closed. The event body continues to mask actor email and excludes tokens, signed URLs, SSNs, and file content.
+- Browser rules deny all reads, creates, updates, and deletes for both `sensitiveVaultAuditEvents` and the new `sensitiveVaultAuditState` collection. The chain provides tamper evidence; it does not claim protection against a fully privileged project administrator or replace external log export in Package 12.
+- Local verification passes **81 of 81** core/static tests, Functions syntax, and the diff check. Staging deployment and live synthetic chain verification remain pending at this checkpoint; Production is not authorized.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.

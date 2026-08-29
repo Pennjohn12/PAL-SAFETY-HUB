@@ -101,9 +101,38 @@ function auditEvent({ action, actorUid, actorEmail, intakeId, objectPath, purpos
   });
 }
 
+function chainedAuditEvent(event, previousHash, occurredAt) {
+  const prior = boundedText(previousHash, 64).toLowerCase();
+  if (prior && !/^[a-f0-9]{64}$/.test(prior)) throw new Error('invalid-audit-chain');
+  const timestamp = boundedText(occurredAt, 40);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(timestamp)) throw new Error('invalid-audit-time');
+  const normalized = auditEvent(event);
+  const canonical = JSON.stringify({
+    version: normalized.version,
+    action: normalized.action,
+    actorUid: normalized.actorUid,
+    actorEmailMasked: normalized.actorEmailMasked,
+    intakeId: normalized.intakeId,
+    objectPath: normalized.objectPath,
+    purpose: normalized.purpose,
+    decision: normalized.decision,
+    correlationId: normalized.correlationId,
+    reason: normalized.reason,
+    occurredAt: timestamp,
+    previousHash: prior
+  });
+  return Object.freeze({
+    ...normalized,
+    occurredAt: timestamp,
+    previousHash: prior,
+    eventHash: crypto.createHash('sha256').update(canonical, 'utf8').digest('hex')
+  });
+}
+
 module.exports = {
   SCAN_STATES,
   auditEvent,
+  chainedAuditEvent,
   mayAuthorizeDownload,
   nextScanState,
   normalizeObjectIdentity,

@@ -18,10 +18,17 @@ test('new payroll file metadata enters the sensitive vault while certifications 
 });
 
 test('all sensitive vault audit and approval collections deny browser access', () => {
-  for (const collection of ['sensitiveIntakeVaults','sensitiveVaultAuditEvents','sensitiveDownloadApprovals']) {
+  for (const collection of ['sensitiveIntakeVaults','sensitiveVaultAuditEvents','sensitiveVaultAuditState','sensitiveDownloadApprovals']) {
     const block = rules.match(new RegExp(`match \\/${collection}\\/\\{[^}]+\\} \\{([\\s\\S]*?)\\n    \\}`))?.[1] || '';
     assert.match(block, /allow read, write, delete: if false/);
   }
+});
+
+test('vault audit events are append-only and cryptographically chained', () => {
+  assert.match(backend, /transaction\.create\(eventRef/);
+  assert.match(backend, /collection\('sensitiveVaultAuditState'\)\.doc\('head'\)/);
+  assert.match(backend, /previousHash/);
+  assert.match(backend, /eventHash/);
 });
 
 test('vault reads require separate entitlement and business purpose with a server audit', () => {
