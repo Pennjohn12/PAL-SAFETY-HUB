@@ -45,3 +45,14 @@ test('identity downloads require a second actor and are clean-only short-lived a
   assert.match(backend, /expires: Date\.now\(\) \+ 5 \* 60000/);
   assert.match(backend, /state: 'consumed'/);
 });
+
+test('Staging vault functions use the dedicated keyless runtime identity', () => {
+  const env = fs.readFileSync(new URL('../functions-public-intake/.env.pal-safety-hub-staging', import.meta.url), 'utf8');
+  assert.match(env, /^PAL_VAULT_SERVICE_ACCOUNT=pal-staging-vault-download@pal-safety-hub-staging\.iam\.gserviceaccount\.com\s*$/);
+  assert.match(backend, /defineString\('PAL_VAULT_SERVICE_ACCOUNT'/);
+  assert.match(backend, /const VAULT_RUNTIME = Object\.freeze/);
+  assert.match(backend, /serviceAccount: VAULT_SERVICE_ACCOUNT/);
+  for (const name of ['getSensitiveIntakeVaultV1', 'requestSensitiveIntakeDownloadV1', 'approveSensitiveIntakeDownloadV1']) {
+    assert.match(backend, new RegExp(`exports\\.${name} = onCall\\(VAULT_RUNTIME`));
+  }
+});

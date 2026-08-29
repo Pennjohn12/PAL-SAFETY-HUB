@@ -2,6 +2,7 @@ const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
+const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
 const { chainedAuditEvent, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
@@ -22,6 +23,9 @@ const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 const MAX_PACKET_UPLOAD_BYTES = 100 * 1024 * 1024;
 const MAX_PACKET_FILES = 12;
 const MAX_GRANTS_PER_HOUR = 12;
+const VAULT_SERVICE_ACCOUNT = defineString('PAL_VAULT_SERVICE_ACCOUNT');
+const VAULT_RUNTIME = Object.freeze({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10,
+  serviceAccount: VAULT_SERVICE_ACCOUNT });
 
 function text(value, max = 500) {
   return String(value ?? '').trim().slice(0, max);
@@ -367,7 +371,7 @@ exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, time
   return { status: 'quarantined', totalCount, record };
 });
 
-exports.getSensitiveIntakeVaultV1 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10 }, async request => {
+exports.getSensitiveIntakeVaultV1 = onCall(VAULT_RUNTIME, async request => {
   const actor = requireVaultActor(await officeActor(request.auth));
   const intakeId = text(request.data?.intakeId, 180);
   let purpose;
@@ -378,7 +382,7 @@ exports.getSensitiveIntakeVaultV1 = onCall({ region: REGION, cors: true, timeout
   return { vault: snap.data() };
 });
 
-exports.requestSensitiveIntakeDownloadV1 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10 }, async request => {
+exports.requestSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request => {
   const actor = requireVaultActor(await officeActor(request.auth));
   const intakeId = text(request.data?.intakeId, 180);
   const path = text(request.data?.path, 1024);
@@ -410,7 +414,7 @@ exports.requestSensitiveIntakeDownloadV1 = onCall({ region: REGION, cors: true, 
   return { status: 'authorized', url, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() };
 });
 
-exports.approveSensitiveIntakeDownloadV1 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10 }, async request => {
+exports.approveSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request => {
   const actor = requireVaultActor(await officeActor(request.auth));
   const approvalId = text(request.data?.approvalId, 180);
   const ref = db.collection('sensitiveDownloadApprovals').doc(approvalId);

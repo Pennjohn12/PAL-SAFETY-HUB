@@ -217,3 +217,11 @@ John approved the following Package 6 policy for new records governed by retenti
 - In-app notifications are limited to active Admins and active Office users with explicit sensitive-vault entitlement. External email and text notifications remain disabled until separately configured and approved.
 
 The vendor-neutral policy core and tests implement these decisions without deleting an object, scheduling cleanup, sending an external message, touching existing data, or changing Production. The full suite passes 84/84, along with Functions/policy syntax and diff checks. Live Staging deletion and notification behavior remain uncredited until a safe synthetic implementation and rollback test pass.
+
+### 2026-08-29 dedicated Staging vault identity checkpoint
+
+- Created the keyless Staging-only identity `pal-staging-vault-download@pal-safety-hub-staging.iam.gserviceaccount.com` with zero user-managed keys.
+- Granted only Firestore data access, log writing, object-viewer access on the existing Staging Firebase bucket, and self-signing on that identity. No scanner bucket, Production, credential-key, owner/editor, or broad Storage role was granted.
+- Added a Staging project environment declaration so ordinary Firebase deployments assign all three vault functions to the dedicated identity. A verification deployment proved both Cloud Functions and the serving Cloud Run revisions use that identity and remain ACTIVE.
+- Removed the obsolete self-signing grant from the shared default Compute identity after the durable assignment passed. Empty anonymous probes against all three vault functions still return the expected 401 application denial.
+- The full 85-test suite, Functions/policy syntax, and diff check pass. A fresh authenticated synthetic signed-download regression is still required before this identity checkpoint is credited as fully equivalent to the prior shared-identity test.

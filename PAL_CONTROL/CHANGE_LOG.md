@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 dedicated Staging vault identity deployed
+
+- Created a zero-key Staging-only vault runtime identity with narrow Firestore, logging, exact-bucket object-read, and self-signing access.
+- Made the identity assignment durable in the three vault-function deployment declarations and verified all three Cloud Functions/Cloud Run services ACTIVE on that identity.
+- Removed the shared default Compute identity's obsolete self-signing grant. Anonymous probes still fail closed with 401. Production and real data remain untouched; authenticated synthetic signed-download regression remains pending.
+
 ## 2026-08-29 — Package 6 retention and notification policy encoded
 
 - Recorded John's approval of the 24-hour verified identity-image window, 30-day locked manual-review window, legal/HR-hold override, indefinite audit retention pending a formal PAL schedule, and in-app-only entitled-reviewer notifications.
