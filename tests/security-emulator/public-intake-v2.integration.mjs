@@ -93,6 +93,19 @@ test('server allows a narrow update and submission permanently blocks replay', a
   assert.notEqual((await call('updatePublicIntakeV2', { intakeId: id, token, action: 'basic', payload: { name: 'replay' } })).status, 200);
 });
 
+test('new W-4 payload is removed from the ordinary intake and stored in the server vault', async () => {
+  const id = 'synthetic-w4-vault'; const token = 'synthetic-w4-token';
+  await seed(id, token);
+  const saved = await call('updatePublicIntakeV2', { intakeId: id, token, action: 'w4', payload: { completed: true, firstName: 'Synthetic', lastName: 'Worker', address: '100 Test Way', city: 'Testville', state: 'NY', zip: '00000', ssn: '000-00-0000', filingStatus: 'Single', signature: 'SYNTHETIC ONLY', dateSigned: '2026-08-29' } });
+  assert.equal(saved.status, 200);
+  const intake = (await getAdminFirestore(adminApp).collection('newHireIntakes').doc(id).get()).data();
+  const vault = (await getAdminFirestore(adminApp).collection('sensitiveIntakeVaults').doc(id).get()).data();
+  assert.equal(intake.w4Completed, true);
+  assert.equal(Object.hasOwn(intake, 'w4Form'), false);
+  assert.equal(vault.w4Form.ssn, '000-00-0000');
+  assert.equal(saved.body.result.intake.w4Form.ssn, '000-00-0000');
+});
+
 test('link issuance is never anonymous', async () => {
   await seed('synthetic-issue', 'old-token');
   assert.notEqual((await call('issuePublicIntakeAccessV2', { intakeId: 'synthetic-issue' })).status, 200);
