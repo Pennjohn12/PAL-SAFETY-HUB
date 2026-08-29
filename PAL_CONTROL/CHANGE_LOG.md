@@ -2,6 +2,15 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 Office vault workflow passed in Staging
+
+- With John's approval, deployed only the new Admin approval-queue callable and Staging Hosting/client, then focus-updated the existing protected-download callable with bounded, non-sensitive failure-stage logging. No IAM, scanner image, credential, Production, real-data, or direct image-scan charge changed.
+- Deployment review found that the broad Hosting root would otherwise package `functions-public-intake/**` and `scanner/**`. All maintained Hosting configurations now exclude every `functions*/**` tree and `scanner/**`; live Staging probes return 404 for representative backend and scanner source paths.
+- Authenticated synthetic UI checks passed required-purpose enforcement, non-entitled denial, no direct Storage links, clean non-identity authorization, bounded Admin queue display, different-person identity approval, approval consumption, and the original requester's five-minute protected authorization. The automated browser blocked the resulting new-tab popup; the previously verified backend regression remains the exact-byte evidence.
+- An initial request failed closed because the test object used a synthetic path outside the required `quarantine/newHireIntakes/...` namespace. After correcting only that synthetic fixture, authorization passed. This confirmed the path-binding control rather than exposing a product weakness.
+- Cleanup was independently counted after execution: zero temporary Auth users, user profiles, intake/vault records, approval/notification records, or four synthetic objects remain. Append-only synthetic audit events were intentionally retained. Production remained unchanged.
+- Functions/policy syntax and all 94/94 PAL tests pass. Direct image scans remain five / `$1.30`; small Staging runtime remains pending posted billing reconciliation.
+
 ## 2026-08-29 — Package 6 Office vault workflow prepared before Production proposal
 
 - Current-source inspection found a verified Production-readiness gap: the protected backend had passed synthetic tests, but the Office review screen still used the older generic payroll-file presentation and had no purpose-bound vault status, protected download, false-positive request, or independent approval queue.

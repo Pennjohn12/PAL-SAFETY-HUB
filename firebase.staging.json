@@ -11,6 +11,8 @@
       "firestore.rules",
       "storage.rules",
       "functions/**",
+      "functions*/**",
+      "scanner/**",
       "PAL_CONTROL/**",
       "tests/**",
       "tools/**",

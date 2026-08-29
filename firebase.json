@@ -19,6 +19,8 @@
       "firestore.rules",
       "storage.rules",
       "functions/**",
+      "functions*/**",
+      "scanner/**",
       "SECURITY_RULES_NOTES.md",
       "PAL_ORIENTATION_AI_VIDEO_PLAN.md",
       "PAL_Orientation_Canva_Narration.txt",

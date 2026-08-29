@@ -407,12 +407,29 @@ exports.requestSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request =
     approvalRef = approved.ref;
   }
   const file = admin.storage().bucket().file(path);
-  const [metadata] = await file.getMetadata();
+  let metadata;
+  try {
+    [metadata] = await file.getMetadata();
+  } catch (error) {
+    console.error('sensitive-vault-download-failed', { stage: 'metadata', code: text(error?.code, 80), name: text(error?.name, 80) });
+    throw new HttpsError('unavailable', 'The protected file could not be verified. It remains locked.');
+  }
   const currentIdentity = normalizeObjectIdentity({ path, generation: metadata.generation, size: Number(metadata.size), contentType: metadata.contentType, sha256: metadata.metadata?.palSha256 });
   if (!mayAuthorizeDownload({ scanState: record.malwareScanStatus, recordedIdentity: record.objectIdentity, currentIdentity, entitled: true, disabled: false, purpose,
     falsePositiveReviewRequired: record.falsePositiveReviewRequired === true, falsePositiveApproved: record.falsePositiveApproved === true })) throw new HttpsError('failed-precondition', 'This file is not verified clean and available.');
-  const [url] = await file.getSignedUrl({ version: 'v4', action: 'read', expires: Date.now() + 5 * 60000, queryParams: { generation: currentIdentity.generation }, responseDisposition: `attachment; filename="${safeFileName(record.name)}"` });
-  await writeVaultAudit({ action: 'vault-download', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path, purpose, decision: 'allowed', correlationId: crypto.randomUUID(), reason: 'verified-clean' });
+  let url;
+  try {
+    [url] = await file.getSignedUrl({ version: 'v4', action: 'read', expires: Date.now() + 5 * 60000, queryParams: { generation: currentIdentity.generation }, responseDisposition: `attachment; filename="${safeFileName(record.name)}"` });
+  } catch (error) {
+    console.error('sensitive-vault-download-failed', { stage: 'signing', code: text(error?.code, 80), name: text(error?.name, 80) });
+    throw new HttpsError('unavailable', 'The protected file could not be authorized. It remains locked.');
+  }
+  try {
+    await writeVaultAudit({ action: 'vault-download', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path, purpose, decision: 'allowed', correlationId: crypto.randomUUID(), reason: 'verified-clean' });
+  } catch (error) {
+    console.error('sensitive-vault-download-failed', { stage: 'audit', code: text(error?.code, 80), name: text(error?.name, 80) });
+    throw new HttpsError('unavailable', 'The protected-file audit could not be recorded. The file remains locked.');
+  }
   if (approvalRef) await approvalRef.update({ state: 'consumed', consumedAt: FieldValue.serverTimestamp() });
   return { status: 'authorized', url, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() };
 });

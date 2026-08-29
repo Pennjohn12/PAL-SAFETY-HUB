@@ -112,6 +112,16 @@ test('identity downloads require a second actor and are clean-only short-lived a
   assert.match(backend, /state: 'consumed'/);
 });
 
+test('protected download failures stay locked and log only bounded diagnostic stages', () => {
+  for (const stage of ['metadata', 'signing', 'audit']) {
+    assert.match(backend, new RegExp(`stage: '${stage}'`));
+  }
+  assert.match(backend, /The protected file could not be verified\. It remains locked\./);
+  assert.match(backend, /The protected file could not be authorized\. It remains locked\./);
+  assert.match(backend, /The protected-file audit could not be recorded\. The file remains locked\./);
+  assert.doesNotMatch(backend, /sensitive-vault-download-failed[^\n]+actorEmail/);
+});
+
 test('Staging vault functions use the dedicated keyless runtime identity', () => {
   const env = fs.readFileSync(new URL('../functions-public-intake/.env.pal-safety-hub-staging', import.meta.url), 'utf8');
   assert.match(env, /^PAL_VAULT_SERVICE_ACCOUNT=pal-staging-vault-download@pal-safety-hub-staging\.iam\.gserviceaccount\.com$/m);

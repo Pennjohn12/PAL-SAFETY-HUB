@@ -328,4 +328,12 @@ The local correction adds the missing end-user security boundary:
 
 Static regressions verify callable wiring, purpose prompts, no direct sensitive links, no sensitive printable table, Admin-only bounded queue access, and audit coverage. Functions/policy syntax, diff check, and the full suite pass 93/93.
 
-This work is local/predeployment. Before an exact Production proposal, Staging must deploy only the new queue callable and the Staging client, then use synthetic entitled Office/Admin accounts to verify denied non-entitled access, purpose enforcement, clean non-identity download, two-person identity download, false-positive queue timing, same-person denial, exact bytes/expiry, audit/redaction, popup/error behavior, and cleanup. No Production, real data, IAM, scanner image, or cost action is authorized by this design.
+### Office workflow Staging verification
+
+With John's approval, Staging deployed only the new queue callable and Office client, followed by a focused protected-download diagnostic update. The synthetic UI regression verified required-purpose enforcement, non-entitled denial, no direct Storage link, clean non-identity authorization, the bounded Admin queue, different-person identity approval, approval consumption, and a five-minute requester authorization. The automated browser blocked the returned new-tab popup; exact-byte delivery remains credited from the earlier dedicated-identity backend regression rather than overstated as a browser download.
+
+The first request failed closed because the synthetic fixture path was outside the mandatory `quarantine/newHireIntakes/...` namespace. Correcting only that fake fixture made the same flow pass, proving the path-binding policy operated as designed. Bounded diagnostics now distinguish metadata, signing, and audit failures without logging actor email, purpose, intake ID, object path, token, or signed URL.
+
+Hosting packaging inspection also found and closed a source-exposure gap: every maintained Hosting configuration now excludes `functions*/**` and `scanner/**`. Representative live Staging requests for backend and scanner source return 404.
+
+Cleanup verification returned zero temporary Auth accounts, profile/intake/vault documents, approvals/notifications, and synthetic objects. Append-only synthetic audit events remain intact. No Production, real data, IAM, scanner image, credential, or direct scan charge changed. All isolated Staging functional gates are now credited; posted billing reconciliation and an exact Production proposal/approval remain.

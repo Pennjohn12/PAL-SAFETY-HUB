@@ -26,4 +26,6 @@ test("Staging has a persistent synthetic-data warning and safe hosting headers",
   const headers = stagingConfig.hosting.headers.flatMap(entry => entry.headers);
   assert.ok(headers.some(header => header.key === "Cache-Control" && header.value.includes("no-store")));
   assert.ok(headers.some(header => header.key === "X-Robots-Tag" && header.value.includes("noindex")));
+  assert.ok(stagingConfig.hosting.ignore.includes("functions*/**"));
+  assert.ok(stagingConfig.hosting.ignore.includes("scanner/**"));
 });
