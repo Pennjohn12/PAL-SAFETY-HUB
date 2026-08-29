@@ -179,11 +179,14 @@ async function updateInitialScanRecord({ authorizationId, allowedStates, mutate 
 }
 
 async function queueInitialScan(authorizationId) {
+  let scanQueueStage = 'authorization-read';
+  try {
   const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(authorizationId);
   const authorizationSnap = await authorizationRef.get();
   const authorization = authorizationSnap.data() || {};
   if (!authorizationSnap.exists || !['quarantined', 'scan-queue-failed'].includes(authorization.state)
       || !['certUploads', 'payrollIdUploads'].includes(authorization.folder)) throw new Error('invalid-scan-queue-state');
+  scanQueueStage = 'record-read';
   const [intakeSnap, vaultSnap] = await Promise.all([
     db.collection('newHireIntakes').doc(text(authorization.intakeId, 180)).get(),
     vaultRef(text(authorization.intakeId, 180)).get()
@@ -192,6 +195,7 @@ async function queueInitialScan(authorizationId) {
   if (!record || record.malwareScanStatus !== 'pending') throw new Error('missing-pending-scan-record');
   const identity = normalizeObjectIdentity(record.objectIdentity);
   const source = admin.storage().bucket().file(identity.path, { generation: identity.generation });
+  scanQueueStage = 'source-metadata';
   const [sourceMetadata] = await source.getMetadata();
   const currentIdentity = normalizeObjectIdentity({ path: identity.path, generation: sourceMetadata.generation,
     size: Number(sourceMetadata.size), contentType: sourceMetadata.contentType, sha256: sourceMetadata.metadata?.palSha256 });
@@ -199,18 +203,21 @@ async function queueInitialScan(authorizationId) {
   const metadata = initialScanMetadata({ authorizationId, intakeId: authorization.intakeId, folder: authorization.folder,
     name: authorization.name, originalIdentity: identity });
   const destination = admin.storage().bucket(RESCAN_BUCKET.value()).file(metadata.palInitialScanObjectPath);
+  scanQueueStage = 'isolated-copy';
   try {
     await source.copy(destination, { preconditionOpts: { ifSourceGenerationMatch: Number(identity.generation), ifGenerationMatch: 0 },
-      contentType: identity.contentType, cacheControl: 'private, no-store, max-age=0', metadata });
+      contentType: identity.contentType, cacheControl: 'private, no-store, max-age=0', metadata: { ...metadata } });
   } catch (error) {
     if (![409, 412].includes(Number(error?.code))) throw error;
     const [existing] = await destination.getMetadata();
     const existingCustom = existing.metadata || {};
     if (Object.entries(metadata).some(([key, value]) => existingCustom[key] !== value)) throw new Error('scan-destination-collision');
   }
+  scanQueueStage = 'destination-metadata';
   const [destinationMetadata] = await destination.getMetadata();
   const scanObjectGeneration = text(destinationMetadata.generation, 80);
   if (!/^\d+$/.test(scanObjectGeneration)) throw new Error('invalid-scan-destination-generation');
+  scanQueueStage = 'queue-state-write';
   await updateInitialScanRecord({ authorizationId, allowedStates: ['quarantined', 'scan-queue-failed'], mutate: ({ record: current }) => ({
     record: { ...current, scanQueueState: 'queued', scanObjectPath: metadata.palInitialScanObjectPath,
       scanObjectGeneration, scanQueuedAt: new Date().toISOString() },
@@ -218,6 +225,10 @@ async function queueInitialScan(authorizationId) {
       scanQueuedAt: FieldValue.serverTimestamp(), scanQueueError: FieldValue.delete() }
   }) });
   return metadata.palInitialScanObjectPath;
+  } catch (error) {
+    error.palScanQueueStage = scanQueueStage;
+    throw error;
+  }
 }
 
 function accessState(intake, suppliedToken) {
@@ -499,7 +510,8 @@ exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, time
     await queueInitialScan(authorizationId);
   } catch (error) {
     scanQueueStatus = 'retrying';
-    console.error('initial-scan-queue-failed', { code: text(error?.code, 80), name: text(error?.name, 80) });
+    console.error('initial-scan-queue-failed', { stage: text(error?.palScanQueueStage, 40),
+      code: text(error?.code, 80), name: text(error?.name, 80) });
     await updateInitialScanRecord({ authorizationId, allowedStates: ['quarantined'], mutate: ({ record: current }) => ({
       record: { ...current, scanQueueState: 'queue-failed', downloadable: false },
       authorization: { state: 'scan-queue-failed', scanQueueError: 'queue-failed', scanQueueFailedAt: FieldValue.serverTimestamp() }
@@ -827,7 +839,8 @@ exports.retryPendingInitialScansV1 = onSchedule({ region: REGION, schedule: 'eve
   let queuedCount = 0;
   for (const authorizationId of [...retryIds].slice(0, 25)) {
     try { await queueInitialScan(authorizationId); queuedCount += 1; }
-    catch (error) { console.error('initial-scan-retry-failed', { code: text(error?.code, 80), name: text(error?.name, 80) }); }
+    catch (error) { console.error('initial-scan-retry-failed', { stage: text(error?.palScanQueueStage, 40),
+      code: text(error?.code, 80), name: text(error?.name, 80) }); }
   }
   console.log(JSON.stringify({ event: 'initial-scan-retry', inspected: retryIds.size, queued: queuedCount }));
   return { inspected: retryIds.size, queued: queuedCount };

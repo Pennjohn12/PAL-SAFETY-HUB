@@ -343,6 +343,14 @@ Newest entries go first. Git history remains the detailed code record.
 - The image remains undeployed. No runtime, callback Function, IAM, Hosting, Production, credential, or real-data action occurred.
 - A final read-only query of that exact digest again returned `FINISHED_SUCCESS`; vulnerability and malicious-package finding sections were both absent, with explicit occurrence counts of zero for each. The scanner README was corrected to describe both private callback flows. No cloud mutation or additional charge occurred.
 
+### 2026-08-29 — Initial-scan Staging integration blocked and rolled back
+
+- John approved the exact synthetic Staging deployment/test boundary. Four focused Functions and the tested Staging client deployed; private scanner revision `pal-staging-malware-scanner-00007-9ll` used only accepted digest `sha256:0de3ddbb...`, and callback Invoker was granted only to the dedicated scanner identity. Anonymous callback and scanner probes returned `403`.
+- The first synthetic certification stayed locked. The initial queue attempt exposed that Cloud Storage mutates supplied copy metadata; PAL now passes a fresh copy of the frozen security envelope and retains bounded stage-only diagnostics. Local Functions syntax, diff, and all 99 tests passed.
+- Retry then proved the exact object and envelope reached isolated unscanned storage, but the vault identity required read-only generation lookup. A temporary, bucket-specific unscanned `objectViewer` grant allowed exact generation persistence; no clean/quarantine/Firebase-wide/Production grant was added.
+- The scanner repeatedly classified the 41-byte synthetic PDF CLEAN but rejected its own callback preparation as `PAL scan callback metadata is incomplete`, even though read-only object inspection showed all ten required PAL envelope fields and the configured private callback URL. No callback was accepted, no scan-result audit was written, and the PAL record remained `scan-queued`/`pending` and unavailable.
+- The approved rollback restored prior accepted scanner digest `sha256:ab00939c...` as revision `pal-staging-malware-scanner-00008-rkc`, removed the initial callback environment value and scanner Invoker binding, paused the new retry schedule, removed the temporary unscanned viewer grant, and deleted the named synthetic intake, authorization, and objects. Production and real PAL data were unchanged. Package 6 remains blocked pending a locally reviewed scanner metadata-retrieval correction and a separately approved new image/scan boundary.
+
 ## Entry template
 
 ### YYYY-MM-DD — Short title
