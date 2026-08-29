@@ -296,3 +296,19 @@ The predeployment implementation adds separate request/approval actions, a serve
 - An initial post-release validation stopped only at offline hash recomputation. Inspection found the stored audit event deliberately has `actorEmailMasked` and no full `actorEmail`, but `auditEvent()` previously regenerated the mask only from the full-email input. This did not change or expose deployed audit data, but it prevented an independent verifier from reproducing a stored event hash.
 - The local policy helper now accepts an existing mask only when it matches PAL's strict one- or two-character prefix plus `***@domain` format; a full email or malformed mask in that field becomes empty. Creation from a full actor email remains unchanged. Tests prove a stored event reproduces its original SHA-256 hash and that an unmasked value is rejected. The suite remains 91/91 with policy/Functions syntax and diff checks passing.
 - After loading only the corrected verifier into the synthetic harness, the entire workflow returned PASS: two accounts, clean scanner result, same-person denial, different-Admin approval, exact 67-byte download, four valid audit events, prior anonymous callback 403, and complete cleanup. Live false-positive handling is credited in Staging. The verifier helper itself is local/predeployment; Production remains closed.
+
+## Existing Production file treatment plan — no migration authorized
+
+This plan closes the design question without inspecting or changing any real record. It does not authorize execution.
+
+1. Package 6 Production activation, if later approved, applies only to new version-2 sensitive-vault records and newly uploaded objects. It must not label any existing object as scanned, clean, released, or retention-eligible.
+2. Existing W-4 fields and payroll/identity files remain legacy records under their current access controls. Office must see an explicit `Legacy — not scanned by Package 6` status; the new signed-release path must fail closed for them.
+3. PAL may continue normal business handling of a legacy record only through the pre-cutover workflow. Package 6 must not silently copy, move, hash, download, scan, delete, or rewrite it.
+4. Any future migration requires a separate approved inventory based first on metadata only, a record count and storage estimate, legal/HR retention review, employee/privacy notice decision, rollback mapping, bounded synthetic rehearsal, per-batch reconciliation, and explicit authorization before reading file contents.
+5. A migration batch must bind every source generation and digest, quarantine before scanning, release only after the same clean/authorization controls, preserve an immutable source-to-destination audit map, and leave the source untouched until PAL approves a separately tested deletion stage.
+6. Migration failure leaves both the legacy source and any new copy inaccessible through the clean-release path. Partial copies are quarantined and reconciled; no automatic source deletion or broad retry is allowed.
+7. Rollback of a future Package 6 Production activation disables only the new vault/release entry points and scanner trigger. It must not reopen anonymous uploads, expose quarantine, erase audit records, or reinterpret legacy files. Newly created vault objects remain locked pending a separate disposition decision.
+
+The approved default is therefore **no existing-data migration**. This satisfies the Package 6 planning gate while keeping every real-data action separately approval-gated.
+
+The stored-event verifier correction does not require a separate Staging runtime deployment: deployed writers already create the same masked fields and hashes, while the correction enables offline verification of those stored fields. It will remain part of the exact tested source for any later approved Production deployment.

@@ -13,6 +13,14 @@ This ledger records incremental cloud/service costs created specifically by the 
 | 6 | Staging | Hourly retention worker live test | Dedicated scale-to-zero identity; bounded 50 vaults and 250 reviewers per run | Below $0.01 estimated before free tier for two short forced runs and four tiny synthetic objects | Not yet SKU-reconciled | Active in Staging; exact deletion, hold, audit, notification, and cleanup paths passed |
 | 6 | Production | Warm or other Production malware scanner | No authorization | Preliminary architecture estimate roughly $33–$90/month plus usage; configuration not approved | $0 | Not created |
 
+## 2026-08-29 Package 6 reconciliation checkpoint
+
+- Direct, action-time-authorized Artifact Analysis charges are mathematically reconciled at **5 × $0.26 = $1.30 incurred**. They may post later than the test date; the ledger does not misstate the earlier `$0.52` whole-project dashboard estimate as including them.
+- The last observed dashboard amount remains **$0.52 for the whole Staging project for Aug. 1–29**. Because it is project-wide and not broken down by SKU, it cannot yet be attributed fully to Package 6 or combined with `$1.30` as an invoice total.
+- Package 6 scanner measurement/runtime was bounded at min 0, max 1, concurrency 1 and was previously estimated below `$0.10` before free tier. Later false-positive regressions add only short scale-to-zero executions, tiny synthetic objects, Eventarc requests, Function calls, and logs; no new image scan was triggered.
+- The authoritative current security-program direct-charge ledger is therefore **$1.30 known/incurred plus small usage-dependent Staging charges not yet posted or SKU-reconciled**. Production cost remains `$0` because no Package 6 Production resource exists.
+- Final invoice-grade reconciliation remains time-gated until Google Cloud posts itemized SKU charges/credits/taxes for the testing window. It must record the billing-account scope and must not infer an invoice total from the dashboard estimate.
+
 ## Required final breakdown
 
 - Separate Staging, Production, and one-time build costs.
