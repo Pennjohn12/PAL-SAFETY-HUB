@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 live vault release and audit chain passed in Staging
+
+- With John's specific approval, created two temporary synthetic Staging reviewers and one harmless synthetic PDF. Credentials existed only in memory and were not printed or saved.
+- Verified concurrent entitled reads, different-person approval for identity media, a five-minute exact-object signed download, four linked audit events with matching head, masked/no-secret audit content, and authenticated client audit denial.
+- The first attempts identified fail-closed missing-object-metadata behavior and the missing Staging runtime `signBlob` permission. Added only a self `roles/iam.serviceAccountTokenCreator` binding to the exact Staging runtime identity; no key or broad Storage access was added. A dedicated keyless identity remains required for Production least privilege.
+- Cleanup removed both temporary accounts, profiles, vault/approval/audit records, object, and test harnesses. Production and real PAL data were untouched.
+
 ## 2026-08-29 — Package 6 audit chain deployed to isolated Staging
 
 - Deployed exact commit `acb318844a52ffae76652e9e9c16a3caabc8e443` only to the `public-intake-v2` Functions codebase in `pal-safety-hub-staging`; all nine functions updated successfully.

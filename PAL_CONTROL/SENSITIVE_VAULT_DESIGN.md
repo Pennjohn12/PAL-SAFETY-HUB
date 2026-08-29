@@ -193,6 +193,15 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - No Hosting, Firestore rules, Storage rules, Production service, real record, secret, credential, or synthetic identity was created or changed. Production remains closed.
 - This verifies deployment health and the unauthenticated/client-denial boundary. It does **not** yet credit live chained-event creation, head consistency, or concurrent-write serialization. The six existing synthetic identities have no stored credentials, and creating a new password, custom token, or other authentication credential was outside the authorization for this step. Those live tests remain pending specific credential authorization or an approved credential-free harness.
 
+### 2026-08-29 live signed-download and audit-chain evidence
+
+- John specifically approved two temporary synthetic Staging accounts and credentials. The harness generated credentials only in memory, printed or stored no password/token, used a harmless synthetic PDF, and refused to run if the Staging audit collection already contained events.
+- Two simultaneous entitled vault reads passed. A synthetic driver-license record required approval by a different entitled reviewer; after approval, the requester received a five-minute generation-bound signed URL and downloaded the exact synthetic bytes.
+- The first exact-object attempt correctly failed closed when the test upload lacked its recorded SHA-256 metadata. After the synthetic setup supplied the metadata, the signed-URL step exposed a missing `iam.serviceAccounts.signBlob` permission on the Staging runtime identity. The identity received only `roles/iam.serviceAccountTokenCreator` on itself, with no key file or broader Storage grant; after IAM propagation, the complete test passed.
+- Four live events formed one valid SHA-256 chain with a matching head after two concurrent writes. Authenticated direct client audit reads returned HTTP 403. Audit inspection confirmed masked actor emails and no raw email, signed URL, token, password, or file content.
+- Cleanup passed after every attempt: both temporary Authentication accounts, their user profiles, the synthetic vault record, approval record, audit events/head, and synthetic Storage object were removed. The temporary local and Cloud Shell harnesses were also removed.
+- The Staging self-signing grant remains so signed downloads continue to work. It is attached to the current shared default Compute runtime identity; before Production, PAL should use a dedicated keyless vault-download identity so unrelated functions do not inherit signing capability. No Production permission or resource changed.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
