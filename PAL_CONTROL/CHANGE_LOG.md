@@ -331,6 +331,7 @@ Newest entries go first. Git history remains the detailed code record.
 - The existing scanner quarantine output is intentionally mapped to locked manual review because it can contain encrypted or otherwise non-clean files and does not provide a trustworthy ordinary first-scan malware classification. Errors/timeouts remain fail-closed without a trusted result event.
 - Local validation: 99/99 tests, Functions syntax, and diff checks passed. No cloud, IAM, credential, image scan, Production, real-data, or direct-cost action occurred.
 - Follow-up review found the isolated input generation was not persisted. The queue now reads and requires the numeric destination generation after copy or validated collision, stores it with every queue/requeue, and the stale transaction refuses an empty or mismatched generation. This remains local-only with 99/99 tests passing.
+- After John approved the exact Staging installation boundary, the required pre-mutation IAM inventory found both clean/quarantine result buckets had additional inherited write-capable principals: project owners/editors and the Firebase Admin SDK service account with project-level Storage Admin, in addition to the intended scanner. Deployment stopped before mutation because clean-result authenticity is not exclusive. No Function, trigger, schedule, Hosting, IAM, Production, real-data, or cost action occurred.
 
 ## Entry template
 
