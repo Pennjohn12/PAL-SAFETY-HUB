@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 trusted-rescan integration deployed to Staging
+
+- Pinned patched UUID `11.1.1` after the temporary deploy audit found the new transitive advisory; both production audits are now clear and 89/89 PAL tests pass.
+- Deployed three ACTIVE false-positive actions on the dedicated vault identity, private callback invocation, isolated-bucket object creation, and exact accepted scanner digest on private min-0/max-1/concurrency-1 revision `pal-staging-malware-scanner-00006-h4q`.
+- Anonymous callables return 401 and the callback returns 403. Authenticated two-person synthetic release remains pending explicit temporary-account approval. Production and real data were untouched.
+
 ## 2026-08-29 — Package 6 trusted-rescan image accepted
 
 - Dedicated keyless Cloud Build `2dec656e-9c6e-403f-8778-39bef3905120` produced immutable Staging candidate digest `sha256:ab00939cb01de07150d20ad643dab338feb19fb31f0033049ad4a6f18e457da5` from verified patch `7d75bea8f5c50be29aaaaab7dd8e1c6963b72354d057ce318ce3c0be61cabc01`.
