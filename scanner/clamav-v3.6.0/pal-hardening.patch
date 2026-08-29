@@ -2166,27 +2166,33 @@ new file mode 100644
 index 0000000..3d6983b
 --- /dev/null
 +++ b/cloudrun-malware-scanner/pal-rescan-reporter.ts
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,27 @@
 +import {GoogleAuth} from 'google-auth-library';
 +
-+const REQUIRED = ['palFalsePositiveReviewId', 'palOriginalIntakeId', 'palOriginalPath', 'palOriginalGeneration',
-+  'palOriginalSize', 'palOriginalContentType', 'palOriginalSha256', 'palRescanObjectPath'] as const;
++const ORIGINAL = ['palOriginalIntakeId', 'palOriginalPath', 'palOriginalGeneration', 'palOriginalSize',
++  'palOriginalContentType', 'palOriginalSha256'] as const;
 +
 +export async function reportPalRescan(metadata: Record<string, string> | undefined, result: 'clean' | 'infected', sha256: string,
-+  clamVersion: string): Promise<void> {
++  clamVersion: string, scanObjectGeneration: string): Promise<void> {
 +  const reviewId = metadata?.palFalsePositiveReviewId;
-+  if (!reviewId) return;
-+  const callback = process.env.PAL_RESCAN_CALLBACK_URL;
-+  if (!callback || !REQUIRED.every((key) => metadata?.[key])) throw new Error('PAL rescan callback metadata is incomplete');
++  const authorizationId = metadata?.palInitialScanAuthorizationId;
++  if (!reviewId && !authorizationId) return;
++  const callback = reviewId ? process.env.PAL_RESCAN_CALLBACK_URL : process.env.PAL_INITIAL_SCAN_CALLBACK_URL;
++  const required = reviewId ? [...ORIGINAL, 'palRescanObjectPath'] : [...ORIGINAL, 'palInitialScanIntakeId',
++    'palInitialScanFolder', 'palInitialScanObjectPath'];
++  if (!callback || !required.every((key) => metadata?.[key])) throw new Error('PAL scan callback metadata is incomplete');
 +  if (!/^[a-f0-9]{64}$/.test(sha256) || !Number.isSafeInteger(Number(metadata?.palOriginalSize))
-+      || Number(metadata?.palOriginalSize) < 1) throw new Error('PAL rescan object identity is invalid');
-+  if (metadata?.palOriginalSha256 !== sha256) throw new Error('PAL rescan digest does not match the exact original object');
++      || Number(metadata?.palOriginalSize) < 1 || !/^\d+$/.test(scanObjectGeneration)) throw new Error('PAL scan object identity is invalid');
++  if (metadata?.palOriginalSha256 !== sha256) throw new Error('PAL scan digest does not match the exact original object');
 +  const client = await new GoogleAuth().getIdTokenClient(callback);
-+  await client.request({ url: callback, method: 'POST', timeout: 15000, data: {
-+    reviewId, rescanObjectPath: metadata?.palRescanObjectPath, result, sha256, clamVersion,
++  const data = reviewId ? { reviewId, rescanObjectPath: metadata?.palRescanObjectPath, result, sha256, clamVersion,
 +    scannedAt: new Date().toISOString(), originalIdentity: { path: metadata?.palOriginalPath, generation: metadata?.palOriginalGeneration,
 +      size: Number(metadata?.palOriginalSize), contentType: metadata?.palOriginalContentType, sha256: metadata?.palOriginalSha256 }
-+  } });
++  } : { authorizationId, intakeId: metadata?.palInitialScanIntakeId, folder: metadata?.palInitialScanFolder,
++    scanObjectPath: metadata?.palInitialScanObjectPath, scanObjectGeneration, result, sha256, clamVersion,
++    scannedAt: new Date().toISOString(), originalIdentity: { path: metadata?.palOriginalPath, generation: metadata?.palOriginalGeneration,
++      size: Number(metadata?.palOriginalSize), contentType: metadata?.palOriginalContentType, sha256: metadata?.palOriginalSha256 } };
++  await client.request({ url: callback, method: 'POST', timeout: 15000, data });
 +}
 diff --git a/cloudrun-malware-scanner/scanner.ts b/cloudrun-malware-scanner/scanner.ts
 index efb559c..7a4a3b7 100644
@@ -2221,19 +2227,21 @@ index efb559c..7a4a3b7 100644
  
        let isClean = this.clamdClient.isCleanReply(result);
  
-@@ -305,6 +313,7 @@ export class Scanner {
+@@ -305,6 +313,8 @@ export class Scanner {
            clamdVersion,
          );
  
-+        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'clean', sha256, clamdVersion);
++        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'clean', sha256, clamdVersion,
++          String(metadata.generation));
          await this.moveProcessedFile(gcsFile, bucketDefs.clean);
  
          return {
-@@ -335,6 +344,7 @@ export class Scanner {
+@@ -335,6 +345,8 @@ export class Scanner {
            clamdVersion,
          );
  
-+        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'infected', sha256, clamdVersion);
++        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'infected', sha256, clamdVersion,
++          String(metadata.generation));
          await this.moveProcessedFile(gcsFile, bucketDefs.quarantined);
  
          return {
@@ -2242,17 +2250,20 @@ new file mode 100644
 index 0000000..ed937c8
 --- /dev/null
 +++ b/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,16 @@
 +import {reportPalRescan} from '../pal-rescan-reporter';
 +
 +describe('PAL rescan reporter', () => {
 +  it('does nothing for ordinary scanner objects', async () => {
-+    await expectAsync(reportPalRescan(undefined, 'clean', 'a'.repeat(64), 'test')).toBeResolved();
++    await expectAsync(reportPalRescan(undefined, 'clean', 'a'.repeat(64), 'test', '1')).toBeResolved();
 +  });
 +  it('fails closed on incomplete or mismatched rescan metadata', async () => {
-+    await expectAsync(reportPalRescan({palFalsePositiveReviewId: 'review'}, 'clean', 'a'.repeat(64), 'test')).toBeRejected();
++    await expectAsync(reportPalRescan({palFalsePositiveReviewId: 'review'}, 'clean', 'a'.repeat(64), 'test', '1')).toBeRejected();
 +    const metadata = {palFalsePositiveReviewId: 'review', palOriginalIntakeId: 'intake', palOriginalPath: 'path',
 +      palOriginalGeneration: '1', palOriginalSize: '10', palOriginalContentType: 'application/pdf', palOriginalSha256: 'b'.repeat(64)};
-+    await expectAsync(reportPalRescan(metadata, 'clean', 'a'.repeat(64), 'test')).toBeRejected();
++    await expectAsync(reportPalRescan(metadata, 'clean', 'a'.repeat(64), 'test', '1')).toBeRejected();
++  });
++  it('fails closed on incomplete ordinary first-scan metadata', async () => {
++    await expectAsync(reportPalRescan({palInitialScanAuthorizationId: 'auth'}, 'clean', 'a'.repeat(64), 'test', '1')).toBeRejected();
 +  });
 +});

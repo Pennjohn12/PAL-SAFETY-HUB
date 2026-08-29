@@ -34,33 +34,26 @@ function initialScanMetadata({ authorizationId, intakeId, folder, name, original
   });
 }
 
-function initialScanEvidence({ result, bucket, expectedBucket, name, generation, size, contentType, sha256, metadata }) {
+function initialScanEvidence({ result, authorizationId, intakeId, folder, scanObjectPath, scanObjectGeneration, sha256, originalIdentity }) {
   const normalizedResult = bounded(result, 40).toLowerCase();
-  if (!['clean', 'infected', 'manual-review'].includes(normalizedResult) || bounded(bucket, 220) !== bounded(expectedBucket, 220)) {
-    throw new Error('invalid-scan-result');
-  }
-  const authorizationId = bounded(metadata?.palInitialScanAuthorizationId, 180);
-  const intakeId = bounded(metadata?.palInitialScanIntakeId, 180);
-  const folder = bounded(metadata?.palInitialScanFolder, 40);
-  const scanObjectPath = bounded(metadata?.palInitialScanObjectPath, 1024);
-  if (!authorizationId || !intakeId || !['certUploads', 'payrollIdUploads'].includes(folder)
-      || bounded(name, 1024) !== scanObjectPath || !/^initial-scans\//.test(scanObjectPath)) {
+  const normalizedAuthorizationId = bounded(authorizationId, 180);
+  const normalizedIntakeId = bounded(intakeId, 180);
+  const normalizedFolder = bounded(folder, 40);
+  const normalizedScanObjectPath = bounded(scanObjectPath, 1024);
+  const normalizedScanGeneration = bounded(scanObjectGeneration, 80);
+  if (!['clean', 'manual-review'].includes(normalizedResult) || !normalizedAuthorizationId || !normalizedIntakeId
+      || !['certUploads', 'payrollIdUploads'].includes(normalizedFolder)
+      || !/^initial-scans\//.test(normalizedScanObjectPath) || !/^\d+$/.test(normalizedScanGeneration)) {
     throw new Error('invalid-scan-envelope');
   }
-  const originalIdentity = normalizeObjectIdentity({
-    path: metadata?.palOriginalPath,
-    generation: metadata?.palOriginalGeneration,
-    size: Number(metadata?.palOriginalSize),
-    contentType: metadata?.palOriginalContentType,
-    sha256: metadata?.palOriginalSha256
-  });
+  const normalizedIdentity = normalizeObjectIdentity(originalIdentity);
   const actualSha256 = bounded(sha256, 64).toLowerCase();
-  if (actualSha256 !== originalIdentity.sha256 || Number(size) !== originalIdentity.size
-      || bounded(contentType, 160).toLowerCase() !== originalIdentity.contentType || !/^\d+$/.test(bounded(generation, 80))) {
+  if (actualSha256 !== normalizedIdentity.sha256) {
     throw new Error('scan-output-identity-mismatch');
   }
-  return Object.freeze({ authorizationId, intakeId, folder, scanObjectPath, result: normalizedResult,
-    outputGeneration: bounded(generation, 80), originalIdentity });
+  return Object.freeze({ authorizationId: normalizedAuthorizationId, intakeId: normalizedIntakeId, folder: normalizedFolder,
+    scanObjectPath: normalizedScanObjectPath, result: normalizedResult, outputGeneration: normalizedScanGeneration,
+    originalIdentity: normalizedIdentity });
 }
 
 function mayApplyInitialScan({ authorization, record, evidence }) {

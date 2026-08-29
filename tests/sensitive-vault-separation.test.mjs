@@ -43,8 +43,9 @@ test('trusted initial results are bucket path digest and pending-record bound', 
     size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64) };
   const metadata = initialScanMetadata({ authorizationId: 'auth-12345678', intakeId: 'PAL-SYNTHETIC-123', folder: 'certUploads',
     name: 'training.pdf', originalIdentity });
-  const evidence = initialScanEvidence({ result: 'clean', bucket: 'pal-synthetic-clean', expectedBucket: 'pal-synthetic-clean',
-    name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64), metadata });
+  const evidence = initialScanEvidence({ result: 'clean', authorizationId: metadata.palInitialScanAuthorizationId,
+    intakeId: metadata.palInitialScanIntakeId, folder: metadata.palInitialScanFolder,
+    scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration: '999', sha256: 'a'.repeat(64), originalIdentity });
   assert.equal(mayApplyInitialScan({ authorization: { intakeId: evidence.intakeId, folder: evidence.folder,
     path: originalIdentity.path, scanObjectPath: evidence.scanObjectPath, state: 'scan-queued' },
   record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), true);
@@ -56,10 +57,12 @@ test('trusted initial results are bucket path digest and pending-record bound', 
     record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
   assert.equal(mayApplyInitialScan({ authorization: { ...recording, scanResultObjectGeneration: '1000' },
     record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
-  assert.throws(() => initialScanEvidence({ result: 'clean', bucket: 'wrong', expectedBucket: 'pal-synthetic-clean',
-    name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64), metadata }));
-  assert.throws(() => initialScanEvidence({ result: 'clean', bucket: 'pal-synthetic-clean', expectedBucket: 'pal-synthetic-clean',
-    name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'b'.repeat(64), metadata }));
+  assert.throws(() => initialScanEvidence({ result: 'clean', authorizationId: metadata.palInitialScanAuthorizationId,
+    intakeId: metadata.palInitialScanIntakeId, folder: metadata.palInitialScanFolder,
+    scanObjectPath: 'wrong/path', scanObjectGeneration: '999', sha256: 'a'.repeat(64), originalIdentity }));
+  assert.throws(() => initialScanEvidence({ result: 'clean', authorizationId: metadata.palInitialScanAuthorizationId,
+    intakeId: metadata.palInitialScanIntakeId, folder: metadata.palInitialScanFolder,
+    scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration: '999', sha256: 'b'.repeat(64), originalIdentity }));
 });
 
 test('initial scan retries serialize result audit and stale queue transitions', () => {
@@ -76,10 +79,17 @@ test('initial scan retries serialize result audit and stale queue transitions', 
   assert.match(backend, /scanObjectGeneration, 80\) !== expected\.scanObjectGeneration/);
 });
 
-test('scanner quarantine is locked for manual review rather than mislabeled infected', () => {
-  assert.match(backend, /exports\.recordQuarantinedInitialScanV1/);
-  assert.match(backend, /recordInitialScanResult\(event, 'manual-review'/);
+test('private scanner callback locks every non-clean first scan for manual review', () => {
+  assert.match(backend, /exports\.recordInitialScanResultV1 = onRequest/);
+  assert.match(backend, /invoker: 'private'/);
+  assert.match(backend, /!\['clean', 'infected'\]\.includes\(reportedResult\)/);
+  assert.match(backend, /scannerResult = reportedResult === 'clean' \? 'clean' : 'manual-review'/);
   assert.match(backend, /securityStatus: evidence\.result === 'clean' \? 'verified-clean' : 'manual-review'/);
+  const scannerPatch = fs.readFileSync(new URL('../scanner/clamav-v3.6.0/pal-hardening.patch', import.meta.url), 'utf8');
+  assert.match(scannerPatch, /PAL_INITIAL_SCAN_CALLBACK_URL/);
+  assert.match(scannerPatch, /palInitialScanAuthorizationId/);
+  assert.match(scannerPatch, /scanObjectGeneration/);
+  assert.match(scannerPatch, /await reportPalRescan[\s\S]*?await this\.moveProcessedFile/);
 });
 
 test('clean certifications use a simple purpose-bound server download while identity stays separately entitled', () => {

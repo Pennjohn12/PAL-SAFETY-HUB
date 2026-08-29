@@ -2,7 +2,6 @@ const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
-const { onObjectFinalized } = require('firebase-functions/v2/storage');
 const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
@@ -28,8 +27,6 @@ const MAX_PACKET_FILES = 12;
 const MAX_GRANTS_PER_HOUR = 12;
 const VAULT_SERVICE_ACCOUNT = defineString('PAL_VAULT_SERVICE_ACCOUNT');
 const RESCAN_BUCKET = defineString('PAL_RESCAN_BUCKET');
-const SCANNER_CLEAN_BUCKET = defineString('PAL_SCANNER_CLEAN_BUCKET');
-const SCANNER_QUARANTINE_BUCKET = defineString('PAL_SCANNER_QUARANTINE_BUCKET');
 const VAULT_RUNTIME = Object.freeze({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10,
   serviceAccount: VAULT_SERVICE_ACCOUNT });
 
@@ -736,14 +733,13 @@ exports.approveSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async requ
   return { status: 'approved' };
 });
 
-async function recordInitialScanResult(event, result, expectedBucket) {
-  const data = event.data || {};
-  const name = text(data.name, 1024);
-  if (!name.startsWith('initial-scans/')) return { status: 'ignored' };
-  const outputFile = admin.storage().bucket(text(data.bucket, 220)).file(name, { generation: String(data.generation || '') });
-  const sha256 = await sha256StorageFile(outputFile);
-  const evidence = initialScanEvidence({ result, bucket: data.bucket, expectedBucket, name, generation: data.generation,
-    size: Number(data.size), contentType: data.contentType, sha256, metadata: data.metadata || {} });
+async function recordInitialScanResult(body) {
+  const reportedResult = text(body?.result, 40);
+  if (!['clean', 'infected'].includes(reportedResult)) throw new Error('invalid-initial-scan-result');
+  const scannerResult = reportedResult === 'clean' ? 'clean' : 'manual-review';
+  const evidence = initialScanEvidence({ result: scannerResult, authorizationId: body?.authorizationId,
+    intakeId: body?.intakeId, folder: body?.folder, scanObjectPath: body?.scanObjectPath,
+    scanObjectGeneration: body?.scanObjectGeneration, sha256: body?.sha256, originalIdentity: body?.originalIdentity });
   const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(evidence.authorizationId);
   const currentAuthorization = await authorizationRef.get();
   if (['scan-clean', 'scan-infected', 'scan-manual-review'].includes(currentAuthorization.data()?.state)) return { status: 'duplicate' };
@@ -776,13 +772,16 @@ async function recordInitialScanResult(event, result, expectedBucket) {
   return { status: evidence.result };
 }
 
-exports.recordCleanInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucket: SCANNER_CLEAN_BUCKET,
-  timeoutSeconds: 120, memory: '512MiB', maxInstances: 2, serviceAccount: VAULT_SERVICE_ACCOUNT, retry: true },
-async event => recordInitialScanResult(event, 'clean', SCANNER_CLEAN_BUCKET.value()));
-
-exports.recordQuarantinedInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucket: SCANNER_QUARANTINE_BUCKET,
-  timeoutSeconds: 120, memory: '512MiB', maxInstances: 2, serviceAccount: VAULT_SERVICE_ACCOUNT, retry: true },
-async event => recordInitialScanResult(event, 'manual-review', SCANNER_QUARANTINE_BUCKET.value()));
+exports.recordInitialScanResultV1 = onRequest({ region: REGION, timeoutSeconds: 30, memory: '256MiB', maxInstances: 5,
+  serviceAccount: VAULT_SERVICE_ACCOUNT, invoker: 'private' }, async (request, response) => {
+  if (request.method !== 'POST') return response.status(405).json({ error: 'method-not-allowed' });
+  try {
+    const result = await recordInitialScanResult(request.body);
+    return response.status(200).json(result);
+  } catch (_) {
+    return response.status(403).json({ error: 'initial-scan-evidence-rejected' });
+  }
+});
 
 async function markInitialScanStale(authorizationRef, expected) {
   return db.runTransaction(async transaction => {
