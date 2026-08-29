@@ -34,7 +34,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 ## Current program position
 
 - Completed: **5 of 15** packages at the PAL internal-assessment level.
-- In progress: **Package 6**. Verified separation/scanner risks, the proposed fail-closed design, and required policy/vendor decisions are recorded in `SENSITIVE_VAULT_DESIGN.md`.
+- In progress: **Package 6**. Sensitive-record separation and authorization are active in Staging. The accepted no-finding scanner image now runs privately at scale-to-zero against four isolated synthetic buckets; clean, encrypted-file quarantine, size, duplicate-generation, definition refresh, and forced-schedule paths passed. Office release/download, immutable audit, retention/legal hold, false-positive handling, notifications, forced error/timeout, peak memory, migration, cost reconciliation, and Production remain open in `SENSITIVE_VAULT_DESIGN.md`.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **Package 4 and Package 5 exact cutovers were approved and completed; no further Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.

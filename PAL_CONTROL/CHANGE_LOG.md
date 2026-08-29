@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 isolated scanner measurement passed core Staging paths
+
+- Populated the isolated CVD mirror with pinned `cvdupdate` 1.2.0, then removed the temporary Cloud Shell installation. The mirror contains 154,162,681 bytes and was refreshed successfully by the permanent image-based job.
+- Deployed exact clean digest `sha256:b50fae51da78641f066ea14cd3a9659d509f2b7d1e53d771552f549d24d934cd` as a private scale-to-zero Staging service with 1 vCPU, 4 GiB, max 1, concurrency 1, no public IAM, and only four isolated-bucket access.
+- Added the isolated Storage Eventarc trigger and an enabled four-hour definition-update schedule. Manual and forced-scheduler update executions both completed successfully under the keyless scanner identity.
+- Synthetic tests passed: benign PDF to clean, encrypted archive to quarantine, 1 MiB and 25 MiB clean routing, latest-generation duplicate behavior, and anonymous HTTP 403. The 25 MiB path completed in about 28 seconds end-to-end; ClamAV initialization to application startup took about 20 seconds.
+- Peak memory, forced timeout/error, Office release/download, immutable audit, retention/legal hold, false-positive review, notifications, migration, and Production remain uncredited. Production and the existing Firebase bucket were unchanged.
+
 ## 2026-08-29 — Package 6 startup-fixed image passed the full gate
 
 - John approved the fourth `$0.26` scan; cumulative authorized scanner-analysis charges are `$1.04`, pending billing reconciliation.
