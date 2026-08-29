@@ -52,7 +52,7 @@ index 90c9333..a458047 100755
 -exec npm run start "${CONFIG_FILE}"
 +exec node --enable-source-maps build/server.js "${CONFIG_FILE}"
 diff --git a/cloudrun-malware-scanner/cloudbuild.yaml b/cloudrun-malware-scanner/cloudbuild.yaml
-index 56335f2..0c4acb3 100644
+index 56335f2..0cd5976 100644
 --- a/cloudrun-malware-scanner/cloudbuild.yaml
 +++ b/cloudrun-malware-scanner/cloudbuild.yaml
 @@ -13,16 +13,18 @@
@@ -67,14 +67,14 @@ index 56335f2..0c4acb3 100644
          "build",
 -        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest",
 +        "--build-arg=SOURCE_DATE_EPOCH=1787997587",
-+        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-initial-callback-1",
++        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-1",
          "-f",
          "Dockerfile",
          ".",
        ]
  images:
 -  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest"
-+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-initial-callback-1"
++  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-1"
  options:
    logging: "CLOUD_LOGGING_ONLY"
 diff --git a/cloudrun-malware-scanner/logger.ts b/cloudrun-malware-scanner/logger.ts
@@ -2161,9 +2161,34 @@ index 70c6221..941c857 100644
 +    }
    }
  }
+diff --git a/cloudrun-malware-scanner/pal-object-metadata.ts b/cloudrun-malware-scanner/pal-object-metadata.ts
+new file mode 100644
+index 0000000..eff5421
+--- /dev/null
++++ b/cloudrun-malware-scanner/pal-object-metadata.ts
+@@ -0,0 +1,19 @@
++type MetadataFile = {
++  getMetadata(): Promise<[{generation?: unknown; metadata?: unknown}, unknown]>;
++};
++
++type MetadataStorage = {
++  bucket(name: string): {file(name: string, options: {generation: string}): MetadataFile};
++};
++
++export async function loadAuthoritativePalMetadata(storage: MetadataStorage, bucket: string, name: string,
++  generation: string): Promise<{generation: string; metadata: Readonly<Record<string, string>>}> {
++  if (!bucket || !name || !/^\d+$/.test(generation)) throw new Error('PAL scan object generation is invalid');
++  const exactFile = storage.bucket(bucket).file(name, {generation});
++  const [current] = await exactFile.getMetadata();
++  const currentGeneration = String(current.generation ?? '');
++  if (currentGeneration !== generation) throw new Error('PAL scan object generation changed');
++  const custom = current.metadata;
++  if (!custom || typeof custom !== 'object' || Array.isArray(custom)) throw new Error('PAL scan object metadata is missing');
++  return {generation: currentGeneration, metadata: Object.freeze({...custom as Record<string, string>})};
++}
 diff --git a/cloudrun-malware-scanner/pal-rescan-reporter.ts b/cloudrun-malware-scanner/pal-rescan-reporter.ts
 new file mode 100644
-index 0000000..3d6983b
+index 0000000..a6e944d
 --- /dev/null
 +++ b/cloudrun-malware-scanner/pal-rescan-reporter.ts
 @@ -0,0 +1,27 @@
@@ -2195,19 +2220,29 @@ index 0000000..3d6983b
 +  await client.request({ url: callback, method: 'POST', timeout: 15000, data });
 +}
 diff --git a/cloudrun-malware-scanner/scanner.ts b/cloudrun-malware-scanner/scanner.ts
-index efb559c..7a4a3b7 100644
+index efb559c..509a9d0 100644
 --- a/cloudrun-malware-scanner/scanner.ts
 +++ b/cloudrun-malware-scanner/scanner.ts
-@@ -19,6 +19,8 @@ import {Config, BucketDefs} from './config.js';
+@@ -19,6 +19,9 @@ import {Config, BucketDefs} from './config.js';
  import * as gcs from '@google-cloud/storage';
  import * as ClamdClient from 'clamdjs';
  import * as metrics from './metrics';
 +import {createHash} from 'node:crypto';
 +import {reportPalRescan} from './pal-rescan-reporter';
++import {loadAuthoritativePalMetadata} from './pal-object-metadata';
  
  type MetricsClient = typeof metrics;
  
-@@ -245,6 +247,11 @@ export class Scanner {
+@@ -216,6 +219,8 @@ export class Scanner {
+       }
+ 
+       const [metadata] = await gcsFile.getMetadata();
++      const palCallbackTagged = Boolean(metadata.metadata?.palFalsePositiveReviewId ||
++        metadata.metadata?.palInitialScanAuthorizationId);
+       const metadataSize = parseInt(String(metadata.size));
+       if (fileSize !== metadataSize) {
+         logger.info(
+@@ -245,6 +250,11 @@ export class Scanner {
        );
        const startTime = Date.now();
        const readStream = gcsFile.createReadStream();
@@ -2219,7 +2254,7 @@ index efb559c..7a4a3b7 100644
        let result;
        try {
          result = await this.clamdScanStream(readStream, CLAMD_TIMEOUT);
-@@ -254,6 +261,7 @@ export class Scanner {
+@@ -254,6 +264,7 @@ export class Scanner {
          readStream.destroy();
        }
        const scanDuration = Date.now() - startTime;
@@ -2227,27 +2262,64 @@ index efb559c..7a4a3b7 100644
  
        let isClean = this.clamdClient.isCleanReply(result);
  
-@@ -305,6 +313,8 @@ export class Scanner {
+@@ -305,6 +316,11 @@ export class Scanner {
            clamdVersion,
          );
  
-+        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'clean', sha256, clamdVersion,
-+          String(metadata.generation));
++        if (palCallbackTagged) {
++          const palMetadata = await loadAuthoritativePalMetadata(this.storageClient, storageObject.bucket,
++            storageObject.name, String(metadata.generation));
++          await reportPalRescan(palMetadata.metadata, 'clean', sha256, clamdVersion, palMetadata.generation);
++        }
          await this.moveProcessedFile(gcsFile, bucketDefs.clean);
  
          return {
-@@ -335,6 +345,8 @@ export class Scanner {
+@@ -335,6 +351,11 @@ export class Scanner {
            clamdVersion,
          );
  
-+        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'infected', sha256, clamdVersion,
-+          String(metadata.generation));
++        if (palCallbackTagged) {
++          const palMetadata = await loadAuthoritativePalMetadata(this.storageClient, storageObject.bucket,
++            storageObject.name, String(metadata.generation));
++          await reportPalRescan(palMetadata.metadata, 'infected', sha256, clamdVersion, palMetadata.generation);
++        }
          await this.moveProcessedFile(gcsFile, bucketDefs.quarantined);
  
          return {
+diff --git a/cloudrun-malware-scanner/spec/pal-object-metadata.spec.ts b/cloudrun-malware-scanner/spec/pal-object-metadata.spec.ts
+new file mode 100644
+index 0000000..a085b3c
+--- /dev/null
++++ b/cloudrun-malware-scanner/spec/pal-object-metadata.spec.ts
+@@ -0,0 +1,25 @@
++import {loadAuthoritativePalMetadata} from '../pal-object-metadata';
++
++describe('PAL authoritative object metadata', () => {
++  it('loads the exact generation and ignores mutable caller metadata', async () => {
++    const envelope = {palInitialScanAuthorizationId: 'auth', palOriginalSha256: 'a'.repeat(64)};
++    const requested: string[] = [];
++    const storage = {bucket: (bucket: string) => ({file: (name: string, options: {generation: string}) => {
++      requested.push(bucket, name, options.generation);
++      return {getMetadata: async (): Promise<[{generation?: unknown; metadata?: unknown}, unknown]> => [{generation: '42', metadata: envelope}, {}]};
++    }})};
++    const callerMetadata = {palInitialScanAuthorizationId: 'forged'};
++    const loaded = await loadAuthoritativePalMetadata(storage, 'unscanned', 'object.pdf', '42');
++    callerMetadata.palInitialScanAuthorizationId = 'changed-again';
++    expect(requested).toEqual(['unscanned', 'object.pdf', '42']);
++    expect(loaded.metadata.palInitialScanAuthorizationId).toBe('auth');
++    expect(Object.isFrozen(loaded.metadata)).toBeTrue();
++  });
++
++  it('fails closed on a missing envelope or mismatched generation', async () => {
++    const storage = {bucket: () => ({file: () => ({getMetadata: async (): Promise<[{generation?: unknown; metadata?: unknown}, unknown]> => [{generation: '43'}, {}]})})};
++    await expectAsync(loadAuthoritativePalMetadata(storage, 'unscanned', 'object.pdf', '42')).toBeRejected();
++    const missing = {bucket: () => ({file: () => ({getMetadata: async (): Promise<[{generation?: unknown; metadata?: unknown}, unknown]> => [{generation: '42'}, {}]})})};
++    await expectAsync(loadAuthoritativePalMetadata(missing, 'unscanned', 'object.pdf', '42')).toBeRejected();
++  });
++});
 diff --git a/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts b/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts
 new file mode 100644
-index 0000000..ed937c8
+index 0000000..29ca900
 --- /dev/null
 +++ b/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts
 @@ -0,0 +1,16 @@

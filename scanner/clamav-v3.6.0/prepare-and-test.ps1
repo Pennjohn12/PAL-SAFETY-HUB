@@ -42,8 +42,11 @@ git -C $Destination apply $patchPath
 $scannerPath = Join-Path $Destination 'cloudrun-malware-scanner'
 $reporterPath = Join-Path $scannerPath 'pal-rescan-reporter.ts'
 $reporterSpecPath = Join-Path $scannerPath 'spec\pal-rescan-reporter.spec.ts'
-if (-not (Test-Path -LiteralPath $reporterPath) -or -not (Test-Path -LiteralPath $reporterSpecPath)) {
-    throw 'The hardened scanner patch is missing the PAL rescan reporter or its test.'
+$metadataPath = Join-Path $scannerPath 'pal-object-metadata.ts'
+$metadataSpecPath = Join-Path $scannerPath 'spec\pal-object-metadata.spec.ts'
+if (-not (Test-Path -LiteralPath $reporterPath) -or -not (Test-Path -LiteralPath $reporterSpecPath) `
+    -or -not (Test-Path -LiteralPath $metadataPath) -or -not (Test-Path -LiteralPath $metadataSpecPath)) {
+    throw 'The hardened scanner patch is missing the PAL callback or authoritative-metadata implementation/tests.'
 }
 Push-Location $scannerPath
 try {
