@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 live false-positive release gate passed in Staging
+
+- With John's exact approval, focus-deployed only corrected `requestSensitiveFalsePositiveReviewV1` to isolated Staging. Deployment completed successfully; no IAM, scanner image, scan charge, credential, Production, or real-data change occurred.
+- The complete two-account synthetic workflow passed: exact-object rescan returned clean, the requester was denied self-approval, a different synthetic Admin approved, the five-minute generation-bound download returned the exact 67 bytes, four audit events validated, and all temporary accounts, records, and objects were removed.
+- The first post-deployment run exposed a verifier-only problem after the protected release controls had succeeded: stored events contain only the masked actor email, while the shared helper attempted to mask that already-masked value again during independent recomputation. The local helper now accepts only the strict one- or two-character-plus-`***@domain` stored mask, rejects an unmasked email in that field, and reproduces the original hashes. The complete PAL suite remains 91/91 with syntax and diff checks passing.
+- Live false-positive handling is now credited in Staging. The verifier correction is local/predeployment code and does not change the hashes or fields created by the deployed writer. Production remains closed. Direct image scans remain five / `$1.30`; small Staging runtime usage remains pending billing reconciliation.
+
 ## 2026-08-29 — Package 6 rescan metadata handoff defect isolated and corrected in code
 
 - Focus-deployed the prior review-before-copy correction to Staging and reran the approved two-account synthetic workflow. The request action was ACTIVE on the dedicated vault identity; the run failed closed and completed full synthetic cleanup, with no approval or download.

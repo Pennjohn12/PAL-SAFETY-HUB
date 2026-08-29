@@ -69,6 +69,8 @@ test('audit chain is deterministic, linked, and rejects invalid predecessors', (
   assert.equal(first.eventHash, repeated.eventHash);
   assert.equal(second.previousHash, first.eventHash);
   assert.notEqual(second.eventHash, first.eventHash);
+  assert.equal(policy.chainedAuditEvent(first, first.previousHash, first.occurredAt).eventHash, first.eventHash);
+  assert.equal(policy.auditEvent({ ...input, actorEmail: '', actorEmailMasked: 'invalid@example.invalid' }).actorEmailMasked, '');
   assert.throws(() => policy.chainedAuditEvent(input, 'not-a-hash', '2026-08-29T17:00:00.000Z'), /invalid-audit-chain/);
 });
 

@@ -123,14 +123,16 @@ function notificationAudience(profiles = []) {
     .map(profile => boundedText(profile.uid, 180)).filter(Boolean))].sort();
 }
 
-function auditEvent({ action, actorUid, actorEmail, intakeId, objectPath, purpose, decision, correlationId, reason }) {
+function auditEvent({ action, actorUid, actorEmail, actorEmailMasked, intakeId, objectPath, purpose, decision, correlationId, reason }) {
   const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review', 'retention-delete', 'false-positive-review']);
   const allowedDecisions = new Set(['allowed', 'denied', 'clean', 'infected', 'error', 'timeout', 'unsupported', 'manual-review']);
   const normalizedAction = boundedText(action, 40);
   const normalizedDecision = boundedText(decision, 40);
   if (!allowedActions.has(normalizedAction) || !allowedDecisions.has(normalizedDecision)) throw new Error('invalid-audit-event');
   const email = boundedText(actorEmail, 180).toLowerCase();
-  const maskedEmail = email.includes('@') ? `${email.slice(0, 2)}***@${email.split('@').pop()}` : '';
+  const suppliedMask = boundedText(actorEmailMasked, 180).toLowerCase();
+  const maskedEmail = email.includes('@') ? `${email.slice(0, 2)}***@${email.split('@').pop()}`
+    : /^[^@\s]{1,2}\*{3}@[a-z0-9.-]+$/.test(suppliedMask) ? suppliedMask : '';
   return Object.freeze({
     version: 1,
     action: normalizedAction,
