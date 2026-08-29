@@ -64,7 +64,30 @@ Evidence: **79 of 79** core/static tests and **12 of 12** Firestore/Storage/Func
 
 The selected reference is Google's `GoogleCloudPlatform/docker-clamav-malware-scanner`, which uses the official `clamav/clamav` image, Cloud Run, Eventarc, separate unscanned/clean/quarantine buckets, and a Cloud Storage mirror for ClamAV signature updates. PAL must pin an reviewed repository commit and immutable container digests rather than deploy a floating branch or tag. Signature freshness, image vulnerability findings, build provenance, and rollback image digest must be monitored and recorded.
 
-Google's published deployment keeps one 1-vCPU/4-GiB scanner instance warm because cold start and signature-database downloads are substantial. Using published list rates, an always-running instance can be material (roughly **$33/month at request-based idle rates**, with active scans/build/storage/Eventarc extra; instance-based continuous CPU can approach **$90/month** before free-tier/discount effects). A scale-to-zero Staging experiment is cheaper but cannot yet be credited as a reliable Production scanner. No scanner service or credential has been created. John must approve the final measured configuration and recurring-cost cap before live Staging scanner infrastructure is created.
+Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm because cold start and signature-database downloads are substantial. Using published list rates, an always-running instance can be material (roughly **$33/month at request-based idle rates**, with active scans/build/storage/Eventarc extra; instance-based continuous CPU can approach **$90/month** before free-tier/discount effects). A scale-to-zero Staging experiment is cheaper but cannot yet be credited as a reliable Production scanner. No scanner service or credential has been created. John must approve the final measured configuration and recurring-cost cap before live Staging scanner infrastructure is created.
+
+### Verified upstream pin for the proposed Staging experiment
+
+- Upstream repository: `GoogleCloudPlatform/docker-clamav-malware-scanner`.
+- Reviewed release: `v3.6.0`, exact Git commit `0db019c9f09494215aa4485b71094e9b8d5ea90b`.
+- Runtime build inputs declared by that release and registry digests observed on 2026-08-29:
+  - `node:24.15.0-alpine@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f`
+  - `clamav/clamav:1.5.2_base@sha256:3aa0c6d6a966dc062899e070fb13f87485acf0cbb710fccaae9a848cd5f5b09a`
+  - `gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine@sha256:9309b9c14eaa55728e508d98e9971919ace5cb931582cacf9c7d040a077b5953`
+- The upstream Cloud Build file currently tags its built output as `latest`; PAL must replace that with a commit-derived tag and record the resulting Artifact Registry digest before any deployment. All three base image references must also be rewritten to the reviewed digests so a future tag change cannot alter the build.
+- ClamAV definitions are removed from the base image and supplied from a PAL-owned Cloud Storage mirror by pinned `cvdupdate` version `1.2.0`. Monitoring must alert when the mirror update fails, the definition timestamp exceeds 6 hours, a scan service is unhealthy, or infected/error/timeout results occur.
+
+### Exact proposed measurement-only Staging scope — not yet authorized
+
+- Region: `us-east1`, matching the verified Staging Storage location; no cross-region clean/quarantine movement.
+- Dedicated service account with no key file and only object access to three new synthetic-only buckets plus metric/log writing and authenticated Eventarc/Scheduler invocation. It receives no Firebase Auth, general Firestore, Secret Manager, Production, or project-owner role.
+- Three new regional Staging buckets: unscanned, clean, and ClamAV definition mirror. Existing Package 5 quarantine remains the fail-closed destination; no existing object is scanned or moved.
+- Private Cloud Run service, authenticated invocation only, 1 vCPU, 4 GiB, request-based billing, minimum 0, maximum 1, concurrency 1 for measurement. One authenticated Eventarc trigger and one definition-update Scheduler job.
+- Synthetic inputs only: a benign tiny PDF, a harmless deterministic test marker routed to the infected result by the test harness (not a live malware sample), an unsupported file, and forced error/timeout cases. No EICAR or other signature string will be written unless endpoint security handling is separately approved.
+- Measurements required before any warm or Production decision: cold-start time, definition age, scan time for 1 MiB and 25 MiB synthetic files, peak memory, clean/infected/error/timeout routing, duplicate-event behavior, and complete resource cost for at least one controlled test window.
+- Cost controls: maximum one instance and a dedicated **$5 monthly alert** scoped to the Staging scanner resources. Google budgets are alerts, not hard caps; the experiment must stop before estimated scanner-specific spend reaches $5. No minimum instance may be enabled without a new approval.
+- Failure behavior: unavailable scanner, stale definitions, timeout, unsupported/encrypted file, digest/generation mismatch, duplicate event, or notification failure leaves the file inaccessible in quarantine/manual review. No failure path copies to clean or issues a download.
+- Expected performance is not yet verified. Scale-to-zero is expected to have a long cold start because the ClamAV database is hundreds of MiB; the official warm recommendation exists for this reason. PAL will not claim a latency or throughput target until the Staging measurements exist.
 
 ## Rollback principle
 
