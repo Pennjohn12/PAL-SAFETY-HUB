@@ -6,7 +6,8 @@ Newest entries go first. Git history remains the detailed code record.
 
 - Created a zero-key Staging-only vault runtime identity with narrow Firestore, logging, exact-bucket object-read, and self-signing access.
 - Made the identity assignment durable in the three vault-function deployment declarations and verified all three Cloud Functions/Cloud Run services ACTIVE on that identity.
-- Removed the shared default Compute identity's obsolete self-signing grant. Anonymous probes still fail closed with 401. Production and real data remain untouched; authenticated synthetic signed-download regression remains pending.
+- Removed the shared default Compute identity's obsolete self-signing grant. Anonymous probes still fail closed with 401.
+- With John's exact approval, repeated the temporary two-reviewer synthetic regression under the dedicated identity. Concurrent reads, different-person approval, exact fake-file signed download, four-event linked audit chain, client 403, and audit redaction passed; both accounts and every synthetic record/object were removed. Production and real data remained untouched.
 
 ## 2026-08-29 — Package 6 retention and notification policy encoded
 
