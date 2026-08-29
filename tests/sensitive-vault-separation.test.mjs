@@ -4,7 +4,8 @@ import { createRequire } from 'node:module';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
-const { initialScanEvidence, initialScanMetadata, mayApplyInitialScan } = require('../functions-public-intake/initial-scan-policy.js');
+const { initialScanEvidence, initialScanMetadata, isMatchingTerminalInitialScan,
+  mayApplyInitialScan } = require('../functions-public-intake/initial-scan-policy.js');
 
 const backend = fs.readFileSync(new URL('../functions-public-intake/index.js', import.meta.url), 'utf8');
 const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
@@ -45,24 +46,36 @@ test('trusted initial results are bucket path digest and pending-record bound', 
     name: 'training.pdf', originalIdentity });
   const evidence = initialScanEvidence({ result: 'clean', authorizationId: metadata.palInitialScanAuthorizationId,
     intakeId: metadata.palInitialScanIntakeId, folder: metadata.palInitialScanFolder,
-    scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration: '999', sha256: 'a'.repeat(64), originalIdentity });
+    scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration: '999', sha256: 'a'.repeat(64),
+    clamVersion: 'ClamAV synthetic', scannedAt: '2026-08-29T12:00:00.000Z', originalIdentity });
   assert.equal(mayApplyInitialScan({ authorization: { intakeId: evidence.intakeId, folder: evidence.folder,
-    path: originalIdentity.path, scanObjectPath: evidence.scanObjectPath, state: 'scan-queued' },
+    path: originalIdentity.path, scanObjectPath: evidence.scanObjectPath, scanObjectGeneration: '999', state: 'scan-queued' },
   record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), true);
   const recording = { intakeId: evidence.intakeId, folder: evidence.folder, path: originalIdentity.path,
-    scanObjectPath: evidence.scanObjectPath, state: 'scan-result-recording', scanResult: 'clean', scanResultObjectGeneration: '999' };
+    scanObjectPath: evidence.scanObjectPath, scanObjectGeneration: '999', state: 'scan-result-recording',
+    scanResult: 'clean', scanResultObjectGeneration: '999' };
   assert.equal(mayApplyInitialScan({ authorization: recording,
     record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), true);
   assert.equal(mayApplyInitialScan({ authorization: { ...recording, scanResult: 'manual-review' },
     record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
   assert.equal(mayApplyInitialScan({ authorization: { ...recording, scanResultObjectGeneration: '1000' },
     record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
+  assert.equal(mayApplyInitialScan({ authorization: { ...recording, scanObjectGeneration: '1000' },
+    record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), false);
   assert.throws(() => initialScanEvidence({ result: 'clean', authorizationId: metadata.palInitialScanAuthorizationId,
     intakeId: metadata.palInitialScanIntakeId, folder: metadata.palInitialScanFolder,
-    scanObjectPath: 'wrong/path', scanObjectGeneration: '999', sha256: 'a'.repeat(64), originalIdentity }));
+    scanObjectPath: 'wrong/path', scanObjectGeneration: '999', sha256: 'a'.repeat(64), clamVersion: 'test',
+    scannedAt: '2026-08-29T12:00:00.000Z', originalIdentity }));
   assert.throws(() => initialScanEvidence({ result: 'clean', authorizationId: metadata.palInitialScanAuthorizationId,
     intakeId: metadata.palInitialScanIntakeId, folder: metadata.palInitialScanFolder,
-    scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration: '999', sha256: 'b'.repeat(64), originalIdentity }));
+    scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration: '999', sha256: 'b'.repeat(64), clamVersion: 'test',
+    scannedAt: '2026-08-29T12:00:00.000Z', originalIdentity }));
+  assert.equal(isMatchingTerminalInitialScan({ authorization: { ...recording, state: 'scan-clean' },
+    record: { objectIdentity: originalIdentity, initialScanEvidence: { result: 'clean', scanObjectPath: evidence.scanObjectPath,
+      scanObjectGeneration: '999', objectIdentity: originalIdentity } }, evidence }), true);
+  assert.equal(isMatchingTerminalInitialScan({ authorization: { ...recording, state: 'scan-clean', scanObjectGeneration: '1000' },
+    record: { objectIdentity: originalIdentity, initialScanEvidence: { result: 'clean', scanObjectPath: evidence.scanObjectPath,
+      scanObjectGeneration: '999', objectIdentity: originalIdentity } }, evidence }), false);
 });
 
 test('initial scan retries serialize result audit and stale queue transitions', () => {
@@ -84,6 +97,8 @@ test('private scanner callback locks every non-clean first scan for manual revie
   assert.match(backend, /invoker: 'private'/);
   assert.match(backend, /!\['clean', 'infected'\]\.includes\(reportedResult\)/);
   assert.match(backend, /scannerResult = reportedResult === 'clean' \? 'clean' : 'manual-review'/);
+  assert.match(backend, /conflicting-terminal-scan-result/);
+  assert.match(backend, /clamVersion: evidence\.clamVersion, scannerScannedAt: evidence\.scannedAt/);
   assert.match(backend, /securityStatus: evidence\.result === 'clean' \? 'verified-clean' : 'manual-review'/);
   const scannerPatch = fs.readFileSync(new URL('../scanner/clamav-v3.6.0/pal-hardening.patch', import.meta.url), 'utf8');
   assert.match(scannerPatch, /PAL_INITIAL_SCAN_CALLBACK_URL/);

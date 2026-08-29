@@ -5,7 +5,8 @@ const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
-const { initialScanEvidence, initialScanMetadata, initialScanPath, mayApplyInitialScan } = require('./initial-scan-policy');
+const { initialScanEvidence, initialScanMetadata, initialScanPath, isMatchingTerminalInitialScan,
+  mayApplyInitialScan } = require('./initial-scan-policy');
 const { processSensitiveVaultRetention } = require('./sensitive-vault-retention');
 const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, sameObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
@@ -123,7 +124,7 @@ async function writeInitialScanAuditOnce(authorizationRef, evidence) {
     const authorization = authorizationSnap.data() || {};
     if (!authorizationSnap.exists || authorization.state !== 'scan-result-recording'
         || authorization.scanResult !== evidence.result
-        || text(authorization.scanResultObjectGeneration, 80) !== evidence.outputGeneration) {
+        || text(authorization.scanResultObjectGeneration, 80) !== evidence.scanObjectGeneration) {
       throw new Error('initial-scan-audit-state-mismatch');
     }
     if (authorization.scanResultAuditCompleted === true) return false;
@@ -131,7 +132,7 @@ async function writeInitialScanAuditOnce(authorizationRef, evidence) {
     const event = chainedAuditEvent({ action: 'scan-result', actorUid: process.env.PAL_TRUSTED_SCANNER_IDENTITY,
       actorEmail: '', intakeId: evidence.intakeId, objectPath: evidence.originalIdentity.path,
       purpose: 'Automated first malware scan', decision: evidence.result, correlationId: evidence.authorizationId,
-      reason: `trusted-initial-scan-${evidence.result}` }, previousHash, occurredAt);
+      reason: `trusted-initial-scan-${evidence.result}; clam=${evidence.clamVersion}; scanned=${evidence.scannedAt}` }, previousHash, occurredAt);
     transaction.create(eventRef, { ...event, occurredAtTimestamp: Timestamp.fromDate(new Date(occurredAt)) });
     transaction.set(headRef, { version: 1, eventId, eventHash: event.eventHash, updatedAt: FieldValue.serverTimestamp() });
     transaction.update(authorizationRef, { scanResultAuditCompleted: true, scanResultAuditEventId: eventId,
@@ -739,17 +740,26 @@ async function recordInitialScanResult(body) {
   const scannerResult = reportedResult === 'clean' ? 'clean' : 'manual-review';
   const evidence = initialScanEvidence({ result: scannerResult, authorizationId: body?.authorizationId,
     intakeId: body?.intakeId, folder: body?.folder, scanObjectPath: body?.scanObjectPath,
-    scanObjectGeneration: body?.scanObjectGeneration, sha256: body?.sha256, originalIdentity: body?.originalIdentity });
+    scanObjectGeneration: body?.scanObjectGeneration, sha256: body?.sha256, clamVersion: body?.clamVersion,
+    scannedAt: body?.scannedAt, originalIdentity: body?.originalIdentity });
   const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(evidence.authorizationId);
   const currentAuthorization = await authorizationRef.get();
-  if (['scan-clean', 'scan-infected', 'scan-manual-review'].includes(currentAuthorization.data()?.state)) return { status: 'duplicate' };
+  if (['scan-clean', 'scan-infected', 'scan-manual-review'].includes(currentAuthorization.data()?.state)) {
+    const authorization = currentAuthorization.data() || {};
+    const [intakeSnap, vaultSnap] = await Promise.all([
+      db.collection('newHireIntakes').doc(evidence.intakeId).get(), vaultRef(evidence.intakeId).get()
+    ]);
+    const record = recordCollection(evidence.folder, intakeSnap.data(), vaultSnap.data()).find(item => item?.path === authorization.path);
+    if (!isMatchingTerminalInitialScan({ authorization, record, evidence })) throw new Error('conflicting-terminal-scan-result');
+    return { status: 'duplicate' };
+  }
   await updateInitialScanRecord({ authorizationId: evidence.authorizationId, allowedStates: ['scan-queued', 'scan-result-recording'],
     mutate: ({ authorization, record }) => {
       if (!mayApplyInitialScan({ authorization, record, evidence })) throw new Error('initial-scan-evidence-rejected');
       return {
         record: { ...record, scanQueueState: 'result-recording', downloadable: false },
         authorization: { state: 'scan-result-recording', scanResult: evidence.result,
-          scanResultObjectGeneration: evidence.outputGeneration, scanResultReceivedAt: FieldValue.serverTimestamp() }
+          scanResultObjectGeneration: evidence.scanObjectGeneration, scanResultReceivedAt: FieldValue.serverTimestamp() }
       };
     } });
   await writeInitialScanAuditOnce(authorizationRef, evidence);
@@ -762,8 +772,8 @@ async function recordInitialScanResult(body) {
         record: { ...record, malwareScanStatus: evidence.result, securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'manual-review',
           scanQueueState: 'complete', scanCompletedAt: completedAt, downloadable: false, initialScanEvidence: {
             result: evidence.result, scannerPrincipal: process.env.PAL_TRUSTED_SCANNER_IDENTITY, scannedAt: completedAt,
-            scanObjectPath: evidence.scanObjectPath, scanObjectGeneration: evidence.outputGeneration,
-            objectIdentity: evidence.originalIdentity
+            scanObjectPath: evidence.scanObjectPath, scanObjectGeneration: evidence.scanObjectGeneration,
+            clamVersion: evidence.clamVersion, scannerScannedAt: evidence.scannedAt, objectIdentity: evidence.originalIdentity
           } },
         authorization: { state: evidence.result === 'clean' ? 'scan-clean' : 'scan-manual-review', malwareScanStatus: evidence.result,
           scanCompletedAt: FieldValue.serverTimestamp(), securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'manual-review' }
