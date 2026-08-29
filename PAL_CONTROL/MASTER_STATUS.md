@@ -4,11 +4,11 @@ Last verified: **2026-08-28, America/New_York**
 
 ## Current Production status
 
-- Status: **Online; Package 3 maintenance rollback completed and normal application Hosting restored.**
+- Status: **Online; Package 5 secure public-upload controls are active.**
 - Production URL: `https://pal-safety-hub.web.app/`
 - Custom PAL URL: `https://pal.jobsiteresources.com/`
 - Firebase project: `pal-safety-hub`
-- Current Production commit: `4b2e54e214eebe7615a36ddf6b2c7e7e394199be`
+- Current Production security build: `7cbe1c8e866aebf8fd7b0c61bb55b22ec710764c` on `codex/security-package-5-upload-authorization`.
 - Pre-maintenance Production Hosting version: `d9ef60e643ff9f11`
 - Pre-maintenance Production release time: `2026-08-28T18:01:25.005Z`
 - Deployment identity: `jvpanettiere@gmail.com`
@@ -64,7 +64,7 @@ Present in current source and covered by current automated checks where noted:
 - Staging Firebase emulator authorization tests: **10 passed, 0 failed** on 2026-08-28. The added tests safely reproduced and regression-tested repairs for registration/profile and synthetic-marker incompatibilities without creating live credentials.
 - Package 3 maintenance tests: **5 static, 6 deny-all rule-emulator, and 12 endpoint-emulator tests passed** on 2026-08-29. Staging activation and rollback also passed.
 - Package 4 public-intake tests: **63 core/static and 5 synthetic emulator tests passed** on 2026-08-29. Staging and Production Hosting and four token-enforcing Functions are verified; Production direct intake reads/writes are closed.
-- Package 5 secure-upload tests: **68 core/static and 10 synthetic emulator tests passed** on 2026-08-29. Staging grant issuance, quarantine/finalization, and hourly cleanup are active; Production remains on the Package 4 upload behavior pending explicit approval.
+- Package 5 secure-upload tests: **68 core/static and 10 synthetic emulator tests passed** on 2026-08-29. Staging and Production grant issuance, quarantine/finalization, hardened Storage rules, and hourly cleanup are active. The Production cleanup job also passed a forced run.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
@@ -94,7 +94,7 @@ Present in current source and covered by current automated checks where noted:
 - Package 2 of 15, isolated Staging/Test environment: **Passed PAL tests** on 2026-08-28. The separate project has isolated Hosting, Auth, Firestore/PITR, hardened rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, synthetic identities/profiles/project data, 10 passing emulator tests, and a successful temporary-account live lifecycle with complete cleanup. MFA is tracked in Package 9, account/role lifecycle in Package 7, and broad workflow validation in Package 14.
 - Package 3 of 15, controlled Production maintenance mode: **Passed PAL tests** on 2026-08-28. Layered Hosting, deny-all Firestore/Storage rules, Function invocation lockdown, schedule pause, communication, two-hour stop, and rollback controls are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and Production activation verification passed.
 - Package 4 of 15, secure public orientation/intake access: **Passed PAL tests / Production active** on 2026-08-29. Expiring packet-bound tokens, narrow server actions, direct Firestore denial, completion lockout, and legacy-link failure are verified. Existing ID-only links now require PAL Office replacement.
-- Package 5 of 15, secure sensitive-upload authorization: **Passed PAL tests / pre-Production** on 2026-08-29. Single-file grants, packet/folder/type/size binding, replay denial, quarantine, limits, invalid-object removal, and cleanup are verified with synthetic data. New files intentionally remain unavailable pending a later approved malware scan/release control.
+- Package 5 of 15, secure sensitive-upload authorization: **Passed PAL tests / Production active** on 2026-08-29. Single-file grants, packet/folder/type/size binding, replay denial, quarantine, limits, invalid-object removal, and cleanup are active. New files intentionally remain unavailable; malware scanning and controlled release are explicitly assigned to Package 6.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - Package 3 proved the technical maintenance boundary and rollback, but the Production maintenance controls are no longer active.

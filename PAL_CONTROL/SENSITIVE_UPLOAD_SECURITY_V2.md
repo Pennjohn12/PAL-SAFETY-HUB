@@ -45,9 +45,9 @@ Production Storage rules allowed an anonymous browser to upload under any `newHi
 - Staging `cleanupExpiredPublicIntakeUploadsV2` is ACTIVE and scheduled hourly. Staging Cloud Scheduler was enabled for this isolated control.
 - No live end-to-end Staging upload session was created because no synthetic packet credential was retained for this task. The exact grant/storage/finalizer behavior passed against the Firebase emulators; live Staging verified deployment and authorization boundaries only.
 
-## Proposed Production action — not yet authorized
+## Production activation — approved and verified
 
-Deploy only the tested Package 5 commit in this order:
+John explicitly approved tested commit `7cbe1c8e866aebf8fd7b0c61bb55b22ec710764c` after acknowledging that new public uploads remain unavailable even to Office until the later scan/release control. The following activation completed on 2026-08-29:
 
 1. Update the `public-intake-v2` Function codebase and create `createPublicIntakeUploadV2` plus hourly `cleanupExpiredPublicIntakeUploadsV2` in `us-central1`.
 2. Verify the new public callable has Cloud Run public invocation while the scheduled cleanup remains non-public; verify empty anonymous application denials.
@@ -55,7 +55,9 @@ Deploy only the tested Package 5 commit in this order:
 4. Deploy `storage.rules` closing anonymous writes to normal intake paths and denying all browser access to quarantine paths.
 5. Verify both Firebase Hosting domains, active Function/schedule state, direct synthetic Storage denial, and normal non-upload application availability without opening real PAL records.
 
-Production will gain one hourly scheduled invocation and quarantine-object storage costs. Packet limits bound ordinary use, but finalized quarantined objects persist until a later approved scan/release/retention process.
+Verification confirmed all six Package 5 services ACTIVE on Node.js 22 in `us-central1`, both Production Hosting domains serving the secured upload client, anonymous access to the active Storage bucket denied, application-level empty create/finalize requests rejected, and the enabled hourly cleanup completing a forced Production run successfully. No real PAL record, account, credential, or file was used.
+
+Production now has one hourly scheduled invocation and quarantine-object storage costs. Packet limits bound ordinary use, but finalized quarantined objects persist until the approved scan/release/retention process. That work is explicitly assigned to Package 6 with the sensitive payroll/identity vault.
 
 ## Rollback
 

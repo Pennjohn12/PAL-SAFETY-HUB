@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 5 Production activation verified
+
+- John explicitly approved exact tested commit `7cbe1c8e866aebf8fd7b0c61bb55b22ec710764c` and acknowledged that new public uploads remain private and unavailable even to Office until a later scan/release control is completed.
+- Deployed the grant-based Hosting client, hardened Storage rules, five public application callables, and the non-public hourly cleanup Function to Production. All six Package 5 services are ACTIVE on Node.js 22 in `us-central1`.
+- Verification: both Firebase Hosting domains serve the Package 5 client; empty create/finalize calls reach and fail application validation with 400/403; anonymous access to the active Storage bucket returns 403; the cleanup endpoint returns 403 anonymously; and its enabled hourly Scheduler job completed a forced run successfully.
+- No real PAL record, account, credential, or file was opened or changed. Existing files/orphans were not migrated, scanned, or deleted. Malware scanning and controlled quarantine release are explicitly assigned to Package 6 with the sensitive vault.
+
 ## 2026-08-29 — Security program Package 5 passed PAL tests
 
 - Replaced the tested public upload design with 15-minute, single-file backend grants bound to packet, folder, backend-selected quarantine path, label, extension, content type, and exact size.

@@ -20,7 +20,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 | 3 | Controlled Production maintenance mode | Passed PAL tests | John approved the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented and Production activation is verified. |
 | 4 | Secure public orientation/intake access | Passed PAL tests | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
 | 5 | Secure sensitive-upload authorization | Passed PAL tests | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
-| 6 | Separate sensitive payroll/identity vault | Not started | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, and access evidence are approved and tested. |
+| 6 | Separate sensitive payroll/identity vault and safe file release | Not started | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, malware scanning, quarantine release, and access evidence are approved and tested. |
 | 7 | Controlled account and role creation | Not started | Self-registration can create only an unverified, unlinked Employee account; Foreman, Supervisor, Office, Admin, disabled state, and role changes require authorized server/admin workflow and revocation tests. |
 | 8 | Verified identity and employee linking | Not started | Email ownership is verified and an office-controlled link is required before private employee records, certifications, projects, onboarding, or history are returned. |
 | 9 | MFA and privileged-account protection | Not started | MFA is enforced for Admin and Office accounts; recovery, lost-factor, role-change, disablement, and session-revocation procedures are tested. |
@@ -36,7 +36,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - Completed: **5 of 15** packages at the PAL internal-assessment level.
 - In progress: **None**. Package 6 is next and requires separately scoped implementation work.
 - Independently verified: **0 of 15** packages.
-- Production security deployment authorized: **Package 4 exact cutover was approved and completed; no further Production change is authorized**.
+- Production security deployment authorized: **Package 4 and Package 5 exact cutovers were approved and completed; no further Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
 
@@ -111,4 +111,6 @@ The default sequence is Package 2 (Staging), then an explicitly authorized Packa
 - Core/static tests pass **68 of 68** and the synthetic Firebase emulator suite passes **10 of 10**.
 - Staging Hosting, five public V2 callables including the new grant issuer, and the non-public hourly cleanup Function are active. Empty live requests reach expected application denials. Staging Storage remains closed to clients.
 - No real PAL record, account, credential, or file was opened or modified. Existing files are not migrated; new quarantined files remain unavailable until a later approved scanning/release control.
-- Package 5 finish line: **Passed PAL tests on 2026-08-29**. Production activation remains gated on Control Room coordination and John's approval of the exact tested commit, quarantine limitation, scheduled cost, and rollback tradeoff recorded in `SENSITIVE_UPLOAD_SECURITY_V2.md`.
+- John approved tested commit `7cbe1c8e866aebf8fd7b0c61bb55b22ec710764c` after explicitly acknowledging that new public uploads remain unavailable in quarantine until the later scan/release control.
+- Production activation passed on 2026-08-29: five public application callables and the non-public scheduled cleanup are ACTIVE on Node.js 22 in `us-central1`; both Hosting domains serve the grant-based client; direct anonymous access to the active Storage bucket is denied; invalid empty create/finalize requests fail at application authorization; and the enabled hourly cleanup completed a forced Production run successfully.
+- Package 5 finish line: **Passed PAL tests / Production active on 2026-08-29**. Malware scanning and controlled quarantine release are now explicitly assigned to Package 6 with the sensitive vault work.
