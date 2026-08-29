@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 scanner memory and failure recovery passed in Staging
+
+- Cloud Monitoring measured peak scanner memory utilization at about 30.8%, approximately 1.23 GiB of the enforced 4-GiB limit.
+- A reversible one-second timeout drill produced two Eventarc HTTP 504 results while the synthetic 25-MiB object remained unavailable in unscanned storage and absent from clean/quarantine.
+- Restored the tested 300-second timeout on revision `pal-staging-malware-scanner-00003-hbg`; the retry then moved the exact object to clean and removed it from unscanned.
+- An authenticated malformed synthetic event returned HTTP 400 and created no object in any scanner bucket. Production, Firebase Storage, real data, image digest, public access, scaling, and credentials were unchanged.
+
 ## 2026-08-29 — Package 6 isolated scanner measurement passed core Staging paths
 
 - Populated the isolated CVD mirror with pinned `cvdupdate` 1.2.0, then removed the temporary Cloud Shell installation. The mirror contains 154,162,681 bytes and was refreshed successfully by the permanent image-based job.

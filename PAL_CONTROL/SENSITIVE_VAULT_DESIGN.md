@@ -171,6 +171,14 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - Retained state: the private scale-to-zero service, isolated Eventarc trigger, four-hour definition job/schedule, four protected synthetic buckets, accepted private image, keyless identities, 154 MB definition mirror, and clearly named synthetic test objects remain in Staging for review and follow-up. No Production resource, Firebase bucket, real record, credential key, or public scanner endpoint was changed.
 - This checkpoint proves the isolated scanner runtime and basic clean/quarantine/idempotency paths. It does not yet prove forced timeout/error handling, peak memory, immutable audit integration, signed Office download/release, false-positive review, retention deletion/legal hold, notification behavior, existing-file migration, or Production readiness.
 
+### 2026-08-29 Staging memory and failure-recovery evidence
+
+- Cloud Monitoring returned 31 memory-utilization samples for the controlled scanner window. Peak observed mean utilization was `0.30773448944091797` at `2026-08-29T16:41:00Z`, approximately 30.8% or 1.23 GiB of the enforced 4-GiB limit.
+- A reversible Staging-only timeout drill changed only the private scanner request timeout from 300 seconds to 1 second on revision `pal-staging-malware-scanner-00002-kfw`. A synthetic 25-MiB object produced two authenticated Eventarc HTTP 504 attempts. During failure it remained only in the isolated unscanned bucket and was absent from clean and quarantine, so no failed request made it releasable.
+- The timeout was immediately restored to 300 seconds on revision `pal-staging-malware-scanner-00003-hbg`, preserving the same accepted image, 1-vCPU/4-GiB resources, maximum one instance, concurrency one, and private access. Eventarc retry then completed and moved the exact synthetic timeout object to clean with no residual unscanned object.
+- An authenticated malformed synthetic CloudEvent referencing a nonexistent object returned HTTP 400 with `invalid request`; the object was absent from unscanned, clean, and quarantine. No secret or real file was used.
+- Peak-memory, forced-timeout fail-closed behavior, timeout recovery, and malformed-request error handling are now evidenced. Remaining Package 6 gates are signed Office release/download integration, immutable audit, retention/legal hold/deletion, false-positive review, notifications, existing-file planning, billing reconciliation, and Production design/approval.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
