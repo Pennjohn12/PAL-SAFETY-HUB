@@ -15,6 +15,9 @@ const SCAN_STATES = Object.freeze([
 
 const RETRYABLE_STATES = new Set(['pending', 'unsupported', 'error', 'timeout', 'manual-review']);
 const FINAL_STATES = new Set(['clean', 'infected']);
+const IDENTITY_IMAGE_RETENTION_MS = 24 * 60 * 60 * 1000;
+const REVIEW_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const POLICY_VERSION = 2;
 
 function boundedText(value, max) {
   return String(value ?? '').trim().slice(0, max);
@@ -79,6 +82,34 @@ function mayAuthorizeDownload({ scanState, recordedIdentity, currentIdentity, en
   return true;
 }
 
+function retentionDecision(record = {}, nowValue = Date.now()) {
+  const now = Number(nowValue);
+  if (!Number.isFinite(now)) throw new Error('invalid-retention-time');
+  if (record.legalHold === true || record.hrHold === true) return Object.freeze({ action: 'retain', reason: 'legal-or-hr-hold' });
+  if (Number(record.retentionPolicyVersion) !== POLICY_VERSION) return Object.freeze({ action: 'retain', reason: 'outside-approved-policy' });
+
+  const state = boundedText(record.malwareScanStatus, 40).toLowerCase();
+  const verifiedAt = Date.parse(record.identityVerifiedAt || '');
+  const reviewStartedAt = Date.parse(record.manualReviewStartedAt || record.scanCompletedAt || '');
+  const identityImage = ['Social Security Card', 'Driver License / Photo ID'].includes(boundedText(record.type, 120));
+
+  if (identityImage && state === 'clean' && Number.isFinite(verifiedAt)) {
+    const deleteAfter = verifiedAt + IDENTITY_IMAGE_RETENTION_MS;
+    return Object.freeze({ action: now >= deleteAfter ? 'delete-object' : 'retain', reason: 'verified-identity-image', deleteAfter });
+  }
+  if (['infected', 'error', 'timeout', 'unsupported', 'manual-review'].includes(state) && Number.isFinite(reviewStartedAt)) {
+    const deleteAfter = reviewStartedAt + REVIEW_RETENTION_MS;
+    return Object.freeze({ action: now >= deleteAfter ? 'delete-object' : 'retain', reason: 'manual-review-window', deleteAfter });
+  }
+  return Object.freeze({ action: 'retain', reason: 'not-eligible' });
+}
+
+function notificationAudience(profiles = []) {
+  return [...new Set(profiles.filter(profile => profile && profile.disabled !== true)
+    .filter(profile => boundedText(profile.role || profile.accessLevel, 40).toLowerCase() === 'admin' || profile.sensitiveVaultAccess === true)
+    .map(profile => boundedText(profile.uid, 180)).filter(Boolean))].sort();
+}
+
 function auditEvent({ action, actorUid, actorEmail, intakeId, objectPath, purpose, decision, correlationId, reason }) {
   const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review']);
   const allowedDecisions = new Set(['allowed', 'denied', 'clean', 'infected', 'error', 'timeout', 'unsupported', 'manual-review']);
@@ -134,8 +165,11 @@ module.exports = {
   auditEvent,
   chainedAuditEvent,
   mayAuthorizeDownload,
+  notificationAudience,
   nextScanState,
   normalizeObjectIdentity,
+  POLICY_VERSION,
+  retentionDecision,
   sameObjectIdentity,
   trustedScanner,
   validatePurpose

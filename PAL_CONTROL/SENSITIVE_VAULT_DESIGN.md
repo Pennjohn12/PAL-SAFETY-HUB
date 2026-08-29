@@ -205,3 +205,15 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
+
+### 2026-08-29 approved retention and notification policy checkpoint
+
+John approved the following Package 6 policy for new records governed by retention-policy version 2. Existing files and records remain excluded until a separate migration plan is approved.
+
+- Verified Social Security-card and driver-license images become eligible for object deletion 24 hours after recorded identity verification, unless a legal or HR hold exists.
+- Infected, error, timeout, unsupported, manual-review, and disputed files remain locked for 30 days for manual review, then become eligible for object deletion unless held.
+- A legal or HR hold always overrides deletion. Missing, malformed, legacy, or unversioned retention metadata fails safe to retention.
+- Sensitive-vault audit events and the audit-chain head have no automatic deletion. PAL must establish its formal legal retention schedule before that changes.
+- In-app notifications are limited to active Admins and active Office users with explicit sensitive-vault entitlement. External email and text notifications remain disabled until separately configured and approved.
+
+The vendor-neutral policy core and tests implement these decisions without deleting an object, scheduling cleanup, sending an external message, touching existing data, or changing Production. The full suite passes 84/84, along with Functions/policy syntax and diff checks. Live Staging deletion and notification behavior remain uncredited until a safe synthetic implementation and rollback test pass.

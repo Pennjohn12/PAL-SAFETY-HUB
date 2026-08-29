@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 retention and notification policy encoded
+
+- Recorded John's approval of the 24-hour verified identity-image window, 30-day locked manual-review window, legal/HR-hold override, indefinite audit retention pending a formal PAL schedule, and in-app-only entitled-reviewer notifications.
+- Added a fail-safe policy core that excludes existing/unversioned records and never treats incomplete metadata as deletion authorization.
+- Added exact-boundary, hold, legacy/audit safety, and notification-audience tests. The full suite passes 84/84; no object, record, account, credential, Staging resource, or Production component changed.
+
 ## 2026-08-29 — Package 6 live vault release and audit chain passed in Staging
 
 - With John's specific approval, created two temporary synthetic Staging reviewers and one harmless synthetic PDF. Credentials existed only in memory and were not printed or saved.

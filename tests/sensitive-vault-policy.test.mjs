@@ -71,3 +71,32 @@ test('audit chain is deterministic, linked, and rejects invalid predecessors', (
   assert.notEqual(second.eventHash, first.eventHash);
   assert.throws(() => policy.chainedAuditEvent(input, 'not-a-hash', '2026-08-29T17:00:00.000Z'), /invalid-audit-chain/);
 });
+
+test('approved retention deletes only new eligible records after their exact window', () => {
+  const now = Date.parse('2026-08-30T18:00:00.000Z');
+  const identityRecord = { retentionPolicyVersion: 2, type: 'Driver License / Photo ID', malwareScanStatus: 'clean', identityVerifiedAt: '2026-08-29T17:59:59.999Z' };
+  assert.equal(policy.retentionDecision(identityRecord, now).action, 'delete-object');
+  assert.equal(policy.retentionDecision({ ...identityRecord, identityVerifiedAt: '2026-08-29T18:00:00.001Z' }, now).action, 'retain');
+  const reviewRecord = { retentionPolicyVersion: 2, type: 'Social Security Card', malwareScanStatus: 'infected', manualReviewStartedAt: '2026-07-31T18:00:00.000Z' };
+  assert.equal(policy.retentionDecision(reviewRecord, now).action, 'delete-object');
+  assert.equal(policy.retentionDecision({ ...reviewRecord, manualReviewStartedAt: '2026-07-31T18:00:00.001Z' }, now).action, 'retain');
+});
+
+test('legal holds, legacy records, audit evidence, and incomplete records fail safe', () => {
+  const eligible = { retentionPolicyVersion: 2, type: 'Social Security Card', malwareScanStatus: 'clean', identityVerifiedAt: '2020-01-01T00:00:00.000Z' };
+  assert.equal(policy.retentionDecision({ ...eligible, legalHold: true }).reason, 'legal-or-hr-hold');
+  assert.equal(policy.retentionDecision({ ...eligible, hrHold: true }).reason, 'legal-or-hr-hold');
+  assert.equal(policy.retentionDecision({ ...eligible, retentionPolicyVersion: 1 }).reason, 'outside-approved-policy');
+  assert.equal(policy.retentionDecision({ collection: 'sensitiveVaultAuditEvents' }).action, 'retain');
+  assert.equal(policy.retentionDecision({ retentionPolicyVersion: 2, malwareScanStatus: 'clean' }).action, 'retain');
+});
+
+test('in-app notification audience is limited to admins and entitled active reviewers', () => {
+  assert.deepEqual(policy.notificationAudience([
+    { uid: 'admin-1', role: 'admin' },
+    { uid: 'reviewer-1', role: 'office', sensitiveVaultAccess: true },
+    { uid: 'office-1', role: 'office' },
+    { uid: 'disabled-admin', role: 'admin', disabled: true },
+    { uid: 'reviewer-1', role: 'office', sensitiveVaultAccess: true }
+  ]), ['admin-1', 'reviewer-1']);
+});
