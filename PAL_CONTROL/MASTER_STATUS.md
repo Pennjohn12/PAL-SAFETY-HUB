@@ -28,7 +28,7 @@ Last verified: **2026-08-29, America/New_York**
 
 ## Staging/Test status
 
-- Package 6 security scan passed for digest `sha256:945d6e425a7412fc3c0e89307d0e46f601554e4dce931be7be64ea575f075cef`, but pre-deployment review found its startup script still invoked npm after npm was removed from the runtime. The digest remains undeployed. A locally verified direct-Node startup repair requires a new `$0.26` scan before controlled synthetic Staging measurement; Production and real data remain prohibited.
+- Package 6 startup-fixed scanner digest `sha256:b50fae51da78641f066ea14cd3a9659d509f2b7d1e53d771552f549d24d934cd` passed Artifact Analysis with no findings plus source-level startup syntax/no-npm compatibility review. It is approved only for the private, min-0/max-1/concurrency-1 synthetic Staging measurement. Production and real data remain prohibited.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.

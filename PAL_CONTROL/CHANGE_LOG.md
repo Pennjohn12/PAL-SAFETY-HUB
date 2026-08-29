@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 startup-fixed image passed the full gate
+
+- John approved the fourth `$0.26` scan; cumulative authorized scanner-analysis charges are `$1.04`, pending billing reconciliation.
+- Matched patch SHA-256 `973ae669e60d11d9417b4293bff184952dcc02ae2f7a9326b8b19606410e16df` locally and in Cloud Shell, then verified the pinned upstream commit, patch application, startup syntax, direct Node commands, absence of npm startup calls, and clean diff.
+- Dedicated keyless-builder Cloud Build `d219450e-b573-41bd-825b-5ae4e17fbf3e` succeeded and produced immutable digest `sha256:b50fae51da78641f066ea14cd3a9659d509f2b7d1e53d771552f549d24d934cd`.
+- Artifact Analysis reported no malicious packages and no vulnerabilities at any severity. The exact digest passes the image and source-level startup gates.
+- No runtime, trigger, schedule, permission, key, Production component, or real data was changed at this checkpoint.
+
 ## 2026-08-29 — Package 6 runtime startup incompatibility caught before deployment
 
 - Pre-deployment review found the clean scanner image removed npm while its inherited startup script still called npm. The image remained undeployed and no Staging or Production runtime was affected.

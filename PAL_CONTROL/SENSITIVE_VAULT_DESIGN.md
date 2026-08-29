@@ -151,6 +151,15 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - Fresh-clone verification passed startup-script syntax/compatibility, TypeScript compilation, **34 of 34** scanner tests, and the production dependency audit with zero known findings.
 - The functional repair changes the container digest. A fourth newly pushed image would incur another disclosed `$0.26` Artifact Analysis scan and requires John's separate action-time approval. Runtime deployment remains blocked until that exact digest passes the same acceptance criteria.
 
+### 2026-08-29 accepted startup-fixed scanner image
+
+- John explicitly approved the fourth `$0.26` scan. The local patch and uploaded Cloud Shell file both matched SHA-256 `973ae669e60d11d9417b4293bff184952dcc02ae2f7a9326b8b19606410e16df` before use.
+- A fresh temporary clone verified upstream commit `0db019c9f09494215aa4485b71094e9b8d5ea90b`, applied the patch cleanly, passed `bootstrap.sh` shell syntax, showed both direct Node startup commands, confirmed no npm invocation remained, and passed the diff check before submission.
+- Dedicated keyless-builder Cloud Build `d219450e-b573-41bd-825b-5ae4e17fbf3e` succeeded in 2m55s. The resulting immutable image is `us-east1-docker.pkg.dev/pal-safety-hub-staging/malware-scanner/malware-scanner@sha256:b50fae51da78641f066ea14cd3a9659d509f2b7d1e53d771552f549d24d934cd`.
+- Artifact Analysis completed for that exact digest with **no findings**: no malicious packages and no vulnerabilities at any severity. The digest passes both PAL's image gate and source-level startup compatibility review.
+- Cumulative authorized direct Artifact Analysis charges are `$1.04` for four scans, pending billing reconciliation. Build, Artifact Registry, and Storage usage remain usage-dependent and unposted.
+- The image is authorized only for the previously approved private, min-0/max-1/concurrency-1, synthetic-only Staging measurement. Production, real data, minimum instances, broad Firebase-bucket access, credential keys, and a higher cost ceiling remain prohibited.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
