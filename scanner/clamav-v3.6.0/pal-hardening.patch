@@ -32,6 +32,25 @@ index 87fc4f5..6e23ead 100644
  
  CMD ["bash", "bootstrap.sh"]
  
+diff --git a/cloudrun-malware-scanner/bootstrap.sh b/cloudrun-malware-scanner/bootstrap.sh
+index 90c9333..a458047 100755
+--- a/cloudrun-malware-scanner/bootstrap.sh
++++ b/cloudrun-malware-scanner/bootstrap.sh
+@@ -72,7 +72,7 @@ fi
+ #
+ export PROXY_PORT=${PROXY_PORT:-8888}
+ PROXY_SERVER_ADDRESS=localhost:${PROXY_PORT}
+-npm run start-proxy "${CONFIG_FILE}" &
++node --enable-source-maps build/gcs-proxy-server.js "${CONFIG_FILE}" &
+ 
+ 
+ # This function is used to update clam and freshclam config files.
+@@ -212,4 +212,4 @@ waitForAlive "Clamd service" "${CLAMD_CHECK_INTERVAL:-10}" "${CLAMD_CHECK_ATTEMP
+ 
+ # Run node server process
+ Log INFO main "Starting malware-scanner service"
+-exec npm run start "${CONFIG_FILE}"
++exec node --enable-source-maps build/server.js "${CONFIG_FILE}"
 diff --git a/cloudrun-malware-scanner/cloudbuild.yaml b/cloudrun-malware-scanner/cloudbuild.yaml
 index 56335f2..aa84eba 100644
 --- a/cloudrun-malware-scanner/cloudbuild.yaml

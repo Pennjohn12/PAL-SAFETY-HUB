@@ -143,6 +143,14 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - Cumulative authorized Artifact Analysis direct charges are `$0.78` for three images, pending billing reconciliation. Cloud Build and storage usage remain usage-dependent and unposted.
 - Acceptance of the image permits only the previously approved isolated, synthetic-only Staging runtime measurement. It does not authorize Production, real files, a minimum instance, a higher cost ceiling, broad Firebase-bucket access, or any credential key.
 
+### 2026-08-29 pre-deployment startup compatibility stop
+
+- Read-only review immediately before Staging deployment found that the accepted image removes npm from the final runtime layer, while inherited `bootstrap.sh` still invokes `npm run start-proxy` and `npm run start`. The image passes security scanning but cannot be credited as startable.
+- Digest `sha256:945d6e425a7412fc3c0e89307d0e46f601554e4dce931be7be64ea575f075cef` remains undeployed. No Cloud Run service, Eventarc trigger, Scheduler job, permission, Production component, or real-data action occurred.
+- The local overlay now invokes the compiled proxy and server directly with Node, preserving source-map support and eliminating the removed npm dependency. The preparation script also validates shell syntax and fails if the startup script reintroduces an npm invocation.
+- Fresh-clone verification passed startup-script syntax/compatibility, TypeScript compilation, **34 of 34** scanner tests, and the production dependency audit with zero known findings.
+- The functional repair changes the container digest. A fourth newly pushed image would incur another disclosed `$0.26` Artifact Analysis scan and requires John's separate action-time approval. Runtime deployment remains blocked until that exact digest passes the same acceptance criteria.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.

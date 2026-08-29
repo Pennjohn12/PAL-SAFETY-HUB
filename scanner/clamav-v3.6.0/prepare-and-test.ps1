@@ -42,6 +42,24 @@ git -C $Destination apply $patchPath
 $scannerPath = Join-Path $Destination 'cloudrun-malware-scanner'
 Push-Location $scannerPath
 try {
+    $bashCommand = Get-Command bash -ErrorAction SilentlyContinue
+    $bashPath = if ($bashCommand) { $bashCommand.Source } else { $null }
+    if (-not $bashPath) {
+        $gitBash = Join-Path $env:ProgramFiles 'Git\bin\bash.exe'
+        if (Test-Path -LiteralPath $gitBash) {
+            $bashPath = $gitBash
+        }
+    }
+    if (-not $bashPath) {
+        throw 'bash is required to validate the scanner startup script.'
+    }
+    & $bashPath -n bootstrap.sh
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Scanner startup script syntax validation failed.'
+    }
+    if (Select-String -Path bootstrap.sh -Pattern '\bnpm\b' -Quiet) {
+        throw 'Scanner startup script still requires npm after npm was removed from the runtime image.'
+    }
     Invoke-PalNpm ci --ignore-scripts
     Invoke-PalNpm audit --omit=dev
     Invoke-PalNpm run build

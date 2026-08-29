@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 runtime startup incompatibility caught before deployment
+
+- Pre-deployment review found the clean scanner image removed npm while its inherited startup script still called npm. The image remained undeployed and no Staging or Production runtime was affected.
+- Updated the local source overlay to start both compiled Node programs directly and added reproducible startup-script syntax and npm-compatibility checks.
+- Fresh-clone verification passed startup validation, TypeScript compilation, 34/34 tests, and the zero-finding production dependency audit.
+- The repair requires a new image digest and a separately approved fourth `$0.26` scan. Cumulative authorized direct scans remain `$0.78`.
+
 ## 2026-08-29 — Package 6 immutable scanner image passed Artifact Analysis
 
 - John approved the third `$0.26` scan; cumulative authorized scanner-analysis charges are `$0.78`, pending billing reconciliation.
