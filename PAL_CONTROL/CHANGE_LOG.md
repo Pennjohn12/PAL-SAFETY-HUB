@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 trusted-rescan image accepted
+
+- Dedicated keyless Cloud Build `2dec656e-9c6e-403f-8778-39bef3905120` produced immutable Staging candidate digest `sha256:ab00939cb01de07150d20ad643dab338feb19fb31f0033049ad4a6f18e457da5` from verified patch `7d75bea8f5c50be29aaaaab7dd8e1c6963b72354d057ce318ce3c0be61cabc01`.
+- Artifact Analysis completed with zero vulnerabilities and zero malicious-package findings. The fifth approved `$0.26` scan brings the direct-scan ledger to `$1.30`, pending billing reconciliation.
+- Image acceptance is Staging-only; no runtime, IAM, Production, existing-file, credential, or real-data change is credited.
+
 ## 2026-08-29 — Package 6 false-positive policy prepared, scanner handoff gated
 
 - Encoded John's approved different-person reviewer/Admin policy, mandatory justification, later trusted clean rescan, exact-object binding, permanent audit, and clean-rescan-alone download denial.
