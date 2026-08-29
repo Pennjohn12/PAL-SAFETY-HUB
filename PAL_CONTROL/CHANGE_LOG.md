@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 immutable scanner image passed Artifact Analysis
+
+- John approved the third `$0.26` scan; cumulative authorized scanner-analysis charges are `$0.78`, pending billing reconciliation.
+- Verified the checked-in hardening patch by matching SHA-256 locally and in Cloud Shell before building a fresh clone of the pinned upstream commit.
+- Keyless-builder Cloud Build `c8ebdc20-40aa-44c6-af32-0bdfffacef74` succeeded and produced immutable digest `sha256:945d6e425a7412fc3c0e89307d0e46f601554e4dce931be7be64ea575f075cef`.
+- Artifact Analysis completed with no findings: no malicious packages and no vulnerabilities at any severity. The exact digest passes PAL's scanner-image gate.
+- Production, real data, runtime deployment, triggers, schedules, minimum instances, broad Firebase-bucket access, and credential keys remained unchanged.
+
 ## 2026-08-29 — Package 6 hardened image blocked on package-name collision
 
 - John approved one additional `$0.26` scan. Hardened Cloud Build `7638a7ae-dd62-4578-a05b-512da21a4b52` succeeded and produced immutable digest `sha256:8151f03645b61edc7af9182fe8e91cc863b323f9175f91cc05b5cd700e720192`.

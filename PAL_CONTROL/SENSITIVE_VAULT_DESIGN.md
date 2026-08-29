@@ -134,6 +134,15 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - The local source overlay now renames only the root application package and lockfile identity to `pal-clamav-scanner`. Fresh-clone verification again passed the TypeScript build, **34 of 34** tests, and `npm audit --omit=dev` with zero known runtime findings. Logs now identify the PAL package name.
 - Clearing the scanner finding requires a different image digest and therefore another newly pushed image and disclosed `$0.26` scan. That next direct cost is not authorized. No runtime, trigger, schedule, new permission, credential, Production resource, or real data was used.
 
+### 2026-08-29 accepted immutable scanner image
+
+- John explicitly approved the third `$0.26` scan. The exact checked-in hardening patch had SHA-256 `b5432995d716a2411205b916c01cab097b0e4c412a607f7e75c157a7fbcd150d` in both the local repository and Cloud Shell before use.
+- A fresh temporary clone verified upstream commit `0db019c9f09494215aa4485b71094e9b8d5ea90b`, applied the checksum-matched patch cleanly, and showed `pal-clamav-scanner` as the root package in `package.json` and both lockfile identity locations.
+- Dedicated keyless-builder Cloud Build `c8ebdc20-40aa-44c6-af32-0bdfffacef74` succeeded in 2m29s using the pinned builder and base-image inputs. The resulting immutable image is `us-east1-docker.pkg.dev/pal-safety-hub-staging/malware-scanner/malware-scanner@sha256:945d6e425a7412fc3c0e89307d0e46f601554e4dce931be7be64ea575f075cef`.
+- Artifact Analysis completed for that exact digest with **no findings**: no malicious packages and no Critical, High, Medium, Low, or unclassified vulnerabilities. The image satisfies PAL's recorded scanner-image acceptance criteria.
+- Cumulative authorized Artifact Analysis direct charges are `$0.78` for three images, pending billing reconciliation. Cloud Build and storage usage remain usage-dependent and unposted.
+- Acceptance of the image permits only the previously approved isolated, synthetic-only Staging runtime measurement. It does not authorize Production, real files, a minimum instance, a higher cost ceiling, broad Firebase-bucket access, or any credential key.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
