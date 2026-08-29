@@ -67,14 +67,14 @@ index 56335f2..0c4acb3 100644
          "build",
 -        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest",
 +        "--build-arg=SOURCE_DATE_EPOCH=1787997587",
-+        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-hardened-rescan-1",
++        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-initial-callback-1",
          "-f",
          "Dockerfile",
          ".",
        ]
  images:
 -  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest"
-+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-hardened-rescan-1"
++  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-initial-callback-1"
  options:
    logging: "CLOUD_LOGGING_ONLY"
 diff --git a/cloudrun-malware-scanner/logger.ts b/cloudrun-malware-scanner/logger.ts
