@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 3 corrective Production rollback
+
+- The scheduled rollback safeguard did not execute. A live check at 12:14 AM found Production still in maintenance, after the approved 10:39 PM deadline. Corrective rollback began immediately under the documented authorization.
+- Restored the exact `allUsers` Cloud Run Invoker bindings on the same 12 interactive services and resumed only the two recorded Firebase Scheduler jobs.
+- Deployed normal Hosting, Firestore rules, and Storage rules from exact pre-maintenance commit `4b2e54e214eebe7615a36ddf6b2c7e7e394199be` in an isolated detached worktree.
+- Verification at approximately 12:23 AM: both Production domains and `projects.html` served normal PAL Safety Hub content; all 12 services showed Public access; both schedules showed Enabled; synthetic empty endpoint requests reached expected application-level validation/authentication; anonymous arbitrary Firestore and Storage reads remained denied.
+- No secret, account, Function code, real PAL identity, or real PAL record was read or changed. The missed deadline is recorded as an operational-control failure requiring a stronger actively monitored rollback mechanism before another timed Production window.
+
 ## 2026-08-28 — Package 3 Production maintenance activation verified
 
 - John explicitly approved the exact controlled Production activation after its impact, security benefit, two-hour limit, and rollback were explained.

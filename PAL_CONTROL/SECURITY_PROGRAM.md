@@ -36,7 +36,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - Completed: **3 of 15** packages at the PAL internal-assessment level.
 - In progress: **None**. Package 4 is next and requires separately scoped implementation work.
 - Independently verified: **0 of 15** packages.
-- Production security deployment authorized: **Package 3 activation only; no additional Production change is authorized**.
+- Production security deployment authorized: **No additional Production change is authorized; Package 3 activation has been rolled back**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
 
@@ -87,4 +87,4 @@ The default sequence is Package 2 (Staging), then an explicitly authorized Packa
 - Automated evidence passes: 59 core/static checks, 6 maintenance rule emulator checks, and 12 maintenance endpoint emulator checks.
 - Staging activation and rollback rehearsal passed. All tested old/public routes served identical maintenance content; anonymous Firestore access was denied; normal Staging Hosting/rules were restored; the 10-test normal Staging authorization suite passed afterward.
 - Production activation passed on 2026-08-28: both Hosting domains and representative legacy/public routes serve the protected maintenance page; Firestore and Storage deny anonymous synthetic probes; all 12 active interactive Functions reject anonymous invocation at the platform boundary; and the two exact Scheduler jobs are paused.
-- Package 3 finish line: **Passed PAL tests on 2026-08-28**. Production remains inside the explicitly approved two-hour maintenance window and must be rolled back or explicitly renewed before the recorded stop time.
+- Package 3 finish line: **Passed PAL tests on 2026-08-28**. Production activation and technical rollback were verified, but the 10:39 PM deadline was missed and corrective rollback completed at approximately 12:23 AM on 2026-08-29. This operational-control failure is recorded and must be addressed before another time-bounded Production window.

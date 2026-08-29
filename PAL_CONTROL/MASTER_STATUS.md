@@ -4,7 +4,7 @@ Last verified: **2026-08-28, America/New_York**
 
 ## Current Production status
 
-- Status: **Controlled security maintenance mode active; normal application and public-link use is unavailable.**
+- Status: **Online; Package 3 maintenance rollback completed and normal application Hosting restored.**
 - Production URL: `https://pal-safety-hub.web.app/`
 - Custom PAL URL: `https://pal.jobsiteresources.com/`
 - Firebase project: `pal-safety-hub`
@@ -14,7 +14,7 @@ Last verified: **2026-08-28, America/New_York**
 - Deployment identity: `jvpanettiere@gmail.com`
 - Evidence: live `index.html`, `projects.html`, Firebase client configuration, `manifest.json`, and `sw.js` matched the Git blobs at the Production commit.
 - Firestore and Storage rule text was compared read-only in the Firebase console on 2026-08-29 and matched the checked-in rules after line-ending normalization. Deployed Function source equivalence remains unverified.
-- Package 3 maintenance activation began at approximately 8:39 PM America/New_York on 2026-08-28 with John's explicit approval. Both Production domains serve the maintenance page; Firestore and Storage use deny-all client rules; all 12 interactive Functions reject anonymous invocation; and the two exact Firebase Scheduler jobs are paused. The approved window ends at approximately 10:39 PM unless renewed.
+- Package 3 maintenance activation began at approximately 8:39 PM America/New_York on 2026-08-28 with John's explicit approval. Its 10:39 PM rollback deadline was missed because the scheduled safeguard did not execute. Corrective rollback completed at approximately 12:23 AM on 2026-08-29: normal Hosting and rules were restored from commit `4b2e54e`, all 12 recorded invoker bindings were restored, and both exact Scheduler jobs were enabled. The failure and corrective evidence are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`.
 
 ## Current source and Git checkpoint
 
@@ -93,7 +93,7 @@ Present in current source and covered by current automated checks where noted:
 - Package 3 of 15, controlled Production maintenance mode: **Passed PAL tests** on 2026-08-28. Layered Hosting, deny-all Firestore/Storage rules, Function invocation lockdown, schedule pause, communication, two-hour stop, and rollback controls are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and Production activation verification passed.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
-- The no-submission boundary is now technically enforced by the active Package 3 maintenance controls for the approved window.
+- Package 3 proved the technical maintenance boundary and rollback, but the Production maintenance controls are no longer active.
 - Detailed status: `SECURITY_PROGRAM.md`. Verified risks and gaps: `SECURITY_RISK_REGISTER.md`.
 
 ## Production authorization

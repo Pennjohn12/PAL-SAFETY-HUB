@@ -104,6 +104,16 @@ The separately listed `us-central1/submitEmployeeFieldForm` metadata was `UNKNOW
 - The stale `us-central1/submitEmployeeFieldForm` entry remains outside the active inventory; its pre-activation endpoint returned 404.
 - Final Production verification completed at approximately **8:49 PM America/New_York**. The maintenance window must be rolled back or explicitly renewed before its two-hour stop time.
 
+## Production rollback evidence
+
+- The 10:30 PM rollback safeguard did not execute, and the approved 10:39 PM stop time was missed. This control failure was identified by a live check at **12:14 AM America/New_York on 2026-08-29**; Production was still serving the maintenance page. No claim of timely rollback is made.
+- Corrective rollback began immediately under the previously approved runbook. Only the exact `allUsers` Cloud Run Invoker bindings removed during activation were restored to the same 12 interactive services.
+- Only `firebase-schedule-monitorIntegrationHealth-us-central1` and `firebase-schedule-sendWeeklyCertWatch-us-central1` were resumed. Both were verified **Enabled** with their original schedules and next-run times.
+- Normal Hosting, Firestore rules, and Storage rules were deployed from the exact recorded pre-maintenance commit `4b2e54e214eebe7615a36ddf6b2c7e7e394199be` using an isolated detached worktree. No newer branch application files were substituted.
+- At approximately **12:23 AM America/New_York**, both Production domains and `projects.html` returned normal `PAL Safety Hub` content rather than the maintenance page. All 12 Cloud Run services showed **Public access**; synthetic empty requests reached the expected application-level validation/authentication boundary. The signature-status endpoint returned its expected application-level 403 while its Cloud Run service remained verified Public.
+- Anonymous arbitrary synthetic Firestore and Storage reads remained denied with 403 under the restored normal rules. No real PAL identity, record, document, or file was used.
+- The missed deadline is a verified operational-control failure. Future time-bounded Production work must not rely on a suggested reminder as the rollback mechanism; an actively monitored execution task or earlier manual rollback checkpoint is required.
+
 ## User communication
 
 Activation notice:
