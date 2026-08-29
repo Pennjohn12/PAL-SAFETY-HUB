@@ -35,6 +35,12 @@ Status: **Design checkpoint / no Production authorization**
 - No download is available before clean release. Short-lived download authorization is object-bound and not reusable after expiry.
 - Quarantine retry, orphan cleanup, retention holds, false-positive escalation, and rollback retain evidence and never silently expose or delete a sensitive file.
 
+## Approved PAL policy
+
+John approved on 2026-08-29: Google Cloud-hosted ClamAV; Admin plus explicitly entitled payroll reviewers; mandatory stated purpose; two-person approval for Social Security-card and driver-license downloads; delete identity images after verification unless legally required; fail-closed manual review for infected/error/unsupported/timeout; and no existing-data migration without a separate plan.
+
+This approval permits design and isolated Staging testing. It does not authorize Production, real-data access/migration, credentials, irreversible retention, or a materially recurring scanner cost without the recorded estimate and boundary review.
+
 ## Decisions that require John before implementation can be completed
 
 1. **Scanner/vendor and paid-service commitment.** Select an approved malware scanning service or approve a separately operated scanner. Review pricing, data location, subprocessors, retention, privacy terms, breach notice, service availability, file-size/type support, and whether PAL content trains any model. No credential or paid service may be created under the current authorization.
@@ -49,6 +55,16 @@ Status: **Design checkpoint / no Production authorization**
 Code can implement and test the vault authorization, state machine, metadata integrity, audit shape, and fail-closed download boundary using unmistakably synthetic records and a deterministic test scanner. Such a test scanner is not a real malware control and cannot satisfy the Package 6 Production finish line. Live scanner integration, credentials, vendor commitment, irreversible retention, real-data migration, and Production deployment remain separately approval-gated.
 
 The first vendor-neutral implementation checkpoint adds pure policy enforcement for all eight scan states, retry/terminal transition rules, trusted-scanner identity matching, exact path/generation/size/type/SHA-256 binding, required access purpose, clean-only entitled download authorization, and masked secret-free audit records. This module has no network, credential, Storage, Firestore, vendor, or Production side effect.
+
+The second checkpoint separates new W-4 payloads and payroll/identity file records into `sensitiveIntakeVaults`, deletes newly saved W-4 payloads from ordinary intake records, and preserves existing-record compatibility without migrating real data. Direct browser access to vault, audit, and approval collections is denied. Three Staging backend actions require authentication and implement separately entitled vault reads, purpose-bound clean-only five-minute downloads, and a different second approver for SS-card/driver-license downloads. Approved download records are single-use. Staging lists all three services ACTIVE on Node.js 22 in `us-central1`; empty anonymous probes return 401.
+
+Evidence: **79 of 79** core/static tests and **12 of 12** Firestore/Storage/Functions emulator tests pass. The emulator behaviorally proves that a synthetic full W-4 is returned only to its active packet action while the ordinary intake retains only `w4Completed` and the full synthetic payload is stored in the server vault.
+
+## Scanner supply chain and cost boundary
+
+The selected reference is Google's `GoogleCloudPlatform/docker-clamav-malware-scanner`, which uses the official `clamav/clamav` image, Cloud Run, Eventarc, separate unscanned/clean/quarantine buckets, and a Cloud Storage mirror for ClamAV signature updates. PAL must pin an reviewed repository commit and immutable container digests rather than deploy a floating branch or tag. Signature freshness, image vulnerability findings, build provenance, and rollback image digest must be monitored and recorded.
+
+Google's published deployment keeps one 1-vCPU/4-GiB scanner instance warm because cold start and signature-database downloads are substantial. Using published list rates, an always-running instance can be material (roughly **$33/month at request-based idle rates**, with active scans/build/storage/Eventarc extra; instance-based continuous CPU can approach **$90/month** before free-tier/discount effects). A scale-to-zero Staging experiment is cheaper but cannot yet be credited as a reliable Production scanner. No scanner service or credential has been created. John must approve the final measured configuration and recurring-cost cap before live Staging scanner infrastructure is created.
 
 ## Rollback principle
 

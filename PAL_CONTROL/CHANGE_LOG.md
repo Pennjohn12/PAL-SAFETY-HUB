@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 vault separation active in Staging
+
+- John approved the seven recorded Package 6 policies; Production, real-data migration, credentials, irreversible retention, and material recurring scanner cost remain separately gated.
+- New W-4 payloads and payroll/identity file records are separated from ordinary intake records into a client-denied server vault. Existing real records are not migrated or inspected.
+- Added separately entitled, purpose-audited vault reads; clean-only five-minute downloads; and single-use two-person approval for SS-card/driver-license downloads. Unknown or non-clean scanner states remain unavailable.
+- Staging Firestore rules and three Node.js 22/us-central1 vault actions are active. Empty anonymous calls return 401. Tests pass 79/79 core and 12/12 emulator cases with synthetic data.
+- The Google Cloud/ClamAV supply-chain and preliminary recurring-cost boundary are documented. No scanner runtime, scanner identity, credential, real file, or Production component was created.
+
 ## 2026-08-29 — Package 6 verified design checkpoint
 
 - Verified that full W-4/SSN data remains in ordinary intake documents and that Office review has no separate sensitive-vault entitlement or server-attributed sensitive-read event.
