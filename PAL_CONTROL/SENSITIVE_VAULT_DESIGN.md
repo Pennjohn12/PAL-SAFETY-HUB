@@ -273,3 +273,10 @@ The predeployment implementation adds separate request/approval actions, a serve
 - Run one showed the accepted scanner eventually classify and move the exact rescan object as clean, but the vault did not expose trusted rescan evidence within the four-minute observation window. Run two extended the fail-closed observation window to ten minutes and still did not receive trusted evidence. Retained scanner logs for run two showed health/self-check activity during that interval but no corresponding scan request, placing the observed failure before scanner processing rather than proving a callback rejection.
 - Neither run reached human release, signed download, or audit-chain completion. The original vault object remained locked throughout, so the failure did not weaken confidentiality; it demonstrates that the event/callback lifecycle is not yet reliable enough for Production.
 - Live false-positive credit is blocked. Correct the handoff lifecycle, then rerun the full same-person denial, different-person approval, exact five-minute generation-bound download, audit-chain/redaction, and complete-cleanup test before preparing any Production proposal.
+
+### 2026-08-29 rescan lifecycle correction — predeployment
+
+- Inspection found that the request action created the isolated rescan object before persisting its callback review record. Because object creation can immediately emit the scanner event, that ordering allowed a fast scanner/callback to arrive before its server-only review target existed.
+- The request now creates the pending review first and only then copies the exact generation into the isolated rescan bucket. If copying fails, the review is marked `copy-failed`, the caller receives a locked/unavailable response, and no release path is opened.
+- A new static regression enforces review-before-copy ordering and the fail-closed failure state. The full suite passes 90/90, Functions syntax passes, and the diff check passes.
+- No Staging or Production deployment is credited here. Focused Staging deployment and the complete approved authenticated two-person synthetic regression remain required.

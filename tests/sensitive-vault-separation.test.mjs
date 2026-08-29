@@ -39,6 +39,15 @@ test('false-positive release requires request, trusted exact rescan, different A
   assert.match(backend, /falsePositiveApproved: true/);
 });
 
+test('false-positive review exists before rescan object creation can trigger its callback', () => {
+  const requestStart = backend.indexOf('exports.requestSensitiveFalsePositiveReviewV1');
+  const callbackStart = backend.indexOf('exports.recordSensitiveFalsePositiveRescanV1');
+  const requestBlock = backend.slice(requestStart, callbackStart);
+  assert.ok(requestBlock.indexOf('await ref.create(') < requestBlock.indexOf('await source.copy('));
+  assert.match(requestBlock, /state: 'copy-failed'/);
+  assert.match(requestBlock, /The file remains locked/);
+});
+
 test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {
   assert.match(retention, /retentionDecision\(record, now\)/);
   assert.match(retention, /sameObjectIdentity\(identity, \{ \.\.\.identity, path: record\.path \}\)/);

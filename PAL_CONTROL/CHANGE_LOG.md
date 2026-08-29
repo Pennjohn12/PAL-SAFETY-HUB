@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 rescan lifecycle race corrected in code
+
+- Reordered false-positive review creation so the private callback target exists before the isolated rescan object can emit its finalize event. A failed copy now records `copy-failed` and returns a locked/unavailable result rather than leaving a pending review.
+- Added a regression that enforces review-before-copy ordering and fail-closed copy failure. The complete PAL suite passes 90/90, Functions syntax passes, and the diff check passes.
+- This is predeployment evidence only. Staging still serves the prior implementation and live false-positive credit remains blocked until the focused deployment and full authenticated synthetic regression pass. Production and real data remain untouched.
+
 ## 2026-08-29 — Package 6 live false-positive regression failed closed
 
 - Ran two approved authenticated, two-person synthetic Staging regressions against the private trusted-rescan workflow. Both created only temporary synthetic accounts, a harmless 67-byte fake PDF, and isolated test records; both cleanup routines completed and removed the accounts, records, and objects.

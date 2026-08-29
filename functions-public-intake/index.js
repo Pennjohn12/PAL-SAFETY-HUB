@@ -447,14 +447,20 @@ exports.requestSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async requ
   const ref = db.collection('sensitiveFalsePositiveReviews').doc();
   const rescanPath = `false-positive-rescans/${ref.id}/${safeFileName(record.name)}`;
   const destination = admin.storage().bucket(RESCAN_BUCKET.value()).file(rescanPath);
-  await source.copy(destination, { preconditionOpts: { ifSourceGenerationMatch: Number(currentIdentity.generation) }, metadata: {
-    contentType: currentIdentity.contentType, cacheControl: 'private, no-store, max-age=0', metadata: {
-      palFalsePositiveReviewId: ref.id, palOriginalIntakeId: intakeId, palOriginalPath: currentIdentity.path,
-      palOriginalGeneration: currentIdentity.generation, palOriginalSize: String(currentIdentity.size),
-      palOriginalContentType: currentIdentity.contentType, palOriginalSha256: currentIdentity.sha256, palRescanObjectPath: rescanPath
-    } } });
   await ref.create({ version: 1, intakeId, path, requesterUid: actor.uid, purpose, state: 'pending', originalIdentity: currentIdentity,
     rescanObjectPath: rescanPath, requestedAt: new Date().toISOString(), createdAt: FieldValue.serverTimestamp() });
+  try {
+    // Persist the callback target before object creation can emit its finalize event.
+    await source.copy(destination, { preconditionOpts: { ifSourceGenerationMatch: Number(currentIdentity.generation) }, metadata: {
+      contentType: currentIdentity.contentType, cacheControl: 'private, no-store, max-age=0', metadata: {
+        palFalsePositiveReviewId: ref.id, palOriginalIntakeId: intakeId, palOriginalPath: currentIdentity.path,
+        palOriginalGeneration: currentIdentity.generation, palOriginalSize: String(currentIdentity.size),
+        palOriginalContentType: currentIdentity.contentType, palOriginalSha256: currentIdentity.sha256, palRescanObjectPath: rescanPath
+      } } });
+  } catch (_) {
+    await ref.update({ state: 'copy-failed', failedAt: FieldValue.serverTimestamp() }).catch(() => {});
+    throw new HttpsError('unavailable', 'The protected rescan could not be queued. The file remains locked.');
+  }
   await writeVaultAudit({ action: 'false-positive-review', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path,
     purpose, decision: 'manual-review', correlationId: ref.id, reason: 'fresh-clean-rescan-and-admin-required' });
   return { status: 'pending-rescan', reviewId: ref.id };
