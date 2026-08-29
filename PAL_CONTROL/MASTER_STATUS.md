@@ -1,6 +1,6 @@
 # PAL Safety Hub Master Status
 
-Last verified: **2026-08-28, America/New_York**
+Last verified: **2026-08-29, America/New_York**
 
 ## Current Production status
 
@@ -27,6 +27,8 @@ Last verified: **2026-08-28, America/New_York**
 - Preserved local QA fixtures: five clearly marked `PAL_QA_*_NOT_REAL.pdf` files under `tests/fixtures/`; untracked and not altered.
 
 ## Staging/Test status
+
+- Package 6 scanner deployment remains blocked. A locally tested hardening overlay now passes 34/34 scanner tests and reports zero known runtime dependency vulnerabilities, but no replacement image has been pushed or scanned. A new `$0.26` scan requires separate approval before the Staging runtime measurement can resume.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.

@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 scanner remediation candidate prepared
+
+- Kept both vulnerable scanner images blocked and undeployed.
+- Added a reproducible, commit-verifying PAL hardening overlay for the reviewed Google v3.6.0 scanner source.
+- Removed unused vulnerable packages, updated affected runtime dependencies, pinned build inputs, and removed npm tooling from the runtime layer.
+- Local verification passed the TypeScript build, all 34 upstream scanner tests, and a production dependency audit with zero known findings.
+- No cloud resource, permission, image, trigger, schedule, credential, Production component, or paid scan was created. The next image push would incur a separately approval-gated `$0.26` scan.
+
 ## 2026-08-29 — Package 6 Staging scanner experiment and cost tracking approved
 
 - John approved the exact measurement-only Staging scanner resources and requested a complete cost breakdown when the security program is finished.

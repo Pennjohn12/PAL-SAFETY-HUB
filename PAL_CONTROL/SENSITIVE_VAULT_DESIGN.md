@@ -117,6 +117,15 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - The first approved scan charge is recorded as incurred even though the cloud billing report had not posted it at verification time. A replacement image will trigger another disclosed `$0.26` scan and therefore requires a separate direct-cost approval before push.
 - Expected performance is not yet verified. Scale-to-zero is expected to have a long cold start because the ClamAV database is hundreds of MiB; the official warm recommendation exists for this reason. PAL will not claim a latency or throughput target until the Staging measurements exist.
 
+### 2026-08-29 dependency-remediation candidate
+
+- The blocked image was not deployed and received no runtime trigger, schedule, or bucket access beyond the already documented identity boundary.
+- PAL created a reviewable source overlay at `scanner/clamav-v3.6.0` against exact upstream commit `0db019c9f09494215aa4485b71094e9b8d5ea90b`. The preparation script verifies that commit before applying the patch and performs no Google Cloud authentication, push, deployment, or paid scan.
+- The candidate pins the Node, ClamAV, Google Cloud CLI, and Cloud Build Docker inputs by digest; removes unused `eventid` and `@google-cloud/pino-logging-gcp-config`; updates Google Cloud Storage and monitoring-exporter dependencies; constrains the affected transitive UUID version; and removes npm tooling and its dependency tree from the final runtime layer.
+- Local verification on Windows completed successfully: the TypeScript build passed, all **34 of 34** upstream scanner tests passed, and `npm audit --omit=dev` reported **0 known runtime dependency vulnerabilities**. The expected fatal log messages in the test output are assertions that malformed configuration and unavailable buckets fail closed; they were not test failures.
+- This source audit does not prove that the resulting Linux container is vulnerability-free or bit-for-bit reproducible. A new immutable image must be built once, its digest recorded, and Artifact Analysis must scan that exact digest.
+- PAL acceptance for the next candidate is: no CRITICAL or HIGH findings; no fix-available MEDIUM finding unless PAL documents a specific false-positive or non-exploitable exception; exact source/base/builder inputs and resulting digest recorded; zero credential keys; and no runtime deployment until the scan is reviewed. A new image push will incur another disclosed `$0.26` scan and requires John's separate action-time approval.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.
