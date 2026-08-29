@@ -52,7 +52,7 @@ index 90c9333..a458047 100755
 -exec npm run start "${CONFIG_FILE}"
 +exec node --enable-source-maps build/server.js "${CONFIG_FILE}"
 diff --git a/cloudrun-malware-scanner/cloudbuild.yaml b/cloudrun-malware-scanner/cloudbuild.yaml
-index 56335f2..aa84eba 100644
+index 56335f2..0c4acb3 100644
 --- a/cloudrun-malware-scanner/cloudbuild.yaml
 +++ b/cloudrun-malware-scanner/cloudbuild.yaml
 @@ -13,16 +13,18 @@
@@ -67,14 +67,14 @@ index 56335f2..aa84eba 100644
          "build",
 -        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest",
 +        "--build-arg=SOURCE_DATE_EPOCH=1787997587",
-+        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-hardened-1",
++        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-hardened-rescan-1",
          "-f",
          "Dockerfile",
          ".",
        ]
  images:
 -  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest"
-+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-hardened-1"
++  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-hardened-rescan-1"
  options:
    logging: "CLOUD_LOGGING_ONLY"
 diff --git a/cloudrun-malware-scanner/logger.ts b/cloudrun-malware-scanner/logger.ts
@@ -2161,3 +2161,98 @@ index 70c6221..941c857 100644
 +    }
    }
  }
+diff --git a/cloudrun-malware-scanner/pal-rescan-reporter.ts b/cloudrun-malware-scanner/pal-rescan-reporter.ts
+new file mode 100644
+index 0000000..3d6983b
+--- /dev/null
++++ b/cloudrun-malware-scanner/pal-rescan-reporter.ts
+@@ -0,0 +1,21 @@
++import {GoogleAuth} from 'google-auth-library';
++
++const REQUIRED = ['palFalsePositiveReviewId', 'palOriginalIntakeId', 'palOriginalPath', 'palOriginalGeneration',
++  'palOriginalSize', 'palOriginalContentType', 'palOriginalSha256', 'palRescanObjectPath'] as const;
++
++export async function reportPalRescan(metadata: Record<string, string> | undefined, result: 'clean' | 'infected', sha256: string,
++  clamVersion: string): Promise<void> {
++  const reviewId = metadata?.palFalsePositiveReviewId;
++  if (!reviewId) return;
++  const callback = process.env.PAL_RESCAN_CALLBACK_URL;
++  if (!callback || !REQUIRED.every((key) => metadata?.[key])) throw new Error('PAL rescan callback metadata is incomplete');
++  if (!/^[a-f0-9]{64}$/.test(sha256) || !Number.isSafeInteger(Number(metadata?.palOriginalSize))
++      || Number(metadata?.palOriginalSize) < 1) throw new Error('PAL rescan object identity is invalid');
++  if (metadata?.palOriginalSha256 !== sha256) throw new Error('PAL rescan digest does not match the exact original object');
++  const client = await new GoogleAuth().getIdTokenClient(callback);
++  await client.request({ url: callback, method: 'POST', timeout: 15000, data: {
++    reviewId, rescanObjectPath: metadata?.palRescanObjectPath, result, sha256, clamVersion,
++    scannedAt: new Date().toISOString(), originalIdentity: { path: metadata?.palOriginalPath, generation: metadata?.palOriginalGeneration,
++      size: Number(metadata?.palOriginalSize), contentType: metadata?.palOriginalContentType, sha256: metadata?.palOriginalSha256 }
++  } });
++}
+diff --git a/cloudrun-malware-scanner/scanner.ts b/cloudrun-malware-scanner/scanner.ts
+index efb559c..7a4a3b7 100644
+--- a/cloudrun-malware-scanner/scanner.ts
++++ b/cloudrun-malware-scanner/scanner.ts
+@@ -19,6 +19,8 @@ import {Config, BucketDefs} from './config.js';
+ import * as gcs from '@google-cloud/storage';
+ import * as ClamdClient from 'clamdjs';
+ import * as metrics from './metrics';
++import {createHash} from 'node:crypto';
++import {reportPalRescan} from './pal-rescan-reporter';
+ 
+ type MetricsClient = typeof metrics;
+ 
+@@ -245,6 +247,11 @@ export class Scanner {
+       );
+       const startTime = Date.now();
+       const readStream = gcsFile.createReadStream();
++      const digest = createHash('sha256');
++      const canHashStream = typeof (readStream as {on?: unknown}).on === 'function';
++      if (canHashStream) {
++        readStream.on('data', (chunk: Buffer) => digest.update(chunk));
++      }
+       let result;
+       try {
+         result = await this.clamdScanStream(readStream, CLAMD_TIMEOUT);
+@@ -254,6 +261,7 @@ export class Scanner {
+         readStream.destroy();
+       }
+       const scanDuration = Date.now() - startTime;
++      const sha256 = canHashStream ? digest.digest('hex') : '';
+ 
+       let isClean = this.clamdClient.isCleanReply(result);
+ 
+@@ -305,6 +313,7 @@ export class Scanner {
+           clamdVersion,
+         );
+ 
++        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'clean', sha256, clamdVersion);
+         await this.moveProcessedFile(gcsFile, bucketDefs.clean);
+ 
+         return {
+@@ -335,6 +344,7 @@ export class Scanner {
+           clamdVersion,
+         );
+ 
++        await reportPalRescan(metadata.metadata as Record<string, string> | undefined, 'infected', sha256, clamdVersion);
+         await this.moveProcessedFile(gcsFile, bucketDefs.quarantined);
+ 
+         return {
+diff --git a/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts b/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts
+new file mode 100644
+index 0000000..ed937c8
+--- /dev/null
++++ b/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts
+@@ -0,0 +1,13 @@
++import {reportPalRescan} from '../pal-rescan-reporter';
++
++describe('PAL rescan reporter', () => {
++  it('does nothing for ordinary scanner objects', async () => {
++    await expectAsync(reportPalRescan(undefined, 'clean', 'a'.repeat(64), 'test')).toBeResolved();
++  });
++  it('fails closed on incomplete or mismatched rescan metadata', async () => {
++    await expectAsync(reportPalRescan({palFalsePositiveReviewId: 'review'}, 'clean', 'a'.repeat(64), 'test')).toBeRejected();
++    const metadata = {palFalsePositiveReviewId: 'review', palOriginalIntakeId: 'intake', palOriginalPath: 'path',
++      palOriginalGeneration: '1', palOriginalSize: '10', palOriginalContentType: 'application/pdf', palOriginalSha256: 'b'.repeat(64)};
++    await expectAsync(reportPalRescan(metadata, 'clean', 'a'.repeat(64), 'test')).toBeRejected();
++  });
++});

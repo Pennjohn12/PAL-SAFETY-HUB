@@ -40,6 +40,11 @@ git -C $Destination apply --check $patchPath
 git -C $Destination apply $patchPath
 
 $scannerPath = Join-Path $Destination 'cloudrun-malware-scanner'
+$reporterPath = Join-Path $scannerPath 'pal-rescan-reporter.ts'
+$reporterSpecPath = Join-Path $scannerPath 'spec\pal-rescan-reporter.spec.ts'
+if (-not (Test-Path -LiteralPath $reporterPath) -or -not (Test-Path -LiteralPath $reporterSpecPath)) {
+    throw 'The hardened scanner patch is missing the PAL rescan reporter or its test.'
+}
 Push-Location $scannerPath
 try {
     $bashCommand = Get-Command bash -ErrorAction SilentlyContinue

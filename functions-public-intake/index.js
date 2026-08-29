@@ -1,12 +1,12 @@
 const admin = require('firebase-admin');
 const crypto = require('crypto');
-const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
 const { processSensitiveVaultRetention } = require('./sensitive-vault-retention');
-const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
+const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, sameObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
 const db = getFirestore();
@@ -25,6 +25,7 @@ const MAX_PACKET_UPLOAD_BYTES = 100 * 1024 * 1024;
 const MAX_PACKET_FILES = 12;
 const MAX_GRANTS_PER_HOUR = 12;
 const VAULT_SERVICE_ACCOUNT = defineString('PAL_VAULT_SERVICE_ACCOUNT');
+const RESCAN_BUCKET = defineString('PAL_RESCAN_BUCKET');
 const VAULT_RUNTIME = Object.freeze({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10,
   serviceAccount: VAULT_SERVICE_ACCOUNT });
 
@@ -438,12 +439,58 @@ exports.requestSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async requ
   const vault = await vaultRef(intakeId).get();
   const record = (Array.isArray(vault.data()?.payrollIdFiles) ? vault.data().payrollIdFiles : []).find(item => item?.path === path);
   if (!record || !['infected', 'manual-review', 'unsupported', 'error', 'timeout'].includes(record.malwareScanStatus)) throw new HttpsError('failed-precondition', 'Only a locked review file can enter false-positive review.');
+  const source = admin.storage().bucket().file(path);
+  const [metadata] = await source.getMetadata();
+  const currentIdentity = normalizeObjectIdentity({ path, generation: metadata.generation, size: Number(metadata.size),
+    contentType: metadata.contentType, sha256: metadata.metadata?.palSha256 });
+  if (!record.objectIdentity || !sameObjectIdentity(currentIdentity, record.objectIdentity)) throw new HttpsError('failed-precondition', 'The locked file identity changed and cannot be reviewed.');
   const ref = db.collection('sensitiveFalsePositiveReviews').doc();
-  await ref.create({ version: 1, intakeId, path, requesterUid: actor.uid, purpose, state: 'pending', originalIdentity: record.objectIdentity,
-    requestedAt: new Date().toISOString(), createdAt: FieldValue.serverTimestamp() });
+  const rescanPath = `false-positive-rescans/${ref.id}/${safeFileName(record.name)}`;
+  const destination = admin.storage().bucket(RESCAN_BUCKET.value()).file(rescanPath);
+  await source.copy(destination, { preconditionOpts: { ifSourceGenerationMatch: Number(currentIdentity.generation) }, metadata: {
+    contentType: currentIdentity.contentType, cacheControl: 'private, no-store, max-age=0', metadata: {
+      palFalsePositiveReviewId: ref.id, palOriginalIntakeId: intakeId, palOriginalPath: currentIdentity.path,
+      palOriginalGeneration: currentIdentity.generation, palOriginalSize: String(currentIdentity.size),
+      palOriginalContentType: currentIdentity.contentType, palOriginalSha256: currentIdentity.sha256, palRescanObjectPath: rescanPath
+    } } });
+  await ref.create({ version: 1, intakeId, path, requesterUid: actor.uid, purpose, state: 'pending', originalIdentity: currentIdentity,
+    rescanObjectPath: rescanPath, requestedAt: new Date().toISOString(), createdAt: FieldValue.serverTimestamp() });
   await writeVaultAudit({ action: 'false-positive-review', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path,
     purpose, decision: 'manual-review', correlationId: ref.id, reason: 'fresh-clean-rescan-and-admin-required' });
   return { status: 'pending-rescan', reviewId: ref.id };
+});
+
+exports.recordSensitiveFalsePositiveRescanV1 = onRequest({ region: REGION, timeoutSeconds: 30, memory: '256MiB', maxInstances: 5,
+  serviceAccount: VAULT_SERVICE_ACCOUNT, invoker: 'private' }, async (request, response) => {
+  if (request.method !== 'POST') return response.status(405).json({ error: 'method-not-allowed' });
+  const reviewId = text(request.body?.reviewId, 180);
+  const rescanResult = text(request.body?.result, 40);
+  const scannedAt = text(request.body?.scannedAt, 40);
+  const reviewRef = db.collection('sensitiveFalsePositiveReviews').doc(reviewId);
+  try {
+    if (!reviewId || !['clean', 'infected'].includes(rescanResult) || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(scannedAt)) throw new Error('invalid-evidence');
+    await db.runTransaction(async transaction => {
+      const reviewSnap = await transaction.get(reviewRef);
+      const review = reviewSnap.data() || {};
+      if (!reviewSnap.exists || review.state !== 'pending' || review.rescanObjectPath !== text(request.body?.rescanObjectPath, 1024)) throw new Error('invalid-review');
+      const sensitiveRef = vaultRef(text(review.intakeId, 180));
+      const vaultSnap = await transaction.get(sensitiveRef);
+      const files = Array.isArray(vaultSnap.data()?.payrollIdFiles) ? vaultSnap.data().payrollIdFiles : [];
+      const index = files.findIndex(item => item?.path === review.path);
+      if (index < 0) throw new Error('missing-object');
+      const evidenceIdentity = normalizeObjectIdentity(request.body?.originalIdentity);
+      if (!sameObjectIdentity(evidenceIdentity, review.originalIdentity)
+          || text(request.body?.sha256, 64) !== evidenceIdentity.sha256) throw new Error('identity-mismatch');
+      files[index] = { ...files[index], falsePositiveReviewRequired: true, falsePositiveApproved: false, rescanEvidence: {
+        result: rescanResult, scannerPrincipal: process.env.PAL_TRUSTED_SCANNER_IDENTITY,
+        scannedAt, clamVersion: text(request.body?.clamVersion, 120), objectIdentity: evidenceIdentity } };
+      transaction.update(sensitiveRef, { payrollIdFiles: files, updatedAt: FieldValue.serverTimestamp() });
+      transaction.update(reviewRef, { rescanResult, rescanRecordedAt: FieldValue.serverTimestamp() });
+    });
+    return response.status(200).json({ status: 'recorded' });
+  } catch (_) {
+    return response.status(403).json({ error: 'rescan-evidence-rejected' });
+  }
 });
 
 exports.approveSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async request => {
