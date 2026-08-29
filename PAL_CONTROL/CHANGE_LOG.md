@@ -2,6 +2,16 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 3 Staging activation and rollback rehearsal
+
+- Coordinated the Production-impacting package with **00 — PAL CONTROL ROOM** and created branch `codex/security-package-3-maintenance`.
+- Inventoried Production Hosting, public/signed-in routes, Firestore/Storage paths, 12 active interactive Functions, two schedules, and one stale Function entry that returned 404. Deployed Firestore and Storage rule text matched source after line-ending normalization.
+- Built a static maintenance page, deny-all client rules, a no-secret backend endpoint coverage harness, a Production-targeted configuration that does not deploy Function code, and `PRODUCTION_MAINTENANCE_RUNBOOK.md`.
+- Tests: 59 core/static checks, 6 maintenance-rule emulator checks, and 12 maintenance-endpoint emulator checks passed.
+- Staging activation: all tested root, intake/project, old-link, and daily-access routes served identical protected maintenance content; anonymous Firestore access returned 403.
+- Rollback: normal Staging rules, Storage, and Hosting were restored; the normal Staging page and all 10 authorization emulator tests passed afterward.
+- Production impact: none. Production maintenance activation remains gated on the final tested commit, current IAM/schedule metadata capture, Control Room report, and John's approval of the exact two-hour action in the runbook.
+
 ## 2026-08-28 — Security program Package 2 completed
 
 - Result: **Passed PAL tests**. The isolated Staging project satisfies the Package 2 finish line for separate Firebase services, synthetic fixtures, environment guards, cost alerting, closed integrations/files, visible warnings, and authorization evidence.

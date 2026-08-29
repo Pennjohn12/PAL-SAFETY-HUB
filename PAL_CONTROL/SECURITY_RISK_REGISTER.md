@@ -66,8 +66,8 @@ PAL must protect employee identity, payroll, onboarding, safety, certification, 
 
 These are not confirmed vulnerabilities until evidence establishes the condition.
 
-- Checked-in Firestore and Storage rules have not been proven identical to the deployed Production revisions.
-- Deployed Function source has not been mapped conclusively to the current Git commit. An older `us-central1` `submitEmployeeFieldForm` entry is reported with `UNKNOWN` state in addition to the active `us-east1` deployment; callability and removal status require safe verification.
+- Deployed Production Firestore and Storage rule text matched the checked-in files after line-ending normalization on 2026-08-29. Rule release identifiers/history still require capture before a Production rule change.
+- Deployed Function source has not been mapped conclusively to the current Git commit. An older `us-central1` `submitEmployeeFieldForm` entry remains reported with `UNKNOWN` metadata, but its endpoint returned 404; the active `us-east1` endpoint returned the expected unauthenticated denial.
 - The Staging emulator suite covers ten core allow/deny cases, but it does not yet verify the complete anonymous/Employee/Foreman/Supervisor/Office/Admin, cross-project, Functions, and end-to-end workflow matrix.
 - Isolated Staging infrastructure and synthetic role fixtures exist. Emulator evidence identified registration-profile and synthetic-marker incompatibilities; both were repaired and deployed to Staging with regression coverage. Full interactive and cross-role workflow validation remains pending.
 - Staging Auth settings were audited and its password policy hardened. MFA, blocking functions, Auth activity logging, session-revocation behavior, and abuse protection still require decisions or testing; several require an Identity Platform upgrade.

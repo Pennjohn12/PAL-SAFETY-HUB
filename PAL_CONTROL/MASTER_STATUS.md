@@ -13,7 +13,7 @@ Last verified: **2026-08-28, America/New_York**
 - Production release time: `2026-08-28T18:01:25.005Z`
 - Deployment identity: `jvpanettiere@gmail.com`
 - Evidence: live `index.html`, `projects.html`, Firebase client configuration, `manifest.json`, and `sw.js` matched the Git blobs at the Production commit.
-- Boundary: Hosting verification does not independently prove deployed Functions or security-rule revisions.
+- Firestore and Storage rule text was compared read-only in the Firebase console on 2026-08-29 and matched the checked-in rules after line-ending normalization. Deployed Function source equivalence remains unverified.
 
 ## Current source and Git checkpoint
 
@@ -61,6 +61,7 @@ Present in current source and covered by current automated checks where noted:
 
 - Automated tests: **54 passed, 0 failed** on 2026-08-28.
 - Staging Firebase emulator authorization tests: **10 passed, 0 failed** on 2026-08-28. The added tests safely reproduced and regression-tested repairs for registration/profile and synthetic-marker incompatibilities without creating live credentials.
+- Package 3 maintenance tests: **5 static, 6 deny-all rule-emulator, and 12 endpoint-emulator tests passed** on 2026-08-29. Staging activation and rollback also passed.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
@@ -70,7 +71,7 @@ Present in current source and covered by current automated checks where noted:
 
 - Staging is established for synthetic security work; broad end-to-end workflow validation belongs to Package 14. Demo does not exist.
 - Production releases lack a built-in visible Git commit identifier; current mapping required content hashing.
-- Deployed Functions and rules need a separate evidence-backed revision comparison.
+- Deployed Functions need a separate evidence-backed source revision comparison; Firestore and Storage rule text now matches source.
 - Backup configuration is documented as active, but a current restore exercise is not verified here.
 - Stale remote `staging` and `chore/pal-governance` branches must not overwrite current `main`.
 
@@ -88,6 +89,7 @@ Present in current source and covered by current automated checks where noted:
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
 - Package 2 of 15, isolated Staging/Test environment: **Passed PAL tests** on 2026-08-28. The separate project has isolated Hosting, Auth, Firestore/PITR, hardened rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, synthetic identities/profiles/project data, 10 passing emulator tests, and a successful temporary-account live lifecycle with complete cleanup. MFA is tracked in Package 9, account/role lifecycle in Package 7, and broad workflow validation in Package 14.
+- Package 3 of 15, controlled Production maintenance mode: **In progress**. Layered Hosting, Firestore, Storage, Function-invocation, schedule-pause, communication, two-hour stop, and rollback controls are inventoried in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and 23 focused tests passed. Production is not in maintenance mode and awaits exact activation approval after the Control Room checkpoint.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.
