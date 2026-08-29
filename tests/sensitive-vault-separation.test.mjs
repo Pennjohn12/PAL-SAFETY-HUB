@@ -5,6 +5,8 @@ import test from 'node:test';
 const backend = fs.readFileSync(new URL('../functions-public-intake/index.js', import.meta.url), 'utf8');
 const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
 const retention = fs.readFileSync(new URL('../functions-public-intake/sensitive-vault-retention.js', import.meta.url), 'utf8');
+const firebaseClient = fs.readFileSync(new URL('../assets/js/config/pal-firebase.js', import.meta.url), 'utf8');
+const projects = fs.readFileSync(new URL('../projects.html', import.meta.url), 'utf8');
 
 test('new W-4 writes separate full data from ordinary intake completion state', () => {
   assert.match(backend, /transaction\.set\(sensitiveRef, \{ w4Form: updatedW4Form/);
@@ -54,6 +56,29 @@ test('false-positive rescan labels use the Cloud Storage copy option shape', () 
   const requestBlock = backend.slice(requestStart, callbackStart);
   assert.match(requestBlock, /contentType: currentIdentity\.contentType,\s+cacheControl: 'private, no-store, max-age=0',\s+metadata: \{\s+palFalsePositiveReviewId/);
   assert.doesNotMatch(requestBlock, /metadata: \{\s+contentType: currentIdentity\.contentType/);
+});
+
+test('Office protected-vault UI uses purpose-bound callables and never direct sensitive file links', () => {
+  assert.match(firebaseClient, /getSensitiveIntakeVaultV1Callable/);
+  assert.match(firebaseClient, /requestSensitiveIntakeDownloadV1Callable/);
+  assert.match(firebaseClient, /listSensitiveVaultApprovalsV1Callable/);
+  assert.match(projects, /Required business purpose/);
+  assert.match(projects, /requestSensitiveVaultDownload/);
+  assert.match(projects, /Approve as Independent Admin/);
+  assert.match(projects, /Sensitive payroll and identity files are intentionally excluded from printable\/exported packets/);
+  const payrollBlock = projects.slice(projects.indexOf('<strong>Protected Payroll / Identity Vault</strong>'), projects.indexOf('function sensitiveVaultPurpose'));
+  assert.doesNotMatch(payrollBlock, /newHireFileLinkHTML/);
+  assert.doesNotMatch(payrollBlock, /getDownloadURL/);
+});
+
+test('pending sensitive approval queue is Admin-only, bounded, and audited', () => {
+  const start = backend.indexOf('exports.listSensitiveVaultApprovalsV1');
+  const end = backend.indexOf('exports.requestSensitiveFalsePositiveReviewV1');
+  const block = backend.slice(start, end);
+  assert.match(block, /actor\.role !== 'admin'/);
+  assert.match(block, /where\('state', '==', 'pending'\)\.limit\(25\)/);
+  assert.match(block, /action: 'approval-queue'/);
+  assert.doesNotMatch(block, /requesterEmail/);
 });
 
 test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {

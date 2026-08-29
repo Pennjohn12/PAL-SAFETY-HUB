@@ -124,7 +124,7 @@ function notificationAudience(profiles = []) {
 }
 
 function auditEvent({ action, actorUid, actorEmail, actorEmailMasked, intakeId, objectPath, purpose, decision, correlationId, reason }) {
-  const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review', 'retention-delete', 'false-positive-review']);
+  const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review', 'retention-delete', 'false-positive-review', 'approval-queue']);
   const allowedDecisions = new Set(['allowed', 'denied', 'clean', 'infected', 'error', 'timeout', 'unsupported', 'manual-review']);
   const normalizedAction = boundedText(action, 40);
   const normalizedDecision = boundedText(decision, 40);

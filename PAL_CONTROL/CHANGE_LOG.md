@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 Office vault workflow prepared before Production proposal
+
+- Current-source inspection found a verified Production-readiness gap: the protected backend had passed synthetic tests, but the Office review screen still used the older generic payroll-file presentation and had no purpose-bound vault status, protected download, false-positive request, or independent approval queue.
+- Added a predeployment Office workflow that excludes sensitive files from printable packets, requires a stated business purpose, loads only server-authorized vault metadata, exposes downloads only through five-minute signed-release callables, supports locked false-positive requests, and clearly labels legacy entries unscanned/unavailable.
+- Added an Admin-only, server-side, 25-item bounded approval queue for protected downloads and false-positive reviews. The queue returns no requester email, remains inaccessible through Firestore rules, and writes a chained `approval-queue` audit event. Existing approval endpoints still enforce different-person approval and fail closed on incomplete, expired, or self-approved requests.
+- Functions/policy syntax, diff check, and all 93/93 PAL tests pass. This is local/predeployment only. Staging Hosting, the new queue callable, Production, IAM, scanner resources, real data, and cost were not changed.
+
 ## 2026-08-29 — Package 6 live false-positive release gate passed in Staging
 
 - With John's exact approval, focus-deployed only corrected `requestSensitiveFalsePositiveReviewV1` to isolated Staging. Deployment completed successfully; no IAM, scanner image, scan charge, credential, Production, or real-data change occurred.

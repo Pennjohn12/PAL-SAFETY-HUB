@@ -430,6 +430,28 @@ exports.approveSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request =
   return { status: 'approved' };
 });
 
+exports.listSensitiveVaultApprovalsV1 = onCall(VAULT_RUNTIME, async request => {
+  const actor = requireVaultActor(await officeActor(request.auth));
+  if (actor.role !== 'admin') throw new HttpsError('permission-denied', 'Only an Admin can review pending sensitive-file approvals.');
+  let purpose;
+  try { purpose = validatePurpose(request.data?.purpose); } catch (_) { throw new HttpsError('invalid-argument', 'A business purpose is required.'); }
+  const [downloads, falsePositives] = await Promise.all([
+    db.collection('sensitiveDownloadApprovals').where('state', '==', 'pending').limit(25).get(),
+    db.collection('sensitiveFalsePositiveReviews').where('state', '==', 'pending').limit(25).get()
+  ]);
+  const rows = [
+    ...downloads.docs.map(item => ({ id: item.id, kind: 'download', intakeId: text(item.data()?.intakeId, 180),
+      path: text(item.data()?.path, 1024), purpose: text(item.data()?.purpose, 500), requesterUid: text(item.data()?.requesterUid, 180),
+      requestedAt: item.data()?.createdAt?.toDate?.().toISOString?.() || '', expiresAt: item.data()?.expiresAt?.toDate?.().toISOString?.() || '' })),
+    ...falsePositives.docs.map(item => ({ id: item.id, kind: 'false-positive', intakeId: text(item.data()?.intakeId, 180),
+      path: text(item.data()?.path, 1024), purpose: text(item.data()?.purpose, 500), requesterUid: text(item.data()?.requesterUid, 180),
+      requestedAt: text(item.data()?.requestedAt, 40), expiresAt: '' }))
+  ].filter(item => item.intakeId && item.path && item.requesterUid);
+  await writeVaultAudit({ action: 'approval-queue', actorUid: actor.uid, actorEmail: actor.email, intakeId: 'approval-queue',
+    purpose, decision: 'allowed', correlationId: crypto.randomUUID(), reason: `pending-items-${rows.length}` });
+  return { approvals: rows };
+});
+
 exports.requestSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async request => {
   const actor = requireVaultActor(await officeActor(request.auth));
   const intakeId = text(request.data?.intakeId, 180);

@@ -312,3 +312,20 @@ This plan closes the design question without inspecting or changing any real rec
 The approved default is therefore **no existing-data migration**. This satisfies the Package 6 planning gate while keeping every real-data action separately approval-gated.
 
 The stored-event verifier correction does not require a separate Staging runtime deployment: deployed writers already create the same masked fields and hashes, while the correction enables offline verification of those stored fields. It will remain part of the exact tested source for any later approved Production deployment.
+
+## Office workflow gap and predeployment correction
+
+Read-only Production inventory verified zero Package 6 Functions, scanner services, and Package 6 schedules. Current-client inspection also found that the Office onboarding modal did not invoke any Package 6 callable. Its older generic file renderer could not provide purpose-bound vault status, signed release, false-positive review, or a discoverable independent-approval workflow. Printable onboarding packets also had a payroll/ID file table, which is inappropriate for version-2 sensitive objects even if current separated records no longer populate that legacy field.
+
+The local correction adds the missing end-user security boundary:
+
+- Printable/exported packets contain no sensitive-file link or filename table; they direct authorized staff back to the protected vault.
+- Office must enter a specific business purpose before loading vault metadata or requesting a download/review.
+- Version-2 files display only fail-closed scan/review status. The browser never calls Storage download APIs for them; it receives a five-minute generation-bound URL only after the server authorizes the request.
+- Social Security-card and driver-license requests continue to require a different Admin. A new Admin-only callable lists at most 25 pending download/false-positive approvals, returns no requester email, and creates a chained queue-access audit event. Direct Firestore access stays denied.
+- Legacy payroll entries are labeled unscanned and cannot be opened through the protected release path. The no-migration policy is unchanged.
+- False-positive controls remain locked until exact clean rescan evidence and a different Admin approval; early, expired, incomplete, and self-approval attempts fail closed in the existing endpoints.
+
+Static regressions verify callable wiring, purpose prompts, no direct sensitive links, no sensitive printable table, Admin-only bounded queue access, and audit coverage. Functions/policy syntax, diff check, and the full suite pass 93/93.
+
+This work is local/predeployment. Before an exact Production proposal, Staging must deploy only the new queue callable and the Staging client, then use synthetic entitled Office/Admin accounts to verify denied non-entitled access, purpose enforcement, clean non-identity download, two-person identity download, false-positive queue timing, same-person denial, exact bytes/expiry, audit/redaction, popup/error behavior, and cleanup. No Production, real data, IAM, scanner image, or cost action is authorized by this design.

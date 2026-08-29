@@ -4231,7 +4231,13 @@
     getPublicIntakeV2Callable,
     updatePublicIntakeV2Callable,
     createPublicIntakeUploadV2Callable,
-    finalizePublicIntakeUploadV2Callable
+    finalizePublicIntakeUploadV2Callable,
+    getSensitiveIntakeVaultV1Callable,
+    requestSensitiveIntakeDownloadV1Callable,
+    approveSensitiveIntakeDownloadV1Callable,
+    requestSensitiveFalsePositiveReviewV1Callable,
+    approveSensitiveFalsePositiveReviewV1Callable,
+    listSensitiveVaultApprovalsV1Callable
   } from "./assets/js/config/pal-firebase.js?v=2026-08-29-public-intake-v2";
   import { PAL_IS_STAGING } from "./assets/js/config/pal-environment.js";
   import {
@@ -4600,6 +4606,11 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveNewHireCertUploads = saveNewHireCertUploads;
   window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
   window.openNewHireStoredFile = openNewHireStoredFile;
+  window.loadSensitiveVaultForReview = loadSensitiveVaultForReview;
+  window.requestSensitiveVaultDownload = requestSensitiveVaultDownload;
+  window.requestSensitiveFalsePositiveReview = requestSensitiveFalsePositiveReview;
+  window.loadSensitiveApprovalQueue = loadSensitiveApprovalQueue;
+  window.approveSensitiveQueueItem = approveSensitiveQueueItem;
   window.finalSubmitPublicNewHirePacket = finalSubmitPublicNewHirePacket;
   window.openExtraWorkTicketModal = openExtraWorkTicketModal;
   window.openProjectTicketModal = openProjectTicketModal;
@@ -14005,7 +14016,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </section>
     <section>
       <h2>Payroll / ID Uploads</h2>
-      <table><thead><tr><th>Type</th><th>File</th><th>Uploaded</th></tr></thead><tbody>${fileRows(x.payrollIdFiles || [])}</tbody></table>
+      <p class="note">Sensitive payroll and identity files are intentionally excluded from printable/exported packets. Authorized Office review must use the purpose-bound protected vault inside PAL.</p>
     </section>
   </div>
 </body>
@@ -14127,9 +14138,12 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">${newHireFileLinkHTML(f, 'Certification File')}</div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
     </div>
     <div class="newhire-upload-list" style="margin-top:12px;">
-      <strong>Payroll / ID Uploads</strong>
-      <div class="helper-text" style="margin:4px 0 8px;">Office-sensitive onboarding documents uploaded by the employee.</div>
-      ${(x.payrollIdFiles || []).length ? (x.payrollIdFiles || []).map(f => `<div class="newhire-upload-item">${esc(f.type || 'Payroll / ID Document')}: ${newHireFileLinkHTML(f, 'Uploaded Document')}</div>`).join('') : '<div class="helper-text">No payroll/ID documents uploaded yet.</div>'}
+      <strong>Protected Payroll / Identity Vault</strong>
+      <div class="helper-text" style="margin:4px 0 8px;">Files are never opened directly. Enter a business purpose to load status or request a short-lived protected download.</div>
+      <div class="field" style="margin:8px 0;"><label for="sensitive-vault-purpose">Required business purpose</label><input id="sensitive-vault-purpose" maxlength="500" placeholder="Example: Verify identity documents for approved onboarding"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-sm" type="button" onclick="loadSensitiveVaultForReview()">Load Protected File Status</button>${isAdminRole() ? '<button class="btn-sm" type="button" onclick="loadSensitiveApprovalQueue()">Review Pending Approvals</button>' : ''}</div>
+      <div id="sensitive-vault-files" class="helper-text" style="margin-top:10px;">Protected files have not been loaded.</div>
+      ${Array.isArray(x.payrollIdFiles) && x.payrollIdFiles.length ? '<div class="helper-text" style="margin-top:10px;color:#92400e;">Legacy payroll/ID entries are unscanned and cannot use the protected release path. No legacy file was opened.</div>' : ''}
     </div>`;
     const input = document.getElementById('newhire-cert-upload'); if (input) input.value = '';
     const payrollVerifyButton = document.getElementById('verify-existing-payroll-btn');
@@ -14137,6 +14151,121 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       payrollVerifyButton.style.display = x.existingEmployeePayrollDocsOnFile ? 'none' : '';
     }
     document.getElementById('modal-newhire-review')?.classList.add('open');
+  }
+
+  function sensitiveVaultPurpose() {
+    return String(document.getElementById('sensitive-vault-purpose')?.value || '').trim();
+  }
+
+  function requireSensitiveVaultPurpose() {
+    const purpose = sensitiveVaultPurpose();
+    if (purpose.length < 12) {
+      toast('Enter a specific business purpose before accessing the protected vault.');
+      return '';
+    }
+    return purpose;
+  }
+
+  function sensitiveVaultFileStatus(file) {
+    const state = String(file?.malwareScanStatus || 'unknown').toLowerCase();
+    if (state === 'clean' && file?.falsePositiveReviewRequired !== true) return 'Verified clean — protected download available';
+    if (state === 'clean' && file?.falsePositiveApproved === true) return 'Verified clean — independently approved false-positive release';
+    if (state === 'pending' || state === 'scanning') return 'Scanning in progress — locked';
+    if (['infected','manual-review','unsupported','error','timeout'].includes(state)) return `${state.replace('-', ' ')} — locked for review`;
+    return 'Not verified clean — locked';
+  }
+
+  function renderSensitiveVaultFiles(files = []) {
+    const target = document.getElementById('sensitive-vault-files');
+    if (!target) return;
+    if (!files.length) {
+      target.innerHTML = '<div class="helper-text">No version-2 protected payroll/identity files are recorded for this intake.</div>';
+      return;
+    }
+    target.innerHTML = files.map((file, index) => {
+      const path = encodeURIComponent(String(file?.path || '')).replace(/'/g, '%27');
+      const state = String(file?.malwareScanStatus || 'unknown').toLowerCase();
+      const canRequest = state === 'clean' && (file?.falsePositiveReviewRequired !== true || file?.falsePositiveApproved === true);
+      const canReview = ['infected','manual-review','unsupported','error','timeout'].includes(state);
+      return `<div class="newhire-upload-item"><strong>${esc(file?.type || file?.name || `Protected file ${index + 1}`)}</strong><div class="helper-text">${esc(sensitiveVaultFileStatus(file))}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">${canRequest ? `<button class="btn-sm" type="button" onclick="requestSensitiveVaultDownload('${path}')">Request Protected Download</button>` : ''}${canReview ? `<button class="btn-sm" type="button" onclick="requestSensitiveFalsePositiveReview('${path}')">Request False-Positive Review</button>` : ''}</div></div>`;
+    }).join('');
+  }
+
+  async function loadSensitiveVaultForReview() {
+    if (!currentUser || !isOfficeRole()) return toast('Authorized Office sign-in is required.');
+    const purpose = requireSensitiveVaultPurpose();
+    const intake = currentReviewIntake();
+    if (!purpose || !intake) return;
+    try {
+      const result = await getSensitiveIntakeVaultV1Callable({ intakeId: intake.id, purpose });
+      renderSensitiveVaultFiles(result.data?.vault?.payrollIdFiles || []);
+    } catch (error) {
+      console.error('Protected vault status failed', error);
+      renderSensitiveVaultFiles([]);
+      toast('Protected file status is unavailable or your account is not entitled.');
+    }
+  }
+
+  async function requestSensitiveVaultDownload(encodedPath) {
+    const purpose = requireSensitiveVaultPurpose();
+    const intake = currentReviewIntake();
+    if (!purpose || !intake) return;
+    try {
+      const result = await requestSensitiveIntakeDownloadV1Callable({ intakeId: intake.id, path: decodeURIComponent(encodedPath), purpose });
+      if (result.data?.status === 'approval-required') {
+        toast(`A different Admin must approve request ${result.data.approvalId}.`);
+        return loadSensitiveApprovalQueue();
+      }
+      if (result.data?.status !== 'authorized' || !result.data?.url) throw new Error('not-authorized');
+      const popup = window.open(result.data.url, '_blank', 'noopener');
+      if (!popup) toast('Popup blocked. Allow popups and request the protected download again.');
+    } catch (error) {
+      console.error('Protected download failed', error);
+      toast('The file remains locked. Confirm it is clean, approved when required, and your purpose is valid.');
+    }
+  }
+
+  async function requestSensitiveFalsePositiveReview(encodedPath) {
+    const purpose = requireSensitiveVaultPurpose();
+    const intake = currentReviewIntake();
+    if (!purpose || !intake) return;
+    try {
+      await requestSensitiveFalsePositiveReviewV1Callable({ intakeId: intake.id, path: decodeURIComponent(encodedPath), purpose });
+      toast('Independent rescan requested. The file remains locked until a clean result and different Admin approval.');
+      await loadSensitiveVaultForReview();
+    } catch (error) {
+      console.error('False-positive review request failed', error);
+      toast('The review could not be started. The file remains locked.');
+    }
+  }
+
+  async function loadSensitiveApprovalQueue() {
+    if (!isAdminRole()) return toast('Only an Admin can review protected approval requests.');
+    const purpose = requireSensitiveVaultPurpose();
+    if (!purpose) return;
+    const target = document.getElementById('sensitive-vault-files');
+    try {
+      const result = await listSensitiveVaultApprovalsV1Callable({ purpose });
+      const rows = result.data?.approvals || [];
+      if (!rows.length) return void (target.innerHTML = '<div class="helper-text">No pending protected-file approvals.</div>');
+      target.innerHTML = rows.map(row => `<div class="newhire-upload-item"><strong>${row.kind === 'download' ? 'Protected download approval' : 'False-positive release approval'}</strong><div class="helper-text">Intake: ${esc(row.intakeId)}<br>Purpose: ${esc(row.purpose)}<br>File: ${esc(String(row.path || '').split('/').pop())}</div><button class="btn-sm" type="button" onclick="approveSensitiveQueueItem('${esc(row.kind)}','${esc(row.id)}')">Approve as Independent Admin</button></div>`).join('');
+    } catch (error) {
+      console.error('Protected approval queue failed', error);
+      toast('The protected approval queue is unavailable or your account is not authorized.');
+    }
+  }
+
+  async function approveSensitiveQueueItem(kind, approvalId) {
+    if (!isAdminRole()) return toast('Only an Admin can approve this request.');
+    try {
+      const callable = kind === 'false-positive' ? approveSensitiveFalsePositiveReviewV1Callable : approveSensitiveIntakeDownloadV1Callable;
+      await callable({ [kind === 'false-positive' ? 'reviewId' : 'approvalId']: approvalId });
+      toast('Independent approval recorded. The original requester must request the protected download again.');
+      await loadSensitiveApprovalQueue();
+    } catch (error) {
+      console.error('Protected approval failed', error);
+      toast('Approval was denied. The same requester cannot approve their own request, and expired or incomplete requests remain locked.');
+    }
   }
 
   async function verifyExistingEmployeePayrollDocs(id = currentNewHireReviewId) {
