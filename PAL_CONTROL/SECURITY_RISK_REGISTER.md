@@ -62,7 +62,9 @@ PAL must protect employee identity, payroll, onboarding, safety, certification, 
 | PAL-SEC-009 | Medium | Production lacks a Content Security Policy. The bare root URL also receives a one-hour cache policy and lacks the configured frame and permissions headers, while explicit HTML paths receive them. | Live response-header inspection and `firebase.json` | Package 11: deploy and verify a compatible CSP and consistent security/cache headers after Staging validation. |
 | PAL-SEC-010 | Medium | Production dependency audit reports four high, two moderate, and one low transitive advisories. Exploitability in PAL's execution paths is not yet established. | `pnpm --dir functions audit --prod` on 2026-08-28 | Package 10/14: update in isolation, review breaking changes, retest Functions, and document residual advisories. |
 
-Package 4 treatment for `PAL-SEC-004` passed isolated PAL tests and was activated in Production with John's explicit approval on 2026-08-29. Direct public Firestore intake access is denied; expiring packet-bound server actions are active; completed, revoked, expired, guessed, cross-packet, and ID-only access fails closed. The historical condition remains listed above for traceability. Package 5 upload authorization and Package 6 sensitive-data separation remain open.
+Package 4 treatment for `PAL-SEC-004` passed isolated PAL tests and was activated in Production with John's explicit approval on 2026-08-29. Direct public Firestore intake access is denied; expiring packet-bound server actions are active; completed, revoked, expired, guessed, cross-packet, and ID-only access fails closed. The historical condition remains listed above for traceability. Package 6 sensitive-data separation remains open.
+
+Package 5 treatment for `PAL-SEC-003` passed isolated PAL tests on 2026-08-29 and is live only in Staging. Production anonymous intake Storage writes remain open until John approves the exact cutover. The tested treatment uses single-file grants and inaccessible quarantine; it does not claim malware scanning or migrate existing files.
 
 ## Verification gaps
 

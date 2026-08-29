@@ -6,15 +6,19 @@ const appSource = readFileSync(new URL('../projects.html', import.meta.url), 'ut
 const firestoreRules = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
 const storageRules = readFileSync(new URL('../storage.rules', import.meta.url), 'utf8');
 
+assert.match(functionsSource, /exports\.createPublicIntakeUploadV2 = onCall/, 'backend must issue a narrow single-file upload grant');
 assert.match(functionsSource, /exports\.finalizePublicIntakeUploadV2 = onCall/, 'token-bound backend finalizer must be deployed as a callable function');
 assert.match(functionsSource, /file\.getMetadata\(\)/, 'backend must verify the stored object before attaching it');
-assert.match(functionsSource, /item\?\.path !== path/, 'backend must replace duplicate file paths idempotently');
+assert.match(functionsSource, /grant\.path/, 'backend must use its own grant-bound quarantine path');
 assert.match(functionsSource, /CLOSED_STATUSES/, 'approved and archived packets must reject employee file changes');
-assert.match(appSource, /uploadBytesResumable\(/, 'intake uploads must use resumable transfer');
+assert.match(appSource, /createPublicIntakeUploadV2Callable\(/, 'the browser must request a one-file backend grant before uploading');
+assert.match(appSource, /request\.open\('PUT', uploadUrl\)/, 'the browser must upload only through the server-created resumable URL');
 assert.match(appSource, /finalizePublicIntakeUploadV2Callable\(/, 'each upload must be confirmed by the token-bound backend');
-assert.match(appSource, /stableNewHireUploadName\(/, 'retrying the same file must use a stable path');
+assert.doesNotMatch(appSource, /newHireIntakes\/\$\{publicNewHireIntakeId\}\/\$\{folder\}/, 'the public browser must not choose a direct Storage path');
 assert.match(functionsSource, /update\.certUploadNotes = notes/, 'cert notes must save in the backend transaction');
 assert.match(functionsSource, /update\.payrollIdNotes = notes/, 'payroll notes must save in the backend transaction');
+assert.match(storageRules, /allow write: if isOffice\(\) && isSafeUpload/, 'public intake Storage writes must require Office access');
+assert.match(storageRules, /match \/quarantine\/newHireIntakes[\s\S]*?allow read, write, delete: if false/, 'quarantine must be closed to every browser');
 assert.match(functionsSource, /UPLOAD_EXTENSIONS/, 'backend must verify file extensions against content types');
 assert.match(functionsSource, /CERT_LABELS/, 'backend must allow only known certification categories');
 assert.doesNotMatch(appSource, /submitPublicNewHireIntake/, 'obsolete direct public uploader must remain removed');

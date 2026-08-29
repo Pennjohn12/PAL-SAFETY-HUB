@@ -100,16 +100,17 @@ service firebase.storage {
     }
 
     match /newHireIntakes/{intakeId}/{folder}/{fileName} {
-      // Public intake upload links use unguessable intake IDs.
       allow read: if isOffice();
-      allow write: if (
-        isOffice() ||
-        folder in [
-          'certUploads',
-          'payrollIdUploads'
-        ]
-      ) && isSafeUpload(25 * 1024 * 1024);
+      // Public intake uploads use server-created, one-file resumable grants and
+      // never receive direct client Storage permission.
+      allow write: if isOffice() && isSafeUpload(25 * 1024 * 1024);
       allow delete: if false;
+    }
+
+    match /quarantine/newHireIntakes/{intakeId}/{folder}/{fileName} {
+      // Quarantined public files are inaccessible to every browser, including
+      // Office. Only trusted backend validation/cleanup may touch this path.
+      allow read, write, delete: if false;
     }
 
     match /{allPaths=**} {

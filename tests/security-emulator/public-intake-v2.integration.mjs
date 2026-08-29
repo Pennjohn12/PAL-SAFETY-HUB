@@ -1,18 +1,34 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { createRequire } from 'node:module';
 import test, { after, before } from 'node:test';
 import { initializeTestEnvironment, assertFails } from '@firebase/rules-unit-testing';
 import { doc, getDoc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { ref as storageRef, uploadBytes } from 'firebase/storage';
+
+const require = createRequire(new URL('../../functions-public-intake/package.json', import.meta.url));
+const { initializeApp, deleteApp } = require('firebase-admin/app');
+const { getStorage } = require('firebase-admin/storage');
+const { getFirestore: getAdminFirestore, Timestamp: AdminTimestamp, FieldValue } = require('firebase-admin/firestore');
+const { cleanupExpiredUploads } = require('./upload-cleanup');
 
 const projectId = process.env.GCLOUD_PROJECT || 'pal-safety-hub-staging';
 const functionUrl = name => `http://127.0.0.1:5006/${projectId}/us-central1/${name}`;
 let env;
+let adminApp;
 
 function tokenHash(token) { return crypto.createHash('sha256').update(token).digest('hex'); }
 async function call(name, data) {
   const response = await fetch(functionUrl(name), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ data }) });
   const body = await response.json();
   return { status: response.status, body };
+}
+async function saveGrantedObject(grant, bytes, contentType = grant.contentType) {
+  const bucket = getStorage(adminApp).bucket();
+  await bucket.file(grant.path).save(bytes, {
+    resumable: false,
+    metadata: { contentType, metadata: { palUploadAuthorization: grant.authorizationId, palSecurityStatus: 'quarantine' } }
+  });
 }
 async function seed(id, token, overrides = {}) {
   await env.withSecurityRulesDisabled(async context => {
@@ -24,8 +40,11 @@ async function seed(id, token, overrides = {}) {
   });
 }
 
-before(async () => { env = await initializeTestEnvironment({ projectId, firestore: { host: '127.0.0.1', port: 8086 } }); });
-after(async () => { await env?.cleanup(); });
+before(async () => {
+  env = await initializeTestEnvironment({ projectId, firestore: { host: '127.0.0.1', port: 8086 }, storage: { host: '127.0.0.1', port: 9198 } });
+  adminApp = initializeApp({ projectId, storageBucket: `${projectId}.firebasestorage.app` }, `public-intake-upload-${Date.now()}`);
+});
+after(async () => { await env?.cleanup(); if (adminApp) await deleteApp(adminApp); });
 
 test('anonymous clients cannot directly read or update an intake by document ID', async () => {
   await seed('synthetic-direct-deny', 'direct-token');
@@ -69,4 +88,63 @@ test('server allows a narrow update and submission permanently blocks replay', a
 test('link issuance is never anonymous', async () => {
   await seed('synthetic-issue', 'old-token');
   assert.notEqual((await call('issuePublicIntakeAccessV2', { intakeId: 'synthetic-issue' })).status, 200);
+});
+
+test('direct public Storage writes are denied even with a valid packet ID', async () => {
+  const storage = env.unauthenticatedContext().storage(`${projectId}.appspot.com`);
+  await assertFails(uploadBytes(storageRef(storage, 'newHireIntakes/synthetic-direct-deny/certUploads/guess.pdf'), new Uint8Array([0x25,0x50,0x44,0x46,0x2d]), { contentType: 'application/pdf' }));
+  await assertFails(uploadBytes(storageRef(storage, 'quarantine/newHireIntakes/synthetic-direct-deny/certUploads/guess.pdf'), new Uint8Array([0x25,0x50,0x44,0x46,0x2d]), { contentType: 'application/pdf' }));
+});
+
+test('single-file grant is packet-bound, quarantined, and cannot be replayed', async () => {
+  const id = 'synthetic-upload-valid'; const token = 'upload-valid-token';
+  await seed(id, token);
+  const created = await call('createPublicIntakeUploadV2', { intakeId: id, token, folder: 'certUploads', name: 'synthetic.pdf', type: 'OSHA 30 / OSHA 10', contentType: 'application/pdf', size: 9 });
+  assert.equal(created.status, 200);
+  const grant = created.body.result;
+  assert.match(grant.uploadUrl, /^emulator:/);
+  await saveGrantedObject(grant, Buffer.from('%PDF-1.7\n'));
+  assert.notEqual((await call('finalizePublicIntakeUploadV2', { intakeId: 'synthetic-other-packet', token, authorizationId: grant.authorizationId, grantToken: grant.grantToken })).status, 200);
+  const finalized = await call('finalizePublicIntakeUploadV2', { intakeId: id, token, authorizationId: grant.authorizationId, grantToken: grant.grantToken });
+  assert.equal(finalized.status, 200);
+  assert.equal(finalized.body.result.record.securityStatus, 'quarantined');
+  assert.equal(finalized.body.result.record.downloadable, false);
+  assert.notEqual((await call('finalizePublicIntakeUploadV2', { intakeId: id, token, authorizationId: grant.authorizationId, grantToken: grant.grantToken })).status, 200);
+});
+
+test('mismatched file signature is rejected and removed', async () => {
+  const id = 'synthetic-upload-signature'; const token = 'upload-signature-token';
+  await seed(id, token);
+  const created = await call('createPublicIntakeUploadV2', { intakeId: id, token, folder: 'certUploads', name: 'synthetic.pdf', type: 'SST Card', contentType: 'application/pdf', size: 9 });
+  assert.equal(created.status, 200);
+  const grant = created.body.result;
+  await saveGrantedObject(grant, Buffer.from('NOTPDF123'));
+  assert.notEqual((await call('finalizePublicIntakeUploadV2', { intakeId: id, token, authorizationId: grant.authorizationId, grantToken: grant.grantToken })).status, 200);
+  const [exists] = await getStorage(adminApp).bucket().file(grant.path).exists();
+  assert.equal(exists, false);
+});
+
+test('expired grants and folder or size mismatches fail closed', async () => {
+  const id = 'synthetic-upload-expired'; const token = 'upload-expired-token';
+  await seed(id, token);
+  assert.notEqual((await call('createPublicIntakeUploadV2', { intakeId: id, token, folder: 'wrong', name: 'synthetic.pdf', type: 'SST Card', contentType: 'application/pdf', size: 9 })).status, 200);
+  assert.notEqual((await call('createPublicIntakeUploadV2', { intakeId: id, token, folder: 'certUploads', name: 'synthetic.pdf', type: 'SST Card', contentType: 'application/pdf', size: 30 * 1024 * 1024 })).status, 200);
+  const created = await call('createPublicIntakeUploadV2', { intakeId: id, token, folder: 'certUploads', name: 'synthetic.pdf', type: 'SST Card', contentType: 'application/pdf', size: 9 });
+  const grant = created.body.result;
+  await saveGrantedObject(grant, Buffer.from('%PDF-1.7\n'));
+  await env.withSecurityRulesDisabled(async context => updateDoc(doc(context.firestore(), 'publicIntakeUploadAuthorizations', grant.authorizationId), { expiresAt: Timestamp.fromMillis(Date.now() - 1000) }));
+  assert.notEqual((await call('finalizePublicIntakeUploadV2', { intakeId: id, token, authorizationId: grant.authorizationId, grantToken: grant.grantToken })).status, 200);
+});
+
+test('scheduled cleanup removes abandoned completed objects for expired grants', async () => {
+  const id = 'synthetic-upload-cleanup'; const token = 'upload-cleanup-token';
+  await seed(id, token);
+  const created = await call('createPublicIntakeUploadV2', { intakeId: id, token, folder: 'certUploads', name: 'synthetic.pdf', type: 'SST Card', contentType: 'application/pdf', size: 9 });
+  const grant = created.body.result;
+  await saveGrantedObject(grant, Buffer.from('%PDF-1.7\n'));
+  await env.withSecurityRulesDisabled(async context => updateDoc(doc(context.firestore(), 'publicIntakeUploadAuthorizations', grant.authorizationId), { expiresAt: Timestamp.fromMillis(Date.now() - 1000) }));
+  const removed = await cleanupExpiredUploads({ db: getAdminFirestore(adminApp), bucket: getStorage(adminApp).bucket(), Timestamp: AdminTimestamp, FieldValue });
+  assert.ok(removed >= 1);
+  const [exists] = await getStorage(adminApp).bucket().file(grant.path).exists();
+  assert.equal(exists, false);
 });

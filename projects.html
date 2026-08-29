@@ -4210,7 +4210,7 @@
 <script type="module">
   import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { collection, collectionGroup, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, Timestamp, query, orderBy, onSnapshot, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import { PAL_TRANSLATIONS } from "./assets/js/pal-translations.js?v=2026-08-19-spanish-orientation-video";
   import {
     PAL_ADMIN_EMAILS,
@@ -4230,6 +4230,7 @@
     issuePublicIntakeAccessV2Callable,
     getPublicIntakeV2Callable,
     updatePublicIntakeV2Callable,
+    createPublicIntakeUploadV2Callable,
     finalizePublicIntakeUploadV2Callable
   } from "./assets/js/config/pal-firebase.js?v=2026-08-29-public-intake-v2";
   import { PAL_IS_STAGING } from "./assets/js/config/pal-environment.js";
@@ -13110,6 +13111,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   function newHireFileLinkHTML(file, fallbackLabel = 'Uploaded File') {
     const label = esc(file?.name || fallbackLabel);
+    if (file?.securityStatus === 'quarantined' || file?.malwareScanStatus === 'pending' || file?.downloadable === false) {
+      return `${label} <span class="muted">(secured in quarantine — not available to open)</span>`;
+    }
     if (file?.url) return `<a href="${esc(file.url)}" target="_blank" rel="noopener">${label}</a>`;
     if (!file?.path) return label;
     const encodedPath = encodeURIComponent(String(file.path)).replace(/'/g, '%27');
@@ -13133,16 +13137,9 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
   }
 
-  function stableNewHireUploadName(file, label) {
-    const identity = `${Number(file?.size || 0)}_${Number(file?.lastModified || 0)}`;
-    const safeLabel = label.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const safeFile = String(file?.name || 'upload').replace(/[^a-zA-Z0-9._-]/g, '_');
-    return `${identity}_${safeLabel}_${safeFile}`;
-  }
-
-  function uploadNewHireFileResumable(storageRef, file, metadata, onProgress) {
+  function uploadNewHireFileResumable(uploadUrl, file, contentType, onProgress) {
     return new Promise((resolve, reject) => {
-      const task = uploadBytesResumable(storageRef, file, metadata);
+      const request = new XMLHttpRequest();
       let lastPercent = 0;
       let stallTimer = null;
       const armStallNotice = () => {
@@ -13150,19 +13147,24 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         stallTimer = setTimeout(() => onProgress?.(lastPercent, { stalled: true }), 15000);
       };
       armStallNotice();
-      task.on('state_changed', snapshot => {
-        const total = Number(snapshot.totalBytes || 0);
-        const percent = total ? Math.round((Number(snapshot.bytesTransferred || 0) / total) * 100) : 0;
+      request.upload.addEventListener('progress', event => {
+        const percent = event.lengthComputable ? Math.round((event.loaded / event.total) * 100) : lastPercent;
         lastPercent = percent;
         onProgress?.(percent, { stalled: false });
         armStallNotice();
-      }, error => {
-        clearTimeout(stallTimer);
-        reject(error);
-      }, () => {
-        clearTimeout(stallTimer);
-        resolve(task.snapshot);
       });
+      request.addEventListener('error', () => {
+        clearTimeout(stallTimer);
+        reject(new Error('The secure upload connection failed.'));
+      });
+      request.addEventListener('load', () => {
+        clearTimeout(stallTimer);
+        if (request.status >= 200 && request.status < 300) resolve({ status: request.status });
+        else reject(new Error(`PAL secure storage rejected the upload (${request.status}).`));
+      });
+      request.open('PUT', uploadUrl);
+      request.setRequestHeader('Content-Type', contentType);
+      request.send(file);
     });
   }
 
@@ -13190,20 +13192,34 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     if (!file) return null;
     const fileError = validateNewHireUploadFile(file);
     if (fileError) throw new Error(`${label}: ${fileError}`);
-    const safeName = stableNewHireUploadName(file, label);
-    const path = `newHireIntakes/${publicNewHireIntakeId}/${folder}/${safeName}`;
-    const storageRef = ref(storage, path);
-    await uploadNewHireFileResumable(storageRef, file, newHireUploadMetadata(file), onProgress);
+    const metadata = newHireUploadMetadata(file);
+    let authorization;
+    try {
+      const created = await createPublicIntakeUploadV2Callable({
+        intakeId: publicNewHireIntakeId,
+        token: publicNewHireAccessToken,
+        folder,
+        name: file.name,
+        type: label,
+        contentType: metadata.contentType,
+        size: Number(file.size || 0)
+      });
+      authorization = created?.data;
+      if (!authorization?.uploadUrl || !authorization?.authorizationId || !authorization?.grantToken) throw new Error('PAL did not return a complete secure upload grant.');
+      await uploadNewHireFileResumable(authorization.uploadUrl, file, authorization.contentType || metadata.contentType, onProgress);
+    } catch (error) {
+      const taggedError = new Error(error?.message || 'PAL secure upload could not be completed.');
+      taggedError.code = error?.code || '';
+      taggedError.palUploadStage = 'upload';
+      taggedError.cause = error;
+      throw taggedError;
+    }
     let result;
     try {
       result = await confirmPublicIntakeUpload({
         intakeId: publicNewHireIntakeId,
-        folder,
-        path,
-        name: file.name,
-        type: label,
-        contentType: newHireUploadMetadata(file).contentType,
-        size: Number(file.size || 0),
+        authorizationId: authorization.authorizationId,
+        grantToken: authorization.grantToken,
         expirationDate,
         notes
       });

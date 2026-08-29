@@ -19,7 +19,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 | 2 | Isolated Staging/Test environment | Passed PAL tests | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
 | 3 | Controlled Production maintenance mode | Passed PAL tests | John approved the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented and Production activation is verified. |
 | 4 | Secure public orientation/intake access | Passed PAL tests | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
-| 5 | Secure sensitive-upload authorization | Not started | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
+| 5 | Secure sensitive-upload authorization | Passed PAL tests | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
 | 6 | Separate sensitive payroll/identity vault | Not started | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, and access evidence are approved and tested. |
 | 7 | Controlled account and role creation | Not started | Self-registration can create only an unverified, unlinked Employee account; Foreman, Supervisor, Office, Admin, disabled state, and role changes require authorized server/admin workflow and revocation tests. |
 | 8 | Verified identity and employee linking | Not started | Email ownership is verified and an office-controlled link is required before private employee records, certifications, projects, onboarding, or history are returned. |
@@ -33,8 +33,8 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 
 ## Current program position
 
-- Completed: **4 of 15** packages at the PAL internal-assessment level.
-- In progress: **None**. Package 5 is next and requires separately scoped implementation work.
+- Completed: **5 of 15** packages at the PAL internal-assessment level.
+- In progress: **None**. Package 6 is next and requires separately scoped implementation work.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **Package 4 exact cutover was approved and completed; no further Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
@@ -100,3 +100,15 @@ The default sequence is Package 2 (Staging), then an explicitly authorized Packa
 - No real PAL record, account, credential, or file was opened or modified. Staging Storage remains closed; the remaining raw upload authorization boundary belongs to Package 5.
 - Existing Production ID-only links require replacement after cutover. No Production deployment or real-record migration is authorized. Exact behavior, migration, later-package boundaries, proposed deployment, and rollback are recorded in `PUBLIC_INTAKE_SECURITY_V2.md`.
 - Package 4 finish line: **Passed PAL tests on 2026-08-29**. John approved the exact commit and acknowledged that existing ID-only links require replacement; the four Functions, Hosting client, and hardened Firestore rules are active in Production.
+
+## Package 5 verified progress
+
+- Direct anonymous intake Storage writes are removed in the tested rules. Public browsers must obtain a 15-minute, single-file backend grant bound to packet, folder, backend-selected quarantine path, label, extension, content type, and byte size.
+- Finalization requires a separate grant secret and verifies token state, expiry, replay, binding, stored metadata, exact size/type, and file signature. Mismatches are rejected and their completed object is deleted.
+- Accepted files remain browser-inaccessible quarantine with explicit pending-malware status; the system does not claim that file-signature checks are malware scanning.
+- Abuse limits enforce 25 MiB per file, 12 files and 100 MiB saved data per packet, and 12 grants per packet per hour.
+- Hourly cleanup expires unused grants and removes completed-but-unfinalized quarantine objects. Grant lifecycle records and structured cleanup logs provide limited operational evidence; Package 12 remains responsible for immutable audit coverage.
+- Core/static tests pass **68 of 68** and the synthetic Firebase emulator suite passes **10 of 10**.
+- Staging Hosting, five public V2 callables including the new grant issuer, and the non-public hourly cleanup Function are active. Empty live requests reach expected application denials. Staging Storage remains closed to clients.
+- No real PAL record, account, credential, or file was opened or modified. Existing files are not migrated; new quarantined files remain unavailable until a later approved scanning/release control.
+- Package 5 finish line: **Passed PAL tests on 2026-08-29**. Production activation remains gated on Control Room coordination and John's approval of the exact tested commit, quarantine limitation, scheduled cost, and rollback tradeoff recorded in `SENSITIVE_UPLOAD_SECURITY_V2.md`.

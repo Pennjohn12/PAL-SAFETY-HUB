@@ -2,6 +2,16 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Security program Package 5 passed PAL tests
+
+- Replaced the tested public upload design with 15-minute, single-file backend grants bound to packet, folder, backend-selected quarantine path, label, extension, content type, and exact size.
+- Hardened the tested Storage rules so public browsers cannot write normal intake paths and no browser can read or write quarantine paths.
+- Finalization verifies grant secret, expiry, replay, packet binding, metadata, size/type, and file signature; mismatches are removed. Accepted objects remain inaccessible quarantine with malware status explicitly pending.
+- Added packet/hour abuse limits and hourly cleanup of expired grants plus completed-but-unfinalized quarantine objects.
+- Tests: 68 of 68 core/static checks and 10 of 10 Firebase emulator security cases passed with synthetic records and bytes.
+- Staging: grant-based Hosting, the new public grant callable, updated finalizer, and non-public hourly cleanup Function are active. Empty live calls reach expected application validation. No real data or retained credential was used.
+- Production impact: none. Compatibility, quarantine limitation, cost, exact proposed components, and rollback are recorded in `SENSITIVE_UPLOAD_SECURITY_V2.md` and remain separately approval-gated.
+
 ## 2026-08-29 — Package 4 Production activation verified
 
 - John explicitly approved exact tested commit `39d2e976c65b2f4d98f291ee88f6dbaa292b0fe4` and acknowledged that every existing ID-only intake link would fail closed and require replacement.

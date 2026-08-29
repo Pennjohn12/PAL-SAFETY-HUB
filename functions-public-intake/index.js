@@ -1,7 +1,9 @@
 const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
+const { cleanupExpiredUploads } = require('./upload-cleanup');
 
 admin.initializeApp();
 const db = getFirestore();
@@ -14,6 +16,11 @@ const UPLOAD_TYPES = /^(image\/(jpeg|png|webp|heic|heif)|application\/pdf)$/i;
 const CERT_LABELS = new Set(['OSHA 30 / OSHA 10', 'SST Card', 'Scaffold Certification', 'Lift Certification', 'Fire Watch / G60', 'Other Certification']);
 const PAYROLL_LABELS = new Set(['Driver License / Photo ID', 'Union Book / Union Card', 'Social Security Card', 'W-4 / Payroll Form', 'Additional Payroll / ID Document']);
 const UPLOAD_EXTENSIONS = new Map([['pdf','application/pdf'],['jpg','image/jpeg'],['jpeg','image/jpeg'],['png','image/png'],['webp','image/webp'],['heic','image/heic'],['heif','image/heif']]);
+const UPLOAD_GRANT_MINUTES = 15;
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+const MAX_PACKET_UPLOAD_BYTES = 100 * 1024 * 1024;
+const MAX_PACKET_FILES = 12;
+const MAX_GRANTS_PER_HOUR = 12;
 
 function text(value, max = 500) {
   return String(value ?? '').trim().slice(0, max);
@@ -26,6 +33,41 @@ function hashToken(token) {
 function safeEqualHex(left, right) {
   if (!/^[a-f0-9]{64}$/.test(left) || !/^[a-f0-9]{64}$/.test(right)) return false;
   return crypto.timingSafeEqual(Buffer.from(left, 'hex'), Buffer.from(right, 'hex'));
+}
+
+function safeFileName(value) {
+  return text(value, 180).replace(/[^a-zA-Z0-9._ -]/g, '_').replace(/[\r\n"]/g, '_') || 'PAL-upload';
+}
+
+function uploadRequest(data = {}) {
+  const intakeId = text(data.intakeId, 180);
+  const token = text(data.token, 200);
+  const folder = text(data.folder, 40);
+  const name = safeFileName(data.name);
+  const label = text(data.type, 120);
+  const contentType = text(data.contentType, 120).toLowerCase();
+  const size = Number(data.size || 0);
+  const extension = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+  const labels = folder === 'certUploads' ? CERT_LABELS : PAYROLL_LABELS;
+  if (!intakeId || !token || !UPLOAD_FOLDERS.has(folder) || !labels.has(label)
+      || UPLOAD_EXTENSIONS.get(extension) !== contentType || !UPLOAD_TYPES.test(contentType)
+      || !Number.isSafeInteger(size) || size <= 0 || size > MAX_UPLOAD_BYTES) {
+    throw new HttpsError('invalid-argument', 'This file is not allowed for the PAL intake packet.');
+  }
+  return { intakeId, token, folder, name, label, contentType, size, extension };
+}
+
+function fileSignatureMatches(buffer, contentType) {
+  const bytes = Buffer.from(buffer || []);
+  if (contentType === 'application/pdf') return bytes.subarray(0, 5).toString('ascii') === '%PDF-';
+  if (contentType === 'image/jpeg') return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  if (contentType === 'image/png') return bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]));
+  if (contentType === 'image/webp') return bytes.length >= 12 && bytes.subarray(0, 4).toString('ascii') === 'RIFF' && bytes.subarray(8, 12).toString('ascii') === 'WEBP';
+  if (contentType === 'image/heic' || contentType === 'image/heif') {
+    const brand = bytes.length >= 12 ? bytes.subarray(8, 12).toString('ascii') : '';
+    return bytes.length >= 12 && bytes.subarray(4, 8).toString('ascii') === 'ftyp' && ['heic','heix','hevc','hevx','mif1','msf1'].includes(brand);
+  }
+  return false;
 }
 
 async function officeActor(auth) {
@@ -172,51 +214,120 @@ exports.updatePublicIntakeV2 = onCall({ region: REGION, cors: true, timeoutSecon
   return result;
 });
 
+exports.createPublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 60, memory: '256MiB', maxInstances: 20 }, async request => {
+  const spec = uploadRequest(request.data);
+  const intakeRef = db.collection('newHireIntakes').doc(spec.intakeId);
+  const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc();
+  const grantToken = crypto.randomBytes(32).toString('base64url');
+  const now = Date.now();
+  const expiresAt = Timestamp.fromMillis(now + UPLOAD_GRANT_MINUTES * 60000);
+  const path = `quarantine/newHireIntakes/${spec.intakeId}/${spec.folder}/${authorizationRef.id}.${spec.extension}`;
+  await db.runTransaction(async transaction => {
+    const snap = await transaction.get(intakeRef);
+    if (!snap.exists) throw new HttpsError('permission-denied', 'This PAL link is invalid.');
+    const row = snap.data() || {};
+    requireActive(row, spec.token);
+    if (spec.folder === 'payrollIdUploads' && row.existingEmployeePayrollDocsOnFile === true) throw new HttpsError('failed-precondition', 'PAL Office already verified payroll documents for this packet.');
+    const existing = [...(Array.isArray(row.certFiles) ? row.certFiles : []), ...(Array.isArray(row.payrollIdFiles) ? row.payrollIdFiles : [])];
+    const existingBytes = existing.reduce((sum, item) => sum + Math.max(0, Number(item?.size || 0)), 0);
+    if (existing.length >= MAX_PACKET_FILES || existingBytes + spec.size > MAX_PACKET_UPLOAD_BYTES) throw new HttpsError('resource-exhausted', 'This packet reached its secure upload limit. Contact PAL Office.');
+    const rate = row.publicUploadRate || {};
+    const windowStart = rate.windowStart?.toMillis?.() || 0;
+    const count = now - windowStart < 3600000 ? Number(rate.count || 0) : 0;
+    if (count >= MAX_GRANTS_PER_HOUR) throw new HttpsError('resource-exhausted', 'Too many upload attempts. Wait and try again or contact PAL Office.');
+    transaction.set(authorizationRef, {
+      version: 2, intakeId: spec.intakeId, folder: spec.folder, path, name: spec.name, label: spec.label,
+      contentType: spec.contentType, size: spec.size, grantTokenHash: hashToken(grantToken), state: 'issued',
+      issuedAt: FieldValue.serverTimestamp(), expiresAt, usedAt: null, securityStatus: 'quarantine'
+    });
+    transaction.update(intakeRef, {
+      publicUploadRate: { windowStart: Timestamp.fromMillis(count ? windowStart : now), count: count + 1 },
+      updatedAt: FieldValue.serverTimestamp()
+    });
+  });
+  let uploadUrl;
+  if (process.env.FIREBASE_STORAGE_EMULATOR_HOST || process.env.STORAGE_EMULATOR_HOST) {
+    uploadUrl = `emulator://public-intake-upload/${authorizationRef.id}`;
+  } else {
+    try {
+      [uploadUrl] = await admin.storage().bucket().file(path).createResumableUpload({
+        metadata: {
+          contentType: spec.contentType,
+          cacheControl: 'private, no-store, max-age=0',
+          contentDisposition: `attachment; filename="${spec.name}"`,
+          metadata: { palUploadAuthorization: authorizationRef.id, palSecurityStatus: 'quarantine' }
+        },
+        origin: '*'
+      });
+    } catch (error) {
+      await authorizationRef.update({ state: 'failed', failedAt: FieldValue.serverTimestamp() }).catch(() => {});
+      throw new HttpsError('unavailable', 'PAL secure upload could not start. Try again shortly.');
+    }
+  }
+  return { authorizationId: authorizationRef.id, grantToken, uploadUrl, expiresAt: expiresAt.toDate().toISOString(), path, contentType: spec.contentType, size: spec.size };
+});
+
 exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 60, memory: '256MiB', maxInstances: 20 }, async request => {
   const intakeId = text(request.data?.intakeId, 180);
   const token = text(request.data?.token, 200);
-  const folder = text(request.data?.folder, 40);
-  const path = text(request.data?.path, 900);
-  const name = text(request.data?.name, 240);
-  const type = text(request.data?.type, 120);
-  const expectedContentType = text(request.data?.contentType, 120).toLowerCase();
-  const expectedSize = Number(request.data?.size || 0);
+  const authorizationId = text(request.data?.authorizationId, 180);
+  const grantToken = text(request.data?.grantToken, 200);
   const notes = text(request.data?.notes, 1200);
-  if (!intakeId || !token || !UPLOAD_FOLDERS.has(folder)) throw new HttpsError('permission-denied', 'A valid PAL upload link is required.');
-  const prefix = `newHireIntakes/${intakeId}/${folder}/`;
-  const storedName = path.startsWith(prefix) ? path.slice(prefix.length) : '';
-  const extension = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
-  const labels = folder === 'certUploads' ? CERT_LABELS : PAYROLL_LABELS;
-  if (!storedName || storedName.includes('/') || !labels.has(type) || UPLOAD_EXTENSIONS.get(extension) !== expectedContentType || !UPLOAD_TYPES.test(expectedContentType) || expectedSize <= 0 || expectedSize >= 25 * 1024 * 1024) {
-    throw new HttpsError('invalid-argument', 'The uploaded file does not match this intake packet.');
+  if (!intakeId || !token || !/^[A-Za-z0-9_-]{8,180}$/.test(authorizationId) || !grantToken) throw new HttpsError('permission-denied', 'A valid PAL upload grant is required.');
+  const intakeRef = db.collection('newHireIntakes').doc(intakeId);
+  const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(authorizationId);
+  const [initialIntake, authorizationSnap] = await Promise.all([intakeRef.get(), authorizationRef.get()]);
+  if (!initialIntake.exists || !authorizationSnap.exists) throw new HttpsError('permission-denied', 'This PAL upload grant is invalid.');
+  requireActive(initialIntake.data() || {}, token);
+  const grant = authorizationSnap.data() || {};
+  const grantExpires = grant.expiresAt?.toMillis?.() || 0;
+  if (grant.intakeId !== intakeId || grant.state !== 'issued' || grant.usedAt || grantExpires <= Date.now() || !safeEqualHex(text(grant.grantTokenHash, 64), hashToken(grantToken))) {
+    throw new HttpsError('permission-denied', 'This PAL upload grant expired or was already used.');
   }
-  const ref = db.collection('newHireIntakes').doc(intakeId);
-  const initial = await ref.get();
-  if (!initial.exists) throw new HttpsError('permission-denied', 'This PAL link is invalid.');
-  requireActive(initial.data() || {}, token);
-  const file = admin.storage().bucket().file(path);
+  const file = admin.storage().bucket().file(grant.path);
   let metadata;
   try { [metadata] = await file.getMetadata(); } catch (_) { throw new HttpsError('not-found', 'The file did not finish reaching PAL secure storage.'); }
   const storedSize = Number(metadata?.size || 0);
   const storedType = text(metadata?.contentType, 120).toLowerCase();
-  if (storedSize !== expectedSize || !UPLOAD_TYPES.test(storedType)) throw new HttpsError('failed-precondition', 'The saved file could not be verified.');
-  const record = { type, name, path, uploadedAt: new Date().toISOString(), source: folder, size: storedSize, contentType: storedType };
-  if (folder === 'certUploads' && request.data?.expirationDate) record.expirationDate = text(request.data.expirationDate, 20);
+  const custom = metadata?.metadata || {};
+  let prefix;
+  try { [prefix] = await file.download({ start: 0, end: 31 }); } catch (_) { throw new HttpsError('failed-precondition', 'The uploaded file could not be inspected safely.'); }
+  if (grant.path !== `quarantine/newHireIntakes/${intakeId}/${grant.folder}/${authorizationId}.${String(grant.name).split('.').pop().toLowerCase()}`
+      || storedSize !== Number(grant.size) || storedType !== grant.contentType
+      || custom.palUploadAuthorization !== authorizationId || custom.palSecurityStatus !== 'quarantine'
+      || !fileSignatureMatches(prefix, storedType)) {
+    await file.delete({ ignoreNotFound: true }).catch(() => {});
+    await authorizationRef.update({ state: 'rejected', rejectedAt: FieldValue.serverTimestamp(), rejectionReason: 'verification-mismatch' }).catch(() => {});
+    throw new HttpsError('failed-precondition', 'The uploaded file failed PAL security verification and was removed.');
+  }
+  const record = {
+    type: grant.label, name: grant.name, path: grant.path, uploadedAt: new Date().toISOString(), source: grant.folder,
+    size: storedSize, contentType: storedType, securityStatus: 'quarantined', malwareScanStatus: 'pending', downloadable: false
+  };
+  if (grant.folder === 'certUploads' && request.data?.expirationDate) record.expirationDate = text(request.data.expirationDate, 20);
   let totalCount = 0;
   await db.runTransaction(async transaction => {
-    const snap = await transaction.get(ref);
+    const [snap, authSnap] = await Promise.all([transaction.get(intakeRef), transaction.get(authorizationRef)]);
     const row = snap.data() || {};
+    const currentGrant = authSnap.data() || {};
     requireActive(row, token);
-    if (folder === 'payrollIdUploads' && row.existingEmployeePayrollDocsOnFile === true) throw new HttpsError('failed-precondition', 'PAL Office already verified payroll documents for this packet.');
-    const field = folder === 'certUploads' ? 'certFiles' : 'payrollIdFiles';
-    const files = Array.isArray(row[field]) ? row[field].filter(item => item?.path !== path) : [];
+    if (currentGrant.state !== 'issued' || currentGrant.usedAt || !safeEqualHex(text(currentGrant.grantTokenHash, 64), hashToken(grantToken))) throw new HttpsError('permission-denied', 'This PAL upload grant was already used.');
+    if (grant.folder === 'payrollIdUploads' && row.existingEmployeePayrollDocsOnFile === true) throw new HttpsError('failed-precondition', 'PAL Office already verified payroll documents for this packet.');
+    const field = grant.folder === 'certUploads' ? 'certFiles' : 'payrollIdFiles';
+    const files = Array.isArray(row[field]) ? row[field].filter(item => item?.path !== grant.path) : [];
     files.push(record); totalCount = files.length;
     const update = { [field]: files, status: 'Ready for Review', updatedAt: FieldValue.serverTimestamp() };
-    if (folder === 'certUploads') update.certUploadsCompleted = true;
+    if (grant.folder === 'certUploads') update.certUploadsCompleted = true;
     else { update.payrollIdUploadsCompleted = true; update.payrollIdUploadCount = totalCount; }
-    if (folder === 'certUploads' && notes) update.certUploadNotes = notes;
-    if (folder === 'payrollIdUploads' && notes) update.payrollIdNotes = notes;
-    transaction.update(ref, update);
+    if (grant.folder === 'certUploads' && notes) update.certUploadNotes = notes;
+    if (grant.folder === 'payrollIdUploads' && notes) update.payrollIdNotes = notes;
+    transaction.update(intakeRef, update);
+    transaction.update(authorizationRef, { state: 'quarantined', usedAt: FieldValue.serverTimestamp(), securityStatus: 'quarantined', malwareScanStatus: 'pending' });
   });
-  return { status: 'saved', path, totalCount, record };
+  return { status: 'quarantined', totalCount, record };
+});
+
+exports.cleanupExpiredPublicIntakeUploadsV2 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1 }, async () => {
+  const removed = await cleanupExpiredUploads({ db, bucket: admin.storage().bucket(), Timestamp, FieldValue });
+  console.log(JSON.stringify({ event: 'public-intake-upload-cleanup', removed }));
 });
