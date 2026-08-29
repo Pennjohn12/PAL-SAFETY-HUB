@@ -61,3 +61,7 @@ export const submitDailyAccessCallable = httpsCallable(functions, "submitDailyAc
 export const updateDailyAccessSubmissionCallable = httpsCallable(functions, "updateDailyAccessSubmission");
 export const closeDailyAccessSessionCallable = httpsCallable(functions, "closeDailyAccessSession");
 export const finalizePublicIntakeUploadCallable = httpsCallable(functions, "finalizePublicIntakeUpload");
+export const issuePublicIntakeAccessV2Callable = httpsCallable(functions, "issuePublicIntakeAccessV2");
+export const getPublicIntakeV2Callable = httpsCallable(functions, "getPublicIntakeV2");
+export const updatePublicIntakeV2Callable = httpsCallable(functions, "updatePublicIntakeV2");
+export const finalizePublicIntakeUploadV2Callable = httpsCallable(functions, "finalizePublicIntakeUploadV2");

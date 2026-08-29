@@ -4227,8 +4227,11 @@
     submitDailyAccessCallable,
     updateDailyAccessSubmissionCallable,
     closeDailyAccessSessionCallable,
-    finalizePublicIntakeUploadCallable
-  } from "./assets/js/config/pal-firebase.js?v=2026-08-27-branded-sms";
+    issuePublicIntakeAccessV2Callable,
+    getPublicIntakeV2Callable,
+    updatePublicIntakeV2Callable,
+    finalizePublicIntakeUploadV2Callable
+  } from "./assets/js/config/pal-firebase.js?v=2026-08-29-public-intake-v2";
   import { PAL_IS_STAGING } from "./assets/js/config/pal-environment.js";
   import {
     capitalize,
@@ -4347,6 +4350,7 @@
   let requestedProjectId = new URLSearchParams(window.location.search).get('projectId');
   let requestedFieldFormsMenu = new URLSearchParams(window.location.search).get('openFieldForms') === '1';
   let publicNewHireIntakeId = new URLSearchParams(window.location.search).get('intake') || new URLSearchParams(window.location.search).get('newhire');
+  let publicNewHireAccessToken = new URLSearchParams(window.location.search).get('access') || '';
   const publicTicketSignParams = new URLSearchParams(window.location.search);
   const publicTicketSignProjectId = publicTicketSignParams.get('ticketProjectId') || '';
   const publicTicketSignTicketId = publicTicketSignParams.get('ticketId') || '';
@@ -4358,13 +4362,7 @@
 // PUBLIC_NEWHIRE_BYPASS_LOGIN_HARD_FIX_2026_05_23
 const palPublicStartParam = new URLSearchParams(window.location.search).get('publicStart');
   const palPublicNoLoginParam = new URLSearchParams(window.location.search).get('noLogin');
-if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) {
-  publicNewHireIntakeId = 'public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
-  const palPublicUrl = new URL(window.location.href);
-  palPublicUrl.searchParams.set('newhire', publicNewHireIntakeId);
-  palPublicUrl.searchParams.set('publicStart', '1');
-  window.history.replaceState({}, '', palPublicUrl.toString());
-}
+if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId || publicNewHireIntakeId === 'public' || publicNewHireIntakeId === 'new')) publicNewHireIntakeId = '';
   let publicNewHireIntakeLoaded = false;
   let currentPublicNewHireIntake = null;
   let publicTicketSignatureLoaded = false;
@@ -4788,7 +4786,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     }
     if (publicNewHireIntakeId || palPublicParams.get('newhire') || palPublicParams.get('intake') || palPublicParams.get('publicStart') || palPublicParams.get('noLogin')) {
       if (!publicNewHireIntakeId) {
-        publicNewHireIntakeId = palPublicParams.get('newhire') || palPublicParams.get('intake') || ('public-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9));
+        publicNewHireIntakeId = palPublicParams.get('newhire') || palPublicParams.get('intake') || '';
       }
       currentUser = user || null;
       showView('view-public-newhire-intake');
@@ -12792,38 +12790,20 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
 
   // PUBLIC_NEWHIRE_ROUTE_ORIENTATION_FIX_2026_05_15
   async function loadPublicNewHireIntake() {
-    if (!publicNewHireIntakeId) return;
+    if (!publicNewHireIntakeId || !publicNewHireAccessToken) {
+      const statusCard = document.getElementById('public-intake-status-card');
+      const formCard = document.getElementById('public-intake-form-card');
+      if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Link Replaced</h3><p class="helper-text">This older link does not contain the required secure access code. Please ask PAL Office for a new link.</p>`;
+      if (formCard) formCard.style.display = 'none';
+      return;
+    }
     publicNewHireIntakeLoaded = true;
     const statusCard = document.getElementById('public-intake-status-card');
     const formCard = document.getElementById('public-intake-form-card');
     try {
-      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-      if (!snap.exists()) {
-        // PUBLIC_INTAKE_NOT_FOUND_STILL_OPEN_PACKET_FIX_2026_05_15
-        // Do NOT block the employee if the intake document cannot be found.
-        // Keep the public packet open so the employee can still submit information tied to the intake code.
-        currentPublicNewHireIntake = {
-          id: publicNewHireIntakeId,
-          status: 'Pending',
-          notes: 'Intake record was not preloaded. Employee can still complete the PAL pre-site packet.'
-        };
-        if (statusCard) statusCard.innerHTML = `<h3>PAL New Hire Packet</h3>
-          <p class="helper-text">Your intake link opened correctly. The office request could not be preloaded, but you can still complete your PAL pre-site packet below.</p>
-          <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '-')}</div></div>`;
-        if (formCard) formCard.style.display = 'block';
-        const os = document.getElementById('public-orientation-status');
-        if (os) os.textContent = 'Orientation Form: Pending';
-        const ds = document.getElementById('public-drug-status');
-        if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
-        const ss = document.getElementById('public-safety-status');
-        if (ss) ss.textContent = 'Safety Agreement: Pending';
-        const ws = document.getElementById('public-w4-status');
-        if (ws) ws.textContent = 'Federal W-4 Form: Pending';
-        updatePublicPacketChecklist(currentPublicNewHireIntake);
-        showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
-        return;
-      }
-      currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
+      const response = await getPublicIntakeV2Callable({ intakeId: publicNewHireIntakeId, token: publicNewHireAccessToken });
+      currentPublicNewHireIntake = response?.data?.intake || null;
+      if (!currentPublicNewHireIntake) throw new Error('The secure intake response was empty.');
       const x = currentPublicNewHireIntake;
       if (isArchivedRecord(x)) {
         if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Link Closed</h3><p class="helper-text">This onboarding request is no longer active. Please contact the PAL office if you still need to complete an intake packet.</p>`;
@@ -12863,27 +12843,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       updatePublicPacketChecklist(x);
       showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
     } catch (e) {
-      // PUBLIC_INTAKE_LOAD_FALLBACK_FIX_2026_05_15
-      // If Firebase blocks public read or the intake lookup fails, do not dead-end the employee.
-      // Show a blank/public packet tied to the intake id so the employee can still fill it out.
       console.error('Public intake load failed', e);
-      currentPublicNewHireIntake = {
-        id: publicNewHireIntakeId,
-        status: 'Pending',
-        notes: 'Public intake opened without office packet preload. Employee can still complete the packet below.'
-      };
-      if (statusCard) statusCard.innerHTML = `<h3>PAL New Hire Packet</h3>
-        <p class="helper-text">We could not preload the office request, but you can still complete your PAL pre-site packet below. Your submission will stay linked to this intake code.</p>
-        <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId || '-')}</div></div>`;
-      if (formCard) formCard.style.display = 'block';
-      const os = document.getElementById('public-orientation-status');
-      if (os) os.textContent = 'Orientation Form: Pending';
-      const ds = document.getElementById('public-drug-status'); if (ds) ds.textContent = 'Drug & Alcohol Consent: Pending';
-      const ss = document.getElementById('public-safety-status'); if (ss) ss.textContent = 'Safety Agreement: Pending';
-      const ws = document.getElementById('public-w4-status'); if (ws) ws.textContent = 'Federal W-4 Form: Pending';
-      updatePublicPacketChecklist(currentPublicNewHireIntake);
-      showPublicNewHireWizardStep(publicNewHireWizardStep || 0);
+      currentPublicNewHireIntake = null;
+      if (statusCard) statusCard.innerHTML = `<h3>PAL Intake Link Unavailable</h3><p class="helper-text">This link is invalid, expired, replaced, completed, or closed. Please ask PAL Office for a new link if you still need access.</p>`;
+      if (formCard) formCard.style.display = 'none';
     }
+  }
+
+  async function savePublicIntakeAction(action, payload = {}) {
+    if (!publicNewHireIntakeId || !publicNewHireAccessToken) throw new Error('A valid PAL secure intake link is required.');
+    const response = await updatePublicIntakeV2Callable({ intakeId: publicNewHireIntakeId, token: publicNewHireAccessToken, action, payload });
+    if (response?.data?.intake) currentPublicNewHireIntake = response.data.intake;
+    return response?.data || {};
   }
 
   function openPublicNewHireOrientationForm() {
@@ -13025,10 +12996,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       updatedAt: serverTimestamp(),
       source: 'public-guided-intake'
     };
-    if (!currentPublicNewHireIntake?.createdAt) data.createdAt = serverTimestamp();
     try {
-      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), data, { merge: true });
-      currentPublicNewHireIntake = { ...(currentPublicNewHireIntake || {}), id: publicNewHireIntakeId, ...data };
+      await savePublicIntakeAction('basic', data);
       if (!allNewHireIntakes.some(x => x.id === publicNewHireIntakeId)) allNewHireIntakes.push(currentPublicNewHireIntake);
       return true;
     } catch (e) {
@@ -13206,7 +13175,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     let lastError = null;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
-        return await finalizePublicIntakeUploadCallable(payload);
+        return await finalizePublicIntakeUploadV2Callable({ ...payload, token: publicNewHireAccessToken });
       } catch (error) {
         lastError = error;
         if (!isTransientIntakeConfirmationError(error) || attempt === maxAttempts) break;
@@ -13419,10 +13388,8 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   async function refreshCurrentPublicIntakeQuiet() {
     if (!publicNewHireIntakeId) return currentPublicNewHireIntake;
     try {
-      const snap = await getDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId));
-      if (snap.exists()) {
-        currentPublicNewHireIntake = { id: snap.id, ...snap.data() };
-      }
+      const response = await getPublicIntakeV2Callable({ intakeId: publicNewHireIntakeId, token: publicNewHireAccessToken });
+      if (response?.data?.intake) currentPublicNewHireIntake = response.data.intake;
     } catch (e) {
       console.warn('Could not refresh public intake checklist', e);
     }
@@ -13448,21 +13415,15 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
         if (btn) { btn.disabled = false; btn.textContent = 'Submit Full Packet to PAL Office'; }
         return;
       }
-      await setDoc(doc(db, 'newHireIntakes', publicNewHireIntakeId), {
-        packetChecklist: checklist,
-        packetSubmitted: true,
-        packetSubmittedAt: new Date().toISOString(),
-        status: 'Ready for Review',
-        updatedAt: serverTimestamp()
-      }, { merge: true });
+      await savePublicIntakeAction('submit', { packetChecklist: checklist });
       toast('Packet submitted to PAL office for review.');
-      await refreshCurrentPublicIntakeQuiet();
       const statusCard = document.getElementById('public-intake-status-card');
-      if (statusCard && currentPublicNewHireIntake) {
+      if (statusCard) {
         statusCard.innerHTML = `<h3>Packet Submitted to PAL</h3>
           <p class="helper-text">Your new-hire packet has been sent to PAL office/foreman for review. If anything is missing, PAL will contact you.</p>
           <div class="report-field" style="margin-top:10px;"><span class="k">Intake Code</span><div class="v">${esc(publicNewHireIntakeId)}</div></div>`;
       }
+      document.getElementById('public-intake-form-card').style.display = 'none';
     } catch (e) {
       console.error('Final packet submit failed', e);
       toast('Could not submit full packet. PAL may need to enable public intake permissions.');
@@ -13493,11 +13454,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
       ? 'Your payroll and identity documents are already verified in the PAL office. Do not upload a W-4, driver/photo ID, union book/card, or Social Security card. All requested certifications are still required.'
       : 'Complete the W-4 and upload the requested payroll/identity documents.';
     const startLine = data.startDate ? `Expected start date: ${data.startDate}` : '';
-    const fallbackIntakeId = String(data.id || data.intakeId || '').trim();
-    const fallbackLink = fallbackIntakeId
-      ? buildPublicIntakeLink(fallbackIntakeId)
-      : '';
-    const link = data.intakeLink || fallbackLink || 'Intake link will be added after saving the request.';
+    const link = data.intakeLink || 'A new secure link must be issued by PAL Office before sending.';
     return `PAL New Hire / Pre-Site Intake
 
 ${data.name ? 'Hello ' + data.name + ',' : 'Hello,'}
@@ -13580,8 +13537,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
-      const intakeLink = buildPublicIntakeLink(docRef.id);
-      await updateDoc(doc(db, 'newHireIntakes', docRef.id), { intakeLink });
+      const access = await issuePublicIntakeAccessV2Callable({ intakeId: docRef.id, days: 14 });
+      const intakeLink = buildPublicIntakeLink(docRef.id, access?.data?.token);
       await logAuditEvent('new_hire_intake.created', {
         intakeId: docRef.id,
         employeeName: data.name || '',
@@ -13922,11 +13879,19 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     navigator.clipboard?.writeText(text).then(() => toast('Text message copied.')).catch(() => toast('Could not copy text.'));
   }
 
-  function copyNewHireIntakeTextById(id) {
+  async function copyNewHireIntakeTextById(id) {
     const x = allNewHireIntakes.find(i => i.id === id);
     if (!x) return toast('Intake request not found.');
-    const text = buildNewHireIntakeText(x);
-    navigator.clipboard?.writeText(text).then(() => toast('Text message copied.')).catch(() => toast('Could not copy text.'));
+    try {
+      const access = await issuePublicIntakeAccessV2Callable({ intakeId: id, days: 14 });
+      const intakeLink = buildPublicIntakeLink(id, access?.data?.token);
+      const message = buildNewHireIntakeText({ ...x, intakeLink });
+      await navigator.clipboard.writeText(message);
+      toast('A new 14-day secure link was issued and copied. Any earlier link is now revoked.');
+    } catch (error) {
+      console.error('Could not issue secure intake link', error);
+      toast('Could not issue a secure link. Completed or archived packets cannot be reopened.');
+    }
   }
 
   function newHireFullPacketHTML(x) {
@@ -14873,10 +14838,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     };
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await updateDoc(doc(db, 'newHireIntakes', currentNewHireOrientationId), {
-        orientationForm,
-        updatedAt: serverTimestamp()
-      });
+      if (publicNewHireIntakeId) await savePublicIntakeAction('orientation', orientationForm);
+      else await updateDoc(doc(db, 'newHireIntakes', currentNewHireOrientationId), { orientationForm, updatedAt: serverTimestamp() });
       try { localStorage.removeItem(orientationProgressKey()); } catch (_) {}
       toast('Orientation form saved to intake packet.');
       closeModal('modal-newhire-orientation-form');
@@ -14934,10 +14897,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     };
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await updateDoc(doc(db, 'newHireIntakes', currentNewHireDrugConsentId), {
-        drugConsentForm,
-        updatedAt: serverTimestamp()
-      });
+      if (publicNewHireIntakeId) await savePublicIntakeAction('drug', drugConsentForm);
+      else await updateDoc(doc(db, 'newHireIntakes', currentNewHireDrugConsentId), { drugConsentForm, updatedAt: serverTimestamp() });
       toast('Drug & Alcohol Consent saved to intake packet.');
       closeModal('modal-newhire-drug-form');
       if (publicNewHireIntakeId) {
@@ -14997,10 +14958,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     };
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await updateDoc(doc(db, 'newHireIntakes', currentNewHireSafetyAgreementId), {
-        safetyAgreementForm,
-        updatedAt: serverTimestamp()
-      });
+      if (publicNewHireIntakeId) await savePublicIntakeAction('safety', safetyAgreementForm);
+      else await updateDoc(doc(db, 'newHireIntakes', currentNewHireSafetyAgreementId), { safetyAgreementForm, updatedAt: serverTimestamp() });
       toast('Safety Agreement saved to intake packet.');
       closeModal('modal-newhire-safety-form');
       if (publicNewHireIntakeId) {
@@ -15235,10 +15194,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     };
     try {
       if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-      await setDoc(doc(db, 'newHireIntakes', currentNewHireW4Id), {
-        w4Form,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
+      if (publicNewHireIntakeId) await savePublicIntakeAction('w4', w4Form);
+      else await setDoc(doc(db, 'newHireIntakes', currentNewHireW4Id), { w4Form, updatedAt: serverTimestamp() }, { merge: true });
       toast('Federal W-4 saved to intake packet.');
       closeModal('modal-newhire-w4-form');
       if (publicNewHireIntakeId) {
@@ -15296,9 +15253,10 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     return digits.length === 10 || (digits.length === 11 && digits.startsWith('1'));
   }
 
-  function buildPublicIntakeLink(intakeId) {
+  function buildPublicIntakeLink(intakeId, token) {
     const url = new URL(PAL_PUBLIC_PROJECTS_URL);
     url.searchParams.set('intake', String(intakeId || ''));
+    url.searchParams.set('access', String(token || ''));
     return url.toString();
   }
 
@@ -15370,8 +15328,8 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
         if (!intakeId || !intakeLink) {
           const docRef = await addDoc(collection(db, 'newHireIntakes'), intakeData);
           intakeId = docRef.id;
-          intakeLink = buildPublicIntakeLink(intakeId);
-          await updateDoc(doc(db, 'newHireIntakes', intakeId), { intakeLink });
+          const access = await issuePublicIntakeAccessV2Callable({ intakeId, days: 14 });
+          intakeLink = buildPublicIntakeLink(intakeId, access?.data?.token);
           item.row.dataset.orientationIntakeId = intakeId;
           item.row.dataset.orientationIntakeLink = intakeLink;
         }

@@ -1,0 +1,7 @@
+{
+  "functions": [{
+    "source": "functions-public-intake",
+    "codebase": "public-intake-v2",
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
+  }]
+}

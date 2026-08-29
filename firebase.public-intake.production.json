@@ -1,0 +1,9 @@
+{
+  "firestore": { "rules": "firestore.rules" },
+  "functions": [{
+    "source": "functions-public-intake",
+    "codebase": "public-intake-v2",
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
+  }],
+  "hosting": { "site": "pal-safety-hub", "public": ".", "ignore": ["firebase*.json", ".firebaserc", ".git/**", ".firebase/**", "functions*/**", "PAL_CONTROL/**", "tests/**", "tools/**", "outputs/**", "**/.*", "**/node_modules/**", "**/*.md", "**/*.docx", "**/*.pdf", "**/*.pptx", "**/*.avi", "**/*.zip", "**/*.map"] }
+}

@@ -15,7 +15,8 @@ test('My Operations exposes a simple multi-number orientation sender', () => {
 
 test('each recipient receives a unique tracked intake link', () => {
   assert.match(html, /await addDoc\(collection\(db, 'newHireIntakes'\), intakeData\)/);
-  assert.match(html, /buildPublicIntakeLink\(intakeId\)/);
+  assert.match(html, /issuePublicIntakeAccessV2Callable/);
+  assert.match(html, /buildPublicIntakeLink\(intakeId, access\?\.data\?\.token\)/);
   assert.match(html, /feature: 'orientation-only'/);
   assert.match(html, /source: 'operations-orientation-invite'/);
 });
@@ -34,8 +35,8 @@ test('Twilio supports an orientation-specific message', () => {
 
 test('orientation texts use the branded PAL domain instead of the generic hosting domain', () => {
   assert.match(firebaseConfig, /https:\/\/pal\.jobsiteresources\.com\/projects\.html/);
-  assert.match(html, /buildPublicIntakeLink\(intakeId\)/);
-  assert.match(html, /buildPublicIntakeLink\(docRef\.id\)/);
+  assert.match(html, /buildPublicIntakeLink\(intakeId, access\?\.data\?\.token\)/);
+  assert.match(html, /buildPublicIntakeLink\(docRef\.id, access\?\.data\?\.token\)/);
   assert.doesNotMatch(html, /intakeLink = `\$\{window\.location\.origin\}/);
 });
 

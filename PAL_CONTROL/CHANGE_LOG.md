@@ -2,6 +2,16 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Security program Package 4 passed PAL tests
+
+- Replaced ID-only public orientation/intake access with random packet-bound tokens, server-side token hashes, expiry, revocation, completion lockout, and four narrow callable actions.
+- Removed direct public Firestore reads/writes for intake records and removed the blank writable fallback for missing or legacy links.
+- Tests: 63 of 63 core/static checks and 5 of 5 synthetic Firebase emulator attack cases passed.
+- Staging: V2 Hosting is live; four Node.js 22 Functions are ACTIVE; only those four services received public Cloud Run invocation so their application-level token and Office authorization can execute. Empty anonymous requests are rejected with expected 401/403 responses, and a synthetic legacy link displays the replacement-link message.
+- Build correction: approved build scripts only for the two Firebase dependency packages identified by the pnpm supply-chain policy and added the Functions Framework explicitly; Staging then built successfully. The us-central1 Artifact Registry cleanup policy retains images for one day.
+- Compatibility: all existing ID-only links must be replaced after Production cutover; no bulk migration or real-record inspection was performed.
+- Production impact: none. The exact Production components, compatibility impact, and rollback are recorded in `PUBLIC_INTAKE_SECURITY_V2.md` and remain separately approval-gated.
+
 ## 2026-08-29 — Package 3 corrective Production rollback
 
 - The scheduled rollback safeguard did not execute. A live check at 12:14 AM found Production still in maintenance, after the approved 10:39 PM deadline. Corrective rollback began immediately under the documented authorization.

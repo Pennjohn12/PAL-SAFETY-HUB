@@ -63,6 +63,7 @@ Present in current source and covered by current automated checks where noted:
 - Automated tests: **54 passed, 0 failed** on 2026-08-28.
 - Staging Firebase emulator authorization tests: **10 passed, 0 failed** on 2026-08-28. The added tests safely reproduced and regression-tested repairs for registration/profile and synthetic-marker incompatibilities without creating live credentials.
 - Package 3 maintenance tests: **5 static, 6 deny-all rule-emulator, and 12 endpoint-emulator tests passed** on 2026-08-29. Staging activation and rollback also passed.
+- Package 4 public-intake tests: **63 core/static and 5 synthetic emulator tests passed** on 2026-08-29. Staging Hosting and four active token-enforcing Functions are verified; Production remains unchanged.
 - Test files: all current `tests/*.test.mjs` files.
 - Functions JavaScript syntax: **passed** for `functions/index.js`.
 - Production Hosting comparison: **passed** for five deploy-critical frontend files.
@@ -91,6 +92,7 @@ Present in current source and covered by current automated checks where noted:
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
 - Package 2 of 15, isolated Staging/Test environment: **Passed PAL tests** on 2026-08-28. The separate project has isolated Hosting, Auth, Firestore/PITR, hardened rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, synthetic identities/profiles/project data, 10 passing emulator tests, and a successful temporary-account live lifecycle with complete cleanup. MFA is tracked in Package 9, account/role lifecycle in Package 7, and broad workflow validation in Package 14.
 - Package 3 of 15, controlled Production maintenance mode: **Passed PAL tests** on 2026-08-28. Layered Hosting, deny-all Firestore/Storage rules, Function invocation lockdown, schedule pause, communication, two-hour stop, and rollback controls are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and Production activation verification passed.
+- Package 4 of 15, secure public orientation/intake access: **Passed PAL tests** on 2026-08-29. Expiring packet-bound tokens and narrow server actions are verified in isolated Staging; existing ID-only links require replacement at a separately approved Production cutover.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - Package 3 proved the technical maintenance boundary and rollback, but the Production maintenance controls are no longer active.

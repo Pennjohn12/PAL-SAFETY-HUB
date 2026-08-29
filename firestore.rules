@@ -123,28 +123,6 @@ service cloud.firestore {
         && request.auth.uid in request.resource.data.memberUids;
     }
 
-    function publicIntakeStatusUpdateAllowed() {
-      return (!('archived' in resource.data) || resource.data.archived != true)
-        && (!('status' in resource.data) || resource.data.status != 'Archived')
-        && (
-          !request.resource.data.diff(resource.data).changedKeys().hasAny(['status']) || (
-            (!('status' in resource.data) || resource.data.status in [
-              'Pending',
-              'Started',
-              'Missing Info',
-              'Ready for Review',
-              'Submitted'
-            ])
-            && request.resource.data.status in [
-              'Pending',
-              'Started',
-              'Ready for Review',
-              'Submitted'
-            ]
-          )
-        );
-    }
-
     match /users/{userId} {
       allow read: if signedIn() && (isOffice() || userId == request.auth.uid || resource.data.uid == request.auth.uid);
       allow create: if safeUserCreate(userId);
@@ -220,86 +198,11 @@ service cloud.firestore {
     }
 
     match /newHireIntakes/{intakeId} {
-      // Public intake links are unguessable IDs. Public users can only get/create/update a known packet.
-      // Listing all intakes is office-only.
-      allow get: if isOffice() || true;
+      // Package 4: public access is server-controlled through a separate expiring token.
+      // A document ID is never sufficient authority to read or change an intake packet.
+      allow get: if isOffice();
       allow list: if isOffice();
-      allow create: if isOffice() || (
-        (!('status' in request.resource.data) ||
-          request.resource.data.status in ['Pending', 'Started', 'Ready for Review', 'Submitted']) &&
-        request.resource.data.keys().hasOnly([
-          'name',
-          'phone',
-          'email',
-          'trade',
-          'projectId',
-          'projectName',
-          'foreman',
-          'required',
-          'notes',
-          'employeeNotes',
-          'status',
-          'createdAt',
-          'createdBy',
-          'createdByName',
-          'intakeLink',
-          'updatedAt',
-          'publicSubmittedAt',
-          'orientationForm',
-          'drugConsentForm',
-          'safetyAgreementForm',
-          'packetChecklist',
-          'packetSubmitted',
-          'packetSubmittedAt',
-          'employeeNotes',
-          'emergencyContactName',
-          'emergencyContactPhone',
-          'employeeSubmittedAt',
-          'source',
-          'w4Form',
-          'emergencyName',
-          'emergencyPhone',
-          'emergencyContactName',
-          'emergencyContactPhone',
-          'source',
-          'finalSubmittedAt'
-        ])
-      );
-      allow update: if isOffice() || (
-        publicIntakeStatusUpdateAllowed() &&
-        (!request.resource.data.diff(resource.data).changedKeys().hasAny(['createdAt']) ||
-          (!('createdAt' in resource.data) && request.resource.data.createdAt == request.time)) &&
-        request.resource.data.diff(resource.data).changedKeys().hasOnly([
-          'name',
-          'phone',
-          'email',
-          'trade',
-          'notes',
-          'employeeNotes',
-          'status',
-          'createdAt',
-          'updatedAt',
-          'publicSubmittedAt',
-          'orientationForm',
-          'drugConsentForm',
-          'safetyAgreementForm',
-          'packetChecklist',
-          'packetSubmitted',
-          'packetSubmittedAt',
-          'employeeNotes',
-          'emergencyContactName',
-          'emergencyContactPhone',
-          'employeeSubmittedAt',
-          'source',
-          'w4Form',
-          'emergencyName',
-          'emergencyPhone',
-          'emergencyContactName',
-          'emergencyContactPhone',
-          'source',
-          'finalSubmittedAt'
-        ])
-      );
+      allow create, update: if isOffice();
       allow delete: if false;
     }
 

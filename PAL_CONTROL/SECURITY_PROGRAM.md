@@ -1,6 +1,6 @@
 # PAL Security Hardening Program
 
-Last updated: **2026-08-28, America/New_York**
+Last updated: **2026-08-29, America/New_York**
 
 This is the durable status tracker for the PAL Safety Hub security program. A package is not complete merely because code exists: its finish line and required evidence must be satisfied. Production remains protected by the approval requirements in `PROTECTED_SYSTEMS.md` and `RELEASE_CHECKLIST.md`.
 
@@ -18,7 +18,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 | 1 | Security inventory and risk register | Passed PAL tests | Current source, configuration, Production metadata, data classes, trust boundaries, controls, verified risks, and verification gaps are recorded in `SECURITY_RISK_REGISTER.md`. No destructive testing or real-data inspection is used. |
 | 2 | Isolated Staging/Test environment | Passed PAL tests | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
 | 3 | Controlled Production maintenance mode | Passed PAL tests | John approved the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented and Production activation is verified. |
-| 4 | Secure public orientation/intake access | Not started | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
+| 4 | Secure public orientation/intake access | Passed PAL tests | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
 | 5 | Secure sensitive-upload authorization | Not started | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
 | 6 | Separate sensitive payroll/identity vault | Not started | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, and access evidence are approved and tested. |
 | 7 | Controlled account and role creation | Not started | Self-registration can create only an unverified, unlinked Employee account; Foreman, Supervisor, Office, Admin, disabled state, and role changes require authorized server/admin workflow and revocation tests. |
@@ -33,8 +33,8 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 
 ## Current program position
 
-- Completed: **3 of 15** packages at the PAL internal-assessment level.
-- In progress: **None**. Package 4 is next and requires separately scoped implementation work.
+- Completed: **4 of 15** packages at the PAL internal-assessment level.
+- In progress: **None**. Package 5 is next and requires separately scoped implementation work.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **No additional Production change is authorized; Package 3 activation has been rolled back**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
@@ -88,3 +88,15 @@ The default sequence is Package 2 (Staging), then an explicitly authorized Packa
 - Staging activation and rollback rehearsal passed. All tested old/public routes served identical maintenance content; anonymous Firestore access was denied; normal Staging Hosting/rules were restored; the 10-test normal Staging authorization suite passed afterward.
 - Production activation passed on 2026-08-28: both Hosting domains and representative legacy/public routes serve the protected maintenance page; Firestore and Storage deny anonymous synthetic probes; all 12 active interactive Functions reject anonymous invocation at the platform boundary; and the two exact Scheduler jobs are paused.
 - Package 3 finish line: **Passed PAL tests on 2026-08-28**. Production activation and technical rollback were verified, but the 10:39 PM deadline was missed and corrective rollback completed at approximately 12:23 AM on 2026-08-29. This operational-control failure is recorded and must be addressed before another time-bounded Production window.
+
+## Package 4 verified progress
+
+- The verified ID-only public-intake authorization vulnerability is replaced by a separate random, packet-bound token whose SHA-256 hash is stored server-side.
+- Four narrow callable Functions issue, read, update, and finalize intake activity. Link issuance requires an active authenticated Office/Admin profile; public actions validate token, packet, expiry, revocation, archive, and completion state.
+- Direct public Firestore reads and writes for `newHireIntakes` are removed. Missing and legacy links fail closed without creating a writable fallback packet.
+- Tokens expire after 14 days by default, may not exceed 30 days, are replaced when reissued, and are revoked during final submission so completed packets cannot be replayed.
+- Core/static tests pass **63 of 63** and the synthetic Firebase emulator suite passes **5 of 5**, covering direct access, guesses, cross-packet use, expiry, revocation, narrow writes, completion, replay, and anonymous issuance.
+- Staging Hosting serves the V2 client and visibly rejects an ID-only synthetic link. All four Staging Functions are ACTIVE on Node.js 22; their Cloud Run invoker bindings permit request delivery, while empty anonymous calls are rejected by application authorization with 401/403 responses.
+- No real PAL record, account, credential, or file was opened or modified. Staging Storage remains closed; the remaining raw upload authorization boundary belongs to Package 5.
+- Existing Production ID-only links require replacement after cutover. No Production deployment or real-record migration is authorized. Exact behavior, migration, later-package boundaries, proposed deployment, and rollback are recorded in `PUBLIC_INTAKE_SECURITY_V2.md`.
+- Package 4 finish line: **Passed PAL tests on 2026-08-29**. Production activation remains gated on Control Room coordination and John's approval of the exact tested commit and cutover.
