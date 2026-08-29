@@ -105,7 +105,16 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - Created the private `us-east1` Artifact Registry repository `malware-scanner`.
 - Built reviewed upstream commit `0db019c9f09494215aa4485b71094e9b8d5ea90b` with the three recorded base-image digests and pinned build-tool digest `sha256:cf44459cd3e2cdca5e2c9546fbfa9444f007f288f53b8b76b52ffcb0a0e2c2e6`.
 - Cloud Build `e6a0516d-38bf-4e2a-a8fc-5fa719b65cfc` succeeded in 3m15s. The 268.2 MB image is `us-east1-docker.pkg.dev/pal-safety-hub-staging/malware-scanner/malware-scanner@sha256:e8ee7cc0ba2b31394f0131fcabeecd3309b0c27afc93e5a26e67ec96b7fece6c`.
-- Artifact Registry vulnerability scanning is not enabled. The console disclosed a direct cost of `$0.26 per image`; specific paid-action approval is pending before enabling it. No scanner runtime, trigger, schedule, or scan test is credited yet.
+- At this build checkpoint, Artifact Registry vulnerability scanning was not yet enabled and the console disclosed a direct cost of `$0.26 per image`. The subsequent approved scan and its blocking results are recorded below. No scanner runtime, trigger, schedule, or scan test is credited yet.
+
+### 2026-08-29 vulnerability-scan stop checkpoint
+
+- John explicitly approved the disclosed `$0.26` charge for one private Staging image. Artifact Analysis automatic scanning was enabled.
+- Google requires an image push after enabling scanning. A repeat of the exact pinned Cloud Build (`fd1d5ca2-04c0-4bcd-b5a3-e530a05fa85d`) succeeded and produced digest `sha256:36e6cbf11793c215521f528aee951ab1121e5551e1da6d5321502cd08861f134`.
+- The repeated build did **not** reproduce the first digest (`sha256:e8ee7cc0ba2b31394f0131fcabeecd3309b0c27afc93e5a26e67ec96b7fece6c`). This proves that pinning the upstream commit and base images alone does not make the current upstream build bit-for-bit reproducible. Neither digest is approved for runtime deployment.
+- Artifact Analysis reported 32 records for the second digest: **17 HIGH** (maximum CVSS 7.7, fixes available for all), **9 MEDIUM** (maximum CVSS 6.5, fixes available for all), and 6 records without a severity classification (five with fixes). No CRITICAL classification appeared.
+- High findings include affected versions of `@grpc/grpc-js`, `protobufjs`, `tar`, `uuid`, `picomatch`, `brace-expansion`, `ip-address`, and `sigstore`. The scanner runtime remains undeployed until dependencies are remediated, the build is re-reviewed, a replacement image is scanned, and the findings meet PAL's acceptance policy.
+- The first approved scan charge is recorded as incurred even though the cloud billing report had not posted it at verification time. A replacement image will trigger another disclosed `$0.26` scan and therefore requires a separate direct-cost approval before push.
 - Expected performance is not yet verified. Scale-to-zero is expected to have a long cold start because the ClamAV database is hundreds of MiB; the official warm recommendation exists for this reason. PAL will not claim a latency or throughput target until the Staging measurements exist.
 
 ## Rollback principle

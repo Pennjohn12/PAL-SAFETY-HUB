@@ -13,6 +13,9 @@ Newest entries go first. Git history remains the detailed code record.
 - Applied object-only scanner access to the four isolated buckets and created a separate keyless, narrowly scoped build identity rather than using the project's Editor-capable default identity.
 - Built the pinned scanner source and base images successfully into immutable digest `sha256:e8ee7cc0ba2b31394f0131fcabeecd3309b0c27afc93e5a26e67ec96b7fece6c`. The build lasted 3m15s; runtime deployment remains pending.
 - The console disclosed a `$0.26 per image` vulnerability-scanning charge. It remains disabled pending specific paid-action approval and is separately recorded in the cost ledger.
+- John approved the `$0.26` scan. Artifact Analysis was enabled and an exact repeat build was pushed to initiate scanning.
+- The repeat build succeeded but produced a different digest, proving the current upstream build is not bit-for-bit reproducible. The scanned replacement digest is `sha256:36e6cbf11793c215521f528aee951ab1121e5551e1da6d5321502cd08861f134`.
+- The scan reported 17 HIGH findings (maximum CVSS 7.7), 9 MEDIUM findings (maximum CVSS 6.5), and 6 unclassified records. All high and medium findings have fixes. Scanner deployment is blocked pending remediation and a separately approved replacement-image scan.
 
 ## 2026-08-29 — Package 6 vault separation active in Staging
 
