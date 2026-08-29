@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 verified design checkpoint
+
+- Verified that full W-4/SSN data remains in ordinary intake documents and that Office review has no separate sensitive-vault entitlement or server-attributed sensitive-read event.
+- Verified that Package 5 quarantine is fail-closed but has no trusted malware scanner or controlled clean-file release/download path.
+- Recorded the proposed server-only vault, explicit scanner states, object-integrity binding, short-lived authorized downloads, append-only audit evidence, and failure-safe rollback in `SENSITIVE_VAULT_DESIGN.md`.
+- No Production configuration, real record, file, account, credential, retention setting, or paid service was changed. Scanner/vendor, access, retention, false-positive, and existing-data policies remain explicit approval boundaries.
+
 ## 2026-08-29 — Package 5 Production activation verified
 
 - John explicitly approved exact tested commit `7cbe1c8e866aebf8fd7b0c61bb55b22ec710764c` and acknowledged that new public uploads remain private and unavailable even to Office until a later scan/release control is completed.

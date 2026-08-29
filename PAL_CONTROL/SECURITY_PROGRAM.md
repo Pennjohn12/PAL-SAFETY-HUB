@@ -20,7 +20,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 | 3 | Controlled Production maintenance mode | Passed PAL tests | John approved the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented and Production activation is verified. |
 | 4 | Secure public orientation/intake access | Passed PAL tests | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
 | 5 | Secure sensitive-upload authorization | Passed PAL tests | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
-| 6 | Separate sensitive payroll/identity vault and safe file release | Not started | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, malware scanning, quarantine release, and access evidence are approved and tested. |
+| 6 | Separate sensitive payroll/identity vault and safe file release | In progress | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, malware scanning, quarantine release, and access evidence are approved and tested. |
 | 7 | Controlled account and role creation | Not started | Self-registration can create only an unverified, unlinked Employee account; Foreman, Supervisor, Office, Admin, disabled state, and role changes require authorized server/admin workflow and revocation tests. |
 | 8 | Verified identity and employee linking | Not started | Email ownership is verified and an office-controlled link is required before private employee records, certifications, projects, onboarding, or history are returned. |
 | 9 | MFA and privileged-account protection | Not started | MFA is enforced for Admin and Office accounts; recovery, lost-factor, role-change, disablement, and session-revocation procedures are tested. |
@@ -34,7 +34,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 ## Current program position
 
 - Completed: **5 of 15** packages at the PAL internal-assessment level.
-- In progress: **None**. Package 6 is next and requires separately scoped implementation work.
+- In progress: **Package 6**. Verified separation/scanner risks, the proposed fail-closed design, and required policy/vendor decisions are recorded in `SENSITIVE_VAULT_DESIGN.md`.
 - Independently verified: **0 of 15** packages.
 - Production security deployment authorized: **Package 4 and Package 5 exact cutovers were approved and completed; no further Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
