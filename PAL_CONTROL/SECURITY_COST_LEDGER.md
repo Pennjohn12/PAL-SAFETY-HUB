@@ -8,7 +8,7 @@ This ledger records incremental cloud/service costs created specifically by the 
 |---|---|---|---|---:|---:|---|
 | 2 | Staging | Existing PAL Staging Firebase/Google Cloud project | Existing $5 monthly project alert | Usage dependent | Not yet reconciled | Active |
 | 5 | Staging + Production | Hourly expired-upload cleanup invocation and quarantine storage | Packet/file limits; one hourly invocation | Low usage-dependent | Not yet reconciled | Active |
-| 6 | Staging | Measurement-only ClamAV scanner: Cloud Run, Eventarc, Scheduler, Artifact Registry/build, three synthetic buckets, logs/metrics | Proposed min 0, max 1, concurrency 1; stop before estimated scanner-specific spend reaches $5; dedicated $5 alert requested | Target under $5 for controlled experiment | $0 before resource creation; update after measurement | Approved, creation pending |
+| 6 | Staging | Measurement-only ClamAV scanner: Cloud Run, Eventarc, Scheduler, Artifact Registry/build, three synthetic buckets, logs/metrics | Approved min 0, max 1, concurrency 1; stop before estimated scanner-specific spend reaches $5; dedicated $5 alert requested | Target under $5 for controlled experiment | Console showed $0.00 estimated project charges for Aug. 1–29 immediately before creation; post-creation cost not yet available | Identity and three buckets created; runtime blocked pending isolated quarantine-bucket approval |
 | 6 | Production | Warm or other Production malware scanner | No authorization | Preliminary architecture estimate roughly $33–$90/month plus usage; configuration not approved | $0 | Not created |
 
 ## Required final breakdown

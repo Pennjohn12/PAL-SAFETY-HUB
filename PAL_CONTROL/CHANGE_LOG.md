@@ -7,6 +7,8 @@ Newest entries go first. Git history remains the detailed code record.
 - John approved the exact measurement-only Staging scanner resources and requested a complete cost breakdown when the security program is finished.
 - Added `SECURITY_COST_LEDGER.md` to track estimated and measured incremental costs, billing scope, alerts, free-tier effects, and final reconciliation.
 - Approval is limited to the recorded us-east1, keyless, synthetic-only, min-0/max-1/concurrency-1 experiment with a $5 alert and stop boundary. No Production scanner, minimum instance, real file, credential key, or higher ceiling is authorized.
+- Enabled the approved Staging APIs, created the keyless scanner service account, and created exactly the three approved isolated `us-east1` buckets. No credential key was created.
+- Paused before scanner deployment because safely writing rejected objects requires a fourth isolated quarantine bucket; broad access to or a storage-mode change on the existing Firebase bucket was not applied. Recorded the pre-creation console cost baseline of `$0.00` estimated August charges.
 
 ## 2026-08-29 — Package 6 vault separation active in Staging
 

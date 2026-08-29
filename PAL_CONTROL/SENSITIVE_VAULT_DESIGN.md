@@ -87,6 +87,15 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - Measurements required before any warm or Production decision: cold-start time, definition age, scan time for 1 MiB and 25 MiB synthetic files, peak memory, clean/infected/error/timeout routing, duplicate-event behavior, and complete resource cost for at least one controlled test window.
 - Cost controls: maximum one instance and a dedicated **$5 monthly alert** scoped to the Staging scanner resources. Google budgets are alerts, not hard caps; the experiment must stop before estimated scanner-specific spend reaches $5. No minimum instance may be enabled without a new approval.
 - Failure behavior: unavailable scanner, stale definitions, timeout, unsupported/encrypted file, digest/generation mismatch, duplicate event, or notification failure leaves the file inaccessible in quarantine/manual review. No failure path copies to clean or issues a download.
+
+### 2026-08-29 Staging resource checkpoint
+
+- Required Google Cloud APIs were enabled successfully in `pal-safety-hub-staging`.
+- Created the keyless service account `pal-staging-malware-scanner` without generating or downloading any credential key.
+- Created exactly the three approved `us-east1` buckets for unscanned objects, clean objects, and the ClamAV definition mirror. Verification confirmed uniform bucket-level access is `true` and public-access prevention is `enforced`; the scanner account has zero user-managed keys.
+- The existing Firebase Storage bucket did not report uniform bucket-level access as enabled. Google Cloud requires uniform bucket-level access for bucket-level conditional IAM. Therefore the scanner was not granted broad access and the existing bucket was not changed.
+- The scanner runtime, image build, Eventarc trigger, Scheduler job, and scan tests remain paused. A fourth isolated quarantine bucket is the recommended least-privilege resolution and requires explicit approval because the earlier authorization named exactly three new buckets.
+- The Cloud console showed `$0.00` estimated Staging project charges for August 1–29 immediately before these resources were created. This is a baseline, not a guarantee of zero eventual billed cost.
 - Expected performance is not yet verified. Scale-to-zero is expected to have a long cold start because the ClamAV database is hundreds of MiB; the official warm recommendation exists for this reason. PAL will not claim a latency or throughput target until the Staging measurements exist.
 
 ## Rollback principle
