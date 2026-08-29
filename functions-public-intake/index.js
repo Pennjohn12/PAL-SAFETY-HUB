@@ -4,6 +4,7 @@ const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
+const { auditEvent, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
 const db = getFirestore();
@@ -78,7 +79,21 @@ async function officeActor(auth) {
   if (profile.disabled === true || !['office', 'admin'].includes(role)) {
     throw new HttpsError('permission-denied', 'PAL Office or Admin access is required.');
   }
-  return { uid: auth.uid, email: text(auth.token?.email, 180) };
+  return { uid: auth.uid, email: text(auth.token?.email, 180), role, sensitiveVaultAccess: profile.sensitiveVaultAccess === true };
+}
+
+function requireVaultActor(actor) {
+  if (actor.role !== 'admin' && actor.sensitiveVaultAccess !== true) {
+    throw new HttpsError('permission-denied', 'Separate PAL payroll-vault access is required.');
+  }
+  return actor;
+}
+
+function vaultRef(intakeId) { return db.collection('sensitiveIntakeVaults').doc(intakeId); }
+
+async function writeVaultAudit(input) {
+  const event = auditEvent(input);
+  await db.collection('sensitiveVaultAuditEvents').add({ ...event, occurredAt: FieldValue.serverTimestamp() });
 }
 
 function accessState(intake, suppliedToken) {
@@ -103,15 +118,19 @@ function requireActive(intake, token) {
   }
 }
 
-function publicView(id, row) {
+function publicView(id, row, vault = {}) {
   const allowed = [
     'name','phone','email','trade','projectName','projectJobNumber','foreman','startDate','required','notes',
     'employeeNotes','status','existingEmployeePayrollDocsOnFile','emergencyContactName','emergencyContactPhone',
-    'orientationForm','drugConsentForm','safetyAgreementForm','w4Form','certFiles','payrollIdFiles',
+    'orientationForm','drugConsentForm','safetyAgreementForm','certFiles',
     'certUploadsCompleted','payrollIdUploadsCompleted','packetChecklist','packetSubmitted'
   ];
   const result = { id };
   for (const key of allowed) if (row[key] !== undefined) result[key] = row[key];
+  if (vault.w4Form !== undefined) result.w4Form = vault.w4Form;
+  else if (row.w4Form !== undefined) result.w4Form = row.w4Form; // Existing records remain readable until separately approved migration.
+  if (vault.payrollIdFiles !== undefined) result.payrollIdFiles = vault.payrollIdFiles;
+  else if (row.payrollIdFiles !== undefined) result.payrollIdFiles = row.payrollIdFiles;
   return result;
 }
 
@@ -143,7 +162,7 @@ function checklist(row) {
     orientation: row.orientationForm?.completed === true,
     drug: row.drugConsentForm?.completed === true,
     safety: row.safetyAgreementForm?.completed === true,
-    w4: payrollBypass || row.w4Form?.completed === true,
+    w4: payrollBypass || row.w4Completed === true || row.w4Form?.completed === true,
     certs: row.certUploadsCompleted === true || (Array.isArray(row.certFiles) && row.certFiles.length > 0),
     payroll: payrollBypass || row.payrollIdUploadsCompleted === true || (Array.isArray(row.payrollIdFiles) && row.payrollIdFiles.length > 0),
     payrollBypass
@@ -178,7 +197,8 @@ exports.getPublicIntakeV2 = onCall({ region: REGION, cors: true, timeoutSeconds:
   if (!snap.exists) throw new HttpsError('permission-denied', 'This PAL link is invalid.');
   const row = snap.data() || {};
   requireActive(row, token);
-  return { intake: publicView(intakeId, row), expiresAt: row.publicAccess.expiresAt.toDate().toISOString() };
+  const vaultSnap = await vaultRef(intakeId).get();
+  return { intake: publicView(intakeId, row, vaultSnap.exists ? vaultSnap.data() : {}), expiresAt: row.publicAccess.expiresAt.toDate().toISOString() };
 });
 
 exports.updatePublicIntakeV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 20 }, async request => {
@@ -189,8 +209,10 @@ exports.updatePublicIntakeV2 = onCall({ region: REGION, cors: true, timeoutSecon
   if (!intakeId || !token) throw new HttpsError('permission-denied', 'A valid PAL intake link is required.');
   const ref = db.collection('newHireIntakes').doc(intakeId);
   let result;
+  let updatedW4Form;
   await db.runTransaction(async transaction => {
-    const snap = await transaction.get(ref);
+    const sensitiveRef = vaultRef(intakeId);
+    const [snap, sensitiveSnap] = await Promise.all([transaction.get(ref), transaction.get(sensitiveRef)]);
     if (!snap.exists) throw new HttpsError('permission-denied', 'This PAL link is invalid.');
     const row = snap.data() || {};
     requireActive(row, token);
@@ -201,7 +223,9 @@ exports.updatePublicIntakeV2 = onCall({ region: REGION, cors: true, timeoutSecon
     else if (action === 'safety') update = { safetyAgreementForm: formPayload(payload, ['employeeName','date','project','fallAcknowledgement','scaffoldAcknowledgement','notes','signature','dateSigned']) };
     else if (action === 'w4') {
       if (row.existingEmployeePayrollDocsOnFile === true) throw new HttpsError('failed-precondition', 'PAL Office already verified payroll documents for this packet.');
-      update = { w4Form: formPayload(payload, ['firstName','lastName','address','city','state','zip','ssn','filingStatus','multipleJobs','childCredit','otherCredit','totalCredits','otherIncome','deductions','extraWithholding','notes','signature','dateSigned']) };
+      updatedW4Form = formPayload(payload, ['firstName','lastName','address','city','state','zip','ssn','filingStatus','multipleJobs','childCredit','otherCredit','totalCredits','otherIncome','deductions','extraWithholding','notes','signature','dateSigned']);
+      transaction.set(sensitiveRef, { w4Form: updatedW4Form, updatedAt: FieldValue.serverTimestamp(), version: 1 }, { merge: true });
+      update = { w4Completed: true, w4Form: FieldValue.delete() };
     } else if (action === 'submit') {
       const state = checklist(row);
       if (!state.orientation || !state.drug || !state.safety || !state.w4 || !state.certs || !state.payroll) throw new HttpsError('failed-precondition', 'Complete every required packet step before submitting.');
@@ -209,7 +233,8 @@ exports.updatePublicIntakeV2 = onCall({ region: REGION, cors: true, timeoutSecon
     } else throw new HttpsError('invalid-argument', 'This intake update is not allowed.');
     update.updatedAt = FieldValue.serverTimestamp();
     transaction.update(ref, update);
-    result = action === 'submit' ? { submitted: true } : { intake: publicView(intakeId, { ...row, ...update }) };
+    const sensitive = sensitiveSnap.exists ? sensitiveSnap.data() : {};
+    result = action === 'submit' ? { submitted: true } : { intake: publicView(intakeId, { ...row, ...update }, action === 'w4' ? { ...sensitive, w4Form: updatedW4Form } : sensitive) };
   });
   return result;
 });
@@ -313,10 +338,15 @@ exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, time
     requireActive(row, token);
     if (currentGrant.state !== 'issued' || currentGrant.usedAt || !safeEqualHex(text(currentGrant.grantTokenHash, 64), hashToken(grantToken))) throw new HttpsError('permission-denied', 'This PAL upload grant was already used.');
     if (grant.folder === 'payrollIdUploads' && row.existingEmployeePayrollDocsOnFile === true) throw new HttpsError('failed-precondition', 'PAL Office already verified payroll documents for this packet.');
+    const sensitiveRef = vaultRef(intakeId);
+    const sensitiveSnap = grant.folder === 'payrollIdUploads' ? await transaction.get(sensitiveRef) : null;
     const field = grant.folder === 'certUploads' ? 'certFiles' : 'payrollIdFiles';
-    const files = Array.isArray(row[field]) ? row[field].filter(item => item?.path !== grant.path) : [];
+    const source = grant.folder === 'certUploads' ? row : (sensitiveSnap?.data() || {});
+    const files = Array.isArray(source[field]) ? source[field].filter(item => item?.path !== grant.path) : [];
     files.push(record); totalCount = files.length;
-    const update = { [field]: files, status: 'Ready for Review', updatedAt: FieldValue.serverTimestamp() };
+    const update = { status: 'Ready for Review', updatedAt: FieldValue.serverTimestamp() };
+    if (grant.folder === 'certUploads') update[field] = files;
+    else transaction.set(sensitiveRef, { payrollIdFiles: files, updatedAt: FieldValue.serverTimestamp(), version: 1 }, { merge: true });
     if (grant.folder === 'certUploads') update.certUploadsCompleted = true;
     else { update.payrollIdUploadsCompleted = true; update.payrollIdUploadCount = totalCount; }
     if (grant.folder === 'certUploads' && notes) update.certUploadNotes = notes;
@@ -325,6 +355,62 @@ exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, time
     transaction.update(authorizationRef, { state: 'quarantined', usedAt: FieldValue.serverTimestamp(), securityStatus: 'quarantined', malwareScanStatus: 'pending' });
   });
   return { status: 'quarantined', totalCount, record };
+});
+
+exports.getSensitiveIntakeVaultV1 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10 }, async request => {
+  const actor = requireVaultActor(await officeActor(request.auth));
+  const intakeId = text(request.data?.intakeId, 180);
+  let purpose;
+  try { purpose = validatePurpose(request.data?.purpose); } catch (_) { throw new HttpsError('invalid-argument', 'A business purpose is required.'); }
+  const snap = await vaultRef(intakeId).get();
+  await writeVaultAudit({ action: 'vault-read', actorUid: actor.uid, actorEmail: actor.email, intakeId, purpose, decision: snap.exists ? 'allowed' : 'denied', correlationId: crypto.randomUUID(), reason: snap.exists ? 'entitled-review' : 'vault-not-found' });
+  if (!snap.exists) throw new HttpsError('not-found', 'The sensitive payroll vault record was not found.');
+  return { vault: snap.data() };
+});
+
+exports.requestSensitiveIntakeDownloadV1 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10 }, async request => {
+  const actor = requireVaultActor(await officeActor(request.auth));
+  const intakeId = text(request.data?.intakeId, 180);
+  const path = text(request.data?.path, 1024);
+  let purpose;
+  try { purpose = validatePurpose(request.data?.purpose); } catch (_) { throw new HttpsError('invalid-argument', 'A business purpose is required.'); }
+  const snap = await vaultRef(intakeId).get();
+  const files = Array.isArray(snap.data()?.payrollIdFiles) ? snap.data().payrollIdFiles : [];
+  const record = files.find(item => item?.path === path);
+  const sensitiveType = ['Social Security Card', 'Driver License / Photo ID'].includes(record?.type);
+  if (!record) throw new HttpsError('not-found', 'The sensitive file was not found.');
+  let approvalRef = null;
+  if (sensitiveType) {
+    const approvals = await db.collection('sensitiveDownloadApprovals').where('intakeId', '==', intakeId).where('path', '==', path).where('requesterUid', '==', actor.uid).where('state', '==', 'approved').limit(1).get();
+    const approved = approvals.docs.find(item => (item.data()?.expiresAt?.toMillis?.() || 0) > Date.now());
+    if (!approved) {
+      const approval = await db.collection('sensitiveDownloadApprovals').add({ intakeId, path, requesterUid: actor.uid, purpose, state: 'pending', createdAt: FieldValue.serverTimestamp(), expiresAt: Timestamp.fromMillis(Date.now() + 3600000) });
+      await writeVaultAudit({ action: 'vault-download', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path, purpose, decision: 'denied', correlationId: approval.id, reason: 'second-approval-required' });
+      return { status: 'approval-required', approvalId: approval.id };
+    }
+    approvalRef = approved.ref;
+  }
+  const file = admin.storage().bucket().file(path);
+  const [metadata] = await file.getMetadata();
+  const currentIdentity = normalizeObjectIdentity({ path, generation: metadata.generation, size: Number(metadata.size), contentType: metadata.contentType, sha256: metadata.metadata?.palSha256 });
+  if (!mayAuthorizeDownload({ scanState: record.malwareScanStatus, recordedIdentity: record.objectIdentity, currentIdentity, entitled: true, disabled: false, purpose })) throw new HttpsError('failed-precondition', 'This file is not verified clean and available.');
+  const [url] = await file.getSignedUrl({ version: 'v4', action: 'read', expires: Date.now() + 5 * 60000, queryParams: { generation: currentIdentity.generation }, responseDisposition: `attachment; filename="${safeFileName(record.name)}"` });
+  await writeVaultAudit({ action: 'vault-download', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path, purpose, decision: 'allowed', correlationId: crypto.randomUUID(), reason: 'verified-clean' });
+  if (approvalRef) await approvalRef.update({ state: 'consumed', consumedAt: FieldValue.serverTimestamp() });
+  return { status: 'authorized', url, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() };
+});
+
+exports.approveSensitiveIntakeDownloadV1 = onCall({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10 }, async request => {
+  const actor = requireVaultActor(await officeActor(request.auth));
+  const approvalId = text(request.data?.approvalId, 180);
+  const ref = db.collection('sensitiveDownloadApprovals').doc(approvalId);
+  await db.runTransaction(async transaction => {
+    const snap = await transaction.get(ref);
+    const row = snap.data() || {};
+    if (!snap.exists || row.state !== 'pending' || row.requesterUid === actor.uid || (row.expiresAt?.toMillis?.() || 0) <= Date.now()) throw new HttpsError('failed-precondition', 'This approval request cannot be approved.');
+    transaction.update(ref, { state: 'approved', approverUid: actor.uid, approvedAt: FieldValue.serverTimestamp() });
+  });
+  return { status: 'approved' };
 });
 
 exports.cleanupExpiredPublicIntakeUploadsV2 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1 }, async () => {

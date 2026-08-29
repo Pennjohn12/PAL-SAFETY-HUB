@@ -53,6 +53,14 @@ test('anonymous clients cannot directly read or update an intake by document ID'
   await assertFails(updateDoc(doc(db, 'newHireIntakes', 'synthetic-direct-deny'), { name: 'blocked' }));
 });
 
+test('sensitive vault audit and approval records deny every browser directly', async () => {
+  const db = env.unauthenticatedContext().firestore();
+  await assertFails(getDoc(doc(db, 'sensitiveIntakeVaults', 'PAL_SYNTHETIC_DO_NOT_USE')));
+  await assertFails(setDoc(doc(db, 'sensitiveIntakeVaults', 'PAL_SYNTHETIC_DO_NOT_USE'), { ssn: '000-00-0000' }));
+  await assertFails(getDoc(doc(db, 'sensitiveVaultAuditEvents', 'synthetic-event')));
+  await assertFails(setDoc(doc(db, 'sensitiveDownloadApprovals', 'synthetic-approval'), { state: 'approved' }));
+});
+
 test('valid token is packet-bound while guessed and cross-packet tokens are denied', async () => {
   await seed('synthetic-packet-a', 'token-a');
   await seed('synthetic-packet-b', 'token-b');
