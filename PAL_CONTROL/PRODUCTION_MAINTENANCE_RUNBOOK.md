@@ -4,6 +4,10 @@ Prepared and Staging-tested: **2026-08-29, America/New_York**
 Owner: **John Panettiere**  
 Coordination: **00 — PAL CONTROL ROOM** and **06 — PAL SECURITY & ACCESS**
 
+Production activated: **2026-08-28 at approximately 8:39 PM America/New_York**
+
+Authorized window ends: **approximately 10:39 PM America/New_York unless John renews it**
+
 ## Purpose and authorization boundary
 
 This mode temporarily prevents PAL Safety Hub from accepting, returning, changing, uploading, or sending PAL application data while security work is performed. It is not active merely because these files exist.
@@ -87,6 +91,18 @@ The separately listed `us-central1/submitEmployeeFieldForm` metadata was `UNKNOW
 - Live anonymous Staging Firestore read during maintenance: **403 denied**.
 - Rollback rehearsal: normal Staging rules, closed Storage, Hosting application, synthetic banner, and registration repair were restored. The normal 10-test Staging authorization suite passed after rollback.
 - Production impact during testing: **None**.
+
+## Production activation evidence
+
+- John explicitly approved the exact activation after the affected behavior, security purpose, two-hour limit, and rollback boundary were explained in **06 — PAL SECURITY & ACCESS**.
+- Activation used tested commit `139d6df13e039d7b9d9c033339030c300b966ad4` on branch `codex/security-package-3-maintenance`; tracked files were clean and the five untracked synthetic QA fixtures were preserved.
+- Firebase deployed only maintenance Hosting plus deny-all Firestore and Storage rules through `firebase.maintenance.production.json`; no Function code, secret, Authentication setting, account, or PAL record was changed.
+- Both `https://pal.jobsiteresources.com/` and `https://pal-safety-hub.web.app/`, plus representative intake, daily-access, and old-link paths, returned the same 1,916-byte maintenance page with HTTP 200, `Cache-Control: no-store, max-age=0`, and `X-Frame-Options: DENY`.
+- Anonymous synthetic probes returned **403** from Firestore and **403 Permission denied** from the Production Storage bucket. No real collection, document, object, or identity was used.
+- Public `allUsers` Cloud Run Invoker access was removed from all 12 active interactive services listed above. Independent unauthenticated POSTs returned platform denial: ten endpoints returned **403** and the two east-region endpoints returned **401**. No request reached application validation after final verification.
+- Exact Scheduler jobs `firebase-schedule-monitorIntegrationHealth-us-central1` and `firebase-schedule-sendWeeklyCertWatch-us-central1` were **Enabled** before activation and verified **Paused** afterward.
+- The stale `us-central1/submitEmployeeFieldForm` entry remains outside the active inventory; its pre-activation endpoint returned 404.
+- Final Production verification completed at approximately **8:49 PM America/New_York**. The maintenance window must be rolled back or explicitly renewed before its two-hour stop time.
 
 ## User communication
 

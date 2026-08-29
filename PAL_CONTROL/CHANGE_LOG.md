@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-28 — Package 3 Production maintenance activation verified
+
+- John explicitly approved the exact controlled Production activation after its impact, security benefit, two-hour limit, and rollback were explained.
+- Deployed maintenance Hosting and deny-all Firestore/Storage rules only; no Function code, secret, Authentication account, or PAL record was changed.
+- Removed public Cloud Run Invoker access from all 12 active interactive Function services and paused only `firebase-schedule-monitorIntegrationHealth-us-central1` and `firebase-schedule-sendWeeklyCertWatch-us-central1`.
+- Verification: both Production domains and representative old/public routes served the same protected maintenance page; anonymous synthetic Firestore and Storage probes returned 403; ten central endpoints returned 403 and two east endpoints returned 401 before application handling; both exact schedules showed Paused.
+- Result: Package 3 **Passed PAL tests**. Production remains in the approved two-hour maintenance window ending at approximately 10:39 PM America/New_York unless John renews it; rollback remains defined in `PRODUCTION_MAINTENANCE_RUNBOOK.md`.
+
 ## 2026-08-29 — Package 3 Staging activation and rollback rehearsal
 
 - Coordinated the Production-impacting package with **00 — PAL CONTROL ROOM** and created branch `codex/security-package-3-maintenance`.

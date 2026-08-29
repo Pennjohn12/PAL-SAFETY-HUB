@@ -4,16 +4,17 @@ Last verified: **2026-08-28, America/New_York**
 
 ## Current Production status
 
-- Status: **Online; sampled deploy-critical Hosting content matches current source.**
+- Status: **Controlled security maintenance mode active; normal application and public-link use is unavailable.**
 - Production URL: `https://pal-safety-hub.web.app/`
 - Custom PAL URL: `https://pal.jobsiteresources.com/`
 - Firebase project: `pal-safety-hub`
 - Current Production commit: `4b2e54e214eebe7615a36ddf6b2c7e7e394199be`
-- Production Hosting version: `d9ef60e643ff9f11`
-- Production release time: `2026-08-28T18:01:25.005Z`
+- Pre-maintenance Production Hosting version: `d9ef60e643ff9f11`
+- Pre-maintenance Production release time: `2026-08-28T18:01:25.005Z`
 - Deployment identity: `jvpanettiere@gmail.com`
 - Evidence: live `index.html`, `projects.html`, Firebase client configuration, `manifest.json`, and `sw.js` matched the Git blobs at the Production commit.
 - Firestore and Storage rule text was compared read-only in the Firebase console on 2026-08-29 and matched the checked-in rules after line-ending normalization. Deployed Function source equivalence remains unverified.
+- Package 3 maintenance activation began at approximately 8:39 PM America/New_York on 2026-08-28 with John's explicit approval. Both Production domains serve the maintenance page; Firestore and Storage use deny-all client rules; all 12 interactive Functions reject anonymous invocation; and the two exact Firebase Scheduler jobs are paused. The approved window ends at approximately 10:39 PM unless renewed.
 
 ## Current source and Git checkpoint
 
@@ -89,10 +90,10 @@ Present in current source and covered by current automated checks where noted:
 
 - Package 1 of 15, Security inventory and risk register: **Passed PAL tests** on 2026-08-28 through read-only evidence review.
 - Package 2 of 15, isolated Staging/Test environment: **Passed PAL tests** on 2026-08-28. The separate project has isolated Hosting, Auth, Firestore/PITR, hardened rules, closed Storage, a $5 monthly alert, environment guards, a visible test-data banner, one isolated health Function, synthetic identities/profiles/project data, 10 passing emulator tests, and a successful temporary-account live lifecycle with complete cleanup. MFA is tracked in Package 9, account/role lifecycle in Package 7, and broad workflow validation in Package 14.
-- Package 3 of 15, controlled Production maintenance mode: **In progress**. Layered Hosting, Firestore, Storage, Function-invocation, schedule-pause, communication, two-hour stop, and rollback controls are inventoried in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and 23 focused tests passed. Production is not in maintenance mode and awaits exact activation approval after the Control Room checkpoint.
+- Package 3 of 15, controlled Production maintenance mode: **Passed PAL tests** on 2026-08-28. Layered Hosting, deny-all Firestore/Storage rules, Function invocation lockdown, schedule pause, communication, two-hour stop, and rollback controls are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and Production activation verification passed.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
-- This boundary is operational only; Production has not been placed into a technically enforced maintenance mode.
+- The no-submission boundary is now technically enforced by the active Package 3 maintenance controls for the approved window.
 - Detailed status: `SECURITY_PROGRAM.md`. Verified risks and gaps: `SECURITY_RISK_REGISTER.md`.
 
 ## Production authorization

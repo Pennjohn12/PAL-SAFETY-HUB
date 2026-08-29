@@ -17,7 +17,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 |---|---|---|---|
 | 1 | Security inventory and risk register | Passed PAL tests | Current source, configuration, Production metadata, data classes, trust boundaries, controls, verified risks, and verification gaps are recorded in `SECURITY_RISK_REGISTER.md`. No destructive testing or real-data inspection is used. |
 | 2 | Isolated Staging/Test environment | Passed PAL tests | Separate Firebase project, Auth, Firestore, Storage, Functions, Hosting, secrets, budgets, alerts, synthetic fixtures, and visible staging banner are verified. No Production data is copied. |
-| 3 | Controlled Production maintenance mode | In progress | John approves the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented. |
+| 3 | Controlled Production maintenance mode | Passed PAL tests | John approved the exact lockdown; existing account and public-link behavior is inventoried; maintenance access, rollback, communication, and verification are documented and Production activation is verified. |
 | 4 | Secure public orientation/intake access | Not started | Public database reads/writes are replaced by narrow, expiring, server-controlled actions; completed and revoked packets cannot be reopened; tests cover guessed, expired, replayed, and cross-packet access. |
 | 5 | Secure sensitive-upload authorization | Not started | Uploads require expiring, single-purpose authorization bound to one packet, folder, file, size, and approved content type; abuse limits and malware-handling controls are tested. |
 | 6 | Separate sensitive payroll/identity vault | Not started | SSNs, W-4s, IDs, payroll, and future banking data are excluded from ordinary app records; least-privilege access, encryption design, retention, and access evidence are approved and tested. |
@@ -33,10 +33,10 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 
 ## Current program position
 
-- Completed: **2 of 15** packages at the PAL internal-assessment level.
-- In progress: **Package 3 — Controlled Production maintenance mode**. The layered mode and rollback passed Staging tests; exact Production activation remains approval-gated.
+- Completed: **3 of 15** packages at the PAL internal-assessment level.
+- In progress: **None**. Package 4 is next and requires separately scoped implementation work.
 - Independently verified: **0 of 15** packages.
-- Production security deployment authorized: **No**.
+- Production security deployment authorized: **Package 3 activation only; no additional Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
 
@@ -86,4 +86,5 @@ The default sequence is Package 2 (Staging), then an explicitly authorized Packa
 - A static one-page maintenance site, deny-all Firestore/Storage rules, endpoint-coverage harness, exact affected-flow inventory, two-hour stop condition, user notices, and rollback runbook are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`.
 - Automated evidence passes: 59 core/static checks, 6 maintenance rule emulator checks, and 12 maintenance endpoint emulator checks.
 - Staging activation and rollback rehearsal passed. All tested old/public routes served identical maintenance content; anonymous Firestore access was denied; normal Staging Hosting/rules were restored; the 10-test normal Staging authorization suite passed afterward.
-- Not complete: the tested checkpoint, final pre-activation Production metadata/IAM/schedule capture, Control Room report, and John's explicit approval of the exact Production activation described in the runbook.
+- Production activation passed on 2026-08-28: both Hosting domains and representative legacy/public routes serve the protected maintenance page; Firestore and Storage deny anonymous synthetic probes; all 12 active interactive Functions reject anonymous invocation at the platform boundary; and the two exact Scheduler jobs are paused.
+- Package 3 finish line: **Passed PAL tests on 2026-08-28**. Production remains inside the explicitly approved two-hour maintenance window and must be rolled back or explicitly renewed before the recorded stop time.
