@@ -96,6 +96,16 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - The existing Firebase Storage bucket did not report uniform bucket-level access as enabled. Google Cloud requires uniform bucket-level access for bucket-level conditional IAM. Therefore the scanner was not granted broad access and the existing bucket was not changed.
 - The scanner runtime, image build, Eventarc trigger, Scheduler job, and scan tests remain paused. A fourth isolated quarantine bucket is the recommended least-privilege resolution and requires explicit approval because the earlier authorization named exactly three new buckets.
 - The Cloud console showed `$0.00` estimated Staging project charges for August 1–29 immediately before these resources were created. This is a baseline, not a guarantee of zero eventual billed cost.
+
+### 2026-08-29 approved isolation and immutable-build checkpoint
+
+- John explicitly approved a fourth isolated quarantine bucket under the existing synthetic-only, Staging-only, under-$5 experiment boundary. `pal-safety-hub-staging-clamav-quarantine` was created in `us-east1` with uniform bucket-level access and enforced public-access prevention. The existing Firebase Storage bucket remains unchanged.
+- The scanner identity received object-only administration on the four isolated scanner buckets plus metric-writer, Eventarc-receiver, and Cloud Run-invoker roles. It did not receive Storage Admin or access to the existing Firebase bucket.
+- The project default build identity has the broad Editor role and was not used. A second keyless `pal-staging-scanner-builder` identity was created with only source-bucket object read, scanner-repository write, and logging write. Verification found zero user-managed keys.
+- Created the private `us-east1` Artifact Registry repository `malware-scanner`.
+- Built reviewed upstream commit `0db019c9f09494215aa4485b71094e9b8d5ea90b` with the three recorded base-image digests and pinned build-tool digest `sha256:cf44459cd3e2cdca5e2c9546fbfa9444f007f288f53b8b76b52ffcb0a0e2c2e6`.
+- Cloud Build `e6a0516d-38bf-4e2a-a8fc-5fa719b65cfc` succeeded in 3m15s. The 268.2 MB image is `us-east1-docker.pkg.dev/pal-safety-hub-staging/malware-scanner/malware-scanner@sha256:e8ee7cc0ba2b31394f0131fcabeecd3309b0c27afc93e5a26e67ec96b7fece6c`.
+- Artifact Registry vulnerability scanning is not enabled. The console disclosed a direct cost of `$0.26 per image`; specific paid-action approval is pending before enabling it. No scanner runtime, trigger, schedule, or scan test is credited yet.
 - Expected performance is not yet verified. Scale-to-zero is expected to have a long cold start because the ClamAV database is hundreds of MiB; the official warm recommendation exists for this reason. PAL will not claim a latency or throughput target until the Staging measurements exist.
 
 ## Rollback principle

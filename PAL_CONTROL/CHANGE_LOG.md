@@ -9,6 +9,10 @@ Newest entries go first. Git history remains the detailed code record.
 - Approval is limited to the recorded us-east1, keyless, synthetic-only, min-0/max-1/concurrency-1 experiment with a $5 alert and stop boundary. No Production scanner, minimum instance, real file, credential key, or higher ceiling is authorized.
 - Enabled the approved Staging APIs, created the keyless scanner service account, and created exactly the three approved isolated `us-east1` buckets. No credential key was created.
 - Paused before scanner deployment because safely writing rejected objects requires a fourth isolated quarantine bucket; broad access to or a storage-mode change on the existing Firebase bucket was not applied. Recorded the pre-creation console cost baseline of `$0.00` estimated August charges.
+- John approved and PAL created the fourth isolated Staging quarantine bucket with matching region and access protections; the existing Firebase bucket remains unchanged.
+- Applied object-only scanner access to the four isolated buckets and created a separate keyless, narrowly scoped build identity rather than using the project's Editor-capable default identity.
+- Built the pinned scanner source and base images successfully into immutable digest `sha256:e8ee7cc0ba2b31394f0131fcabeecd3309b0c27afc93e5a26e67ec96b7fece6c`. The build lasted 3m15s; runtime deployment remains pending.
+- The console disclosed a `$0.26 per image` vulnerability-scanning charge. It remains disabled pending specific paid-action approval and is separately recorded in the cost ledger.
 
 ## 2026-08-29 — Package 6 vault separation active in Staging
 
