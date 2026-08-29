@@ -102,10 +102,20 @@ index 325f556..d6723b3 100644
  
  export {logger};
 diff --git a/cloudrun-malware-scanner/package-lock.json b/cloudrun-malware-scanner/package-lock.json
-index 7cc96d8..37dab4b 100644
+index 7cc96d8..ccae603 100644
 --- a/cloudrun-malware-scanner/package-lock.json
 +++ b/cloudrun-malware-scanner/package-lock.json
-@@ -9,15 +9,13 @@
+@@ -1,23 +1,21 @@
+ {
+-  "name": "gcs-malware-scanner",
++  "name": "pal-clamav-scanner",
+   "version": "3.6.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "gcs-malware-scanner",
++      "name": "pal-clamav-scanner",
        "version": "3.6.0",
        "license": "Apache-2.0",
        "dependencies": {
@@ -2093,9 +2103,16 @@ index 7cc96d8..37dab4b 100644
        "version": "0.1.0",
        "integrity": "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==",
 diff --git a/cloudrun-malware-scanner/package.json b/cloudrun-malware-scanner/package.json
-index 70c6221..0f6505e 100644
+index 70c6221..941c857 100644
 --- a/cloudrun-malware-scanner/package.json
 +++ b/cloudrun-malware-scanner/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "gcs-malware-scanner",
++  "name": "pal-clamav-scanner",
+   "version": "3.6.0",
+   "description": "Service to scan GCS documents for the malware and move the analyzed documents to appropriate buckets",
+   "main": "index.js",
 @@ -23,15 +23,13 @@
    "author": "Google Inc.",
    "license": "Apache-2.0",

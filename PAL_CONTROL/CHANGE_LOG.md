@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 hardened image blocked on package-name collision
+
+- John approved one additional `$0.26` scan. Hardened Cloud Build `7638a7ae-dd62-4578-a05b-512da21a4b52` succeeded and produced immutable digest `sha256:8151f03645b61edc7af9182fe8e91cc863b323f9175f91cc05b5cd700e720192`.
+- Artifact Analysis reported zero vulnerabilities and one CRITICAL malicious-package match against the root application name `gcs-malware-scanner`.
+- Verified the advisory describes an unrelated npm-registry package while Google's reviewed source uses the same name for its local application. PAL still applied the no-CRITICAL policy and kept the image blocked.
+- Renamed the local package identity to `pal-clamav-scanner`; a fresh-clone build, 34/34 tests, and the production dependency audit pass. No follow-up image or scan was created because another `$0.26` charge requires separate approval.
+- Cumulative authorized scanner-analysis charge is now `$0.52`, pending billing reconciliation. No scanner runtime, trigger, schedule, Production component, credential key, or real data was used.
+
 ## 2026-08-29 — Package 6 scanner remediation candidate prepared
 
 - Kept both vulnerable scanner images blocked and undeployed.

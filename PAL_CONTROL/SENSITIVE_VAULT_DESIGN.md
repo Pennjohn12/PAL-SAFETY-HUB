@@ -126,6 +126,14 @@ Google’s published deployment keeps one 1-vCPU/4-GiB scanner instance warm bec
 - This source audit does not prove that the resulting Linux container is vulnerability-free or bit-for-bit reproducible. A new immutable image must be built once, its digest recorded, and Artifact Analysis must scan that exact digest.
 - PAL acceptance for the next candidate is: no CRITICAL or HIGH findings; no fix-available MEDIUM finding unless PAL documents a specific false-positive or non-exploitable exception; exact source/base/builder inputs and resulting digest recorded; zero credential keys; and no runtime deployment until the scan is reviewed. A new image push will incur another disclosed `$0.26` scan and requires John's separate action-time approval.
 
+### 2026-08-29 hardened-image name-collision stop checkpoint
+
+- John explicitly approved one additional `$0.26` scan. Cloud Build `7638a7ae-dd62-4578-a05b-512da21a4b52` succeeded in 2m46s using the dedicated keyless builder and the pinned builder digest. The resulting 214.7 MB image is `sha256:8151f03645b61edc7af9182fe8e91cc863b323f9175f91cc05b5cd700e720192`.
+- Artifact Analysis completed with zero vulnerability findings but one CRITICAL malicious-package match: `MAL-2022-3299` / GitHub advisory `GHSA-vqx8-hw9w-5xp3`, package `gcs-malware-scanner`, all versions, no fix.
+- This is a verified package-name collision rather than evidence that PAL installed the malicious npm artifact: Google's reviewed source declares its own root application with that name, while the advisory identifies an unrelated npm registry package and lists no source repository. PAL nevertheless applies its no-CRITICAL acceptance rule, so this image remains blocked and undeployed.
+- The local source overlay now renames only the root application package and lockfile identity to `pal-clamav-scanner`. Fresh-clone verification again passed the TypeScript build, **34 of 34** tests, and `npm audit --omit=dev` with zero known runtime findings. Logs now identify the PAL package name.
+- Clearing the scanner finding requires a different image digest and therefore another newly pushed image and disclosed `$0.26` scan. That next direct cost is not authorized. No runtime, trigger, schedule, new permission, credential, Production resource, or real data was used.
+
 ## Rollback principle
 
 Rollback must never copy newly separated sensitive data back into ordinary intake records or make quarantine objects browser-readable. If the scanner or release service fails, the safe state is continued quarantine and unavailable downloads. Any emergency compatibility rollback requires a separately approved data-handling plan and must preserve vault/audit records.

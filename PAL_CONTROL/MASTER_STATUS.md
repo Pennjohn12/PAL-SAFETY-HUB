@@ -28,7 +28,7 @@ Last verified: **2026-08-29, America/New_York**
 
 ## Staging/Test status
 
-- Package 6 scanner deployment remains blocked. A locally tested hardening overlay now passes 34/34 scanner tests and reports zero known runtime dependency vulnerabilities, but no replacement image has been pushed or scanned. A new `$0.26` scan requires separate approval before the Staging runtime measurement can resume.
+- Package 6 scanner deployment remains blocked. The first hardened image scan reported zero vulnerabilities but one CRITICAL match caused by the Google source package name colliding with an unrelated malicious npm package. The source overlay now uses `pal-clamav-scanner` and again passes 34/34 tests plus a zero-finding production dependency audit. A new `$0.26` image scan requires separate approval before Staging runtime measurement can resume.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
