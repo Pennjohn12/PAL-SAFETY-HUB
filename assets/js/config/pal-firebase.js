@@ -67,6 +67,7 @@ export const updatePublicIntakeV2Callable = httpsCallable(functions, "updatePubl
 export const createPublicIntakeUploadV2Callable = httpsCallable(functions, "createPublicIntakeUploadV2");
 export const finalizePublicIntakeUploadV2Callable = httpsCallable(functions, "finalizePublicIntakeUploadV2");
 export const getSensitiveIntakeVaultV1Callable = httpsCallable(functions, "getSensitiveIntakeVaultV1");
+export const requestIntakeCertificationDownloadV1Callable = httpsCallable(functions, "requestIntakeCertificationDownloadV1");
 export const requestSensitiveIntakeDownloadV1Callable = httpsCallable(functions, "requestSensitiveIntakeDownloadV1");
 export const approveSensitiveIntakeDownloadV1Callable = httpsCallable(functions, "approveSensitiveIntakeDownloadV1");
 export const requestSensitiveFalsePositiveReviewV1Callable = httpsCallable(functions, "requestSensitiveFalsePositiveReviewV1");

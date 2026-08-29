@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 automatic first-scan candidate prepared locally
+
+- Added a predeployment first-scan flow for both Package 5 upload folders. Finalization hashes and binds the exact Firebase object generation, persists the correct certification or sensitive-vault record first, and then automatically copies only that generation into the private scanner input using an idempotent authorization-derived path.
+- Added separate clean/infected output-bucket handlers that re-hash the scanner output, validate bucket/path/generation/size/type/SHA-256 metadata against the pending record, serialize result recording, and keep every file non-downloadable until a later server authorization. A ten-minute worker automatically retries failed queue copies and stale results; employees do not move or resubmit files because of an internal interruption.
+- Added a purpose-bound five-minute certification download callable for active Office/Admin users. It does not require sensitive-vault entitlement or two-person identity approval; payroll/identity files retain those stronger controls. The Office UI uses plain statuses: security check in progress, Office review required, or one protected Open button.
+- This candidate uses the already accepted scanner image unchanged, so it requires no new image push or `$0.26` Artifact Analysis scan. It is local/predeployment only. Staging still requires exact approval for two new private bucket-result Eventarc Functions, one retry schedule, focused finalizer/certification-callable/client deployment, and narrow vault-identity object-viewer access on only the isolated clean/quarantine buckets.
+- Functions and policy syntax pass; all 97/97 PAL tests pass. No cloud, IAM, Production, real-data, credential, or cost action occurred.
+
 ## 2026-08-29 — Package 6 initial-upload scanner handoff remains blocked
 
 - Exact Production-proposal inspection found a verified integration gap after the Office workflow checkpoint: `finalizePublicIntakeUploadV2` validates and records both certification and payroll/identity uploads as `pending`, but it does not enqueue either exact Firebase-quarantine object into the isolated scanner.

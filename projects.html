@@ -4233,6 +4233,7 @@
     createPublicIntakeUploadV2Callable,
     finalizePublicIntakeUploadV2Callable,
     getSensitiveIntakeVaultV1Callable,
+    requestIntakeCertificationDownloadV1Callable,
     requestSensitiveIntakeDownloadV1Callable,
     approveSensitiveIntakeDownloadV1Callable,
     requestSensitiveFalsePositiveReviewV1Callable,
@@ -4607,6 +4608,7 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
   window.saveNewHirePayrollIdUploads = saveNewHirePayrollIdUploads;
   window.openNewHireStoredFile = openNewHireStoredFile;
   window.loadSensitiveVaultForReview = loadSensitiveVaultForReview;
+  window.requestCertificationDownload = requestCertificationDownload;
   window.requestSensitiveVaultDownload = requestSensitiveVaultDownload;
   window.requestSensitiveFalsePositiveReview = requestSensitiveFalsePositiveReview;
   window.loadSensitiveApprovalQueue = loadSensitiveApprovalQueue;
@@ -13179,6 +13181,18 @@ if ((palPublicStartParam || palPublicNoLoginParam) && (!publicNewHireIntakeId ||
     });
   }
 
+  function certificationFileHTML(file, fallbackLabel = 'Certification File') {
+    const label = esc(file?.name || fallbackLabel);
+    const state = String(file?.malwareScanStatus || '').toLowerCase();
+    if (file?.objectIdentity && state === 'clean') {
+      const encodedPath = encodeURIComponent(String(file.path || '')).replace(/'/g, '%27');
+      return `${label} <span class="muted">(security check complete)</span> <button class="btn-sm" type="button" onclick="requestCertificationDownload('${encodedPath}')">Open Protected File</button>`;
+    }
+    if (file?.objectIdentity && ['pending', 'scanning'].includes(state)) return `${label} <span class="muted">(security check in progress — no action needed)</span>`;
+    if (file?.objectIdentity) return `${label} <span class="muted">(PAL Office review required)</span>`;
+    return newHireFileLinkHTML(file, fallbackLabel);
+  }
+
   function isTransientIntakeConfirmationError(error) {
     const code = String(error?.code || '').toLowerCase();
     return ['network', 'unavailable', 'deadline', 'internal', 'retry-limit'].some(part => code.includes(part));
@@ -14135,7 +14149,7 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
     </div>
     <div class="newhire-upload-list">
       <strong>Uploaded Cert Files</strong>
-      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">${newHireFileLinkHTML(f, 'Certification File')}</div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
+      ${(x.certFiles || []).length ? (x.certFiles || []).map(f => `<div class="newhire-upload-item">${certificationFileHTML(f, 'Certification File')}</div>`).join('') : '<div class="helper-text">No cert files uploaded yet.</div>'}
     </div>
     <div class="newhire-upload-list" style="margin-top:12px;">
       <strong>Protected Payroll / Identity Vault</strong>
@@ -14203,6 +14217,21 @@ ${data.notes || 'Please make sure all cards/photos are clear and readable.'}`;
       console.error('Protected vault status failed', error);
       renderSensitiveVaultFiles([]);
       toast('Protected file status is unavailable or your account is not entitled.');
+    }
+  }
+
+  async function requestCertificationDownload(encodedPath) {
+    const purpose = requireSensitiveVaultPurpose();
+    const intake = currentReviewIntake();
+    if (!purpose || !intake) return;
+    try {
+      const result = await requestIntakeCertificationDownloadV1Callable({ intakeId: intake.id, path: decodeURIComponent(encodedPath), purpose });
+      if (result.data?.status !== 'authorized' || !result.data?.url) throw new Error('not-authorized');
+      const popup = window.open(result.data.url, '_blank', 'noopener');
+      if (!popup) toast('Popup blocked. Allow popups and choose Open Protected File again.');
+    } catch (error) {
+      console.error('Protected certification download failed', error);
+      toast('This certification remains protected. PAL Office can try again after its security check completes.');
     }
   }
 

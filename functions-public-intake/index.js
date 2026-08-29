@@ -2,9 +2,11 @@ const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
+const { onObjectFinalized } = require('firebase-functions/v2/storage');
 const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
+const { initialScanEvidence, initialScanMetadata, initialScanPath, mayApplyInitialScan } = require('./initial-scan-policy');
 const { processSensitiveVaultRetention } = require('./sensitive-vault-retention');
 const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, sameObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
@@ -26,6 +28,8 @@ const MAX_PACKET_FILES = 12;
 const MAX_GRANTS_PER_HOUR = 12;
 const VAULT_SERVICE_ACCOUNT = defineString('PAL_VAULT_SERVICE_ACCOUNT');
 const RESCAN_BUCKET = defineString('PAL_RESCAN_BUCKET');
+const SCANNER_CLEAN_BUCKET = defineString('PAL_SCANNER_CLEAN_BUCKET');
+const SCANNER_QUARANTINE_BUCKET = defineString('PAL_SCANNER_QUARANTINE_BUCKET');
 const VAULT_RUNTIME = Object.freeze({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10,
   serviceAccount: VAULT_SERVICE_ACCOUNT });
 
@@ -110,6 +114,80 @@ async function writeVaultAudit(input) {
     transaction.set(headRef, { version: 1, eventId, eventHash: event.eventHash, updatedAt: FieldValue.serverTimestamp() });
   });
   return eventId;
+}
+
+function sha256StorageFile(file) {
+  return new Promise((resolve, reject) => {
+    const hash = crypto.createHash('sha256');
+    file.createReadStream({ validation: false })
+      .on('error', reject)
+      .on('data', chunk => hash.update(chunk))
+      .on('end', () => resolve(hash.digest('hex')));
+  });
+}
+
+function recordCollection(folder, intakeRow, vaultRow) {
+  return folder === 'certUploads'
+    ? (Array.isArray(intakeRow?.certFiles) ? intakeRow.certFiles : [])
+    : (Array.isArray(vaultRow?.payrollIdFiles) ? vaultRow.payrollIdFiles : []);
+}
+
+async function updateInitialScanRecord({ authorizationId, allowedStates, mutate }) {
+  const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(authorizationId);
+  await db.runTransaction(async transaction => {
+    const authorizationSnap = await transaction.get(authorizationRef);
+    const authorization = authorizationSnap.data() || {};
+    if (!authorizationSnap.exists || !allowedStates.includes(authorization.state)
+        || !['certUploads', 'payrollIdUploads'].includes(authorization.folder)) throw new Error('invalid-scan-authorization-state');
+    const intakeRef = db.collection('newHireIntakes').doc(text(authorization.intakeId, 180));
+    const sensitiveRef = vaultRef(text(authorization.intakeId, 180));
+    const [intakeSnap, vaultSnap] = await Promise.all([transaction.get(intakeRef), transaction.get(sensitiveRef)]);
+    const records = recordCollection(authorization.folder, intakeSnap.data(), vaultSnap.data());
+    const index = records.findIndex(item => item?.path === authorization.path);
+    if (index < 0) throw new Error('missing-scan-record');
+    const result = mutate({ authorization, record: records[index] });
+    records[index] = result.record;
+    if (authorization.folder === 'certUploads') transaction.update(intakeRef, { certFiles: records, updatedAt: FieldValue.serverTimestamp() });
+    else transaction.set(sensitiveRef, { payrollIdFiles: records, updatedAt: FieldValue.serverTimestamp(), version: 1 }, { merge: true });
+    transaction.update(authorizationRef, result.authorization);
+  });
+}
+
+async function queueInitialScan(authorizationId) {
+  const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(authorizationId);
+  const authorizationSnap = await authorizationRef.get();
+  const authorization = authorizationSnap.data() || {};
+  if (!authorizationSnap.exists || !['quarantined', 'scan-queue-failed'].includes(authorization.state)
+      || !['certUploads', 'payrollIdUploads'].includes(authorization.folder)) throw new Error('invalid-scan-queue-state');
+  const [intakeSnap, vaultSnap] = await Promise.all([
+    db.collection('newHireIntakes').doc(text(authorization.intakeId, 180)).get(),
+    vaultRef(text(authorization.intakeId, 180)).get()
+  ]);
+  const record = recordCollection(authorization.folder, intakeSnap.data(), vaultSnap.data()).find(item => item?.path === authorization.path);
+  if (!record || record.malwareScanStatus !== 'pending') throw new Error('missing-pending-scan-record');
+  const identity = normalizeObjectIdentity(record.objectIdentity);
+  const source = admin.storage().bucket().file(identity.path, { generation: identity.generation });
+  const [sourceMetadata] = await source.getMetadata();
+  const currentIdentity = normalizeObjectIdentity({ path: identity.path, generation: sourceMetadata.generation,
+    size: Number(sourceMetadata.size), contentType: sourceMetadata.contentType, sha256: sourceMetadata.metadata?.palSha256 });
+  if (!sameObjectIdentity(identity, currentIdentity)) throw new Error('scan-source-identity-mismatch');
+  const metadata = initialScanMetadata({ authorizationId, intakeId: authorization.intakeId, folder: authorization.folder,
+    name: authorization.name, originalIdentity: identity });
+  const destination = admin.storage().bucket(RESCAN_BUCKET.value()).file(metadata.palInitialScanObjectPath);
+  try {
+    await source.copy(destination, { preconditionOpts: { ifSourceGenerationMatch: Number(identity.generation), ifGenerationMatch: 0 },
+      contentType: identity.contentType, cacheControl: 'private, no-store, max-age=0', metadata });
+  } catch (error) {
+    if (![409, 412].includes(Number(error?.code))) throw error;
+    const [existing] = await destination.getMetadata();
+    const existingCustom = existing.metadata || {};
+    if (Object.entries(metadata).some(([key, value]) => existingCustom[key] !== value)) throw new Error('scan-destination-collision');
+  }
+  await updateInitialScanRecord({ authorizationId, allowedStates: ['quarantined', 'scan-queue-failed'], mutate: ({ record: current }) => ({
+    record: { ...current, scanQueueState: 'queued', scanObjectPath: metadata.palInitialScanObjectPath, scanQueuedAt: new Date().toISOString() },
+    authorization: { state: 'scan-queued', scanObjectPath: metadata.palInitialScanObjectPath, scanQueuedAt: FieldValue.serverTimestamp(), scanQueueError: FieldValue.delete() }
+  }) });
+  return metadata.palInitialScanObjectPath;
 }
 
 function accessState(intake, suppliedToken) {
@@ -308,7 +386,8 @@ exports.createPublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeou
   return { authorizationId: authorizationRef.id, grantToken, uploadUrl, expiresAt: expiresAt.toDate().toISOString(), path, contentType: spec.contentType, size: spec.size };
 });
 
-exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 60, memory: '256MiB', maxInstances: 20 }, async request => {
+exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 120, memory: '512MiB', maxInstances: 10,
+  serviceAccount: VAULT_SERVICE_ACCOUNT }, async request => {
   const intakeId = text(request.data?.intakeId, 180);
   const token = text(request.data?.token, 200);
   const authorizationId = text(request.data?.authorizationId, 180);
@@ -341,9 +420,23 @@ exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, time
     await authorizationRef.update({ state: 'rejected', rejectedAt: FieldValue.serverTimestamp(), rejectionReason: 'verification-mismatch' }).catch(() => {});
     throw new HttpsError('failed-precondition', 'The uploaded file failed PAL security verification and was removed.');
   }
+  const exactFile = admin.storage().bucket().file(grant.path, { generation: String(metadata.generation) });
+  let sha256;
+  try {
+    sha256 = await sha256StorageFile(exactFile);
+    await exactFile.setMetadata({ cacheControl: 'private, no-store, max-age=0', metadata: {
+      ...custom, palSha256: sha256, palSecurityStatus: 'quarantine'
+    } });
+  } catch (_) {
+    await authorizationRef.update({ scanPreparationError: 'identity-hash-failed', scanPreparationFailedAt: FieldValue.serverTimestamp() }).catch(() => {});
+    throw new HttpsError('unavailable', 'The file reached PAL secure storage but could not enter security scanning. It remains locked.');
+  }
+  const objectIdentity = normalizeObjectIdentity({ path: grant.path, generation: String(metadata.generation), size: storedSize,
+    contentType: storedType, sha256 });
   const record = {
     type: grant.label, name: grant.name, path: grant.path, uploadedAt: new Date().toISOString(), source: grant.folder,
-    size: storedSize, contentType: storedType, securityStatus: 'quarantined', malwareScanStatus: 'pending', downloadable: false
+    size: storedSize, contentType: storedType, securityStatus: 'quarantined', malwareScanStatus: 'pending', downloadable: false,
+    objectIdentity, scanQueueState: 'pending', retentionPolicyVersion: 2
   };
   if (grant.folder === 'certUploads' && request.data?.expirationDate) record.expirationDate = text(request.data.expirationDate, 20);
   let totalCount = 0;
@@ -368,9 +461,21 @@ exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, time
     if (grant.folder === 'certUploads' && notes) update.certUploadNotes = notes;
     if (grant.folder === 'payrollIdUploads' && notes) update.payrollIdNotes = notes;
     transaction.update(intakeRef, update);
-    transaction.update(authorizationRef, { state: 'quarantined', usedAt: FieldValue.serverTimestamp(), securityStatus: 'quarantined', malwareScanStatus: 'pending' });
+    transaction.update(authorizationRef, { state: 'quarantined', usedAt: FieldValue.serverTimestamp(), securityStatus: 'quarantined',
+      malwareScanStatus: 'pending', objectIdentity });
   });
-  return { status: 'quarantined', totalCount, record };
+  let scanQueueStatus = 'queued';
+  try {
+    await queueInitialScan(authorizationId);
+  } catch (error) {
+    scanQueueStatus = 'retrying';
+    console.error('initial-scan-queue-failed', { code: text(error?.code, 80), name: text(error?.name, 80) });
+    await updateInitialScanRecord({ authorizationId, allowedStates: ['quarantined'], mutate: ({ record: current }) => ({
+      record: { ...current, scanQueueState: 'queue-failed', downloadable: false },
+      authorization: { state: 'scan-queue-failed', scanQueueError: 'queue-failed', scanQueueFailedAt: FieldValue.serverTimestamp() }
+    }) }).catch(() => {});
+  }
+  return { status: 'quarantined', scanQueueStatus, totalCount, record: { ...record, scanQueueState: scanQueueStatus } };
 });
 
 exports.getSensitiveIntakeVaultV1 = onCall(VAULT_RUNTIME, async request => {
@@ -382,6 +487,34 @@ exports.getSensitiveIntakeVaultV1 = onCall(VAULT_RUNTIME, async request => {
   await writeVaultAudit({ action: 'vault-read', actorUid: actor.uid, actorEmail: actor.email, intakeId, purpose, decision: snap.exists ? 'allowed' : 'denied', correlationId: crypto.randomUUID(), reason: snap.exists ? 'entitled-review' : 'vault-not-found' });
   if (!snap.exists) throw new HttpsError('not-found', 'The sensitive payroll vault record was not found.');
   return { vault: snap.data() };
+});
+
+exports.requestIntakeCertificationDownloadV1 = onCall(VAULT_RUNTIME, async request => {
+  const actor = await officeActor(request.auth);
+  const intakeId = text(request.data?.intakeId, 180);
+  const path = text(request.data?.path, 1024);
+  let purpose;
+  try { purpose = validatePurpose(request.data?.purpose); } catch (_) { throw new HttpsError('invalid-argument', 'A business purpose is required.'); }
+  const intake = await db.collection('newHireIntakes').doc(intakeId).get();
+  const record = (Array.isArray(intake.data()?.certFiles) ? intake.data().certFiles : []).find(item => item?.path === path);
+  if (!record) throw new HttpsError('not-found', 'The certification file was not found.');
+  const file = admin.storage().bucket().file(path);
+  const [metadata] = await file.getMetadata();
+  const currentIdentity = normalizeObjectIdentity({ path, generation: metadata.generation, size: Number(metadata.size),
+    contentType: metadata.contentType, sha256: metadata.metadata?.palSha256 });
+  if (!mayAuthorizeDownload({ scanState: record.malwareScanStatus, recordedIdentity: record.objectIdentity, currentIdentity,
+    entitled: true, disabled: false, purpose })) throw new HttpsError('failed-precondition', 'This certification is not verified clean and available.');
+  let url;
+  try {
+    [url] = await file.getSignedUrl({ version: 'v4', action: 'read', expires: Date.now() + 5 * 60000,
+      queryParams: { generation: currentIdentity.generation }, responseDisposition: `attachment; filename="${safeFileName(record.name)}"` });
+    await writeVaultAudit({ action: 'vault-download', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path,
+      purpose, decision: 'allowed', correlationId: crypto.randomUUID(), reason: 'verified-clean-certification' });
+  } catch (error) {
+    console.error('certification-download-failed', { stage: url ? 'audit' : 'signing', code: text(error?.code, 80), name: text(error?.name, 80) });
+    throw new HttpsError('unavailable', 'The certification remains protected and could not be opened.');
+  }
+  return { status: 'authorized', url, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() };
 });
 
 exports.requestSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request => {
@@ -569,6 +702,79 @@ exports.approveSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async requ
   });
   await writeVaultAudit(auditInput);
   return { status: 'approved' };
+});
+
+async function recordInitialScanResult(event, result, expectedBucket) {
+  const data = event.data || {};
+  const name = text(data.name, 1024);
+  if (!name.startsWith('initial-scans/')) return { status: 'ignored' };
+  const outputFile = admin.storage().bucket(text(data.bucket, 220)).file(name, { generation: String(data.generation || '') });
+  const sha256 = await sha256StorageFile(outputFile);
+  const evidence = initialScanEvidence({ result, bucket: data.bucket, expectedBucket, name, generation: data.generation,
+    size: Number(data.size), contentType: data.contentType, sha256, metadata: data.metadata || {} });
+  const authorizationRef = db.collection('publicIntakeUploadAuthorizations').doc(evidence.authorizationId);
+  const currentAuthorization = await authorizationRef.get();
+  if (['scan-clean', 'scan-infected'].includes(currentAuthorization.data()?.state)) return { status: 'duplicate' };
+  await updateInitialScanRecord({ authorizationId: evidence.authorizationId, allowedStates: ['scan-queued', 'scan-result-recording'],
+    mutate: ({ authorization, record }) => {
+      if (!mayApplyInitialScan({ authorization, record, evidence })) throw new Error('initial-scan-evidence-rejected');
+      return {
+        record: { ...record, scanQueueState: 'result-recording', downloadable: false },
+        authorization: { state: 'scan-result-recording', scanResult: evidence.result,
+          scanResultObjectGeneration: evidence.outputGeneration, scanResultReceivedAt: FieldValue.serverTimestamp() }
+      };
+    } });
+  await writeVaultAudit({ action: 'scan-result', actorUid: process.env.PAL_TRUSTED_SCANNER_IDENTITY, actorEmail: '',
+    intakeId: evidence.intakeId, objectPath: evidence.originalIdentity.path, purpose: 'Automated first malware scan',
+    decision: evidence.result, correlationId: evidence.authorizationId, reason: `trusted-initial-scan-${evidence.result}` });
+  await updateInitialScanRecord({ authorizationId: evidence.authorizationId, allowedStates: ['scan-result-recording'],
+    mutate: ({ authorization, record }) => {
+      if (!mayApplyInitialScan({ authorization, record, evidence })) throw new Error('initial-scan-finalization-rejected');
+      const completedAt = new Date().toISOString();
+      return {
+        record: { ...record, malwareScanStatus: evidence.result, securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'quarantined',
+          scanQueueState: 'complete', scanCompletedAt: completedAt, downloadable: false, initialScanEvidence: {
+            result: evidence.result, scannerPrincipal: process.env.PAL_TRUSTED_SCANNER_IDENTITY, scannedAt: completedAt,
+            scanObjectPath: evidence.scanObjectPath, scanObjectGeneration: evidence.outputGeneration,
+            objectIdentity: evidence.originalIdentity
+          } },
+        authorization: { state: evidence.result === 'clean' ? 'scan-clean' : 'scan-infected', malwareScanStatus: evidence.result,
+          scanCompletedAt: FieldValue.serverTimestamp(), securityStatus: evidence.result === 'clean' ? 'verified-clean' : 'quarantined' }
+      };
+    } });
+  return { status: evidence.result };
+}
+
+exports.recordCleanInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucket: SCANNER_CLEAN_BUCKET,
+  timeoutSeconds: 120, memory: '512MiB', maxInstances: 2, serviceAccount: VAULT_SERVICE_ACCOUNT, retry: true },
+async event => recordInitialScanResult(event, 'clean', SCANNER_CLEAN_BUCKET.value()));
+
+exports.recordInfectedInitialScanV1 = onObjectFinalized({ region: 'us-east1', bucket: SCANNER_QUARANTINE_BUCKET,
+  timeoutSeconds: 120, memory: '512MiB', maxInstances: 2, serviceAccount: VAULT_SERVICE_ACCOUNT, retry: true },
+async event => recordInitialScanResult(event, 'infected', SCANNER_QUARANTINE_BUCKET.value()));
+
+exports.retryPendingInitialScansV1 = onSchedule({ region: REGION, schedule: 'every 10 minutes', timeZone: 'America/New_York',
+  timeoutSeconds: 300, memory: '256MiB', maxInstances: 1, serviceAccount: VAULT_SERVICE_ACCOUNT }, async () => {
+  const [failed, queued] = await Promise.all([
+    db.collection('publicIntakeUploadAuthorizations').where('state', '==', 'scan-queue-failed').limit(25).get(),
+    db.collection('publicIntakeUploadAuthorizations').where('state', '==', 'scan-queued').limit(25).get()
+  ]);
+  const retryIds = new Set(failed.docs.map(doc => doc.id));
+  const staleBefore = Date.now() - 20 * 60000;
+  for (const doc of queued.docs) {
+    const queuedAt = doc.data()?.scanQueuedAt?.toMillis?.() || 0;
+    if (queuedAt && queuedAt <= staleBefore) {
+      await doc.ref.update({ state: 'scan-queue-failed', scanQueueError: 'result-timeout', scanQueueFailedAt: FieldValue.serverTimestamp() });
+      retryIds.add(doc.id);
+    }
+  }
+  let queuedCount = 0;
+  for (const authorizationId of [...retryIds].slice(0, 25)) {
+    try { await queueInitialScan(authorizationId); queuedCount += 1; }
+    catch (error) { console.error('initial-scan-retry-failed', { code: text(error?.code, 80), name: text(error?.name, 80) }); }
+  }
+  console.log(JSON.stringify({ event: 'initial-scan-retry', inspected: retryIds.size, queued: queuedCount }));
+  return { inspected: retryIds.size, queued: queuedCount };
 });
 
 exports.cleanupExpiredPublicIntakeUploadsV2 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1 }, async () => {

@@ -357,3 +357,18 @@ The required correction must preserve these properties:
 - leave legacy/existing objects untouched and require separate authorization for any real-data migration or deletion.
 
 No Production proposal is ready until this first-scan path passes complete synthetic Staging certification and payroll/identity upload → validation → queue → scanner → result → correctly separated Office release regressions, including infected/error/timeout and retry behavior. A design that changes the accepted scanner image requires a newly pushed digest and separately approved `$0.26` Artifact Analysis scan; a design using new Eventarc/Function identities or bucket permissions requires exact Staging IAM/deployment approval. Production remains closed.
+
+### Local automatic first-scan correction
+
+The local candidate deliberately keeps security routing invisible to employees:
+
+1. The existing final upload confirmation computes SHA-256 and binds the original Firebase path, generation, size, and content type. It commits the certification or sensitive-vault record before creating any scanner event.
+2. The server automatically copies only that generation to `initial-scans/{authorizationId}/{safeName}` in the existing private scanner input bucket. A collision is accepted only when every server-created metadata field matches; otherwise it fails closed.
+3. The unchanged accepted scanner moves the copy to the isolated clean or quarantine bucket. Separate private bucket-finalize Functions re-hash that output and validate the entire original-object envelope before recording clean or infected.
+4. A queue failure or a scan result missing for twenty minutes is retried by one bounded ten-minute worker. The employee sees only `security check in progress — no action needed` and does not move, rename, or re-upload a file because of an internal retry.
+5. A clean certification becomes eligible for a five-minute purpose-bound Office/Admin download. It does not require payroll-vault entitlement. Payroll and identity records remain in the separate vault; SS-card/driver-license access still requires the existing entitlement and different-person approval.
+6. Infected or mismatched files remain locked. No isolated scanner copy becomes an Office download source, and browser Storage rules remain closed.
+
+The two result Functions use the dedicated keyless vault runtime in `us-east1`, read only the exact isolated output object delivered by Eventarc, and update the server-only record/authorization collections. Staging deployment requires narrow object-viewer access for that identity on only the existing clean and quarantine scanner buckets; it does not require access for the scanner to the Firebase bucket. The finalizer and retry worker use the same dedicated identity's already established Firebase object-user and scanner-input object-creator permissions.
+
+This design does not modify the scanner image and therefore does not require a sixth `$0.26` image analysis. The local suite passes 97/97 plus Functions/policy syntax. Live credit remains blocked until the exact Staging Functions, Eventarc triggers, schedule, narrow bucket permissions, and synthetic clean/infected/retry/download lifecycle pass with complete cleanup.

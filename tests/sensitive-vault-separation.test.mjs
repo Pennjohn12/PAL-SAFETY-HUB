@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import test from 'node:test';
+
+const require = createRequire(import.meta.url);
+const { initialScanEvidence, initialScanMetadata, mayApplyInitialScan } = require('../functions-public-intake/initial-scan-policy.js');
 
 const backend = fs.readFileSync(new URL('../functions-public-intake/index.js', import.meta.url), 'utf8');
 const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
@@ -18,6 +22,47 @@ test('new payroll file metadata enters the sensitive vault while certifications 
   assert.match(backend, /grant\.folder === 'certUploads' \? row : \(sensitiveSnap\?\.data\(\) \|\| \{\}\)/);
   assert.match(backend, /transaction\.set\(sensitiveRef, \{ payrollIdFiles: files/);
   assert.match(backend, /if \(grant\.folder === 'certUploads'\) update\[field\] = files/);
+});
+
+test('both public upload folders enter an exact-object automatic first-scan envelope', () => {
+  const identity = { path: 'quarantine/newHireIntakes/PAL-SYNTHETIC-123/certUploads/auth-12345678.pdf', generation: '123',
+    size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64) };
+  for (const folder of ['certUploads', 'payrollIdUploads']) {
+    const metadata = initialScanMetadata({ authorizationId: 'auth-12345678', intakeId: 'PAL-SYNTHETIC-123', folder,
+      name: 'training card.pdf', originalIdentity: identity });
+    assert.equal(metadata.palInitialScanFolder, folder);
+    assert.equal(metadata.palOriginalGeneration, '123');
+    assert.match(metadata.palInitialScanObjectPath, /^initial-scans\/auth-12345678\//);
+  }
+  assert.match(backend, /await queueInitialScan\(authorizationId\)/);
+  assert.match(backend, /exports\.retryPendingInitialScansV1 = onSchedule/);
+});
+
+test('trusted initial results are bucket path digest and pending-record bound', () => {
+  const originalIdentity = { path: 'quarantine/newHireIntakes/PAL-SYNTHETIC-123/certUploads/auth-12345678.pdf', generation: '123',
+    size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64) };
+  const metadata = initialScanMetadata({ authorizationId: 'auth-12345678', intakeId: 'PAL-SYNTHETIC-123', folder: 'certUploads',
+    name: 'training.pdf', originalIdentity });
+  const evidence = initialScanEvidence({ result: 'clean', bucket: 'pal-synthetic-clean', expectedBucket: 'pal-synthetic-clean',
+    name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64), metadata });
+  assert.equal(mayApplyInitialScan({ authorization: { intakeId: evidence.intakeId, folder: evidence.folder,
+    path: originalIdentity.path, scanObjectPath: evidence.scanObjectPath, state: 'scan-queued' },
+  record: { malwareScanStatus: 'pending', objectIdentity: originalIdentity }, evidence }), true);
+  assert.throws(() => initialScanEvidence({ result: 'clean', bucket: 'wrong', expectedBucket: 'pal-synthetic-clean',
+    name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64), metadata }));
+  assert.throws(() => initialScanEvidence({ result: 'clean', bucket: 'pal-synthetic-clean', expectedBucket: 'pal-synthetic-clean',
+    name: metadata.palInitialScanObjectPath, generation: '999', size: 45, contentType: 'application/pdf', sha256: 'b'.repeat(64), metadata }));
+});
+
+test('clean certifications use a simple purpose-bound server download while identity stays separately entitled', () => {
+  assert.match(backend, /exports\.requestIntakeCertificationDownloadV1 = onCall\(VAULT_RUNTIME/);
+  assert.match(backend, /const actor = await officeActor\(request\.auth\)/);
+  assert.match(backend, /This certification is not verified clean and available/);
+  assert.match(firebaseClient, /requestIntakeCertificationDownloadV1Callable/);
+  assert.match(projects, /security check in progress — no action needed/);
+  assert.match(projects, /Open Protected File/);
+  assert.match(backend, /exports\.requestSensitiveIntakeDownloadV1 = onCall\(VAULT_RUNTIME/);
+  assert.match(backend, /requireVaultActor\(await officeActor\(request\.auth\)\)/);
 });
 
 test('all sensitive vault audit and approval collections deny browser access', () => {
