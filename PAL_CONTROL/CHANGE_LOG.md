@@ -341,6 +341,7 @@ Newest entries go first. Git history remains the detailed code record.
 - Dedicated builder Cloud Build `fb24262a-fa0a-41dd-9332-97311b56c6fe` succeeded and produced immutable digest `sha256:0de3ddbb8fb983e066f8a4b3bec16dd4ed5b34df78e74c7ee9b24ed73b5ca4e8`.
 - Artifact Analysis finished successfully with no vulnerability or malicious-package findings. The sixth `$0.26` scan is incurred; cumulative direct scans are `$1.56` pending billing reconciliation.
 - The image remains undeployed. No runtime, callback Function, IAM, Hosting, Production, credential, or real-data action occurred.
+- A final read-only query of that exact digest again returned `FINISHED_SUCCESS`; vulnerability and malicious-package finding sections were both absent, with explicit occurrence counts of zero for each. The scanner README was corrected to describe both private callback flows. No cloud mutation or additional charge occurred.
 
 ## Entry template
 
