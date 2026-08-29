@@ -105,7 +105,9 @@ test('private scanner callback locks every non-clean first scan for manual revie
   assert.match(scannerPatch, /PAL_INITIAL_SCAN_CALLBACK_URL/);
   assert.match(scannerPatch, /palInitialScanAuthorizationId/);
   assert.match(scannerPatch, /scanObjectGeneration/);
-  assert.match(scannerPatch, /await reportPalRescan[\s\S]*?await this\.moveProcessedFile/);
+  assert.match(scannerPatch, /requiresPalCallback/);
+  assert.match(scannerPatch, /loadAuthoritativePalMetadata/);
+  assert.match(scannerPatch, /await reportPalRescan/);
 });
 
 test('clean certifications use a simple purpose-bound server download while identity stays separately entitled', () => {

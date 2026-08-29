@@ -36,8 +36,8 @@ if ($actualCommit -ne $expectedCommit) {
     throw "Upstream revision mismatch: expected $expectedCommit, received $actualCommit"
 }
 
-git -C $Destination apply --check $patchPath
-git -C $Destination apply $patchPath
+git -C $Destination apply --unidiff-zero --check $patchPath
+git -C $Destination apply --unidiff-zero $patchPath
 
 $scannerPath = Join-Path $Destination 'cloudrun-malware-scanner'
 $reporterPath = Join-Path $scannerPath 'pal-rescan-reporter.ts'
