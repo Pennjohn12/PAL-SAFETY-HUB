@@ -335,6 +335,13 @@ Newest entries go first. Git history remains the detailed code record.
 - Local remediation replaces output-bucket result triggers with an identity-authenticated private first-scan callback from the scanner. Exact object/envelope checks, strict clean/infected protocol handling, conservative manual review, idempotency, and once-only audit remain server-side; callback failure leaves the file locked. Fresh pinned-upstream validation passed build, production audit=0, scanner 37/37, PAL 99/99, Functions syntax, and diff checks. No push, scan charge, cloud, IAM, Production, or real-data action; the next image scan is separately approval-gated at `$0.26`.
 - Final callback binding now requires the queued scanner-input generation, validates and records ClamAV version/ISO scan time, and acknowledges terminal duplicates only when stored result/path/generation/original identities all match. Conflicts fail closed. A second fresh pinned-upstream build/audit/37 tests and PAL 99/99 passed; patch remains `8399f6cc...`. No cloud or cost action.
 
+### 2026-08-29 — Authenticated first-scan image passed analysis
+
+- John explicitly approved one corrected image using commit `89fbccef...`, upstream `0db019c9...`, patch `6eea59d6...`, and unique tag `pal-initial-callback-1`.
+- Dedicated builder Cloud Build `fb24262a-fa0a-41dd-9332-97311b56c6fe` succeeded and produced immutable digest `sha256:0de3ddbb8fb983e066f8a4b3bec16dd4ed5b34df78e74c7ee9b24ed73b5ca4e8`.
+- Artifact Analysis finished successfully with no vulnerability or malicious-package findings. The sixth `$0.26` scan is incurred; cumulative direct scans are `$1.56` pending billing reconciliation.
+- The image remains undeployed. No runtime, callback Function, IAM, Hosting, Production, credential, or real-data action occurred.
+
 ## Entry template
 
 ### YYYY-MM-DD — Short title
