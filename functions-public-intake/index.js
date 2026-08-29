@@ -210,9 +210,14 @@ async function queueInitialScan(authorizationId) {
     const existingCustom = existing.metadata || {};
     if (Object.entries(metadata).some(([key, value]) => existingCustom[key] !== value)) throw new Error('scan-destination-collision');
   }
+  const [destinationMetadata] = await destination.getMetadata();
+  const scanObjectGeneration = text(destinationMetadata.generation, 80);
+  if (!/^\d+$/.test(scanObjectGeneration)) throw new Error('invalid-scan-destination-generation');
   await updateInitialScanRecord({ authorizationId, allowedStates: ['quarantined', 'scan-queue-failed'], mutate: ({ record: current }) => ({
-    record: { ...current, scanQueueState: 'queued', scanObjectPath: metadata.palInitialScanObjectPath, scanQueuedAt: new Date().toISOString() },
-    authorization: { state: 'scan-queued', scanObjectPath: metadata.palInitialScanObjectPath, scanQueuedAt: FieldValue.serverTimestamp(), scanQueueError: FieldValue.delete() }
+    record: { ...current, scanQueueState: 'queued', scanObjectPath: metadata.palInitialScanObjectPath,
+      scanObjectGeneration, scanQueuedAt: new Date().toISOString() },
+    authorization: { state: 'scan-queued', scanObjectPath: metadata.palInitialScanObjectPath, scanObjectGeneration,
+      scanQueuedAt: FieldValue.serverTimestamp(), scanQueueError: FieldValue.delete() }
   }) });
   return metadata.palInitialScanObjectPath;
 }
@@ -785,6 +790,7 @@ async function markInitialScanStale(authorizationRef, expected) {
     const row = snap.data() || {};
     const queuedAt = row.scanQueuedAt?.toMillis?.() || 0;
     if (!snap.exists || row.state !== 'scan-queued' || queuedAt !== expected.queuedAt
+        || !/^\d+$/.test(text(row.scanObjectGeneration, 80))
         || text(row.scanObjectPath, 1024) !== expected.scanObjectPath
         || text(row.scanObjectGeneration, 80) !== expected.scanObjectGeneration) return false;
     transaction.update(authorizationRef, { state: 'scan-queue-failed', scanQueueError: 'result-timeout',

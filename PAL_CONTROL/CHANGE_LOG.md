@@ -330,6 +330,7 @@ Newest entries go first. Git history remains the detailed code record.
 - The corrected source binds an in-progress retry to the identical result and output generation, commits the chained result audit with a durable once-only marker, requires that marker before finalization, and transactionally rechecks queue state/timestamp/path/generation before marking a scan stale.
 - The existing scanner quarantine output is intentionally mapped to locked manual review because it can contain encrypted or otherwise non-clean files and does not provide a trustworthy ordinary first-scan malware classification. Errors/timeouts remain fail-closed without a trusted result event.
 - Local validation: 99/99 tests, Functions syntax, and diff checks passed. No cloud, IAM, credential, image scan, Production, real-data, or direct-cost action occurred.
+- Follow-up review found the isolated input generation was not persisted. The queue now reads and requires the numeric destination generation after copy or validated collision, stores it with every queue/requeue, and the stale transaction refuses an empty or mismatched generation. This remains local-only with 99/99 tests passing.
 
 ## Entry template
 

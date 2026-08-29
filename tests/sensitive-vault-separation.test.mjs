@@ -69,6 +69,9 @@ test('initial scan retries serialize result audit and stale queue transitions', 
   assert.match(backend, /initial-scan-audit-incomplete/);
   assert.match(backend, /async function markInitialScanStale/);
   assert.match(backend, /row\.state !== 'scan-queued'/);
+  assert.match(backend, /invalid-scan-destination-generation/);
+  assert.match(backend, /scanObjectGeneration,\s+scanQueuedAt/);
+  assert.match(backend, /!\/\^\\d\+\$\/\.test\(text\(row\.scanObjectGeneration, 80\)\)/);
   assert.match(backend, /queuedAt !== expected\.queuedAt/);
   assert.match(backend, /scanObjectGeneration, 80\) !== expected\.scanObjectGeneration/);
 });
