@@ -28,7 +28,7 @@ Last verified: **2026-08-29, America/New_York**
 
 ## Staging/Test status
 
-- Package 6 startup-fixed scanner digest `sha256:b50fae51da78641f066ea14cd3a9659d509f2b7d1e53d771552f549d24d934cd` passed Artifact Analysis and is active only in private, scale-to-zero Staging. Clean, encrypted-file quarantine, 1 MiB/25 MiB, duplicate-generation, anonymous-denial, definition-job/schedule, peak memory, forced timeout/recovery, and malformed-event paths passed. Production and real data remain prohibited; Office release, immutable audit, retention/legal hold, notifications, false-positive workflow, migration, and billing reconciliation remain open.
+- Package 6 startup-fixed scanner digest `sha256:b50fae51da78641f066ea14cd3a9659d509f2b7d1e53d771552f549d24d934cd` passed Artifact Analysis and is active only in private, scale-to-zero Staging. Scanner, dedicated-identity Office release, immutable audit, retention/legal hold/deletion, and internal-notification controls passed with synthetic data. The false-positive policy passes predeployment tests but its trusted scanner handoff remains live-unverified. Production and real data remain prohibited; live false-positive handling, existing-file planning, billing reconciliation, and Production remain open.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
