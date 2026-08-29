@@ -22,6 +22,7 @@ This folder is the concise living record for PAL Safety Hub. Current verified Pr
 - `BACKLOG.md`: active evidence-based priorities only.
 - `SECURITY_PROGRAM.md`: durable status of the 15 security hardening work packages.
 - `SECURITY_RISK_REGISTER.md`: current security inventory, verified risks, controls, and verification gaps.
+- `SECURITY_COST_LEDGER.md`: incremental security-program estimates, measured costs, alerts, and final reconciliation requirements.
 - `TASK_START_TEMPLATE.md`: opening contract for module/task work.
 
 Keep current facts in `MASTER_STATUS.md`, history in `CHANGE_LOG.md`, and future work in `BACKLOG.md`. Do not create growing narrative handoffs.

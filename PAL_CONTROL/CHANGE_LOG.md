@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 Staging scanner experiment and cost tracking approved
+
+- John approved the exact measurement-only Staging scanner resources and requested a complete cost breakdown when the security program is finished.
+- Added `SECURITY_COST_LEDGER.md` to track estimated and measured incremental costs, billing scope, alerts, free-tier effects, and final reconciliation.
+- Approval is limited to the recorded us-east1, keyless, synthetic-only, min-0/max-1/concurrency-1 experiment with a $5 alert and stop boundary. No Production scanner, minimum instance, real file, credential key, or higher ceiling is authorized.
+
 ## 2026-08-29 — Package 6 vault separation active in Staging
 
 - John approved the seven recorded Package 6 policies; Production, real-data migration, credentials, irreversible retention, and material recurring scanner cost remain separately gated.
