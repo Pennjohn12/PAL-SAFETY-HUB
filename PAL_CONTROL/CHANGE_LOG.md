@@ -5,7 +5,7 @@ Newest entries go first. Git history remains the detailed code record.
 ## 2026-08-29 — Package 6 live false-positive regression failed closed
 
 - Ran two approved authenticated, two-person synthetic Staging regressions against the private trusted-rescan workflow. Both created only temporary synthetic accounts, a harmless 67-byte fake PDF, and isolated test records; both cleanup routines completed and removed the accounts, records, and objects.
-- The first run showed the scanner eventually classified and moved the exact rescan object as clean, but the vault did not observe trusted rescan evidence within the original four-minute client window. The second run extended that observation window to ten minutes and still received no trusted evidence; no human approval or download occurred.
+- The first run showed the scanner eventually classified and moved the exact rescan object as clean, but the vault did not observe trusted rescan evidence within the original four-minute client window. The second run extended that observation window to ten minutes and still received no trusted evidence; retained scanner logs for that interval showed health/self-check activity but no corresponding scan request. No human approval or download occurred.
 - This is a verified reliability/security-availability gap in the scanner-to-vault handoff. The control failed closed—the sensitive object remained locked—but live false-positive completion is blocked until the event/callback lifecycle is corrected and the full two-person, exact-download, audit-chain, and cleanup regression passes.
 - Production and real PAL data were untouched. Direct image-scan authorization remains five scans / `$1.30`; these runtime attempts add only small Staging usage pending billing reconciliation.
 
