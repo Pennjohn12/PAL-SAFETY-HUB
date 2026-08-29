@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 4 Production activation verified
+
+- John explicitly approved exact tested commit `39d2e976c65b2f4d98f291ee88f6dbaa292b0fe4` and acknowledged that every existing ID-only intake link would fail closed and require replacement.
+- Deployed four `public-intake-v2` callable Functions, the V2 Hosting client, and hardened Firestore rules to Production. The four services are ACTIVE on Node.js 22 in `us-central1` and have public invocation only so application-level packet-token and Office authorization can execute.
+- Verification: anonymous empty calls return expected application denials (401 for Office-only issuance and 403 for public read/update/upload finalization); both Firebase Hosting domains serve V2 content; an ID-only synthetic link displays `PAL Intake Link Replaced`; anonymous synthetic intake-document REST access returns 403.
+- No real PAL intake, employee, account, credential, or file was opened or changed. No bulk link migration was performed. PAL Office must issue replacement links as active intakes need access.
+- Storage upload authorization remains Package 5; sensitive payroll/identity separation remains Package 6. The Package 4 rollback restores the known ID-only vulnerability and is for emergency use only.
+
 ## 2026-08-29 — Security program Package 4 passed PAL tests
 
 - Replaced ID-only public orientation/intake access with random packet-bound tokens, server-side token hashes, expiry, revocation, completion lockout, and four narrow callable actions.

@@ -36,7 +36,7 @@ This is the durable status tracker for the PAL Safety Hub security program. A pa
 - Completed: **4 of 15** packages at the PAL internal-assessment level.
 - In progress: **None**. Package 5 is next and requires separately scoped implementation work.
 - Independently verified: **0 of 15** packages.
-- Production security deployment authorized: **No additional Production change is authorized; Package 3 activation has been rolled back**.
+- Production security deployment authorized: **Package 4 exact cutover was approved and completed; no further Production change is authorized**.
 - Isolated Staging available: **Established for controlled synthetic security work; it is not approved for real PAL data**.
 - Sensitive-data operating boundary: PAL has stated that no one will submit information during the hardening work. This is an operating instruction, not a technically enforced Production lockdown.
 
@@ -99,4 +99,4 @@ The default sequence is Package 2 (Staging), then an explicitly authorized Packa
 - Staging Hosting serves the V2 client and visibly rejects an ID-only synthetic link. All four Staging Functions are ACTIVE on Node.js 22; their Cloud Run invoker bindings permit request delivery, while empty anonymous calls are rejected by application authorization with 401/403 responses.
 - No real PAL record, account, credential, or file was opened or modified. Staging Storage remains closed; the remaining raw upload authorization boundary belongs to Package 5.
 - Existing Production ID-only links require replacement after cutover. No Production deployment or real-record migration is authorized. Exact behavior, migration, later-package boundaries, proposed deployment, and rollback are recorded in `PUBLIC_INTAKE_SECURITY_V2.md`.
-- Package 4 finish line: **Passed PAL tests on 2026-08-29**. Production activation remains gated on Control Room coordination and John's approval of the exact tested commit and cutover.
+- Package 4 finish line: **Passed PAL tests on 2026-08-29**. John approved the exact commit and acknowledged that existing ID-only links require replacement; the four Functions, Hosting client, and hardened Firestore rules are active in Production.

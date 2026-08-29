@@ -46,9 +46,9 @@ No bulk Production migration and no inspection of real intake records is include
 - Package 11 must add App Check, rate limits, and broader abuse resistance.
 - Package 12 must add the complete immutable security audit trail and alerts.
 
-## Proposed Production action — not yet authorized
+## Production activation
 
-Deploy only the tested Package 4 commit in this order:
+John explicitly approved the exact tested commit and acknowledged the legacy-link replacement impact. Production activation completed at approximately **1:07 AM America/New_York on 2026-08-29** in this order:
 
 1. Deploy the four new `public-intake-v2` callable Functions in `us-central1`.
 2. Verify their active state and anonymous authorization behavior.
@@ -56,7 +56,9 @@ Deploy only the tested Package 4 commit in this order:
 4. Deploy the tested `firestore.rules` that removes direct public intake reads and writes.
 5. Verify both Production domains, legacy-link failure, authenticated Office behavior, and synthetic endpoint denial without opening real PAL records.
 
-The cutover affects every existing public orientation/intake link. PAL should be prepared to issue replacement links from the authenticated Office screen after deployment.
+The four V2 Functions are ACTIVE on Node.js 22 in `us-central1` and publicly invokable at the Cloud Run boundary so their application authorization can operate. Empty anonymous calls return the intended 401/403 application denials. Both Firebase Hosting domains serve the V2 client, an ID-only synthetic URL visibly fails closed, and an anonymous synthetic Firestore document read is denied with 403. No real PAL record was opened or changed.
+
+The cutover affects every existing public orientation/intake link. PAL Office must issue replacement links from the authenticated Office screen when an active intake needs access.
 
 ## Rollback
 
