@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 live retention and internal notification controls passed
+
+- Deployed an hourly, bounded, dedicated-identity Staging retention worker with exact-generation deletion, policy-version gating, legal/HR-hold override, deletion audit, and internal-only authorized notifications.
+- A first forced run encountered temporary new-service invocation propagation, failed closed, and cleaned all test data. After an empty 200 health run, the retry deleted exactly two eligible fake files while retaining legal-hold and recent-review files.
+- Verified two deletion audits, two authorized in-app notification records, external delivery disabled, and complete cleanup. Full local suite passes 86/86. Production, existing files, and real data were untouched.
+
 ## 2026-08-29 — Package 6 dedicated Staging vault identity deployed
 
 - Created a zero-key Staging-only vault runtime identity with narrow Firestore, logging, exact-bucket object-read, and self-signing access.
