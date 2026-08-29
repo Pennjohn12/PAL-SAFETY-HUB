@@ -86,6 +86,7 @@ function retentionDecision(record = {}, nowValue = Date.now()) {
   const now = Number(nowValue);
   if (!Number.isFinite(now)) throw new Error('invalid-retention-time');
   if (record.legalHold === true || record.hrHold === true) return Object.freeze({ action: 'retain', reason: 'legal-or-hr-hold' });
+  if (record.retentionState === 'deleted') return Object.freeze({ action: 'retain', reason: 'already-deleted' });
   if (Number(record.retentionPolicyVersion) !== POLICY_VERSION) return Object.freeze({ action: 'retain', reason: 'outside-approved-policy' });
 
   const state = boundedText(record.malwareScanStatus, 40).toLowerCase();
@@ -111,7 +112,7 @@ function notificationAudience(profiles = []) {
 }
 
 function auditEvent({ action, actorUid, actorEmail, intakeId, objectPath, purpose, decision, correlationId, reason }) {
-  const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review']);
+  const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review', 'retention-delete']);
   const allowedDecisions = new Set(['allowed', 'denied', 'clean', 'infected', 'error', 'timeout', 'unsupported', 'manual-review']);
   const normalizedAction = boundedText(action, 40);
   const normalizedDecision = boundedText(decision, 40);

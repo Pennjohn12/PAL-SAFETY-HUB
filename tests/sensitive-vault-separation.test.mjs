@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const backend = fs.readFileSync(new URL('../functions-public-intake/index.js', import.meta.url), 'utf8');
 const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
+const retention = fs.readFileSync(new URL('../functions-public-intake/sensitive-vault-retention.js', import.meta.url), 'utf8');
 
 test('new W-4 writes separate full data from ordinary intake completion state', () => {
   assert.match(backend, /transaction\.set\(sensitiveRef, \{ w4Form: updatedW4Form/);
@@ -18,10 +19,19 @@ test('new payroll file metadata enters the sensitive vault while certifications 
 });
 
 test('all sensitive vault audit and approval collections deny browser access', () => {
-  for (const collection of ['sensitiveIntakeVaults','sensitiveVaultAuditEvents','sensitiveVaultAuditState','sensitiveDownloadApprovals']) {
+  for (const collection of ['sensitiveIntakeVaults','sensitiveVaultAuditEvents','sensitiveVaultAuditState','sensitiveDownloadApprovals','sensitiveVaultNotifications']) {
     const block = rules.match(new RegExp(`match \\/${collection}\\/\\{[^}]+\\} \\{([\\s\\S]*?)\\n    \\}`))?.[1] || '';
     assert.match(block, /allow read, write, delete: if false/);
   }
+});
+
+test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {
+  assert.match(retention, /retentionDecision\(record, now\)/);
+  assert.match(retention, /sameObjectIdentity\(identity, \{ \.\.\.identity, path: record\.path \}\)/);
+  assert.match(retention, /ifGenerationMatch: Number\(identity\.generation\)/);
+  assert.match(retention, /action: 'retention-delete'/);
+  assert.match(retention, /externalDelivery: false/);
+  assert.match(backend, /exports\.enforceSensitiveVaultRetentionV1 = onSchedule/);
 });
 
 test('vault audit events are append-only and cryptographically chained', () => {

@@ -89,6 +89,7 @@ test('legal holds, legacy records, audit evidence, and incomplete records fail s
   assert.equal(policy.retentionDecision({ ...eligible, retentionPolicyVersion: 1 }).reason, 'outside-approved-policy');
   assert.equal(policy.retentionDecision({ collection: 'sensitiveVaultAuditEvents' }).action, 'retain');
   assert.equal(policy.retentionDecision({ retentionPolicyVersion: 2, malwareScanStatus: 'clean' }).action, 'retain');
+  assert.equal(policy.retentionDecision({ ...eligible, retentionState: 'deleted' }).reason, 'already-deleted');
 });
 
 test('in-app notification audience is limited to admins and entitled active reviewers', () => {

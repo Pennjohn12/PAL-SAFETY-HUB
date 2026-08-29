@@ -5,6 +5,7 @@ const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
+const { processSensitiveVaultRetention } = require('./sensitive-vault-retention');
 const { chainedAuditEvent, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
@@ -430,4 +431,9 @@ exports.approveSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request =
 exports.cleanupExpiredPublicIntakeUploadsV2 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1 }, async () => {
   const removed = await cleanupExpiredUploads({ db, bucket: admin.storage().bucket(), Timestamp, FieldValue });
   console.log(JSON.stringify({ event: 'public-intake-upload-cleanup', removed }));
+});
+
+exports.enforceSensitiveVaultRetentionV1 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1, serviceAccount: VAULT_SERVICE_ACCOUNT }, async () => {
+  const result = await processSensitiveVaultRetention({ db, bucket: admin.storage().bucket(), FieldValue, writeAudit: writeVaultAudit });
+  console.log(JSON.stringify({ event: 'sensitive-vault-retention', ...result }));
 });
