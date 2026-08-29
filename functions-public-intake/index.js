@@ -6,7 +6,7 @@ const { defineString } = require('firebase-functions/params');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { cleanupExpiredUploads } = require('./upload-cleanup');
 const { processSensitiveVaultRetention } = require('./sensitive-vault-retention');
-const { chainedAuditEvent, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
+const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
 const db = getFirestore();
@@ -408,7 +408,8 @@ exports.requestSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request =
   const file = admin.storage().bucket().file(path);
   const [metadata] = await file.getMetadata();
   const currentIdentity = normalizeObjectIdentity({ path, generation: metadata.generation, size: Number(metadata.size), contentType: metadata.contentType, sha256: metadata.metadata?.palSha256 });
-  if (!mayAuthorizeDownload({ scanState: record.malwareScanStatus, recordedIdentity: record.objectIdentity, currentIdentity, entitled: true, disabled: false, purpose })) throw new HttpsError('failed-precondition', 'This file is not verified clean and available.');
+  if (!mayAuthorizeDownload({ scanState: record.malwareScanStatus, recordedIdentity: record.objectIdentity, currentIdentity, entitled: true, disabled: false, purpose,
+    falsePositiveReviewRequired: record.falsePositiveReviewRequired === true, falsePositiveApproved: record.falsePositiveApproved === true })) throw new HttpsError('failed-precondition', 'This file is not verified clean and available.');
   const [url] = await file.getSignedUrl({ version: 'v4', action: 'read', expires: Date.now() + 5 * 60000, queryParams: { generation: currentIdentity.generation }, responseDisposition: `attachment; filename="${safeFileName(record.name)}"` });
   await writeVaultAudit({ action: 'vault-download', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path, purpose, decision: 'allowed', correlationId: crypto.randomUUID(), reason: 'verified-clean' });
   if (approvalRef) await approvalRef.update({ state: 'consumed', consumedAt: FieldValue.serverTimestamp() });
@@ -425,6 +426,52 @@ exports.approveSensitiveIntakeDownloadV1 = onCall(VAULT_RUNTIME, async request =
     if (!snap.exists || row.state !== 'pending' || row.requesterUid === actor.uid || (row.expiresAt?.toMillis?.() || 0) <= Date.now()) throw new HttpsError('failed-precondition', 'This approval request cannot be approved.');
     transaction.update(ref, { state: 'approved', approverUid: actor.uid, approvedAt: FieldValue.serverTimestamp() });
   });
+  return { status: 'approved' };
+});
+
+exports.requestSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async request => {
+  const actor = requireVaultActor(await officeActor(request.auth));
+  const intakeId = text(request.data?.intakeId, 180);
+  const path = text(request.data?.path, 1024);
+  let purpose;
+  try { purpose = validatePurpose(request.data?.purpose); } catch (_) { throw new HttpsError('invalid-argument', 'A detailed false-positive justification is required.'); }
+  const vault = await vaultRef(intakeId).get();
+  const record = (Array.isArray(vault.data()?.payrollIdFiles) ? vault.data().payrollIdFiles : []).find(item => item?.path === path);
+  if (!record || !['infected', 'manual-review', 'unsupported', 'error', 'timeout'].includes(record.malwareScanStatus)) throw new HttpsError('failed-precondition', 'Only a locked review file can enter false-positive review.');
+  const ref = db.collection('sensitiveFalsePositiveReviews').doc();
+  await ref.create({ version: 1, intakeId, path, requesterUid: actor.uid, purpose, state: 'pending', originalIdentity: record.objectIdentity,
+    requestedAt: new Date().toISOString(), createdAt: FieldValue.serverTimestamp() });
+  await writeVaultAudit({ action: 'false-positive-review', actorUid: actor.uid, actorEmail: actor.email, intakeId, objectPath: path,
+    purpose, decision: 'manual-review', correlationId: ref.id, reason: 'fresh-clean-rescan-and-admin-required' });
+  return { status: 'pending-rescan', reviewId: ref.id };
+});
+
+exports.approveSensitiveFalsePositiveReviewV1 = onCall(VAULT_RUNTIME, async request => {
+  const actor = requireVaultActor(await officeActor(request.auth));
+  if (actor.role !== 'admin') throw new HttpsError('permission-denied', 'An Admin must approve a false-positive release.');
+  const reviewId = text(request.data?.reviewId, 180);
+  const reviewRef = db.collection('sensitiveFalsePositiveReviews').doc(reviewId);
+  let auditInput;
+  await db.runTransaction(async transaction => {
+    const reviewSnap = await transaction.get(reviewRef);
+    const review = reviewSnap.data() || {};
+    const sensitiveRef = vaultRef(text(review.intakeId, 180));
+    const vaultSnap = await transaction.get(sensitiveRef);
+    const files = Array.isArray(vaultSnap.data()?.payrollIdFiles) ? vaultSnap.data().payrollIdFiles : [];
+    const index = files.findIndex(item => item?.path === review.path);
+    const record = files[index];
+    if (!reviewSnap.exists || index < 0 || !mayApproveFalsePositive({ requesterUid: review.requesterUid, approverUid: actor.uid,
+      approverRole: actor.role, requestState: review.state, purpose: review.purpose, originalIdentity: review.originalIdentity,
+      currentIdentity: record.objectIdentity, requestedAt: review.requestedAt, rescanEvidence: record.rescanEvidence,
+      configuredScanner: process.env.PAL_TRUSTED_SCANNER_IDENTITY })) throw new HttpsError('failed-precondition', 'This file lacks the required independent clean rescan or approval separation.');
+    files[index] = { ...record, malwareScanStatus: record.rescanEvidence.result, falsePositiveReviewRequired: true, falsePositiveApproved: true,
+      falsePositiveReviewId: reviewId, falsePositiveApprovedAt: new Date().toISOString(), falsePositiveApprovedBy: actor.uid };
+    transaction.update(sensitiveRef, { payrollIdFiles: files, updatedAt: FieldValue.serverTimestamp() });
+    transaction.update(reviewRef, { state: 'approved', approverUid: actor.uid, approvedAt: FieldValue.serverTimestamp() });
+    auditInput = { action: 'false-positive-review', actorUid: actor.uid, actorEmail: actor.email, intakeId: review.intakeId,
+      objectPath: review.path, purpose: review.purpose, decision: 'allowed', correlationId: reviewId, reason: 'independent-clean-rescan-approved' };
+  });
+  await writeVaultAudit(auditInput);
   return { status: 'approved' };
 });
 

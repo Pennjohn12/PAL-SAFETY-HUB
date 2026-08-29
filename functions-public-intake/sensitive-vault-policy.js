@@ -75,11 +75,23 @@ function validatePurpose(value) {
   return purpose;
 }
 
-function mayAuthorizeDownload({ scanState, recordedIdentity, currentIdentity, entitled, disabled, purpose }) {
+function mayAuthorizeDownload({ scanState, recordedIdentity, currentIdentity, entitled, disabled, purpose, falsePositiveReviewRequired = false, falsePositiveApproved = false }) {
   if (scanState !== 'clean' || entitled !== true || disabled === true) return false;
+  if (falsePositiveReviewRequired === true && falsePositiveApproved !== true) return false;
   if (!sameObjectIdentity(recordedIdentity, currentIdentity)) return false;
   try { validatePurpose(purpose); } catch (_) { return false; }
   return true;
+}
+
+function mayApproveFalsePositive({ requesterUid, approverUid, approverRole, requestState, purpose, originalIdentity,
+  currentIdentity, requestedAt, rescanEvidence, configuredScanner }) {
+  if (!requesterUid || !approverUid || requesterUid === approverUid || approverRole !== 'admin' || requestState !== 'pending') return false;
+  try { validatePurpose(purpose); } catch (_) { return false; }
+  if (!sameObjectIdentity(originalIdentity, currentIdentity) || !sameObjectIdentity(currentIdentity, rescanEvidence?.objectIdentity)) return false;
+  if (rescanEvidence?.result !== 'clean' || !trustedScanner(rescanEvidence?.scannerPrincipal, configuredScanner)) return false;
+  const requested = Date.parse(requestedAt || '');
+  const rescanned = Date.parse(rescanEvidence?.scannedAt || '');
+  return Number.isFinite(requested) && Number.isFinite(rescanned) && rescanned > requested;
 }
 
 function retentionDecision(record = {}, nowValue = Date.now()) {
@@ -112,7 +124,7 @@ function notificationAudience(profiles = []) {
 }
 
 function auditEvent({ action, actorUid, actorEmail, intakeId, objectPath, purpose, decision, correlationId, reason }) {
-  const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review', 'retention-delete']);
+  const allowedActions = new Set(['vault-read', 'vault-download', 'scan-result', 'manual-review', 'retention-delete', 'false-positive-review']);
   const allowedDecisions = new Set(['allowed', 'denied', 'clean', 'infected', 'error', 'timeout', 'unsupported', 'manual-review']);
   const normalizedAction = boundedText(action, 40);
   const normalizedDecision = boundedText(decision, 40);
@@ -166,6 +178,7 @@ module.exports = {
   auditEvent,
   chainedAuditEvent,
   mayAuthorizeDownload,
+  mayApproveFalsePositive,
   notificationAudience,
   nextScanState,
   normalizeObjectIdentity,

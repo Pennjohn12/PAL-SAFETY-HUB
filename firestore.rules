@@ -226,6 +226,10 @@ service cloud.firestore {
       allow read, write, delete: if false;
     }
 
+    match /sensitiveFalsePositiveReviews/{reviewId} {
+      allow read, write, delete: if false;
+    }
+
     match /publicTicketSignatures/{signatureId} {
       allow get: if (
         resource.data.token == signatureId

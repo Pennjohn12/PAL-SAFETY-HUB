@@ -19,10 +19,19 @@ test('new payroll file metadata enters the sensitive vault while certifications 
 });
 
 test('all sensitive vault audit and approval collections deny browser access', () => {
-  for (const collection of ['sensitiveIntakeVaults','sensitiveVaultAuditEvents','sensitiveVaultAuditState','sensitiveDownloadApprovals','sensitiveVaultNotifications']) {
+  for (const collection of ['sensitiveIntakeVaults','sensitiveVaultAuditEvents','sensitiveVaultAuditState','sensitiveDownloadApprovals','sensitiveVaultNotifications','sensitiveFalsePositiveReviews']) {
     const block = rules.match(new RegExp(`match \\/${collection}\\/\\{[^}]+\\} \\{([\\s\\S]*?)\\n    \\}`))?.[1] || '';
     assert.match(block, /allow read, write, delete: if false/);
   }
+});
+
+test('false-positive release requires request, trusted exact rescan, different Admin, and audit', () => {
+  assert.match(backend, /exports\.requestSensitiveFalsePositiveReviewV1 = onCall\(VAULT_RUNTIME/);
+  assert.match(backend, /exports\.approveSensitiveFalsePositiveReviewV1 = onCall\(VAULT_RUNTIME/);
+  assert.match(backend, /mayApproveFalsePositive/);
+  assert.match(backend, /actor\.role !== 'admin'/);
+  assert.match(backend, /action: 'false-positive-review'/);
+  assert.match(backend, /falsePositiveApproved: true/);
 });
 
 test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {
@@ -58,7 +67,8 @@ test('identity downloads require a second actor and are clean-only short-lived a
 
 test('Staging vault functions use the dedicated keyless runtime identity', () => {
   const env = fs.readFileSync(new URL('../functions-public-intake/.env.pal-safety-hub-staging', import.meta.url), 'utf8');
-  assert.match(env, /^PAL_VAULT_SERVICE_ACCOUNT=pal-staging-vault-download@pal-safety-hub-staging\.iam\.gserviceaccount\.com\s*$/);
+  assert.match(env, /^PAL_VAULT_SERVICE_ACCOUNT=pal-staging-vault-download@pal-safety-hub-staging\.iam\.gserviceaccount\.com$/m);
+  assert.match(env, /^PAL_TRUSTED_SCANNER_IDENTITY=pal-staging-malware-scanner@pal-safety-hub-staging\.iam\.gserviceaccount\.com$/m);
   assert.match(backend, /defineString\('PAL_VAULT_SERVICE_ACCOUNT'/);
   assert.match(backend, /const VAULT_RUNTIME = Object\.freeze/);
   assert.match(backend, /serviceAccount: VAULT_SERVICE_ACCOUNT/);

@@ -101,3 +101,23 @@ test('in-app notification audience is limited to admins and entitled active revi
     { uid: 'reviewer-1', role: 'office', sensitiveVaultAccess: true }
   ]), ['admin-1', 'reviewer-1']);
 });
+
+test('false-positive approval requires a different Admin and a later trusted exact-object clean rescan', () => {
+  const base = { requesterUid: 'reviewer-1', approverUid: 'admin-1', approverRole: 'admin', requestState: 'pending',
+    purpose: 'Documented false-positive review justification', originalIdentity: identity, currentIdentity: identity,
+    requestedAt: '2026-08-29T18:00:00.000Z', configuredScanner: 'scanner@example.invalid',
+    rescanEvidence: { result: 'clean', scannerPrincipal: 'scanner@example.invalid', scannedAt: '2026-08-29T18:01:00.000Z', objectIdentity: identity } };
+  assert.equal(policy.mayApproveFalsePositive(base), true);
+  assert.equal(policy.mayApproveFalsePositive({ ...base, approverUid: 'reviewer-1' }), false);
+  assert.equal(policy.mayApproveFalsePositive({ ...base, approverRole: 'office' }), false);
+  assert.equal(policy.mayApproveFalsePositive({ ...base, rescanEvidence: { ...base.rescanEvidence, scannerPrincipal: 'other@example.invalid' } }), false);
+  assert.equal(policy.mayApproveFalsePositive({ ...base, rescanEvidence: { ...base.rescanEvidence, scannedAt: '2026-08-29T17:59:00.000Z' } }), false);
+  assert.equal(policy.mayApproveFalsePositive({ ...base, currentIdentity: { ...identity, generation: '2' } }), false);
+});
+
+test('a clean rescan cannot bypass required false-positive human approval', () => {
+  const base = { scanState: 'clean', recordedIdentity: identity, currentIdentity: identity, entitled: true, disabled: false,
+    purpose: 'Payroll identity verification', falsePositiveReviewRequired: true };
+  assert.equal(policy.mayAuthorizeDownload({ ...base, falsePositiveApproved: false }), false);
+  assert.equal(policy.mayAuthorizeDownload({ ...base, falsePositiveApproved: true }), true);
+});

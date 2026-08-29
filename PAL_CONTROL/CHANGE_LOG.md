@@ -2,6 +2,12 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-29 — Package 6 false-positive policy prepared, scanner handoff gated
+
+- Encoded John's approved different-person reviewer/Admin policy, mandatory justification, later trusted clean rescan, exact-object binding, permanent audit, and clean-rescan-alone download denial.
+- Added two server-only false-positive actions and tests; the full suite passes 89/89.
+- Held deployment because the current scanner cannot yet produce trusted vault rescan evidence. A new immutable scanner image and separately approved $0.26 scan are required before live Staging credit. Production and real data were untouched.
+
 ## 2026-08-29 — Package 6 live retention and internal notification controls passed
 
 - Deployed an hourly, bounded, dedicated-identity Staging retention worker with exact-generation deletion, policy-version gating, legal/HR-hold override, deletion audit, and internal-only authorized notifications.
