@@ -1,5 +1,5 @@
 diff --git a/cloudrun-malware-scanner/Dockerfile b/cloudrun-malware-scanner/Dockerfile
-index 87fc4f5..6e23ead 100644
+index 87fc4f5..fd0ce8a 100644
 --- a/cloudrun-malware-scanner/Dockerfile
 +++ b/cloudrun-malware-scanner/Dockerfile
 @@ -16 +16 @@
@@ -11,7 +11,14 @@ index 87fc4f5..6e23ead 100644
 @@ -22 +22 @@ FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine AS gcloud-cli
 -FROM clamav/clamav:1.5.2_base
 +FROM clamav/clamav:1.5.2_base@sha256:3aa0c6d6a966dc062899e070fb13f87485acf0cbb710fccaae9a848cd5f5b09a
-@@ -89 +89,5 @@ COPY .  /app
+@@ -87,0 +88,6 @@ COPY .  /app
++# Normalize the executable startup script inside the Linux image so a Windows
++# checkout cannot introduce CRLF bytes that Bash interprets as commands.
++RUN sed -i 's/\r$//' bootstrap.sh \
++    && ! grep -q "$(printf '\r')" bootstrap.sh \
++    && bash -n bootstrap.sh
++
+@@ -89 +95,5 @@ COPY .  /app
 -RUN npm ci && npm run build && npm ci --omit=dev
 +RUN npm ci \
 +    && npm run build \
@@ -29,7 +36,7 @@ index 90c9333..a458047 100755
 -exec npm run start "${CONFIG_FILE}"
 +exec node --enable-source-maps build/server.js "${CONFIG_FILE}"
 diff --git a/cloudrun-malware-scanner/cloudbuild.yaml b/cloudrun-malware-scanner/cloudbuild.yaml
-index 56335f2..19cb365 100644
+index 56335f2..5f54262 100644
 --- a/cloudrun-malware-scanner/cloudbuild.yaml
 +++ b/cloudrun-malware-scanner/cloudbuild.yaml
 @@ -16 +16,2 @@ steps:
@@ -39,10 +46,10 @@ index 56335f2..19cb365 100644
 @@ -20 +21,2 @@ steps:
 -        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest",
 +        "--build-arg=SOURCE_DATE_EPOCH=1787997587",
-+        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-1",
++        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-startup-1",
 @@ -26 +28 @@ images:
 -  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest"
-+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-1"
++  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-startup-1"
 diff --git a/cloudrun-malware-scanner/logger.ts b/cloudrun-malware-scanner/logger.ts
 index 325f556..d6723b3 100644
 --- a/cloudrun-malware-scanner/logger.ts

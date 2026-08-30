@@ -108,6 +108,8 @@ test('private scanner callback locks every non-clean first scan for manual revie
   assert.match(scannerPatch, /requiresPalCallback/);
   assert.match(scannerPatch, /loadAuthoritativePalMetadata/);
   assert.match(scannerPatch, /await reportPalRescan/);
+  assert.ok(scannerPatch.includes("sed -i 's/\\r$//' bootstrap.sh"));
+  assert.match(scannerPatch, /bash -n bootstrap\.sh/);
 });
 
 test('clean certifications use a simple purpose-bound server download while identity stays separately entitled', () => {

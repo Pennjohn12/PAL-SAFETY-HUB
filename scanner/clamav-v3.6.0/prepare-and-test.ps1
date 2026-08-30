@@ -30,6 +30,7 @@ if (Test-Path -LiteralPath $Destination) {
 }
 
 git clone --no-checkout $upstream $Destination
+git -C $Destination config core.autocrlf false
 git -C $Destination checkout --detach $expectedCommit
 $actualCommit = (git -C $Destination rev-parse HEAD).Trim()
 if ($actualCommit -ne $expectedCommit) {
@@ -44,9 +45,14 @@ $reporterPath = Join-Path $scannerPath 'pal-rescan-reporter.ts'
 $reporterSpecPath = Join-Path $scannerPath 'spec\pal-rescan-reporter.spec.ts'
 $metadataPath = Join-Path $scannerPath 'pal-object-metadata.ts'
 $metadataSpecPath = Join-Path $scannerPath 'spec\pal-object-metadata.spec.ts'
+$dockerfilePath = Join-Path $scannerPath 'Dockerfile'
 if (-not (Test-Path -LiteralPath $reporterPath) -or -not (Test-Path -LiteralPath $reporterSpecPath) `
     -or -not (Test-Path -LiteralPath $metadataPath) -or -not (Test-Path -LiteralPath $metadataSpecPath)) {
     throw 'The hardened scanner patch is missing the PAL callback or authoritative-metadata implementation/tests.'
+}
+if (-not (Select-String -LiteralPath $dockerfilePath -SimpleMatch "sed -i 's/\r$//' bootstrap.sh" -Quiet) `
+    -or -not (Select-String -LiteralPath $dockerfilePath -SimpleMatch "bash -n bootstrap.sh" -Quiet)) {
+    throw 'The hardened scanner image does not normalize and validate the Linux startup script.'
 }
 Push-Location $scannerPath
 try {
