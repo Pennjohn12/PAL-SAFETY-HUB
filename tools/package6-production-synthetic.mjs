@@ -11,7 +11,14 @@ if (!process.argv.includes(CONFIRM)) throw new Error(`Refusing Production execut
 
 const cleanPdf = Buffer.from(`%PDF-1.4\n% ${PREFIX} CLEAN TEST ONLY - NOT REAL\n%%EOF\n`);
 const encryptedPdf = Buffer.from('JVBERi0xLjMKJeLjz9MKMSAwIG9iago8PAovUHJvZHVjZXIgPGZmNGExYmJmYjE+Ci9UaXRsZSA8ZGY3MjI3ZmI4NDBlYjRkMzcxZmJlYTE2NjdkM2Q5N2I0MDE5OTI2ZjVjM2E0Yzg1OTQzMmQ4YjJkNjA2ZDU5ZDZkN2RhYzk2YjEyNGQ5Pgo+PgplbmRvYmoKMiAwIG9iago8PAovVHlwZSAvUGFnZXMKL0NvdW50IDEKL0tpZHMgWyA0IDAgUiBdCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9DYXRhbG9nCi9QYWdlcyAyIDAgUgo+PgplbmRvYmoKNCAwIG9iago8PAovVHlwZSAvUGFnZQovUmVzb3VyY2VzIDw8Cj4+Ci9NZWRpYUJveCBbIDAuMCAwLjAgNzIgNzIgXQovUGFyZW50IDIgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9WIDIKL1IgMwovTGVuZ3RoIDEyOAovUCA0Mjk0OTY3MjkyCi9GaWx0ZXIgL1N0YW5kYXJkCi9PIDxlZjdjZjU1MTA5NWRhYTAxNDY0NTk3ZTZkZGNhNWY4NjdjYzllM2ZkYjE3NmQxZjNkNzQzNWY2MzRmMzA0OGNkPgovVSA8MWIzNjkwY2VjY2YxNzdjYzI2MDQzNjhlOGY2ZmE1YzgyOGJmNGU1ZTRlNzU4YTQxNjQwMDRlNTZmZmZhMDEwOD4KPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMTQ3IDAwMDAwIG4gCjAwMDAwMDAyMDYgMDAwMDAgbiAKMDAwMDAwMDI1NSAwMDAwMCBuIAowMDAwMDAwMzQ3IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNgovUm9vdCAzIDAgUgovSW5mbyAxIDAgUgovSUQgWyA8MzEzNDM2MzIzNzM2NjIzMDY2NjIzNDMzMzIzNzM2MzMzNDM1NjYzNDMzNjM2MTMzNjY2NDM2MzMzMTM4NjQzMD4gPDMxMzQzNjMyMzczNjYyMzA2NjYyMzQzMzMyMzczNjMzMzQzNTY2MzQzMzYzNjEzMzY2NjQzNjMzMzEzODY0MzA+IF0KL0VuY3J5cHQgNSAwIFIKPj4Kc3RhcnR4cmVmCjU2MgolJUVPRgo=', 'base64');
-const manifest = { runId: PREFIX, users: [], docs: [], objects: [], retainedAuditIntakeIds: [], assertions: [] };
+const manifest = { runId: PREFIX, users: [], docs: [], objects: [], approvalQueries: [], retainedAuditIntakeIds: [], assertions: [] };
+class CallableError extends Error {
+  constructor(httpStatus, firebaseStatus) {
+    super(`Callable denied/failed (${httpStatus}; ${firebaseStatus})`);
+    this.httpStatus = httpStatus;
+    this.firebaseStatus = firebaseStatus;
+  }
+}
 
 function accessToken() {
   return execFileSync('gcloud', ['auth', 'print-access-token'], { encoding: 'utf8' }).trim();
@@ -64,14 +71,14 @@ async function getDoc(path) {
     headers: { Authorization: `Bearer ${accessToken()}` }
   });
   if (response.status === 404) return null;
-  if (!response.ok) throw new Error(`Firestore get ${path}: ${response.status} ${await response.text()}`);
+  if (!response.ok) throw new Error(`Exact Firestore read failed (${response.status})`);
   return fromFields((await response.json()).fields || {});
 }
 async function deleteDoc(path) {
   const response = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/${path}`, {
     method: 'DELETE', headers: { Authorization: `Bearer ${accessToken()}` }
   });
-  if (![200, 404].includes(response.status)) throw new Error(`Firestore delete ${path}: ${response.status} ${await response.text()}`);
+  if (![200, 404].includes(response.status)) throw new Error(`Exact Firestore delete failed (${response.status})`);
 }
 async function createUser(kind, role, sensitiveVaultAccess) {
   const email = `${PREFIX.toLowerCase()}-${kind}@example.invalid`;
@@ -111,14 +118,18 @@ async function call(name, data, idToken = '') {
     body: JSON.stringify({ data })
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok || body.error) throw new Error(`${name} denied/failed (${response.status}; ${String(body?.error?.status || 'application-error').slice(0, 80)})`);
+  if (!response.ok || body.error) throw new CallableError(response.status, String(body?.error?.status || 'APPLICATION_ERROR').slice(0, 80));
   return body.result;
 }
-async function expectDenied(label, operation) {
-  try { await operation(); } catch (error) { manifest.assertions.push(`${label}:denied`); return; }
+async function expectDenied(label, expectedStatus, operation) {
+  try { await operation(); } catch (error) {
+    if (!(error instanceof CallableError) || error.firebaseStatus !== expectedStatus) throw error;
+    manifest.assertions.push(`${label}:${expectedStatus}`); return;
+  }
   throw new Error(`${label} unexpectedly succeeded`);
 }
 async function uploadCase({ intakeId, token, folder, label, bytes, fileName }) {
+  if (folder === 'payrollIdUploads') manifest.docs.push(`sensitiveIntakeVaults/${intakeId}`);
   const grant = await call('createPublicIntakeUploadV2', { intakeId, token, folder, name: fileName, type: label, contentType: 'application/pdf', size: bytes.length });
   manifest.docs.push(`publicIntakeUploadAuthorizations/${grant.authorizationId}`);
   manifest.objects.push({ bucket: FIREBASE_BUCKET, path: grant.path, generation: null });
@@ -130,9 +141,9 @@ async function uploadCase({ intakeId, token, folder, label, bytes, fileName }) {
   const uploaded = await fetch(grant.uploadUrl, { method: 'PUT', headers: {
     'Content-Type': 'application/pdf', 'Content-Length': String(bytes.length), 'Content-Range': `bytes 0-${bytes.length - 1}/${bytes.length}`
   }, body: bytes });
-  if (![200, 201].includes(uploaded.status)) throw new Error(`Upload ${intakeId}: ${uploaded.status} ${await uploaded.text()}`);
+  if (![200, 201].includes(uploaded.status)) throw new Error(`Synthetic upload failed (${uploaded.status})`);
   const finalized = await call('finalizePublicIntakeUploadV2', { intakeId, token, authorizationId: grant.authorizationId, grantToken: grant.grantToken, notes: `${PREFIX} test` });
-  if (!['queued', 'retrying'].includes(finalized.scanQueueStatus)) throw new Error(`Unexpected queue state ${JSON.stringify(finalized)}`);
+  if (!['queued', 'retrying'].includes(finalized.scanQueueStatus)) throw new Error(`Unexpected bounded queue state: ${String(finalized?.scanQueueStatus || 'missing').slice(0, 40)}`);
   const authorization = await getDoc(`publicIntakeUploadAuthorizations/${grant.authorizationId}`);
   if (authorization?.scanObjectPath !== expectedScanPath) throw new Error('Exact initial-scan cleanup path was not authoritatively recorded');
   return grant;
@@ -173,11 +184,39 @@ async function assertObjectAbsent(bucket, path) {
   });
   if (response.status !== 404) throw new Error(`Exact synthetic object absence failed (${response.status})`);
 }
+async function discoverExactSyntheticApprovals() {
+  for (const query of manifest.approvalQueries) {
+    const response = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents:runQuery`, {
+      method: 'POST', headers: { Authorization: `Bearer ${accessToken()}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ structuredQuery: {
+        from: [{ collectionId: 'sensitiveDownloadApprovals' }], limit: 10,
+        where: { compositeFilter: { op: 'AND', filters: [
+          { fieldFilter: { field: { fieldPath: 'intakeId' }, op: 'EQUAL', value: fsValue(query.intakeId) } },
+          { fieldFilter: { field: { fieldPath: 'requesterUid' }, op: 'EQUAL', value: fsValue(query.requesterUid) } },
+          { fieldFilter: { field: { fieldPath: 'purpose' }, op: 'EQUAL', value: fsValue(query.purpose) } }
+        ] } }
+      } })
+    });
+    if (!response.ok) throw new Error(`Synthetic approval cleanup query failed (${response.status})`);
+    const rows = await response.json();
+    for (const row of rows) {
+      const name = row.document?.name || '';
+      const prefix = `projects/${PROJECT}/databases/(default)/documents/sensitiveDownloadApprovals/`;
+      if (!name.startsWith(prefix)) continue;
+      const path = name.slice(name.indexOf('/documents/') + 11);
+      if (!/^sensitiveDownloadApprovals\/[A-Za-z0-9_-]{8,180}$/.test(path)) throw new Error('Synthetic approval cleanup returned an invalid exact path');
+      manifest.docs.push(path);
+    }
+  }
+}
 async function cleanup() {
   const failures = [];
+  await discoverExactSyntheticApprovals().catch(error => failures.push(error.message));
   for (const object of [...manifest.objects].reverse()) await deleteObject(object.bucket, object.path, object.generation).catch(error => failures.push(error.message));
   for (const path of [...new Set(manifest.docs)].reverse()) await deleteDoc(path).catch(error => failures.push(error.message));
   for (const user of [...manifest.users].reverse()) await deleteUser(user).catch(error => failures.push(error.message));
+  await new Promise(resolve => setTimeout(resolve, 15000));
+  for (const object of [...manifest.objects].reverse()) await deleteObject(object.bucket, object.path).catch(error => failures.push(error.message));
   for (const object of [...new Map(manifest.objects.map(item => [`${item.bucket}/${item.path}`, item])).values()]) {
     await assertObjectAbsent(object.bucket, object.path).catch(error => failures.push(error.message));
   }
@@ -204,23 +243,23 @@ try {
 
   const identity = await issueIntake(office, 'IDENTITY');
   const identityGrant = await uploadCase({ ...identity, folder: 'payrollIdUploads', label: 'Driver License / Photo ID', bytes: cleanPdf, fileName: `${PREFIX}-identity.pdf` });
-  manifest.docs.push(`sensitiveIntakeVaults/${identity.intakeId}`);
   const identityAuth = await waitAuthorization(identityGrant.authorizationId, ['scan-clean']);
-  await expectDenied('non-entitled-vault', () => call('getSensitiveIntakeVaultV1', { intakeId: identity.intakeId, purpose: `${PREFIX} negative test` }, unentitled.idToken));
-  const pending = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: `${PREFIX} identity verification` }, office.idToken);
-  if (pending.status !== 'approval-required') throw new Error(`Expected approval-required: ${JSON.stringify(pending)}`);
+  await expectDenied('non-entitled-vault', 'PERMISSION_DENIED', () => call('getSensitiveIntakeVaultV1', { intakeId: identity.intakeId, purpose: `${PREFIX} negative test` }, unentitled.idToken));
+  const identityPurpose = `${PREFIX} identity verification`;
+  manifest.approvalQueries.push({ intakeId: identity.intakeId, requesterUid: office.uid, purpose: identityPurpose });
+  const pending = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: identityPurpose }, office.idToken);
+  if (pending.status !== 'approval-required') throw new Error(`Expected approval-required, received ${String(pending?.status || 'missing').slice(0, 40)}`);
   manifest.docs.push(`sensitiveDownloadApprovals/${pending.approvalId}`);
-  await expectDenied('requester-self-approval', () => call('approveSensitiveIntakeDownloadV1', { approvalId: pending.approvalId }, office.idToken));
+  await expectDenied('requester-self-approval', 'FAILED_PRECONDITION', () => call('approveSensitiveIntakeDownloadV1', { approvalId: pending.approvalId }, office.idToken));
   await call('approveSensitiveIntakeDownloadV1', { approvalId: pending.approvalId }, admin.idToken);
-  const identityDownload = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: `${PREFIX} identity verification` }, office.idToken);
+  const identityDownload = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: identityPurpose }, office.idToken);
   await exactDownload(identityDownload.url, cleanPdf);
   manifest.assertions.push('identity-two-person-exact-download:passed');
 
   const review = await issueIntake(office, 'MANUAL');
   const reviewGrant = await uploadCase({ ...review, folder: 'payrollIdUploads', label: 'Additional Payroll / ID Document', bytes: encryptedPdf, fileName: `${PREFIX}-encrypted.pdf` });
-  manifest.docs.push(`sensitiveIntakeVaults/${review.intakeId}`);
   const reviewAuth = await waitAuthorization(reviewGrant.authorizationId, ['scan-manual-review']);
-  await expectDenied('manual-review-download', () => call('requestSensitiveIntakeDownloadV1', { intakeId: review.intakeId, path: reviewGrant.path, purpose: `${PREFIX} manual-review denial` }, office.idToken));
+  await expectDenied('manual-review-download', 'FAILED_PRECONDITION', () => call('requestSensitiveIntakeDownloadV1', { intakeId: review.intakeId, path: reviewGrant.path, purpose: `${PREFIX} manual-review denial` }, office.idToken));
   manifest.assertions.push('encrypted-manual-review-locked:passed');
   passed = true;
   console.log(JSON.stringify({ status: 'PASS', runId: PREFIX, assertions: manifest.assertions, created: { users: manifest.users.length, docs: new Set(manifest.docs).size, objects: manifest.objects.length }, retainedAuditIntakeIds: manifest.retainedAuditIntakeIds }, null, 2));

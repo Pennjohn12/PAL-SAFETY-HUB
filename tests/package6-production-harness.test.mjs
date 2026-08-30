@@ -14,6 +14,9 @@ test('Production synthetic harness registers every isolated cleanup path before 
   const wait = source.indexOf('waitAuthorization(certGrant.authorizationId');
   assert.ok(register > 0 && wait > register);
   assert.match(source, /authorization\?\.scanObjectPath !== expectedScanPath/);
+  const vaultRegistration = source.indexOf("if (folder === 'payrollIdUploads') manifest.docs.push(`sensitiveIntakeVaults/${intakeId}`)");
+  const finalize = source.indexOf("call('finalizePublicIntakeUploadV2'");
+  assert.ok(vaultRegistration > 0 && finalize > vaultRegistration);
 });
 
 test('Production synthetic harness proves strict exact account deletion', () => {
@@ -34,4 +37,26 @@ test('Production synthetic harness exactly verifies cleanup absence without list
 test('Production synthetic harness failure messages do not serialize response bodies', () => {
   assert.doesNotMatch(source, /JSON\.stringify\(body\).*throw new Error/);
   assert.doesNotMatch(source, /await response\.text\(\).*throw new Error/);
+  assert.doesNotMatch(source, /JSON\.stringify\(finalized\)|JSON\.stringify\(pending\)/);
+});
+
+test('Production synthetic harness accepts only exact callable denial statuses', () => {
+  assert.match(source, /error instanceof CallableError/);
+  assert.match(source, /error\.firebaseStatus !== expectedStatus/);
+  assert.match(source, /'non-entitled-vault', 'PERMISSION_DENIED'/);
+  assert.match(source, /'requester-self-approval', 'FAILED_PRECONDITION'/);
+  assert.match(source, /'manual-review-download', 'FAILED_PRECONDITION'/);
+});
+
+test('Production synthetic approval recovery query has all three equality filters', () => {
+  assert.match(source, /collectionId: 'sensitiveDownloadApprovals'/);
+  assert.match(source, /fieldPath: 'intakeId'.*query\.intakeId/s);
+  assert.match(source, /fieldPath: 'requesterUid'.*query\.requesterUid/s);
+  assert.match(source, /fieldPath: 'purpose'.*query\.purpose/s);
+  assert.match(source, /manifest\.approvalQueries\.push\(\{ intakeId: identity\.intakeId, requesterUid: office\.uid, purpose: identityPurpose \}\)/);
+});
+
+test('Production synthetic cleanup repeats exact object removal after bounded quiescence', () => {
+  assert.match(source, /setTimeout\(resolve, 15000\)/);
+  assert.equal((source.match(/for \(const object of \[\.\.\.manifest\.objects\]\.reverse\(\)\) await deleteObject/g) || []).length, 2);
 });
