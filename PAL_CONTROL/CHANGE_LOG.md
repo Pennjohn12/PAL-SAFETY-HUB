@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 corrected initial-scan image accepted, undeployed
+
+- John approved exactly one dedicated-builder image push and one `$0.26` Artifact Analysis scan from reviewed commit `9b387eb`, pinned upstream `0db019c9f09494215aa4485b71094e9b8d5ea90b`, patch SHA-256 `a14d7836af49e4efc211f93da466164c425b421d311d8e17274a3129e458df07`, and unique tag `pal-initial-intake-field-1`.
+- Dedicated keyless-builder Cloud Build `f8dfaf77-f26d-4f75-a08e-ad01bc4596da` succeeded and produced immutable digest `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb`. The exact service account, tag, and digest were recorded from the completed build.
+- Digest-specific package-vulnerability output contained only discovery/image summaries, zero finding paths, and zero occurrences. All-metadata output contained discovery/image/package summaries, zero vulnerability or malicious-package finding paths, and zero occurrences. The ninth scan is incurred; cumulative direct scan charges are `$2.34` pending invoice reconciliation.
+- The image is accepted but **undeployed**. No runtime, IAM, Functions, Hosting, Production, credential, migration, or real-data change occurred. Repeat isolated Staging installation and regression remain separately approval-gated.
+
 ## 2026-08-30 — Package 6 initial-scan field mismatch isolated and corrected locally
 
 - John approved the two-phase isolated Staging installation. Phase 1 deployed only accepted digest `sha256:5137ce2d9f744c428838fa67868c66fb180c342b3f9c21704150255b5b4b533b` to private bounded revision `pal-staging-malware-scanner-00011-mk8` with min 0, max 1, concurrency 1, callback Invoker absent, and retry PAUSED. The revision became healthy, served 100%, returned anonymous HTTP 403, and logged successful Bash, ClamAV, and application startup with no CRLF/startup errors.
