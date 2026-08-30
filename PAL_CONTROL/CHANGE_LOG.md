@@ -2,6 +2,15 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 Production synthetic direct path passed
+
+- Final reviewed harness commit `314b241` and uploaded SHA-256 `7daa8e447b6132f23e11e86f3ce872c36d4a6019f8794d8540e1109724c9e6bb` ran exactly once as `PAL-SYNTHETIC-P6-PROD-352ba6495370`. Immediately before the run, retry/retention were PAUSED and code-disabled, exactly one Eventarc path existed, CVD inventory remained 15 current signed/config objects, private scanner returned 403, and visible Production charges were `$0.26`, below the `$5` stop.
+- Clean certification passed exact-object scanning and purpose-bound exact-byte download. Clean driver-license/photo-ID passed separate entitlement, non-entitled 403/PERMISSION_DENIED, requester self-approval 400/FAILED_PRECONDITION, different-Admin approval, and exact-byte five-minute download.
+- The independently generated 914-byte password-encrypted PDF reached locked manual review; its download returned exact 400/FAILED_PRECONDITION. No real PAL data or existing record was listed/opened.
+- Harness count: three temporary users, twelve exact non-audit documents, and twelve recorded exact object targets. Exact document/object delete and absence checks passed after the bounded second sweep. The harness account-delete calls returned success, but its OAuth exact-account lookup endpoint returned 403; Firebase Authentication console searches then independently verified all three exact synthetic emails absent. Only the three labeled synthetic audit intake IDs remain as retained evidence.
+- Post-run inventory verifies retry and retention still PAUSED, the one intended Eventarc trigger unchanged, scanner still private with anonymous 403, and visible charges still `$0.26`. No retention enforcement/deletion, legacy migration, real-data action, IAM change, image/build/scan charge, or second harness run occurred.
+- Remaining Package 6 activation gates: separately controlled retry enablement/recovery and final post-activation governance/operational decision. The temporary Cloud Shell harness file remains pending explicit deletion confirmation.
+
 ## 2026-08-30 — Package 6 synthetic regression stopped on scanner scale mismatch
 
 - The Control Room approved proceeding to synthetic direct-path regression only after seven pre-test gates, including exact scanner digest/revision/config/identity/limits.
