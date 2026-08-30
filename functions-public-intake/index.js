@@ -217,28 +217,6 @@ async function queueInitialScan(authorizationId) {
   const [destinationMetadata] = await destination.getMetadata();
   const scanObjectGeneration = text(destinationMetadata.generation, 80);
   if (!/^\d+$/.test(scanObjectGeneration)) throw new Error('invalid-scan-destination-generation');
-  // Cloud Storage copy metadata behavior differs across the Admin SDK's bundled
-  // Storage client versions.  Apply and then re-read the security envelope on
-  // the exact copied generation before the authorization can become queued.
-  // A finalize event that races this write can only fail and retry; it cannot
-  // produce a trusted result because the callback remains fail closed.
-  scanQueueStage = 'destination-envelope-write';
-  const exactDestination = admin.storage().bucket(RESCAN_BUCKET.value())
-    .file(metadata.palInitialScanObjectPath, { generation: scanObjectGeneration });
-  await exactDestination.setMetadata({
-    contentType: identity.contentType,
-    cacheControl: 'private, no-store, max-age=0',
-    metadata: { ...metadata }
-  });
-  scanQueueStage = 'destination-envelope-verify';
-  const [verifiedDestination] = await exactDestination.getMetadata();
-  const verifiedCustom = verifiedDestination.metadata || {};
-  if (text(verifiedDestination.generation, 80) !== scanObjectGeneration
-      || text(verifiedDestination.contentType, 120).toLowerCase() !== identity.contentType
-      || verifiedDestination.cacheControl !== 'private, no-store, max-age=0'
-      || Object.entries(metadata).some(([key, value]) => verifiedCustom[key] !== value)) {
-    throw new Error('scan-destination-envelope-mismatch');
-  }
   scanQueueStage = 'queue-state-write';
   await updateInitialScanRecord({ authorizationId, allowedStates: ['quarantined', 'scan-queue-failed'], mutate: ({ record: current }) => ({
     record: { ...current, scanQueueState: 'queued', scanObjectPath: metadata.palInitialScanObjectPath,

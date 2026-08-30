@@ -46,10 +46,10 @@ index 56335f2..5f54262 100644
 @@ -20 +21,2 @@ steps:
 -        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest",
 +        "--build-arg=SOURCE_DATE_EPOCH=1787997587",
-+        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-startup-1",
++        "--tag=$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-initial-intake-field-1",
 @@ -26 +28 @@ images:
 -  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:latest"
-+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-authoritative-metadata-startup-1"
++  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/malware-scanner/malware-scanner:pal-initial-intake-field-1"
 diff --git a/cloudrun-malware-scanner/logger.ts b/cloudrun-malware-scanner/logger.ts
 index 325f556..d6723b3 100644
 --- a/cloudrun-malware-scanner/logger.ts
@@ -1664,11 +1664,17 @@ new file mode 100644
 index 0000000..a6e944d
 --- /dev/null
 +++ b/cloudrun-malware-scanner/pal-rescan-reporter.ts
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,31 @@
 +import {GoogleAuth} from 'google-auth-library';
 +
-+const ORIGINAL = ['palOriginalIntakeId', 'palOriginalPath', 'palOriginalGeneration', 'palOriginalSize',
++const ORIGINAL_OBJECT = ['palOriginalPath', 'palOriginalGeneration', 'palOriginalSize',
 +  'palOriginalContentType', 'palOriginalSha256'] as const;
++
++export function hasCompletePalCallbackMetadata(metadata: Record<string, string> | undefined, reviewId: string | undefined): boolean {
++  const required = reviewId ? ['palOriginalIntakeId', ...ORIGINAL_OBJECT, 'palRescanObjectPath'] : [...ORIGINAL_OBJECT,
++    'palInitialScanIntakeId', 'palInitialScanFolder', 'palInitialScanObjectPath'];
++  return required.every((key) => metadata?.[key]);
++}
 +
 +export async function reportPalRescan(metadata: Record<string, string> | undefined, result: 'clean' | 'infected', sha256: string,
 +  clamVersion: string, scanObjectGeneration: string): Promise<void> {
@@ -1676,9 +1682,7 @@ index 0000000..a6e944d
 +  const authorizationId = metadata?.palInitialScanAuthorizationId;
 +  if (!reviewId && !authorizationId) return;
 +  const callback = reviewId ? process.env.PAL_RESCAN_CALLBACK_URL : process.env.PAL_INITIAL_SCAN_CALLBACK_URL;
-+  const required = reviewId ? [...ORIGINAL, 'palRescanObjectPath'] : [...ORIGINAL, 'palInitialScanIntakeId',
-+    'palInitialScanFolder', 'palInitialScanObjectPath'];
-+  if (!callback || !required.every((key) => metadata?.[key])) throw new Error('PAL scan callback metadata is incomplete');
++  if (!callback || !hasCompletePalCallbackMetadata(metadata, reviewId)) throw new Error('PAL scan callback metadata is incomplete');
 +  if (!/^[a-f0-9]{64}$/.test(sha256) || !Number.isSafeInteger(Number(metadata?.palOriginalSize))
 +      || Number(metadata?.palOriginalSize) < 1 || !/^\d+$/.test(scanObjectGeneration)) throw new Error('PAL scan object identity is invalid');
 +  if (metadata?.palOriginalSha256 !== sha256) throw new Error('PAL scan digest does not match the exact original object');
@@ -1768,12 +1772,23 @@ new file mode 100644
 index 0000000..29ca900
 --- /dev/null
 +++ b/cloudrun-malware-scanner/spec/pal-rescan-reporter.spec.ts
-@@ -0,0 +1,16 @@
-+import {reportPalRescan} from '../pal-rescan-reporter';
+@@ -0,0 +1,27 @@
++import {hasCompletePalCallbackMetadata, reportPalRescan} from '../pal-rescan-reporter';
 +
 +describe('PAL rescan reporter', () => {
 +  it('does nothing for ordinary scanner objects', async () => {
 +    await expectAsync(reportPalRescan(undefined, 'clean', 'a'.repeat(64), 'test', '1')).toBeResolved();
++  });
++  it('uses the workflow-specific intake field for each callback envelope', () => {
++    const original = {palOriginalPath: 'path', palOriginalGeneration: '1', palOriginalSize: '10',
++      palOriginalContentType: 'application/pdf', palOriginalSha256: 'a'.repeat(64)};
++    const initial = {...original, palInitialScanIntakeId: 'intake', palInitialScanFolder: 'certifications',
++      palInitialScanObjectPath: 'initial-scans/auth/file.pdf'};
++    expect(hasCompletePalCallbackMetadata(initial, undefined)).toBeTrue();
++    expect(hasCompletePalCallbackMetadata({...initial, palInitialScanIntakeId: ''}, undefined)).toBeFalse();
++    expect(hasCompletePalCallbackMetadata({...original, palRescanObjectPath: 'false-positive-rescans/review/file.pdf'}, 'review')).toBeFalse();
++    expect(hasCompletePalCallbackMetadata({...original, palOriginalIntakeId: 'intake',
++      palRescanObjectPath: 'false-positive-rescans/review/file.pdf'}, 'review')).toBeTrue();
 +  });
 +  it('fails closed on incomplete or mismatched rescan metadata', async () => {
 +    await expectAsync(reportPalRescan({palFalsePositiveReviewId: 'review'}, 'clean', 'a'.repeat(64), 'test', '1')).toBeRejected();
