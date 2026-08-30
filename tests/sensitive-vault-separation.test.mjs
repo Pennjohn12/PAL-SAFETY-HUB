@@ -185,6 +185,9 @@ test('pending sensitive approval queue is Admin-only, bounded, and audited', () 
 });
 
 test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {
+  assert.match(backend, /PAL_SENSITIVE_VAULT_RETENTION_MODE/);
+  assert.match(backend, /if \(RETENTION_MODE\.value\(\) !== 'enforce'\)/);
+  assert.match(backend, /mode: 'disabled', inspected: 0, deleted: 0/);
   assert.match(retention, /retentionDecision\(record, now\)/);
   assert.match(retention, /sameObjectIdentity\(identity, \{ \.\.\.identity, path: record\.path \}\)/);
   assert.match(retention, /ifGenerationMatch: Number\(identity\.generation\)/);

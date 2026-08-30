@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 exact Production proposal prepared; Production remains closed
+
+- Added `PACKAGE_6_PRODUCTION_PROPOSAL.md` with the exact image-promotion choice, Production resources, identities, repository scanning policy, twelve affected Function actions, rules/Hosting scope, synthetic-only release sequence, user impact, cost monitoring, stop conditions, and fail-closed rollback.
+- The proposal chooses a Production-owned copy of accepted digest `sha256:e0de7bbb...` instead of a permanent cross-project runtime pull. Both Production Function repositories remain scan-disabled; only the dedicated Production scanner repository becomes scan-active. Expected direct image scan is one `$0.26` charge.
+- Read-only Production inventory found two existing `gcf-artifacts` repositories (`us-central1` and `us-east1`), no malware-scanner repository, and Container Scanning API disabled. No Production mutation, credential, real-data access, deployment, or cost action occurred.
+- This is proposal-only. The exact tested commit and independent review must be recorded before John is asked to approve the specific Production boundary.
+- Added a code-level fail-safe retention mode. Unless `PAL_SENSITIVE_VAULT_RETENTION_MODE` is exactly `enforce`, the scheduled worker returns zero inspected/deleted before querying Production records. Staging retains its separately tested `enforce` configuration; the proposal fixes initial Production mode at `disabled`. Enabling Production deletion remains a later exact real-data/retention approval and is not bundled into Package 6 activation.
+
 ## 2026-08-30 — Option A repository-scoped scan-cost control activated in Staging
 
 - John approved keeping automatic vulnerability scanning only for PAL's dedicated malware-scanner repository and disabling it on the two Staging Cloud Functions-managed repositories, acknowledging the loss of automatic Function-container vulnerability visibility.
