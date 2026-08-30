@@ -43,15 +43,21 @@ async function jsonFetch(url, options = {}, expected = [200]) {
   const response = await fetch(url, options);
   const text = await response.text();
   let body = null; try { body = text ? JSON.parse(text) : null; } catch { body = text; }
-  if (!expected.includes(response.status)) throw new Error(`${response.status} ${url}: ${JSON.stringify(body).slice(0, 700)}`);
+  if (!expected.includes(response.status)) throw new Error(`HTTP ${response.status} from ${new URL(url).hostname}`);
   return body;
 }
 async function putDoc(path, data) {
   manifest.docs.push(path);
-  return jsonFetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/${path}`, {
+  const response = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/${path}?currentDocument.exists=false`, {
     method: 'PATCH', headers: { Authorization: `Bearer ${accessToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields: fsFields(data) })
   });
+  if (response.ok) return response.json();
+  if ([400, 409, 412].includes(response.status)) {
+    manifest.docs = manifest.docs.filter(item => item !== path);
+    throw new Error(`Create-only synthetic document conflict (${response.status})`);
+  }
+  throw new Error(`Create-only synthetic document failed ambiguously (${response.status})`);
 }
 async function getDoc(path) {
   const response = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/${path}`, {
@@ -79,10 +85,25 @@ async function createUser(kind, role, sensitiveVaultAccess) {
   return user;
 }
 async function deleteUser(user) {
-  const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`, {
+  let response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: user.idToken })
   });
-  if (![200, 400].includes(response.status)) throw new Error(`Auth delete ${user.uid}: ${response.status} ${await response.text()}`);
+  if (response.status !== 200) {
+    response = await fetch(`https://identitytoolkit.googleapis.com/v1/projects/${PROJECT}/accounts:delete`, {
+      method: 'POST', headers: { Authorization: `Bearer ${accessToken()}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ localId: user.uid })
+    });
+  }
+  if (response.status !== 200) throw new Error(`Auth deletion failed for exact synthetic UID (${response.status})`);
+}
+async function assertUserAbsent(user) {
+  const response = await fetch(`https://identitytoolkit.googleapis.com/v1/projects/${PROJECT}/accounts:lookup`, {
+    method: 'POST', headers: { Authorization: `Bearer ${accessToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ localId: [user.uid] })
+  });
+  if (!response.ok) throw new Error(`Auth absence lookup failed (${response.status})`);
+  const body = await response.json();
+  if (Array.isArray(body.users) && body.users.some(item => item.localId === user.uid)) throw new Error('Exact synthetic Auth UID still exists');
 }
 async function call(name, data, idToken = '') {
   const response = await fetch(`https://${REGION}-${PROJECT}.cloudfunctions.net/${name}`, {
@@ -90,7 +111,7 @@ async function call(name, data, idToken = '') {
     body: JSON.stringify({ data })
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok || body.error) throw new Error(`${name}: ${response.status} ${JSON.stringify(body).slice(0, 800)}`);
+  if (!response.ok || body.error) throw new Error(`${name} denied/failed (${response.status}; ${String(body?.error?.status || 'application-error').slice(0, 80)})`);
   return body.result;
 }
 async function expectDenied(label, operation) {
@@ -101,12 +122,19 @@ async function uploadCase({ intakeId, token, folder, label, bytes, fileName }) {
   const grant = await call('createPublicIntakeUploadV2', { intakeId, token, folder, name: fileName, type: label, contentType: 'application/pdf', size: bytes.length });
   manifest.docs.push(`publicIntakeUploadAuthorizations/${grant.authorizationId}`);
   manifest.objects.push({ bucket: FIREBASE_BUCKET, path: grant.path, generation: null });
+  const scanName = fileName.trim().slice(0, 180).replace(/[^A-Za-z0-9._-]+/g, '_') || 'upload.bin';
+  const expectedScanPath = `initial-scans/${grant.authorizationId}/${scanName}`;
+  for (const bucket of ['pal-safety-hub-clamav-unscanned', 'pal-safety-hub-clamav-clean', 'pal-safety-hub-clamav-quarantine']) {
+    manifest.objects.push({ bucket, path: expectedScanPath, generation: null });
+  }
   const uploaded = await fetch(grant.uploadUrl, { method: 'PUT', headers: {
     'Content-Type': 'application/pdf', 'Content-Length': String(bytes.length), 'Content-Range': `bytes 0-${bytes.length - 1}/${bytes.length}`
   }, body: bytes });
   if (![200, 201].includes(uploaded.status)) throw new Error(`Upload ${intakeId}: ${uploaded.status} ${await uploaded.text()}`);
   const finalized = await call('finalizePublicIntakeUploadV2', { intakeId, token, authorizationId: grant.authorizationId, grantToken: grant.grantToken, notes: `${PREFIX} test` });
   if (!['queued', 'retrying'].includes(finalized.scanQueueStatus)) throw new Error(`Unexpected queue state ${JSON.stringify(finalized)}`);
+  const authorization = await getDoc(`publicIntakeUploadAuthorizations/${grant.authorizationId}`);
+  if (authorization?.scanObjectPath !== expectedScanPath) throw new Error('Exact initial-scan cleanup path was not authoritatively recorded');
   return grant;
 }
 async function waitAuthorization(id, allowed, timeoutMs = 180000) {
@@ -137,13 +165,26 @@ async function deleteObject(bucket, path, generation = '') {
   const response = await fetch(`https://storage.googleapis.com/storage/v1/b/${bucket}/o/${encodeURIComponent(path)}${suffix}`, {
     method: 'DELETE', headers: { Authorization: `Bearer ${accessToken()}` }
   });
-  if (![204, 404].includes(response.status)) throw new Error(`Storage delete ${bucket}/${path}: ${response.status} ${await response.text()}`);
+  if (![204, 404].includes(response.status)) throw new Error(`Exact synthetic object deletion failed (${response.status})`);
+}
+async function assertObjectAbsent(bucket, path) {
+  const response = await fetch(`https://storage.googleapis.com/storage/v1/b/${bucket}/o/${encodeURIComponent(path)}`, {
+    headers: { Authorization: `Bearer ${accessToken()}` }
+  });
+  if (response.status !== 404) throw new Error(`Exact synthetic object absence failed (${response.status})`);
 }
 async function cleanup() {
   const failures = [];
   for (const object of [...manifest.objects].reverse()) await deleteObject(object.bucket, object.path, object.generation).catch(error => failures.push(error.message));
   for (const path of [...new Set(manifest.docs)].reverse()) await deleteDoc(path).catch(error => failures.push(error.message));
   for (const user of [...manifest.users].reverse()) await deleteUser(user).catch(error => failures.push(error.message));
+  for (const object of [...new Map(manifest.objects.map(item => [`${item.bucket}/${item.path}`, item])).values()]) {
+    await assertObjectAbsent(object.bucket, object.path).catch(error => failures.push(error.message));
+  }
+  for (const path of new Set(manifest.docs)) {
+    await getDoc(path).then(row => { if (row !== null) failures.push('Exact synthetic document still exists'); }).catch(error => failures.push(error.message));
+  }
+  for (const user of manifest.users) await assertUserAbsent(user).catch(error => failures.push(error.message));
   if (failures.length) throw new Error(`Cleanup failures: ${failures.join(' | ')}`);
 }
 
@@ -157,8 +198,6 @@ try {
   const cert = await issueIntake(office, 'CERT');
   const certGrant = await uploadCase({ ...cert, folder: 'certUploads', label: 'OSHA 30 / OSHA 10', bytes: cleanPdf, fileName: `${PREFIX}-cert.pdf` });
   const certAuth = await waitAuthorization(certGrant.authorizationId, ['scan-clean']);
-  manifest.objects.push({ bucket: 'pal-safety-hub-clamav-unscanned', path: certAuth.scanObjectPath, generation: certAuth.scanObjectGeneration });
-  manifest.objects.push({ bucket: 'pal-safety-hub-clamav-clean', path: certAuth.scanObjectPath, generation: null });
   const certDownload = await call('requestIntakeCertificationDownloadV1', { intakeId: cert.intakeId, path: certGrant.path, purpose: `${PREFIX} certification verification` }, office.idToken);
   await exactDownload(certDownload.url, cleanPdf);
   manifest.assertions.push('certification-clean-exact-download:passed');
@@ -167,8 +206,6 @@ try {
   const identityGrant = await uploadCase({ ...identity, folder: 'payrollIdUploads', label: 'Driver License / Photo ID', bytes: cleanPdf, fileName: `${PREFIX}-identity.pdf` });
   manifest.docs.push(`sensitiveIntakeVaults/${identity.intakeId}`);
   const identityAuth = await waitAuthorization(identityGrant.authorizationId, ['scan-clean']);
-  manifest.objects.push({ bucket: 'pal-safety-hub-clamav-unscanned', path: identityAuth.scanObjectPath, generation: identityAuth.scanObjectGeneration });
-  manifest.objects.push({ bucket: 'pal-safety-hub-clamav-clean', path: identityAuth.scanObjectPath, generation: null });
   await expectDenied('non-entitled-vault', () => call('getSensitiveIntakeVaultV1', { intakeId: identity.intakeId, purpose: `${PREFIX} negative test` }, unentitled.idToken));
   const pending = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: `${PREFIX} identity verification` }, office.idToken);
   if (pending.status !== 'approval-required') throw new Error(`Expected approval-required: ${JSON.stringify(pending)}`);
@@ -183,8 +220,6 @@ try {
   const reviewGrant = await uploadCase({ ...review, folder: 'payrollIdUploads', label: 'Additional Payroll / ID Document', bytes: encryptedPdf, fileName: `${PREFIX}-encrypted.pdf` });
   manifest.docs.push(`sensitiveIntakeVaults/${review.intakeId}`);
   const reviewAuth = await waitAuthorization(reviewGrant.authorizationId, ['scan-manual-review']);
-  manifest.objects.push({ bucket: 'pal-safety-hub-clamav-unscanned', path: reviewAuth.scanObjectPath, generation: reviewAuth.scanObjectGeneration });
-  manifest.objects.push({ bucket: 'pal-safety-hub-clamav-quarantine', path: reviewAuth.scanObjectPath, generation: null });
   await expectDenied('manual-review-download', () => call('requestSensitiveIntakeDownloadV1', { intakeId: review.intakeId, path: reviewGrant.path, purpose: `${PREFIX} manual-review denial` }, office.idToken));
   manifest.assertions.push('encrypted-manual-review-locked:passed');
   passed = true;
