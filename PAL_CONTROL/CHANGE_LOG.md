@@ -2,6 +2,15 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 repeat lifecycle regression blocked on scanner detection
+
+- John approved the exact isolated Staging runtime/IAM/regression boundary for accepted digest `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb`. The private bounded scanner was installed with the previously approved scanner-only callback Invoker and exact isolated-unscanned viewer access; retry remained PAUSED during direct-path verification. Production and real PAL data were not touched.
+- A first harness attempt used the Production Firebase web identifier against Staging. Firebase correctly rejected all three synthetic tokens as invalid for Staging; logs recorded `auth: INVALID`. The harness cleaned five documents, one object, and three temporary users. A corrected run proved all three temporary tokens were issued by `pal-safety-hub-staging`.
+- Live synthetic evidence passed the certification exact-object first scan and purpose-bound exact-byte download, plus payroll/identity clean scan, non-entitled denial, requester self-approval denial, different-Admin approval, and generation-bound exact-byte download. The direct certification authorization reached `scan-clean` with bound numeric scanner-input generation and a once-only audit marker.
+- The manual-review test then found a material scanner-detection blocker. After correcting an initially malformed harmless antivirus fixture, the standard synthetic antivirus test file was still reported `clean` and the authorization advanced to `verified-clean` instead of `scan-manual-review`. The harness timed out waiting for the required locked state and cleaned nine documents, three objects, and three temporary users. No synthetic file was downloaded after this incorrect classification and no real data was involved.
+- Staging was restored fail closed: 100% scanner traffic returned to `pal-staging-malware-scanner-00010-p6g`; the initial-callback service has no Invoker binding; the temporary isolated-unscanned `objectViewer` grant was removed while the pre-existing objectCreator grant was preserved; retry is `PAUSED`; and the earlier direct synthetic authorization/intake and exact objects were removed and verified absent. Production is unchanged. Package 6 remains **IN PROGRESS / BLOCKED for Production** pending scanner engine/signature verification and a new clean/manual-review regression.
+- No new image build or Artifact Analysis scan occurred. The direct scan ledger remains nine scans / `$2.34`; only small unposted Staging runtime, Function, Storage, Eventarc, and logging usage was added.
+
 ## 2026-08-30 — Package 6 corrected initial-scan image accepted, undeployed
 
 - John approved exactly one dedicated-builder image push and one `$0.26` Artifact Analysis scan from reviewed commit `9b387eb`, pinned upstream `0db019c9f09494215aa4485b71094e9b8d5ea90b`, patch SHA-256 `a14d7836af49e4efc211f93da466164c425b421d311d8e17274a3129e458df07`, and unique tag `pal-initial-intake-field-1`.
