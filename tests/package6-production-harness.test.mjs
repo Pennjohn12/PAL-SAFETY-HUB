@@ -42,10 +42,11 @@ test('Production synthetic harness failure messages do not serialize response bo
 
 test('Production synthetic harness accepts only exact callable denial statuses', () => {
   assert.match(source, /error instanceof CallableError/);
-  assert.match(source, /error\.firebaseStatus !== expectedStatus/);
-  assert.match(source, /'non-entitled-vault', 'PERMISSION_DENIED'/);
-  assert.match(source, /'requester-self-approval', 'FAILED_PRECONDITION'/);
-  assert.match(source, /'manual-review-download', 'FAILED_PRECONDITION'/);
+  assert.match(source, /error\.httpStatus !== expectedHttpStatus/);
+  assert.match(source, /error\.firebaseStatus !== expectedFirebaseStatus/);
+  assert.match(source, /'non-entitled-vault', 403, 'PERMISSION_DENIED'/);
+  assert.match(source, /'requester-self-approval', 400, 'FAILED_PRECONDITION'/);
+  assert.match(source, /'manual-review-download', 400, 'FAILED_PRECONDITION'/);
 });
 
 test('Production synthetic approval recovery query has all three equality filters', () => {
@@ -57,6 +58,6 @@ test('Production synthetic approval recovery query has all three equality filter
 });
 
 test('Production synthetic cleanup repeats exact object removal after bounded quiescence', () => {
-  assert.match(source, /setTimeout\(resolve, 15000\)/);
+  assert.match(source, /setTimeout\(resolve, 45000\)/);
   assert.equal((source.match(/for \(const object of \[\.\.\.manifest\.objects\]\.reverse\(\)\) await deleteObject/g) || []).length, 2);
 });

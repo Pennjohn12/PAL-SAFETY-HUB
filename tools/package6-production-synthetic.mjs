@@ -121,10 +121,10 @@ async function call(name, data, idToken = '') {
   if (!response.ok || body.error) throw new CallableError(response.status, String(body?.error?.status || 'APPLICATION_ERROR').slice(0, 80));
   return body.result;
 }
-async function expectDenied(label, expectedStatus, operation) {
+async function expectDenied(label, expectedHttpStatus, expectedFirebaseStatus, operation) {
   try { await operation(); } catch (error) {
-    if (!(error instanceof CallableError) || error.firebaseStatus !== expectedStatus) throw error;
-    manifest.assertions.push(`${label}:${expectedStatus}`); return;
+    if (!(error instanceof CallableError) || error.httpStatus !== expectedHttpStatus || error.firebaseStatus !== expectedFirebaseStatus) throw error;
+    manifest.assertions.push(`${label}:${expectedHttpStatus}/${expectedFirebaseStatus}`); return;
   }
   throw new Error(`${label} unexpectedly succeeded`);
 }
@@ -215,7 +215,7 @@ async function cleanup() {
   for (const object of [...manifest.objects].reverse()) await deleteObject(object.bucket, object.path, object.generation).catch(error => failures.push(error.message));
   for (const path of [...new Set(manifest.docs)].reverse()) await deleteDoc(path).catch(error => failures.push(error.message));
   for (const user of [...manifest.users].reverse()) await deleteUser(user).catch(error => failures.push(error.message));
-  await new Promise(resolve => setTimeout(resolve, 15000));
+  await new Promise(resolve => setTimeout(resolve, 45000));
   for (const object of [...manifest.objects].reverse()) await deleteObject(object.bucket, object.path).catch(error => failures.push(error.message));
   for (const object of [...new Map(manifest.objects.map(item => [`${item.bucket}/${item.path}`, item])).values()]) {
     await assertObjectAbsent(object.bucket, object.path).catch(error => failures.push(error.message));
@@ -244,13 +244,13 @@ try {
   const identity = await issueIntake(office, 'IDENTITY');
   const identityGrant = await uploadCase({ ...identity, folder: 'payrollIdUploads', label: 'Driver License / Photo ID', bytes: cleanPdf, fileName: `${PREFIX}-identity.pdf` });
   const identityAuth = await waitAuthorization(identityGrant.authorizationId, ['scan-clean']);
-  await expectDenied('non-entitled-vault', 'PERMISSION_DENIED', () => call('getSensitiveIntakeVaultV1', { intakeId: identity.intakeId, purpose: `${PREFIX} negative test` }, unentitled.idToken));
+  await expectDenied('non-entitled-vault', 403, 'PERMISSION_DENIED', () => call('getSensitiveIntakeVaultV1', { intakeId: identity.intakeId, purpose: `${PREFIX} negative test` }, unentitled.idToken));
   const identityPurpose = `${PREFIX} identity verification`;
   manifest.approvalQueries.push({ intakeId: identity.intakeId, requesterUid: office.uid, purpose: identityPurpose });
   const pending = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: identityPurpose }, office.idToken);
   if (pending.status !== 'approval-required') throw new Error(`Expected approval-required, received ${String(pending?.status || 'missing').slice(0, 40)}`);
   manifest.docs.push(`sensitiveDownloadApprovals/${pending.approvalId}`);
-  await expectDenied('requester-self-approval', 'FAILED_PRECONDITION', () => call('approveSensitiveIntakeDownloadV1', { approvalId: pending.approvalId }, office.idToken));
+  await expectDenied('requester-self-approval', 400, 'FAILED_PRECONDITION', () => call('approveSensitiveIntakeDownloadV1', { approvalId: pending.approvalId }, office.idToken));
   await call('approveSensitiveIntakeDownloadV1', { approvalId: pending.approvalId }, admin.idToken);
   const identityDownload = await call('requestSensitiveIntakeDownloadV1', { intakeId: identity.intakeId, path: identityGrant.path, purpose: identityPurpose }, office.idToken);
   await exactDownload(identityDownload.url, cleanPdf);
@@ -259,7 +259,7 @@ try {
   const review = await issueIntake(office, 'MANUAL');
   const reviewGrant = await uploadCase({ ...review, folder: 'payrollIdUploads', label: 'Additional Payroll / ID Document', bytes: encryptedPdf, fileName: `${PREFIX}-encrypted.pdf` });
   const reviewAuth = await waitAuthorization(reviewGrant.authorizationId, ['scan-manual-review']);
-  await expectDenied('manual-review-download', 'FAILED_PRECONDITION', () => call('requestSensitiveIntakeDownloadV1', { intakeId: review.intakeId, path: reviewGrant.path, purpose: `${PREFIX} manual-review denial` }, office.idToken));
+  await expectDenied('manual-review-download', 400, 'FAILED_PRECONDITION', () => call('requestSensitiveIntakeDownloadV1', { intakeId: review.intakeId, path: reviewGrant.path, purpose: `${PREFIX} manual-review denial` }, office.idToken));
   manifest.assertions.push('encrypted-manual-review-locked:passed');
   passed = true;
   console.log(JSON.stringify({ status: 'PASS', runId: PREFIX, assertions: manifest.assertions, created: { users: manifest.users.length, docs: new Set(manifest.docs).size, objects: manifest.objects.length }, retainedAuditIntakeIds: manifest.retainedAuditIntakeIds }, null, 2));
