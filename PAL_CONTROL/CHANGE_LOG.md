@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 Production-owned scanner image accepted; runtime remains undeployed
+
+- John separately approved one official `gcrane` v0.22.0 copy after the Docker-client route failed pre-manifest. GitHub's published checksum-file SHA-256 `32cb6297...` matched the downloaded checksum file; its pinned Linux x86_64 archive entry `edb74d53...` matched the downloaded archive before extraction/execution.
+- Destination tag absence was verified first. `gcrane cp` copied only literal Staging source `@sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb` to unique Production tag `pal-package6-prod-1`, with no rebuild, recursion, all-tags operation, Cloud Build, new identity, or new IAM. Independent `gcrane digest` and Google Artifact Registry describe both returned the exact same digest.
+- Production Artifact Analysis completed at `2026-08-30T09:42:49Z` with `FINISHED_SUCCESS`. Digest-specific all-metadata contained discovery/image/package summaries, zero vulnerability occurrences, and zero malicious-package occurrences. The one expected approximately `$0.26` scan is incurred but not yet invoice-posted.
+- The accepted image remains undeployed. No scanner service/job/Eventarc/Scheduler, callback Invoker, Package 6 Function/rules/Hosting deployment, synthetic account/data, real-data access, or file release occurred. Runtime/application activation remains a separate exact approval boundary.
+
 ## 2026-08-30 — Package 6 Production activation stopped fail closed during exact image promotion
 
 - John approved the exact Production deployment from tested commit `86449b355962437f51c353c88c972c5ea3e9d941`, including one expected `$0.26` scan, named resources/IAM, synthetic-only verification, the `$5` stop boundary, and rollback.
