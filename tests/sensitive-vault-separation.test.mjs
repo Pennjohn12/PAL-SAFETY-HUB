@@ -6,6 +6,7 @@ import test from 'node:test';
 const require = createRequire(import.meta.url);
 const { initialScanEvidence, initialScanMetadata, isMatchingTerminalInitialScan,
   mayApplyInitialScan } = require('../functions-public-intake/initial-scan-policy.js');
+const { enforceSensitiveVaultRetention } = require('../functions-public-intake/sensitive-vault-retention.js');
 
 const backend = fs.readFileSync(new URL('../functions-public-intake/index.js', import.meta.url), 'utf8');
 const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
@@ -186,14 +187,21 @@ test('pending sensitive approval queue is Admin-only, bounded, and audited', () 
 
 test('retention enforcement is generation-bound, hold-aware, audited, and server-only', () => {
   assert.match(backend, /PAL_SENSITIVE_VAULT_RETENTION_MODE/);
-  assert.match(backend, /if \(RETENTION_MODE\.value\(\) !== 'enforce'\)/);
-  assert.match(backend, /mode: 'disabled', inspected: 0, deleted: 0/);
+  assert.match(backend, /default: 'disabled'/);
   assert.match(retention, /retentionDecision\(record, now\)/);
   assert.match(retention, /sameObjectIdentity\(identity, \{ \.\.\.identity, path: record\.path \}\)/);
   assert.match(retention, /ifGenerationMatch: Number\(identity\.generation\)/);
   assert.match(retention, /action: 'retention-delete'/);
   assert.match(retention, /externalDelivery: false/);
   assert.match(backend, /exports\.enforceSensitiveVaultRetentionV1 = onSchedule/);
+});
+
+test('absent or disabled Production retention returns before any data dependency is used', async () => {
+  const blocked = new Proxy({}, { get() { throw new Error('data dependency touched'); } });
+  assert.deepEqual(await enforceSensitiveVaultRetention({ db: blocked, bucket: blocked }),
+    { mode: 'disabled', inspected: 0, deleted: 0 });
+  assert.deepEqual(await enforceSensitiveVaultRetention({ mode: 'disabled', db: blocked, bucket: blocked }),
+    { mode: 'disabled', inspected: 0, deleted: 0 });
 });
 
 test('vault audit events are append-only and cryptographically chained', () => {

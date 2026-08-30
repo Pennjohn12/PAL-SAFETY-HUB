@@ -7,7 +7,7 @@ const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestor
 const { cleanupExpiredUploads } = require('./upload-cleanup');
 const { initialScanEvidence, initialScanMetadata, initialScanPath, isMatchingTerminalInitialScan,
   mayApplyInitialScan } = require('./initial-scan-policy');
-const { processSensitiveVaultRetention } = require('./sensitive-vault-retention');
+const { enforceSensitiveVaultRetention } = require('./sensitive-vault-retention');
 const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, sameObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
@@ -28,7 +28,7 @@ const MAX_PACKET_FILES = 12;
 const MAX_GRANTS_PER_HOUR = 12;
 const VAULT_SERVICE_ACCOUNT = defineString('PAL_VAULT_SERVICE_ACCOUNT');
 const RESCAN_BUCKET = defineString('PAL_RESCAN_BUCKET');
-const RETENTION_MODE = defineString('PAL_SENSITIVE_VAULT_RETENTION_MODE');
+const RETENTION_MODE = defineString('PAL_SENSITIVE_VAULT_RETENTION_MODE', { default: 'disabled' });
 const VAULT_RUNTIME = Object.freeze({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10,
   serviceAccount: VAULT_SERVICE_ACCOUNT });
 
@@ -428,7 +428,7 @@ exports.createPublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeou
   return { authorizationId: authorizationRef.id, grantToken, uploadUrl, expiresAt: expiresAt.toDate().toISOString(), path, contentType: spec.contentType, size: spec.size };
 });
 
-exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 120, memory: '512MiB', maxInstances: 10,
+exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 120, memory: '512MiB', maxInstances: 10, serviceAccount: VAULT_SERVICE_ACCOUNT,
   serviceAccount: VAULT_SERVICE_ACCOUNT }, async request => {
   const intakeId = text(request.data?.intakeId, 180);
   const token = text(request.data?.token, 200);
@@ -853,10 +853,8 @@ exports.cleanupExpiredPublicIntakeUploadsV2 = onSchedule({ region: REGION, sched
 });
 
 exports.enforceSensitiveVaultRetentionV1 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1, serviceAccount: VAULT_SERVICE_ACCOUNT }, async () => {
-  if (RETENTION_MODE.value() !== 'enforce') {
-    console.log(JSON.stringify({ event: 'sensitive-vault-retention', mode: 'disabled', inspected: 0, deleted: 0 }));
-    return { mode: 'disabled', inspected: 0, deleted: 0 };
-  }
-  const result = await processSensitiveVaultRetention({ db, bucket: admin.storage().bucket(), FieldValue, writeAudit: writeVaultAudit });
+  const result = await enforceSensitiveVaultRetention({ mode: RETENTION_MODE.value(),
+    db, bucket: admin.storage().bucket(), FieldValue, writeAudit: writeVaultAudit });
   console.log(JSON.stringify({ event: 'sensitive-vault-retention', ...result }));
+  return result;
 });

@@ -52,4 +52,9 @@ async function processSensitiveVaultRetention({ db, bucket, FieldValue, now = Da
   return result;
 }
 
-module.exports = { notificationId, processSensitiveVaultRetention };
+async function enforceSensitiveVaultRetention(options = {}) {
+  if (options.mode !== 'enforce') return { mode: 'disabled', inspected: 0, deleted: 0 };
+  return processSensitiveVaultRetention(options);
+}
+
+module.exports = { enforceSensitiveVaultRetention, notificationId, processSensitiveVaultRetention };
