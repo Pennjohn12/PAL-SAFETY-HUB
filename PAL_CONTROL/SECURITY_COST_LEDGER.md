@@ -15,7 +15,7 @@ This ledger records incremental cloud/service costs created specifically by the 
 
 ## 2026-08-29 Package 6 reconciliation checkpoint
 
-- Direct, action-time-authorized Artifact Analysis charges are mathematically reconciled at **5 × $0.26 = $1.30 incurred**. They may post later than the test date; the ledger does not misstate the earlier `$0.52` whole-project dashboard estimate as including them.
+- Direct, action-time-authorized Artifact Analysis charges are mathematically reconciled at **7 × $0.26 = $1.82 incurred**. They may post later than the test date; the ledger does not misstate the earlier `$0.52` whole-project dashboard estimate as including them.
 - The last observed dashboard amount remains **$0.52 for the whole Staging project for Aug. 1–29**. Because it is project-wide and not broken down by SKU, it cannot yet be attributed fully to Package 6 or combined with `$1.82` as an invoice total.
 - Package 6 scanner measurement/runtime was bounded at min 0, max 1, concurrency 1 and was previously estimated below `$0.10` before free tier. Later false-positive regressions add only short scale-to-zero executions, tiny synthetic objects, Eventarc requests, Function calls, and logs; no new image scan was triggered.
 - The authoritative current security-program direct-charge ledger is therefore **$1.82 known/incurred plus small usage-dependent Staging charges not yet posted or SKU-reconciled**. Production cost remains `$0` because no Package 6 Production resource exists.
