@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 synthetic regression stopped on scanner scale mismatch
+
+- The Control Room approved proceeding to synthetic direct-path regression only after seven pre-test gates, including exact scanner digest/revision/config/identity/limits.
+- Read-only runtime inventory verified accepted digest `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb`, ready revision `pal-prod-malware-scanner-00002-mc8`, dedicated scanner identity, 1 CPU, 4 GiB, concurrency 1, exact isolated buckets, CVD bucket, and both private callback URLs.
+- The same inventory found `autoscaling.knative.dev/maxScale: '10'`, not the approved max 1. The pre-test gate therefore failed and PAL stopped before creating or uploading any synthetic object or record.
+- No test or real data was read or changed, retry/retention remain PAUSED and code-disabled, and no file was released. Correcting the Production service limit requires an evidence-backed checkpoint before the synthetic matrix resumes.
+
 ## 2026-08-30 — Package 6 Production Eventarc path created and verified private
 
 - John explicitly approved project-level `roles/pubsub.publisher` only for Google-managed Cloud Storage service agent `service-461653262208@gs-project-accounts.iam.gserviceaccount.com` and exactly one additional creation attempt for `pal-prod-malware-scan`.
