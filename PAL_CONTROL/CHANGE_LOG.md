@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Option A repository-scoped scan-cost control activated in Staging
+
+- John approved keeping automatic vulnerability scanning only for PAL's dedicated malware-scanner repository and disabling it on the two Staging Cloud Functions-managed repositories, acknowledging the loss of automatic Function-container vulnerability visibility.
+- Staging `gcf-artifacts` in `us-central1` and `us-east1` now independently report `enablementConfig: DISABLED`, `enablementState: SCANNING_DISABLED`, and reason `Vulnerability scanning is disabled.` Dedicated `us-east1/malware-scanner` reports `enablementConfig: INHERITED` and `enablementState: SCANNING_ACTIVE`.
+- The project scanning API remains enabled. Future new scanner digests remain paid and approval-gated; ordinary Function images should no longer be automatically billed for scanning. Existing `$10.40` posted charges are unchanged, and billing lag remains subject to later review.
+- No image/repository deletion, IAM, Function, Hosting, scanner runtime, credential, Production, or real-data action occurred. Rollback is the exact repository-level `--allow-vulnerability-scanning` update on both `gcf-artifacts` locations followed by active-state verification.
+
 ## 2026-08-30 — Package 6 posted billing exposed project-wide scan-cost variance
 
 - Read-only Billing Report review for Staging, Aug. 1–29, verified 40 units / `$10.40` under `Container Images Scanned` (SKU `BEA5-E1D1-4659`), with `$0.00` SKU savings. Cloud Run CPU/memory usage was offset to `$0.00` subtotal and other visible supporting-service rows were `$0.00`.
