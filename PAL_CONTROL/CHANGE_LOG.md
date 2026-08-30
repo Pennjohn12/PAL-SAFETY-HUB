@@ -2,6 +2,15 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 initial-scan retry recovery passed in isolated Staging
+
+- A temporary synthetic-only harness with local/Staging SHA-256 `41010b5feee6dea370fdb60c32048b9cf0e8175e04c9af31ea2dacb1d40dcde0` created one certification object and matching server-side record/authorization in locked `pending` / `scan-queue-failed` state. It did not create a browser user, credential, or real PAL record.
+- Google Scheduler correctly refused a forced run while the retry job was PAUSED. That attempt created no trust and the harness cleaned its synthetic record/object. The job was then briefly resumed only in Staging under the already approved recovery boundary, forced for the test, and paused immediately after the completed run.
+- Run `PAL-SYNTHETIC-RETRY-0ce7fb3a93fc` passed: the worker copied the exact bound source generation, the accepted private scanner returned clean, authorization advanced from locked pending to `scan-clean`, the record retained `downloadable: false`, and the trusted evidence retained the original SHA-256. Exactly one correlated scan-result audit event was recorded.
+- A second forced worker execution left the same terminal state and audit-event ID unchanged, with the correlated audit count still exactly one. This proves terminal retry idempotency and prevents duplicate trust/audit creation.
+- The harness cleaned the named authorization, intake, Firebase object, and any matching isolated unscanned/clean/quarantine object. Rollback restored 100% scanner traffic to `pal-staging-malware-scanner-00010-p6g`, callback IAM is empty, temporary objectViewer is removed while objectCreator remains, retry is `PAUSED`, and temporary Cloud Shell/local harness copies were removed. Production and real PAL data were unchanged.
+- No image build or Artifact Analysis scan occurred; the direct ledger remains nine scans / `$2.34`. Only short scale-to-zero Staging runtime, Scheduler, Function, Storage, Eventarc, and logging usage was added.
+
 ## 2026-08-30 — Package 6 scanner-detection conclusion corrected; encrypted control passed
 
 - The detection-blocker conclusion recorded in the preceding checkpoint is retracted. The purported corrected antivirus fixture was actually 69 bytes because it contained an extra `)`, and it was prefixed by a PDF header. It therefore did not satisfy the official exact-68-byte, start-of-file EICAR condition and could not establish a scanner failure. The unsupported result remains preserved below as history, but it is not credited as a vulnerability or Production blocker.
