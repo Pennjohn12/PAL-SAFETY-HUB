@@ -1,6 +1,6 @@
 # PAL Safety Hub Master Status
 
-Last verified: **2026-08-29, America/New_York**
+Last verified: **2026-08-30, America/New_York**
 
 ## Current Production status
 
@@ -28,7 +28,7 @@ Last verified: **2026-08-29, America/New_York**
 
 ## Staging/Test status
 
-- Package 6 corrected initial-scan image `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb` passed its image-security gate and was exercised only in isolated Staging. Certification clean/release and payroll/identity clean/two-person release passed, but the scanner incorrectly classified the corrected standard harmless antivirus test file as clean instead of manual review. All temporary data was cleaned and Staging was rolled back to `pal-staging-malware-scanner-00010-p6g`; temporary callback/viewer access is absent and retry is PAUSED. This is a verified Production blocker. Production and real data remain prohibited.
+- Package 6 corrected initial-scan image `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb` passed its image-security gate and the separated first-scan lifecycle in isolated Staging. Certification clean/release and payroll/identity clean/two-person release passed. The prior claimed detection failure was invalid because its fixture did not meet the official EICAR byte/start conditions; a verified encrypted synthetic PDF then produced `Heuristics.Encrypted.PDF FOUND`, advanced only to locked `scan-manual-review`, and could not be downloaded. All temporary data was cleaned and Staging was rolled back to `pal-staging-malware-scanner-00010-p6g`; temporary callback/viewer access is absent and retry is PAUSED. Production and real data remain prohibited.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
@@ -97,7 +97,7 @@ Present in current source and covered by current automated checks where noted:
 - Package 3 of 15, controlled Production maintenance mode: **Passed PAL tests** on 2026-08-28. Layered Hosting, deny-all Firestore/Storage rules, Function invocation lockdown, schedule pause, communication, two-hour stop, and rollback controls are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`; Staging activation/rollback and Production activation verification passed.
 - Package 4 of 15, secure public orientation/intake access: **Passed PAL tests / Production active** on 2026-08-29. Expiring packet-bound tokens, narrow server actions, direct Firestore denial, completion lockout, and legacy-link failure are verified. Existing ID-only links now require PAL Office replacement.
 - Package 5 of 15, secure sensitive-upload authorization: **Passed PAL tests / Production active** on 2026-08-29. Single-file grants, packet/folder/type/size binding, replay denial, quarantine, limits, invalid-object removal, and cleanup are active. New files intentionally remain unavailable; malware scanning and controlled release are explicitly assigned to Package 6.
-- Package 6 of 15, sensitive vault and safe release: **In progress / blocked on scanner detection** on 2026-08-30. Existing release/audit, approval, retention, notification, false-positive, legacy, Office, certification-clean, and payroll/identity-clean gates remain credited. The repeat lifecycle run proved separated clean release paths but the standard harmless antivirus test object was incorrectly marked clean. Staging was safely rolled back with temporary access removed and retry PAUSED; all named synthetic records/objects/users were cleaned. No Production or real-data action occurred.
+- Package 6 of 15, sensitive vault and safe release: **In progress / Production closed** on 2026-08-30. Existing release/audit, approval, retention, notification, false-positive, legacy, Office, certification-clean, payroll/identity-clean, and encrypted-file manual-review gates are credited in isolated Staging. The unsupported scanner-detection conclusion was retracted after the fixture defect was verified. Staging was safely rolled back with temporary access removed and retry PAUSED; all named synthetic records/objects/users were cleaned. Retry-recovery evidence, posted billing reconciliation, and an exact Production proposal remain open. No Production or real-data action occurred.
 - Packages independently verified: **0 of 15**.
 - Sensitive-data boundary: no new SS cards, W-4s, full SSNs, driver licenses, payroll identity files, banking data, or medical/drug-testing records should be accepted through PAL during hardening.
 - Package 3 proved the technical maintenance boundary and rollback, but the Production maintenance controls are no longer active.

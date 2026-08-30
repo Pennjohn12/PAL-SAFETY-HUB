@@ -1,6 +1,6 @@
 # PAL Security Program Cost Ledger
 
-Last updated: **2026-08-29, America/New_York**
+Last updated: **2026-08-30, America/New_York**
 
 This ledger records incremental cloud/service costs created specifically by the PAL security hardening program. Amounts shown as estimates are not invoices. Google Cloud budget alerts notify; they do not enforce a hard cap. Actual billed amounts must be reconciled against the billing report before the final security package is presented.
 
@@ -16,10 +16,10 @@ This ledger records incremental cloud/service costs created specifically by the 
 ## 2026-08-29 Package 6 reconciliation checkpoint
 
 - Direct, action-time-authorized Artifact Analysis charges are mathematically reconciled at **9 × $0.26 = $2.34 incurred**. They may post later than the test date; the ledger does not misstate the earlier `$0.52` whole-project dashboard estimate as including them.
-- The last observed dashboard amount remains **$0.52 for the whole Staging project for Aug. 1–29**. Because it is project-wide and not broken down by SKU, it cannot yet be attributed fully to Package 6 or combined with `$2.08` as an invoice total.
+- The last observed dashboard amount remains **$0.52 for the whole Staging project for Aug. 1–29**. Because it is project-wide and not broken down by SKU, it cannot yet be attributed fully to Package 6 or combined with `$2.34` as an invoice total.
 - Package 6 scanner measurement/runtime was bounded at min 0, max 1, concurrency 1 and was previously estimated below `$0.10` before free tier. Later false-positive regressions add only short scale-to-zero executions, tiny synthetic objects, Eventarc requests, Function calls, and logs; no new image scan was triggered.
 - The authoritative current security-program direct-charge ledger is therefore **$2.34 known/incurred plus small usage-dependent Staging charges not yet posted or SKU-reconciled**. Production cost remains `$0` because no Package 6 Production resource exists.
-- The 2026-08-30 repeat lifecycle regression did not build or scan another image and added no direct Artifact Analysis charge. It added only short bounded Staging scanner/Function/Storage/Eventarc/log usage. The accepted image was rolled back after the scanner incorrectly marked the corrected standard harmless antivirus test object clean; the nine-scan / `$2.34` direct-charge total is unchanged.
+- The 2026-08-30 repeat lifecycle regression and corrected encrypted-PDF rerun did not build or scan another image and added no direct Artifact Analysis charge. They added only short bounded Staging scanner/Function/Storage/Eventarc/log usage. The prior detection conclusion was retracted because its fixture was not a valid exact/start-of-file EICAR control; the verified encrypted PDF was correctly locked for manual review. The nine-scan / `$2.34` direct-charge total is unchanged.
 - The 2026-08-30 two-phase startup/integration run itself incurred no additional scan charge and failed closed at the workflow-specific intake-field check. John then separately approved the corrected image; build `f8dfaf77-f26d-4f75-a08e-ad01bc4596da` incurred the ninth `$0.26` scan, so the direct ledger is now **9 scans / $2.34**. The accepted digest remains undeployed.
 - Final invoice-grade reconciliation remains time-gated until Google Cloud posts itemized SKU charges/credits/taxes for the testing window. It must record the billing-account scope and must not infer an invoice total from the dashboard estimate.
 
