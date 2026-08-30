@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 startup passed; destination-envelope integration failed closed
+
+- John approved the two-phase isolated Staging installation. Phase 1 deployed only accepted digest `sha256:5137ce2d9f744c428838fa67868c66fb180c342b3f9c21704150255b5b4b533b` to private bounded revision `pal-staging-malware-scanner-00011-mk8` with min 0, max 1, concurrency 1, callback Invoker absent, and retry PAUSED. The revision became healthy, served 100%, returned anonymous HTTP 403, and logged successful Bash, ClamAV, and application startup with no CRLF/startup errors.
+- Phase 2 configured the private first-scan callback on revision `pal-staging-malware-scanner-00012-28s`, granted Invoker only to the dedicated scanner identity, and temporarily granted the dedicated vault runtime exact-bucket objectViewer on isolated unscanned storage. No output-bucket trigger or output-bucket viewer grant was created.
+- A synthetic certification traversed the public grant, upload, finalization, isolated copy, Eventarc delivery, and ClamAV scan. ClamAV returned CLEAN in tens of milliseconds, but authoritative Storage inspection proved the copied isolated object had `metadata: null` and lacked the requested content type/cache control. The scanner rejected the callback with `PAL scan callback metadata is incomplete`; authorization remained `scan-queued`, the record remained pending/locked, and no signed release or download occurred. This is a fail-closed Function-to-scanner availability/integration blocker, not a confidentiality bypass.
+- Rollback restored 100% traffic to prior serving revision `pal-staging-malware-scanner-00010-p6g`, whose environment contains only the established false-positive callback. The initial callback Invoker and temporary vault-runtime objectViewer both verify absent, retry verifies PAUSED, and only named `PAL-SYNTHETIC-P6-*` records/accounts/objects were removed. Production and real PAL data were unchanged.
+- Local correction now writes the security envelope with `setMetadata()` against the exact copied generation, re-reads the exact generation, and requires generation, content type, cache control, and every custom envelope field to match before authorization may become `scan-queued`. Any finalize-event race remains fail closed and retryable. Functions syntax, clean diff, and all 99/99 PAL tests pass. The correction is local/predeployment only; no new scanner image or paid Artifact Analysis scan is required.
+
 ## 2026-08-29 — Package 6 automatic first-scan candidate prepared locally
 
 - Added a predeployment first-scan flow for both Package 5 upload folders. Finalization hashes and binds the exact Firebase object generation, persists the correct certification or sensitive-vault record first, and then automatically copies only that generation into the private scanner input using an idempotent authorization-derived path.
