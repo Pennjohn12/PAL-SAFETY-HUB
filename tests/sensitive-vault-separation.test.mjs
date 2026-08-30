@@ -7,6 +7,7 @@ const require = createRequire(import.meta.url);
 const { initialScanEvidence, initialScanMetadata, isMatchingTerminalInitialScan,
   mayApplyInitialScan } = require('../functions-public-intake/initial-scan-policy.js');
 const { enforceSensitiveVaultRetention } = require('../functions-public-intake/sensitive-vault-retention.js');
+const { runInitialScanRetry } = require('../functions-public-intake/initial-scan-retry.js');
 
 const backend = fs.readFileSync(new URL('../functions-public-intake/index.js', import.meta.url), 'utf8');
 const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
@@ -208,6 +209,18 @@ test('absent or disabled Production retention returns before any data dependency
     { mode: 'disabled', inspected: 0, deleted: 0 });
   assert.deepEqual(await enforceSensitiveVaultRetention({ mode: 'disabled', db: blocked, bucket: blocked }),
     { mode: 'disabled', inspected: 0, deleted: 0 });
+});
+
+test('absent or disabled Production initial-scan retry returns before any data dependency is used', async () => {
+  assert.match(backend, /PAL_INITIAL_SCAN_RETRY_MODE/);
+  assert.match(backend, /defineString\('PAL_INITIAL_SCAN_RETRY_MODE', \{ default: 'disabled' \}\)/);
+  const blocked = () => { throw new Error('data dependency touched'); };
+  assert.deepEqual(await runInitialScanRetry({ execute: blocked }),
+    { mode: 'disabled', inspected: 0, queued: 0 });
+  assert.deepEqual(await runInitialScanRetry({ mode: 'disabled', execute: blocked }),
+    { mode: 'disabled', inspected: 0, queued: 0 });
+  assert.deepEqual(await runInitialScanRetry({ mode: 'enforce', execute: async () => ({ inspected: 1, queued: 1 }) }),
+    { inspected: 1, queued: 1 });
 });
 
 test('vault audit events are append-only and cryptographically chained', () => {

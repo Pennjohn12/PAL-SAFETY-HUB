@@ -8,6 +8,7 @@ const { cleanupExpiredUploads } = require('./upload-cleanup');
 const { initialScanEvidence, initialScanMetadata, initialScanPath, isMatchingTerminalInitialScan,
   mayApplyInitialScan } = require('./initial-scan-policy');
 const { enforceSensitiveVaultRetention } = require('./sensitive-vault-retention');
+const { runInitialScanRetry } = require('./initial-scan-retry');
 const { chainedAuditEvent, mayApproveFalsePositive, mayAuthorizeDownload, normalizeObjectIdentity, sameObjectIdentity, validatePurpose } = require('./sensitive-vault-policy');
 
 admin.initializeApp();
@@ -29,6 +30,7 @@ const MAX_GRANTS_PER_HOUR = 12;
 const VAULT_SERVICE_ACCOUNT = defineString('PAL_VAULT_SERVICE_ACCOUNT');
 const RESCAN_BUCKET = defineString('PAL_RESCAN_BUCKET');
 const RETENTION_MODE = defineString('PAL_SENSITIVE_VAULT_RETENTION_MODE', { default: 'disabled' });
+const INITIAL_SCAN_RETRY_MODE = defineString('PAL_INITIAL_SCAN_RETRY_MODE', { default: 'disabled' });
 const VAULT_RUNTIME = Object.freeze({ region: REGION, cors: true, timeoutSeconds: 30, memory: '256MiB', maxInstances: 10,
   serviceAccount: VAULT_SERVICE_ACCOUNT });
 
@@ -823,6 +825,7 @@ async function markInitialScanStale(authorizationRef, expected) {
 
 exports.retryPendingInitialScansV1 = onSchedule({ region: REGION, schedule: 'every 10 minutes', timeZone: 'America/New_York',
   timeoutSeconds: 300, memory: '256MiB', maxInstances: 1, serviceAccount: VAULT_SERVICE_ACCOUNT }, async () => {
+  return runInitialScanRetry({ mode: INITIAL_SCAN_RETRY_MODE.value(), execute: async () => {
   const [failed, queued] = await Promise.all([
     db.collection('publicIntakeUploadAuthorizations').where('state', '==', 'scan-queue-failed').limit(25).get(),
     db.collection('publicIntakeUploadAuthorizations').where('state', '==', 'scan-queued').limit(25).get()
@@ -845,6 +848,7 @@ exports.retryPendingInitialScansV1 = onSchedule({ region: REGION, schedule: 'eve
   }
   console.log(JSON.stringify({ event: 'initial-scan-retry', inspected: retryIds.size, queued: queuedCount }));
   return { inspected: retryIds.size, queued: queuedCount };
+  } });
 });
 
 exports.cleanupExpiredPublicIntakeUploadsV2 = onSchedule({ region: REGION, schedule: 'every 60 minutes', timeZone: 'America/New_York', timeoutSeconds: 300, memory: '256MiB', maxInstances: 1 }, async () => {

@@ -30,17 +30,29 @@ Immediately before mutation, re-export and hash this entire checkpoint: Hosting 
 1. Deploy private `pal-prod-malware-scanner` in `us-east1` from only the accepted digest above: dedicated scanner identity, 1 CPU, 4 GiB, min 0, max 1, concurrency 1, no `allUsers`.
 2. Create `pal-prod-cvd-update` from the same accepted digest: dedicated updater identity, 1 CPU, 1 GiB, one retry, 600-second timeout. Create its Scheduler at `0 */4 * * *`, initially PAUSED.
 3. Create only the isolated-unscanned object-finalized Eventarc trigger, initially disabled or without a service-to-scanner invocation path.
-4. Deploy the retry schedule every ten minutes, initially PAUSED.
+4. Deploy the retry schedule every ten minutes with `PAL_INITIAL_SCAN_RETRY_MODE=disabled`, initially PAUSED. Its absent/disabled path returns before Firestore or Storage access. After the direct scan path passes, a focused non-secret configuration/function update may set it to `enforce` before the job is deliberately resumed.
 5. Deploy the hourly retention schedule with `PAL_SENSITIVE_VAULT_RETENTION_MODE=disabled`. The absent/disabled code path returns before any Firestore or Storage query. It remains PAUSED during initial verification; enabling retention enforcement is not authorized.
 
-### Remaining IAM
+### IAM: verified foundation versus remaining actions
 
-- Repository-scoped `roles/artifactregistry.reader` for `service-461653262208@serverless-robot-prod.iam.gserviceaccount.com` on `us-east1/malware-scanner`.
-- Scanner identity: project `roles/logging.logWriter`, `roles/monitoring.metricWriter`, and `roles/eventarc.eventReceiver`; exact-bucket `roles/storage.objectAdmin` on unscanned/clean/quarantine; `roles/storage.objectViewer` on CVD; exact scanner-service `roles/run.invoker` only when Eventarc is enabled; exact two callback-service `roles/run.invoker` only after startup and application health gates pass.
-- Vault identity: project `roles/datastore.user` and `roles/logging.logWriter`; self-scoped `roles/iam.serviceAccountTokenCreator`; exact Firebase bucket `roles/storage.objectUser`; isolated-unscanned `roles/storage.objectCreator` plus `roles/storage.objectViewer`; exact retry and retention service `roles/run.invoker` for their Scheduler targets.
-- Updater identity: project `roles/logging.logWriter`; CVD-bucket `roles/storage.objectAdmin`; exact definition-job `roles/run.invoker`.
-- Storage service agent `service-461653262208@gs-project-accounts.iam.gserviceaccount.com`: project `roles/pubsub.publisher` only if verified absent and required for the one Eventarc trigger.
-- Preserve only Google-managed Eventarc and Scheduler service-agent roles. No public invoker, custom broad role, credential key, clean/quarantine viewer for the vault identity, or broad Firebase-bucket scanner access is authorized.
+The last Production export records these grants as **already present foundation state**; they are verified but not re-applied or re-authorized by this delta:
+
+- Serverless service agent: repository-scoped `roles/artifactregistry.reader` on `us-east1/malware-scanner`.
+- Scanner identity: project `roles/logging.logWriter`, `roles/monitoring.metricWriter`, `roles/eventarc.eventReceiver`; exact-bucket `roles/storage.objectAdmin` on unscanned/clean/quarantine; CVD `roles/storage.objectViewer`.
+- Vault identity: project `roles/datastore.user`, `roles/logging.logWriter`; self-scoped `roles/iam.serviceAccountTokenCreator`; live Firebase bucket `roles/storage.objectUser`; isolated-unscanned `roles/storage.objectCreator` and `roles/storage.objectViewer`.
+- Updater identity: project `roles/logging.logWriter`; CVD bucket `roles/storage.objectAdmin`.
+
+Only these **resource-dependent grants remain to be added** after their targets exist:
+
+- Scanner identity: exact scanner-service `roles/run.invoker` for Eventarc delivery, added only when the trigger is enabled; exact `roles/run.invoker` on `recordSensitiveFalsePositiveRescanV1` and `recordInitialScanResultV1`, added only after health gates pass.
+- Updater identity: exact `roles/run.invoker` on `pal-prod-cvd-update` for its named Scheduler target.
+- Vault identity: exact `roles/run.invoker` on the generated retry and retention services for their named Scheduler targets.
+- Storage service agent `service-461653262208@gs-project-accounts.iam.gserviceaccount.com`: project `roles/pubsub.publisher` only if the fresh preflight proves it absent and the one Eventarc trigger requires it.
+- Preserve only Google-managed Eventarc and Scheduler service-agent roles.
+
+The eight user-facing callable actions—existing `finalizePublicIntakeUploadV2` plus `getSensitiveIntakeVaultV1`, `requestIntakeCertificationDownloadV1`, `requestSensitiveIntakeDownloadV1`, `approveSensitiveIntakeDownloadV1`, `listSensitiveVaultApprovalsV1`, `requestSensitiveFalsePositiveReviewV1`, and `approveSensitiveFalsePositiveReviewV1`—retain or receive service-scoped `allUsers roles/run.invoker`. This allows Firebase callable requests to reach application authorization; every action still requires and verifies Firebase Authentication, active role/entitlement, purpose, and any separate-approver rule. Platform-public invocation is not anonymous data access.
+
+The two scanner callbacks, both schedules, the definition job, and the scanner service remain private with no `allUsers`. No custom broad role, credential key, clean/quarantine viewer for the vault identity, or broad Firebase-bucket scanner access is authorized.
 
 Every before/after IAM policy is captured. An extra principal, broader role, wrong resource, or nonzero user-managed key stops and rolls back.
 
@@ -61,23 +73,24 @@ Focus-deploy from exact commit `86449b355962437f51c353c88c972c5ea3e9d941` only:
 11. `retryPendingInitialScansV1`
 12. `enforceSensitiveVaultRetentionV1`
 
-Deploy only the tested Firestore/Storage rules and tested Hosting client for protected Office release/status and unchanged simple intake behavior. Hosting must exclude backend, scanner, governance, and source files. Production non-secret configuration uses the named Production identities/bucket and `PAL_SENSITIVE_VAULT_RETENTION_MODE=disabled`.
+Deploy only the tested Firestore/Storage rules and tested Hosting client for protected Office release/status and unchanged simple intake behavior. Hosting must exclude backend, scanner, governance, and source files. Production non-secret configuration uses the named Production identities/bucket, `PAL_INITIAL_SCAN_RETRY_MODE=disabled`, and `PAL_SENSITIVE_VAULT_RETENTION_MODE=disabled`.
 
 ## Phased activation
 
 ### Phase 1 — startup without traffic or data access
 
-- Deploy the exact scanner digest with callbacks absent, Eventarc invocation absent, retry PAUSED, definition schedule PAUSED, and retention PAUSED/disabled.
-- Verify exact digest/config/identity/limits, healthy startup, fresh definitions, private anonymous 403, zero unexpected requests, no active instance after idle scale-down, and no real-data query.
+- Deploy the private updater job first while its schedule remains PAUSED. Execute exactly one authenticated manual update, then verify the CVD bucket's exact object count, expected definition files, timestamps, signatures, and freshness. Stop before scanner startup if update or freshness validation fails.
+- Deploy the exact scanner digest only after definitions pass, with callbacks absent, Eventarc invocation absent, retry PAUSED/code-disabled, definition schedule still PAUSED, and retention PAUSED/code-disabled.
+- Verify the scanner consumes the validated definitions, and verify exact digest/config/identity/limits, healthy startup, private anonymous 403, zero unexpected requests, no real-data query, no invocation paths, and eventual scale-to-zero after the platform idle window.
 - Deploy the focused Functions/rules/Hosting. Verify callables deny anonymous requests with 401, callbacks deny anonymous requests with 403, backend/scanner source paths return 404, both Production domains remain healthy, and the disabled retention action performs zero data dependency calls.
 - Any mismatch triggers rollback before an invocation path is added.
 
 ### Phase 2 — narrow paths and synthetic regression
 
-- Add scanner-only Invoker to the two private callbacks and the exact Eventarc-to-scanner path. Enable the definition update only after a direct definition-health run succeeds. Keep retry PAUSED until one direct exact-envelope/callback flow passes.
+- Add scanner-only Invoker to the two private callbacks and the exact Eventarc-to-scanner path. Enable the definition-update schedule only after its direct authenticated update and scanner-consumption checks pass. Keep retry PAUSED and code-disabled until one direct exact-envelope/callback flow passes.
 - Use only unmistakably named temporary synthetic accounts, records, and harmless fixtures. Do not list, query, open, or alter real PAL records or files.
 - Verify: clean certification upload/scan/purpose-bound exact-byte Office release; clean payroll/identity upload/scan/entitlement/different-person approval/exact-byte five-minute release; verified encrypted PDF to locked manual review with download denial; callback path/generation/size/type/SHA mismatch denial; anonymous and wrong-principal denial; duplicate callback idempotency and conflicting terminal denial; forced queue failure followed by retry recovery; one-time approvals; tamper-evident linked/redacted audit; simple pending/available/review UI states; source 404; rules denials; and no retention query/delete.
-- Enable retry only after the direct path passes. Remove temporary synthetic users, records, and objects; retain only clearly labeled append-only synthetic audit evidence required for verification. Reconcile all created-object/document/user counts.
+- After the direct path passes, focus-update retry configuration to `enforce`, verify the deployed revision, then deliberately enable the retry schedule and run its recovery test. Remove temporary synthetic users, records, and objects; retain only clearly labeled append-only synthetic audit evidence required for verification. Reconcile all created-object/document/user counts.
 
 ## Cost boundary
 
@@ -93,7 +106,7 @@ Employees, foremen, and supervisors keep the same upload steps; routing and scan
 
 - Pause retry, definition, and retention schedules; confirm retention stayed disabled.
 - Disable/delete the new Eventarc trigger and remove both callback Invoker grants and every service-to-scanner invocation path.
-- Leave the private min-0 scanner with no invocation path so it naturally scales to zero; confirm zero active instances. Retain the accepted image, repository, empty foundation buckets, identities, and already approved foundation IAM as evidence.
+- Leave the private min-0 scanner with no invocation path so it naturally scales to zero; confirm eventual zero active instances after the platform idle window. Retain the accepted image, repository, empty foundation buckets, identities, and already approved foundation IAM as evidence.
 - Roll back only the new Functions/rules/Hosting mutations to the captured pre-mutation Package 5 state. Leave every queued/new file private and locked.
 
 ### Fully reverse application activation to Package 5
