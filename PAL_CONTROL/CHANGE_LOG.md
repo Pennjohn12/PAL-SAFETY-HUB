@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 Production Phase 2 stopped on Eventarc bucket-metadata permission
+
+- John explicitly approved exact activation delta commit `e8f6763609c7807820a025d5b744ed1ddbf2e610` and separately confirmed the Phase 2 narrow permission mutations.
+- Production Phase 1 passed: definition job `pal-prod-cvd-update-d5l86` completed; the private CVD bucket contains exactly 15 fresh signed/configuration objects totaling 154,162,965 bytes; scanner revision `pal-prod-malware-scanner-00001-7l4` started from exact accepted digest with no callbacks and returned anonymous 403; the focused twelve actions, rules, and Hosting deployed; both retry and retention schedules were immediately PAUSED and remain code/config disabled; callbacks return anonymous 403 and backend source probes return 404.
+- Phase 2 granted scanner-only Invoker on the scanner and both private callbacks and configured callback URLs on healthy scanner revision `pal-prod-malware-scanner-00002-mc8`. Trigger creation then failed before creation because Eventarc validation requires `storage.buckets.get` on the isolated unscanned bucket for the trigger identity. A fresh inventory lists zero Production Eventarc triggers.
+- Live role inventory shows exact-bucket `roles/storage.bucketViewer` is the narrowest predefined role containing `storage.buckets.get` (and `storage.buckets.list`); `roles/storage.legacyBucketReader` is broader because it also grants object listing. The bucketViewer grant was not in the approved IAM table and was not applied. Production remains fail closed: no upload event path, retry/retention PAUSED and disabled, no synthetic/real-data activity, and files locked. John must separately approve this exact bucket-scoped grant before trigger creation is retried.
+
 ## 2026-08-30 — Package 6 remaining Production activation delta prepared
 
 - Re-inventoried the live Package 5 boundary and recorded exact Hosting release/version and file hashes, canonical Firestore/Storage rule hashes, active Package 5 source hash, zero Package 6 Functions, and the already established Package 6 repository/image/bucket/identity/API foundation.
