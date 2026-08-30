@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 remaining Production activation delta prepared
+
+- Re-inventoried the live Package 5 boundary and recorded exact Hosting release/version and file hashes, canonical Firestore/Storage rule hashes, active Package 5 source hash, zero Package 6 Functions, and the already established Package 6 repository/image/bucket/identity/API foundation.
+- Added `PACKAGE_6_PRODUCTION_ACTIVATION_DELTA.md`, scoped only to the remaining private bounded scanner runtime, definition job/schedule, isolated Eventarc path, exact IAM, twelve focused actions, rules/Hosting client, phased synthetic regression, `$5` usage stop, and two-level fail-closed rollback.
+- The delta begins with callbacks absent, retry PAUSED, retention PAUSED and code/config disabled, and no real-data query. It excludes legacy enumeration/migration, real data, credentials, another image/build/scan, public invocation, broader IAM, and retention enforcement/deletion.
+- This is governance preparation only. Production remains Package 5; the accepted scanner image is undeployed and files remain locked pending independent review and John's specific approval of the exact delta commit.
+
 ## 2026-08-30 — Package 6 Production-owned scanner image accepted; runtime remains undeployed
 
 - John separately approved one official `gcrane` v0.22.0 copy after the Docker-client route failed pre-manifest. GitHub's published checksum-file SHA-256 `32cb6297...` matched the downloaded checksum file; its pinned Linux x86_64 archive entry `edb74d53...` matched the downloaded archive before extraction/execution.
