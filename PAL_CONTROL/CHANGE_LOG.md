@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 Production Eventarc path created and verified private
+
+- John explicitly approved project-level `roles/pubsub.publisher` only for Google-managed Cloud Storage service agent `service-461653262208@gs-project-accounts.iam.gserviceaccount.com` and exactly one additional creation attempt for `pal-prod-malware-scan`.
+- The before-policy query returned no project role for that exact service agent. The approved grant succeeded and the after-policy shows only `roles/pubsub.publisher` for it; no scanner, vault, user, key, or broader Storage permission was substituted.
+- The one approved retry succeeded. Read-only inventory verifies exactly one `us-east1` trigger named `pal-prod-malware-scan`, one Eventarc-managed Pub/Sub topic/subscription, and one `OBJECT_FINALIZE` notification on `pal-safety-hub-clamav-unscanned` using `JSON_API_V1`.
+- The trigger is bound to only that isolated bucket, uses dedicated scanner identity `pal-prod-malware-scanner@pal-safety-hub.iam.gserviceaccount.com`, and targets private service `pal-prod-malware-scanner` in `us-east1`. Scanner service IAM contains only that dedicated identity as `roles/run.invoker`; no `allUsers` binding exists.
+- No object was uploaded and no synthetic or real PAL record was created, read, scanned, released, or deleted. Retry and retention remain PAUSED and code-disabled. The next boundary is the separately approved synthetic-only direct-path regression before retry can be enabled.
+
 ## 2026-08-30 — Package 6 Production Eventarc retry remained fail closed
 
 - John explicitly approved adding `roles/storage.bucketViewer` only on `gs://pal-safety-hub-clamav-unscanned` to `pal-prod-malware-scanner@pal-safety-hub.iam.gserviceaccount.com` and retrying creation of exactly one named trigger.
