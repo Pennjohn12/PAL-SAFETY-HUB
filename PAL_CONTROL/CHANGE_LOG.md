@@ -457,6 +457,15 @@ Newest entries go first. Git history remains the detailed code record.
 
 ## Entry template
 
+### 2026-08-30 — Package 6 Production Eventarc retry remained fail closed
+
+- John explicitly approved adding `roles/storage.bucketViewer` only on `gs://pal-safety-hub-clamav-unscanned` to `pal-prod-malware-scanner@pal-safety-hub.iam.gserviceaccount.com` and retrying creation of exactly one named trigger.
+- Before/after bucket IAM was captured. The new role contributes only `storage.buckets.get` and `storage.buckets.list`; it adds no object read, list, create, overwrite, or delete permission.
+- The one approved `pal-prod-malware-scan` creation retry failed while Google attempted to update bucket notification metadata. The reported causes were Cloud Storage service-agent access to the Eventarc-managed Pub/Sub topic or bucket-notification quota/configuration; no different permission was granted and no second retry was attempted.
+- Read-only follow-up verified zero Eventarc triggers in `us-east1`, zero notification configurations on the isolated unscanned bucket, and no matching `eventarc-us-east1-pal-prod-malware-scan` Pub/Sub topic.
+- Retry and retention remain PAUSED and code-disabled. No synthetic or real PAL data was used, no file was released, and the Production upload-to-scan path remains inactive and fail closed.
+- Follow-up: inspect the exact Cloud Storage service-agent and Eventarc/Pub/Sub prerequisites read-only, then obtain a new explicit approval before any service-agent IAM grant, notification change, or trigger retry.
+
 ### YYYY-MM-DD — Short title
 
 - Objective and scope:
