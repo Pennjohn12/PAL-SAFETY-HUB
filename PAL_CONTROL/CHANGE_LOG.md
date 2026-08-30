@@ -2,6 +2,13 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 posted billing exposed project-wide scan-cost variance
+
+- Read-only Billing Report review for Staging, Aug. 1–29, verified 40 units / `$10.40` under `Container Images Scanned` (SKU `BEA5-E1D1-4659`), with `$0.00` SKU savings. Cloud Run CPU/memory usage was offset to `$0.00` subtotal and other visible supporting-service rows were `$0.00`.
+- Only nine scanner-candidate scans / `$2.34` were explicitly approved. The project therefore posted 31 scan units / `$8.06` above that expectation. Current read-only inventory contains 10 dedicated scanner digests and 36 Cloud Functions-managed digests; the 46-current-digest versus 40-posted-unit difference prevents exact per-digest billing attribution, but confirms that automatic scanning was not confined to the dedicated scanner repository.
+- This is a verified cost-control/governance failure, not a confidentiality failure, malware bypass, or Production-data event. Production is unchanged. Staging remains rolled back, temporary callback/viewer access absent, and retry PAUSED.
+- All discretionary Staging builds, deployments, scans, and runtime tests are stopped. Deleting images or changing automatic-scanning policy is a separate material action and was not performed. John must approve an exact repository-scoped or separate-project cost-control design before Package 6 resumes paid activity or prepares a Production proposal.
+
 ## 2026-08-30 — Package 6 initial-scan retry recovery passed in isolated Staging
 
 - A temporary synthetic-only harness with local/Staging SHA-256 `41010b5feee6dea370fdb60c32048b9cf0e8175e04c9af31ea2dacb1d40dcde0` created one certification object and matching server-side record/authorization in locked `pending` / `scan-queue-failed` state. It did not create a browser user, credential, or real PAL record.

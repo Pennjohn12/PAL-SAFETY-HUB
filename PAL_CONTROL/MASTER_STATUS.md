@@ -29,6 +29,7 @@ Last verified: **2026-08-30, America/New_York**
 ## Staging/Test status
 
 - Package 6 corrected initial-scan image `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb` passed its image-security gate and the separated first-scan lifecycle in isolated Staging. Certification clean/release, payroll/identity clean/two-person release, encrypted-file locked manual review, and automatic recovery from `scan-queue-failed` all passed. A second forced recovery left the terminal result and single audit event unchanged. All temporary data was cleaned and Staging was rolled back to `pal-staging-malware-scanner-00010-p6g`; temporary callback/viewer access is absent and retry is PAUSED. Production and real data remain prohibited.
+- Package 6 cost reconciliation found 40 posted Container Images Scanned units / `$10.40`, versus nine explicitly approved scanner-candidate units / `$2.34`. Current inventory has 10 dedicated scanner digests and 36 Cloud Functions-managed digests, confirming the cost boundary was broader than assumed. All discretionary Staging builds, deployments, scans, and runtime tests are stopped pending John's approval of an exact repository-scoped cost-control policy. This is a billing-control issue, not a security breach; Production remains unchanged.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
