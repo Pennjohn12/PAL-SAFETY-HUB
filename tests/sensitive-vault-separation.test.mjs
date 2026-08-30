@@ -26,6 +26,12 @@ test('new payroll file metadata enters the sensitive vault while certifications 
   assert.match(backend, /if \(grant\.folder === 'certUploads'\) update\[field\] = files/);
 });
 
+test('public upload finalization uses exactly one dedicated vault runtime identity', () => {
+  const options = backend.match(/exports\.finalizePublicIntakeUploadV2 = onCall\((\{[\s\S]*?\}), async request =>/);
+  assert.ok(options, 'finalizer options must be statically discoverable');
+  assert.equal((options[1].match(/serviceAccount: VAULT_SERVICE_ACCOUNT/g) || []).length, 1);
+});
+
 test('both public upload folders enter an exact-object automatic first-scan envelope', () => {
   const identity = { path: 'quarantine/newHireIntakes/PAL-SYNTHETIC-123/certUploads/auth-12345678.pdf', generation: '123',
     size: 45, contentType: 'application/pdf', sha256: 'a'.repeat(64) };

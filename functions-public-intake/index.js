@@ -428,7 +428,7 @@ exports.createPublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeou
   return { authorizationId: authorizationRef.id, grantToken, uploadUrl, expiresAt: expiresAt.toDate().toISOString(), path, contentType: spec.contentType, size: spec.size };
 });
 
-exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 120, memory: '512MiB', maxInstances: 10, serviceAccount: VAULT_SERVICE_ACCOUNT,
+exports.finalizePublicIntakeUploadV2 = onCall({ region: REGION, cors: true, timeoutSeconds: 120, memory: '512MiB', maxInstances: 10,
   serviceAccount: VAULT_SERVICE_ACCOUNT }, async request => {
   const intakeId = text(request.data?.intakeId, 180);
   const token = text(request.data?.token, 200);
