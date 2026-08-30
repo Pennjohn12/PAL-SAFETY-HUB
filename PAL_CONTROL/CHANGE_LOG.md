@@ -2,6 +2,14 @@
 
 Newest entries go first. Git history remains the detailed code record.
 
+## 2026-08-30 — Package 6 Production activation stopped fail closed during exact image promotion
+
+- John approved the exact Production deployment from tested commit `86449b355962437f51c353c88c972c5ea3e9d941`, including one expected `$0.26` scan, named resources/IAM, synthetic-only verification, the `$5` stop boundary, and rollback.
+- Pre-mutation inventory confirmed project `pal-safety-hub`, no Package 6 Production resources, existing Package 5 services/schedules, two `gcf-artifacts` repositories, Container Scanning disabled, and Production Hosting unchanged. The isolated deployment checkout exactly matched the approved commit.
+- Production `gcf-artifacts` in `us-central1` and `us-east1` were explicitly scan-disabled. A private scan-active `us-east1/malware-scanner` repository, four empty US-EAST1 UBLA/public-access-prevention buckets, and dedicated scanner/vault/updater identities were created. All three identities verify zero user-managed keys. Approved narrow project, repository, self-signing, Firebase-bucket, and isolated-bucket IAM was applied. The live Firebase bucket is `pal-safety-hub.firebasestorage.app`; the obsolete historical `pal-safety-hub.appspot.com` name returned 404 and received no binding.
+- The accepted source digest `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb` pulled and inspected exactly. Three attempts to push the identical tag to Production failed on Artifact Registry HTTPS connection refusal before manifest creation. Production verifies zero scanner images, all four buckets empty, and scanner runtime absent. Therefore no Artifact Analysis scan/charge, Function/rules/Hosting deployment, real-data access, file release, or Production scanner traffic occurred.
+- Deployment remains stopped. Using a different copy mechanism such as an isolated Cloud Build/gcrane promotion changes the approved mechanism and requires a new exact approval, builder identity scope, digest verification, cost statement, and rollback. Existing Package 5 behavior remains active and new sensitive uploads remain locked.
+
 ## 2026-08-30 — Package 6 exact Production proposal prepared; Production remains closed
 
 - Added `PACKAGE_6_PRODUCTION_PROPOSAL.md` with the exact image-promotion choice, Production resources, identities, repository scanning policy, twelve affected Function actions, rules/Hosting scope, synthetic-only release sequence, user impact, cost monitoring, stop conditions, and fail-closed rollback.

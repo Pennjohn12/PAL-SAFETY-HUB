@@ -4,7 +4,7 @@ Last verified: **2026-08-30, America/New_York**
 
 ## Current Production status
 
-- Status: **Online; Package 5 secure public-upload controls are active.**
+- Status: **Online; Package 5 secure public-upload controls are active. Package 6 Production foundation is partial and fail closed.**
 - Production URL: `https://pal-safety-hub.web.app/`
 - Custom PAL URL: `https://pal.jobsiteresources.com/`
 - Firebase project: `pal-safety-hub`
@@ -12,6 +12,7 @@ Last verified: **2026-08-30, America/New_York**
 - Pre-maintenance Production Hosting version: `d9ef60e643ff9f11`
 - Pre-maintenance Production release time: `2026-08-28T18:01:25.005Z`
 - Deployment identity: `jvpanettiere@gmail.com`
+- Package 6 exact Production activation was approved from commit `86449b355962437f51c353c88c972c5ea3e9d941`. The dedicated scan-active `us-east1/malware-scanner` repository, four empty private US-EAST1 buckets, and three zero-key Production identities now exist with the approved narrow foundation IAM. Both Production `gcf-artifacts` repositories remain explicitly scan-disabled. Exact-digest promotion stopped after three registry connection refusals; Production contains zero scanner images, no scanner runtime, and no Package 6 Function/Hosting/rules deployment. No scan charge, real-data access, or release occurred. A different image-copy mechanism requires a new exact approval.
 - Evidence: live `index.html`, `projects.html`, Firebase client configuration, `manifest.json`, and `sw.js` matched the Git blobs at the Production commit.
 - Firestore and Storage rule text was compared read-only in the Firebase console on 2026-08-29 and matched the checked-in rules after line-ending normalization. Deployed Function source equivalence remains unverified.
 - Package 3 maintenance activation began at approximately 8:39 PM America/New_York on 2026-08-28 with John's explicit approval. Its 10:39 PM rollback deadline was missed because the scheduled safeguard did not execute. Corrective rollback completed at approximately 12:23 AM on 2026-08-29: normal Hosting and rules were restored from commit `4b2e54e`, all 12 recorded invoker bindings were restored, and both exact Scheduler jobs were enabled. The failure and corrective evidence are recorded in `PRODUCTION_MAINTENANCE_RUNBOOK.md`.
@@ -31,7 +32,7 @@ Last verified: **2026-08-30, America/New_York**
 - Package 6 corrected initial-scan image `sha256:e0de7bbb029eb9d342bd56b9e215fab33d39f27eb3fe23f42728ed920cedd7cb` passed its image-security gate and the separated first-scan lifecycle in isolated Staging. Certification clean/release, payroll/identity clean/two-person release, encrypted-file locked manual review, and automatic recovery from `scan-queue-failed` all passed. A second forced recovery left the terminal result and single audit event unchanged. All temporary data was cleaned and Staging was rolled back to `pal-staging-malware-scanner-00010-p6g`; temporary callback/viewer access is absent and retry is PAUSED. Production and real data remain prohibited.
 - Package 6 cost reconciliation found 40 posted Container Images Scanned units / `$10.40`, versus nine explicitly approved scanner-candidate units / `$2.34`. Current inventory has 10 dedicated scanner digests and 36 Cloud Functions-managed digests, confirming the cost boundary was broader than assumed. All discretionary Staging builds, deployments, scans, and runtime tests are stopped pending John's approval of an exact repository-scoped cost-control policy. This is a billing-control issue, not a security breach; Production remains unchanged.
 - John approved repository-scoped cost control. Staging `gcf-artifacts` in `us-central1` and `us-east1` now verify `SCANNING_DISABLED`; dedicated `us-east1/malware-scanner` verifies `SCANNING_ACTIVE`. This prevents ordinary Staging Function deployments from silently entering the paid scan scope while preserving the required paid gate for each new scanner digest. The loss of automatic Function-container scanning is recorded as the accepted security tradeoff. No Production setting changed.
-- The exact Package 6 Production proposal is prepared locally in `PACKAGE_6_PRODUCTION_PROPOSAL.md`. It selects a Production-owned copy of the accepted scanner digest, dedicated keyless identities/private buckets/runtime, twelve focused Function actions, rules/Hosting updates, one expected `$0.26` scan, a `$5` monitoring stop threshold, synthetic-only smoke tests, no legacy migration, and fail-closed rollback. It remains unapproved and undeployed pending exact-commit testing, Control Room review, and John's specific Production authorization.
+- The exact Package 6 Production proposal passed tests and Control Room review and John approved commit `86449b355962437f51c353c88c972c5ea3e9d941`. Foundation creation began, but image promotion failed closed before any manifest/scan/runtime/application deployment. Completion is blocked on approval of a different no-rebuild copy mechanism.
 
 - GitHub branch `staging` exists but is stale and is not an environment boundary.
 - Dedicated Firebase project `pal-safety-hub-staging` is configured separately from Production.
