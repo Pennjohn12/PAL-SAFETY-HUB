@@ -117,4 +117,4 @@ Employees, foremen, and supervisors keep the same upload steps; routing and scan
 
 ## Exact authorization boundary
 
-This document is preparation only and makes no Production change. Activation requires John's explicit approval of this exact delta commit after independent Control Room review. Approval covers only the remaining mutations and synthetic verification above. It does not authorize real-data access, legacy migration, retention enforcement/deletion, credentials, another image/build/scan, public invocation, broader IAM, or spend beyond the `$5` stop.
+This document is preparation only and makes no Production change. Activation requires John's explicit approval of this exact delta commit after independent Control Room review. Approval covers only the remaining mutations and synthetic verification above. It does not authorize real-data access, legacy migration, retention enforcement/deletion, credentials, another image/build/scan, anonymous application/data access, public invocation beyond the eight explicitly named Firebase-authenticated callable services, broader IAM, or spend beyond the `$5` stop.
